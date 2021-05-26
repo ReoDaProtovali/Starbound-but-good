@@ -1,11 +1,11 @@
 
 #include "renderwindow.hpp";
 
-RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) 
+RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 	:window(NULL), renderer(NULL)
 {
 
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, p_w, p_h, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, p_w, p_h, SDL_WINDOW_OPENGL);
 	if (window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -28,19 +28,20 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filepath) {
 	return texture;
 }
 
-void RenderWindow::render(SDL_Texture* p_tex) {
+void RenderWindow::render(Entity& p_entity) {
 	SDL_Rect src;
-	src.x = 0;
-	src.y = 0;
-	src.w = 16; 
-	src.h = 16;
-	
+	src.x = p_entity.getCurrentFrame().x;
+	src.y = p_entity.getCurrentFrame().y;
+	src.w = p_entity.getCurrentFrame().w;
+	src.h = p_entity.getCurrentFrame().h;
+
 	SDL_Rect dst;
-	dst.x = 0;
-	dst.y = 0;
-	dst.w = 16;
-	dst.h = 16;
-	SDL_RenderCopy(renderer, p_tex, &src, &dst);
+	dst.x = p_entity.getX();
+	dst.y = p_entity.getY();
+	dst.w = p_entity.getCurrentFrame().w * 4;
+	dst.h = p_entity.getCurrentFrame().h * 4;
+
+	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
 void RenderWindow::display() {
 	SDL_RenderPresent(renderer);
