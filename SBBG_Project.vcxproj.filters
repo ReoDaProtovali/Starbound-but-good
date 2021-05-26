@@ -24,12 +24,18 @@
     <ClCompile Include="entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="world.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="entity.hpp">
+    <ClInclude Include="Entity.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="renderwindow.hpp">
+    <ClInclude Include="Renderwindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="World.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
