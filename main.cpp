@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 		std::cout << "somethin done goofed and SDL_image aint runnin gamer: " << IMG_GetError() << std::endl;
 	}
 
-	RenderWindow window = RenderWindow::RenderWindow("Borstoind", 500, 500);
+	RenderWindow window = RenderWindow("Borstoind", 500, 500);
 	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
 
 
