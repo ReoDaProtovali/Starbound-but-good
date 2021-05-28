@@ -150,7 +150,6 @@
     <ClCompile Include="mathutils.cpp" />
     <ClCompile Include="renderwindow.cpp" />
     <ClCompile Include="tile.cpp" />
-    <ClCompile Include="utils.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>

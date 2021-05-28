@@ -10,7 +10,7 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED && SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	if (renderer == NULL) {
 		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
 	}
@@ -47,4 +47,11 @@ void RenderWindow::clear() {
 }
 void RenderWindow::cleanUp() {
 	SDL_DestroyWindow(window);
+}
+
+int RenderWindow::getRefreshRate() {
+	int displayIndex = SDL_GetWindowDisplayIndex(window);
+	SDL_DisplayMode mode;
+	SDL_GetDisplayMode(displayIndex, 0, &mode);
+	return mode.refresh_rate;
 }
