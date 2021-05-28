@@ -2,20 +2,20 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <vector>
+#include "Mathutils.hpp"
 
 class Entity
 {
 public:
-	Entity(float p_x, float p_y, SDL_Texture* p_tex, float p_w = 16.0f, float p_h = 16.0f);
-	float getX();
-	float getY();
+	Entity(Vector2f p_pos, SDL_Texture* p_tex, int p_w = 16, int p_h = 16);
+	Vector2f getPos();
+	void setPos(Vector2f& p_pos);
 	void setX(float p_x);
 	void setY(float p_y);
 	SDL_Texture* getTex();
 	SDL_Rect getSrcRect();
 private:
-	float x;
-	float y;
+	Vector2f pos;
 	SDL_Rect srcRect;
 	SDL_Texture* tex;
 };

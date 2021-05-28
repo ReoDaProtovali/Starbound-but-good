@@ -24,10 +24,10 @@ int main(int argc, char* argv[]) {
 	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
 
 	std::vector<Entity> entities = {
-		Entity(100, 100, testTex, 8, 16),
-		Entity(164, 100, testTex),
-		Entity(228, 100, testTex),
-		Entity(292, 100, testTex)
+		Entity(Vector2f(100.0f, 100.0f), testTex, 8, 16),
+		Entity(Vector2f(164.0f, 100.0f), testTex),
+		Entity(Vector2f(228.0f, 100.0f), testTex),
+		Entity(Vector2f(292.0f, 100.0f), testTex)
 	};
 
 	bool gameActive = true;

@@ -1,24 +1,24 @@
 #include "Entity.hpp"
 
-Entity::Entity(float p_x, float p_y, SDL_Texture* p_tex, float p_w, float p_h)
-	:x(p_x), y(p_y), tex(p_tex)
+Entity::Entity(Vector2f p_pos, SDL_Texture* p_tex, int p_w, int p_h)
+	:pos(p_pos), tex(p_tex)
 {
 	srcRect.x = 0;
 	srcRect.y = 0;
 	srcRect.w = p_w;
 	srcRect.h = p_h;
 }
-float Entity::getX() {
-	return x;
-}
-float Entity::getY() {
-	return y;
+Vector2f Entity::getPos() {
+	return pos;
 }
 void Entity::setX(float p_x) {
-	x = p_x;
+	pos.x = p_x;
 }
 void Entity::setY(float p_y) {
-	y = p_y;
+	pos.y = p_y;
+}
+void Entity::setPos(Vector2f& p_pos) {
+	pos = p_pos;
 }
 SDL_Texture* Entity::getTex() {
 	return tex;
