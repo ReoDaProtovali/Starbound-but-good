@@ -1,12 +1,12 @@
 #include "Entity.hpp"
 
-Entity::Entity(float p_x, float p_y, SDL_Texture* p_tex)
+Entity::Entity(float p_x, float p_y, SDL_Texture* p_tex, float p_w, float p_h)
 	:x(p_x), y(p_y), tex(p_tex)
 {
-	currentFrame.x = 0;
-	currentFrame.y = 0;
-	currentFrame.w = 16;
-	currentFrame.h = 16;
+	srcRect.x = 0;
+	srcRect.y = 0;
+	srcRect.w = p_w;
+	srcRect.h = p_h;
 }
 float Entity::getX() {
 	return x;
@@ -23,6 +23,6 @@ void Entity::setY(float p_y) {
 SDL_Texture* Entity::getTex() {
 	return tex;
 }
-SDL_Rect Entity::getCurrentFrame() {
-	return currentFrame;
+SDL_Rect Entity::getSrcRect() {
+	return srcRect;
 }
