@@ -5,11 +5,14 @@
 #include "Entity.hpp"
 #include "Mathutils.hpp"
 
+
 int main(int argc, char* argv[]) {
+	bool gameActive = true;
+	SDL_Event event;
+
 	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) > 0) {
 		std::cout << "somethin done goofed and sdl aint runnin chief: " << SDL_GetError() << std::endl;
 	}
-
 	if (!IMG_Init(IMG_INIT_PNG)) {
 		std::cout << "somethin done goofed and SDL_image aint runnin gamer: " << IMG_GetError() << std::endl;
 	}
@@ -22,6 +25,12 @@ int main(int argc, char* argv[]) {
 
 	RenderWindow window = RenderWindow("Borstoind", 1280, 720);
 	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
+	SDL_Texture* me = window.loadTexture("res/me.png");
+	if (me == NULL) {
+		gameActive = false;
+	}
+
+	std::cout << (me) << std::endl;
 
 	std::vector<Entity> entities = {
 		Entity(Vector2f(100.0f, 100.0f), testTex, 8, 16),
@@ -30,8 +39,6 @@ int main(int argc, char* argv[]) {
 		Entity(Vector2f(292.0f, 100.0f), testTex)
 	};
 
-	bool gameActive = true;
-	SDL_Event event;
 
 	while (gameActive) {
 		while (SDL_PollEvent(&event)) {
