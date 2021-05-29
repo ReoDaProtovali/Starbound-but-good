@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Tile.hpp"
-#include "Chunk.h"
+#include "Chunk.hpp"
 #include "Entity.hpp"
 #include <stdlib.h>
 #include "utils.h"

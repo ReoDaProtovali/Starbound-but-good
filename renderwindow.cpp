@@ -39,7 +39,7 @@ void RenderWindow::renderEntity(Entity& p_entity) {
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
-void RenderWindow::drawWorld(World &p_world) {
+void RenderWindow::drawChunk(WorldChunk& p_chunk) {
 	int scale = 4;
 	SDL_Rect src;
 	src.x = 0;

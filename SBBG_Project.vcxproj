@@ -151,14 +151,16 @@
     <ClCompile Include="mathutils.cpp" />
     <ClCompile Include="renderwindow.cpp" />
     <ClCompile Include="tile.cpp" />
+    <ClCompile Include="timestepper.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Chunk.h" />
+    <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="Mathutils.hpp" />
     <ClInclude Include="Renderwindow.hpp" />
     <ClInclude Include="Tile.hpp" />
+    <ClInclude Include="Timestepper.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>

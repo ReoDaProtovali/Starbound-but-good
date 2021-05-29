@@ -6,6 +6,7 @@
 #include "Mathutils.hpp"
 #include "utils.h"
 #include "World.hpp"
+#include "Timestepper.h"
 
 int main(int argc, char* argv[]) {
 	bool gameActive = true;
@@ -21,7 +22,9 @@ int main(int argc, char* argv[]) {
 	RenderWindow window = RenderWindow("Borstoind", 1280, 720);
 
 	World world = World();
-	WorldChunk chunk = world.getChunk(Vector2i(0, 0));
+	WorldChunk& chunk = world.getChunk(Vector2i(0, 0));
+	chunk.fillRandom();
+
 	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
 	SDL_Texture* me = window.loadTexture("res/me.png");
 
@@ -29,34 +32,28 @@ int main(int argc, char* argv[]) {
 		gameActive = false;
 	}
 
-	const float timeStep = 1.0f / 60;
-	float accumulator = 0.0f;
-	float currentTime = utils::hireTimeInSeconds();
+	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps
 
 	while (gameActive) {
-		int startTicks = SDL_GetTicks();
-		float newTime = utils::hireTimeInSeconds();
-		float frameTime = newTime - currentTime;
-		currentTime = newTime;
-		accumulator += frameTime;
+		ts.processFrameStart();
 
-		while (accumulator >= timeStep) {
-			while (SDL_PollEvent(&event)) {
+		while (ts.isAccumulatorDrained()) {
+			// update code should go right here I think
+
+			while (SDL_PollEvent(&event)) { // disables the game loop if you hit the x button
 				if (event.type == SDL_QUIT) {
 					gameActive = false;
 				}
 			}
-			accumulator -= timeStep;
+			ts.accumulator -= ts.timeStep;
 		}
-		const float alpha = accumulator / timeStep;
+		ts.calculateAlpha(); 
+		std::cout << ts.alpha << std::endl;
 		window.clear();
+		// render code goes here I think
 
 		window.display();
-
-		int frameTicks = SDL_GetTicks() - startTicks;
-		if (frameTicks < 1000.0f / window.getRefreshRate()) {
-			SDL_Delay(1000.0f / window.getRefreshRate() - frameTicks);
-		}
+		ts.processFrameEnd(window);
 	}
 
 	window.cleanUp();

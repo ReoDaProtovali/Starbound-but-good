@@ -5,9 +5,11 @@
 #include "entity.hpp"
 #include "utils.h"
 #include "World.hpp"
+#include "Chunk.hpp"
 #include "Tile.hpp"
 #include <iostream>
 class World;
+class WorldChunk;
 
 class RenderWindow
 {
@@ -17,7 +19,7 @@ public:
 	void cleanUp();
 	void clear();
 	void renderEntity(Entity& p_entity);
-	void drawWorld(World& p_world);
+	void drawChunk(WorldChunk& p_chunk);
 	void display();
 	int getRefreshRate();
 private:
