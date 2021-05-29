@@ -25,7 +25,9 @@ void WorldChunk::fillRandom() {
 	}
 	return;
 }
-
+Tile** WorldChunk::getTiles() {
+	return tiles;
+}
 void WorldChunk::setChunkTile(Vector2i p_chunkCoordinates) {
 	return;
 }

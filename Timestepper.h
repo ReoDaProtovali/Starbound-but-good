@@ -7,7 +7,7 @@ class Timestepper {
 public:
 	Timestepper(float p_timestep);
 	void processFrameStart();
-	bool isAccumulatorDrained();
+	bool accumulatorFull();
 	void calculateAlpha();
 	void processFrameEnd(RenderWindow& p_window);
 	float accumulator;

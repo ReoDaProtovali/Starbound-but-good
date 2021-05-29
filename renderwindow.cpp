@@ -39,13 +39,26 @@ void RenderWindow::renderEntity(Entity& p_entity) {
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
-void RenderWindow::drawChunk(WorldChunk& p_chunk) {
+void RenderWindow::drawChunk(WorldChunk& p_chunk, SDL_Texture* testTex) {
 	int scale = 4;
 	SDL_Rect src;
 	src.x = 0;
 	src.y = 0;
 	src.w = 8;
 	src.h = 8;
+	Tile** tiles = p_chunk.getTiles();
+	for (int y = 0; y < 128; y++) {
+		for (int x = 0; x < 128; x++) {
+			if (tiles[y][x].tileID == 0) {
+				SDL_Rect dst;
+				dst.x = x * 8;
+				dst.y = y * 8;
+				dst.w = 8;
+				dst.h = 8;
+				SDL_RenderCopy(renderer, testTex, &src, &dst);
+			}
+		}
+	}
 
 	//for 
 	//SDL_Rect dst;
@@ -53,8 +66,8 @@ void RenderWindow::drawChunk(WorldChunk& p_chunk) {
 	//dst.y = p_entity.getPos().y;
 	//dst.w = src.w * scale;
 	//dst.h = src.h * scale;
-	
-	//SDL_RenderCopy(renderer, tex, &src, &dst);
+
+	//
 }
 void RenderWindow::display() {
 	SDL_RenderPresent(renderer);

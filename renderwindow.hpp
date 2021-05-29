@@ -19,7 +19,7 @@ public:
 	void cleanUp();
 	void clear();
 	void renderEntity(Entity& p_entity);
-	void drawChunk(WorldChunk& p_chunk);
+	void drawChunk(WorldChunk& p_chunk, SDL_Texture* testTex);
 	void display();
 	int getRefreshRate();
 private:

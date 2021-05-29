@@ -20,13 +20,14 @@ int main(int argc, char* argv[]) {
 	}
 
 	RenderWindow window = RenderWindow("Borstoind", 1280, 720);
+	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
+	SDL_Texture* me = window.loadTexture("res/me.png");
 
 	World world = World();
 	WorldChunk& chunk = world.getChunk(Vector2i(0, 0));
 	chunk.fillRandom();
 
-	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
-	SDL_Texture* me = window.loadTexture("res/me.png");
+
 
 	if (me == NULL) {
 		gameActive = false;
@@ -37,9 +38,9 @@ int main(int argc, char* argv[]) {
 	while (gameActive) {
 		ts.processFrameStart();
 
-		while (ts.isAccumulatorDrained()) {
+		while (ts.accumulatorFull()) {
 			// update code should go right here I think
-
+			world.getChunk(Vector2i()).fillRandom();
 			while (SDL_PollEvent(&event)) { // disables the game loop if you hit the x button
 				if (event.type == SDL_QUIT) {
 					gameActive = false;
@@ -48,8 +49,8 @@ int main(int argc, char* argv[]) {
 			ts.accumulator -= ts.timeStep;
 		}
 		ts.calculateAlpha(); 
-		std::cout << ts.alpha << std::endl;
 		window.clear();
+		window.drawChunk(world.getChunk(Vector2i(0, 0)), testTex);
 		// render code goes here I think
 
 		window.display();

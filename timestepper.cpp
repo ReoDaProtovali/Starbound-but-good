@@ -10,7 +10,7 @@ void Timestepper::processFrameStart() {
 	currentTime = newTime;
 	accumulator += frameTime;
 }
-bool Timestepper::isAccumulatorDrained() {
+bool Timestepper::accumulatorFull() {
 	return accumulator >= timeStep;
 }
 
