@@ -5,6 +5,7 @@
 #include "Entity.hpp"
 #include "Mathutils.hpp"
 #include "utils.h"
+#include "World.hpp"
 
 int main(int argc, char* argv[]) {
 	bool gameActive = true;
@@ -19,18 +20,14 @@ int main(int argc, char* argv[]) {
 
 	RenderWindow window = RenderWindow("Borstoind", 1280, 720);
 
+	World world = World();
+	WorldChunk chunk = world.getChunk(Vector2i(0, 0));
 	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
 	SDL_Texture* me = window.loadTexture("res/me.png");
+
 	if (me == NULL) {
 		gameActive = false;
 	}
-
-	std::vector<Entity> entities = {
-		Entity(Vector2f(100.0f, 100.0f), testTex, 8, 16),
-		Entity(Vector2f(164.0f, 100.0f), testTex),
-		Entity(Vector2f(228.0f, 100.0f), testTex),
-		Entity(Vector2f(292.0f, 100.0f), testTex)
-	};
 
 	const float timeStep = 1.0f / 60;
 	float accumulator = 0.0f;
@@ -53,9 +50,7 @@ int main(int argc, char* argv[]) {
 		}
 		const float alpha = accumulator / timeStep;
 		window.clear();
-		for (Entity& e : entities) {
-			window.render(e);
-		}
+
 		window.display();
 
 		int frameTicks = SDL_GetTicks() - startTicks;
@@ -65,6 +60,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	window.cleanUp();
+	world.~World();
 	SDL_Quit();
 
 	return 0;

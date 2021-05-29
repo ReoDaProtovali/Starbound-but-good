@@ -4,8 +4,11 @@
 #include <SDL_opengl.h>
 #include "entity.hpp"
 #include "utils.h"
-
+#include "World.hpp"
+#include "Tile.hpp"
 #include <iostream>
+class World;
+
 class RenderWindow
 {
 public:
@@ -13,7 +16,8 @@ public:
 	SDL_Texture* loadTexture(const char* p_filePath);
 	void cleanUp();
 	void clear();
-	void render(Entity& p_entity);
+	void renderEntity(Entity& p_entity);
+	void drawWorld(World& p_world);
 	void display();
 	int getRefreshRate();
 private:

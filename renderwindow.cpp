@@ -28,16 +28,33 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filepath) {
 	return texture;
 }
 
-void RenderWindow::render(Entity& p_entity) {
+void RenderWindow::renderEntity(Entity& p_entity) {
 	SDL_Rect src = p_entity.getSrcRect();
 
 	SDL_Rect dst;
-	dst.x = p_entity.getPos().x;
-	dst.y = p_entity.getPos().y;
+	dst.x = (int)(p_entity.getPos().x);
+	dst.y = (int)(p_entity.getPos().y);
 	dst.w = src.w * 4;
 	dst.h = src.h * 4;
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
+}
+void RenderWindow::drawWorld(World &p_world) {
+	int scale = 4;
+	SDL_Rect src;
+	src.x = 0;
+	src.y = 0;
+	src.w = 8;
+	src.h = 8;
+
+	//for 
+	//SDL_Rect dst;
+	//dst.x = p_entity.getPos().x;
+	//dst.y = p_entity.getPos().y;
+	//dst.w = src.w * scale;
+	//dst.h = src.h * scale;
+	
+	//SDL_RenderCopy(renderer, tex, &src, &dst);
 }
 void RenderWindow::display() {
 	SDL_RenderPresent(renderer);
