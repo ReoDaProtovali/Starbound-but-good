@@ -7,21 +7,22 @@
 #include "World.hpp"
 #include "Chunk.hpp"
 #include "Tile.hpp"
+#include "ResourceLoader.hpp"
 #include <iostream>
+
 class World;
 class WorldChunk;
-
 class RenderWindow
 {
 public:
 	RenderWindow(const char* p_title, int p_w, int p_h);
-	SDL_Texture* loadTexture(const char* p_filePath);
 	void cleanUp();
 	void clear();
 	void renderEntity(Entity& p_entity);
-	void drawChunk(WorldChunk& p_chunk, SDL_Texture* testTex);
+	void drawChunk(WorldChunk& p_chunk);
 	void display();
 	int getRefreshRate();
+	ResourceLoader res;
 private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;

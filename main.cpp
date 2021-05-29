@@ -7,6 +7,8 @@
 #include "utils.h"
 #include "World.hpp"
 #include "Timestepper.h"
+#include "ResourceLoader.hpp"
+
 
 int main(int argc, char* argv[]) {
 	bool gameActive = true;
@@ -20,27 +22,29 @@ int main(int argc, char* argv[]) {
 	}
 
 	RenderWindow window = RenderWindow("Borstoind", 1280, 720);
-	SDL_Texture* testTex = window.loadTexture("res/testsprites/tile1.png");
-	SDL_Texture* me = window.loadTexture("res/me.png");
+
+	window.res.load("res/tiles/teststone.png"); // assigned id 1
+	window.res.load("res/tiles/testdirt.png"); // assigned id 2
+	window.res.load("res/tiles/tile1.png"); // assigned id 3
+	Uint16 meFound = window.res.load("res/me.png"); // assigned id 4
+
+	if (!meFound) {
+		gameActive = false;
+	}
 
 	World world = World();
 	WorldChunk& chunk = world.getChunk(Vector2i(0, 0));
 	chunk.fillRandom();
 
 
-
-	if (me == NULL) {
-		gameActive = false;
-	}
-
-	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps
+	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
 
 	while (gameActive) {
 		ts.processFrameStart();
 
 		while (ts.accumulatorFull()) {
 			// update code should go right here I think
-			world.getChunk(Vector2i()).fillRandom();
+			//world.getChunk(Vector2i()).fillRandom();
 			while (SDL_PollEvent(&event)) { // disables the game loop if you hit the x button
 				if (event.type == SDL_QUIT) {
 					gameActive = false;
@@ -50,7 +54,7 @@ int main(int argc, char* argv[]) {
 		}
 		ts.calculateAlpha(); 
 		window.clear();
-		window.drawChunk(world.getChunk(Vector2i(0, 0)), testTex);
+		window.drawChunk(world.getChunk(Vector2i(0, 0)));
 		// render code goes here I think
 
 		window.display();

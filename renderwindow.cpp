@@ -5,7 +5,7 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 	:window(NULL), renderer(NULL)
 {
 
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, p_w, p_h, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, p_w, p_h, SDL_WINDOW_RESIZABLE);
 	if (window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -14,19 +14,9 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 	if (renderer == NULL) {
 		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
 	}
-
+	res = ResourceLoader(renderer);
 }
 
-SDL_Texture* RenderWindow::loadTexture(const char* p_filepath) {
-	SDL_Texture* texture = NULL;
-	texture = IMG_LoadTexture(renderer, p_filepath);
-
-	if (texture == NULL) {
-		std::cout << "Failed to load texture: " << SDL_GetError() << std::endl;
-		return NULL;
-	}
-	return texture;
-}
 
 void RenderWindow::renderEntity(Entity& p_entity) {
 	SDL_Rect src = p_entity.getSrcRect();
@@ -39,7 +29,7 @@ void RenderWindow::renderEntity(Entity& p_entity) {
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
-void RenderWindow::drawChunk(WorldChunk& p_chunk, SDL_Texture* testTex) {
+void RenderWindow::drawChunk(WorldChunk& p_chunk) {
 	int scale = 4;
 	SDL_Rect src;
 	src.x = 0;
@@ -49,14 +39,12 @@ void RenderWindow::drawChunk(WorldChunk& p_chunk, SDL_Texture* testTex) {
 	Tile** tiles = p_chunk.getTiles();
 	for (int y = 0; y < 128; y++) {
 		for (int x = 0; x < 128; x++) {
-			if (tiles[y][x].tileID == 0) {
-				SDL_Rect dst;
-				dst.x = x * 8;
-				dst.y = y * 8;
-				dst.w = 8;
-				dst.h = 8;
-				SDL_RenderCopy(renderer, testTex, &src, &dst);
-			}
+			SDL_Rect dst;
+			dst.x = x * 16;
+			dst.y = y * 16;
+			dst.w = 16;
+			dst.h = 16;
+			SDL_RenderCopy(renderer, res.getTex(tiles[y][x].tileID), &src, &dst);
 		}
 	}
 
