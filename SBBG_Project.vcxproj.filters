@@ -13,60 +13,81 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Tile/Entity Related">
+      <UniqueIdentifier>{ac77ea1a-f6ce-4f84-be40-898a1f363f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{8938e4c6-ced9-4b6a-83db-e7fb88df3564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering and Updates">
+      <UniqueIdentifier>{7f032046-e35f-49fb-bf11-eba8674f4912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering and Updates">
+      <UniqueIdentifier>{d88241da-33fe-4d03-ab07-ffbc3e86bb73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tile/Entity Related">
+      <UniqueIdentifier>{772e5420-601e-4195-a37a-dcd9a4790ec3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renderwindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="world.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="chunk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="timestepper.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering and Updates</Filter>
     </ClCompile>
     <ClCompile Include="ResourceLoader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering and Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="renderwindow.cpp">
+      <Filter>Source Files\Rendering and Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>Source Files\Rendering and Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="world.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="tile.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="entity.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="chunk.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Chunk.hpp">
+      <Filter>Header Files\Tile/Entity Related</Filter>
+    </ClInclude>
     <ClInclude Include="Entity.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderwindow.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="World.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mathutils.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Tile/Entity Related</Filter>
     </ClInclude>
     <ClInclude Include="Tile.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Tile/Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="World.hpp">
+      <Filter>Header Files\Tile/Entity Related</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Chunk.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Mathutils.hpp">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Timestepper.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderwindow.hpp">
+      <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
     <ClInclude Include="ResourceLoader.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

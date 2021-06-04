@@ -8,7 +8,7 @@
 #include "World.hpp"
 #include "Timestepper.h"
 #include "ResourceLoader.hpp"
-
+#include "InputHandler.h"
 
 int main(int argc, char* argv[]) {
 	bool gameActive = true;
@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
 	WorldChunk& chunk = world.getChunk(Vector2i(0, 0));
 	chunk.fillRandom();
 
+	InputHandler inputHandler = InputHandler();
 
 	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
 
@@ -43,12 +44,18 @@ int main(int argc, char* argv[]) {
 		ts.processFrameStart();
 
 		while (ts.accumulatorFull()) {
-			// update code should go right here I think
-			//world.getChunk(Vector2i()).fillRandom();
-			while (SDL_PollEvent(&event)) { // disables the game loop if you hit the x button
-				if (event.type == SDL_QUIT) {
+
+			while (SDL_PollEvent(&event)) { 
+				if (event.type == SDL_QUIT) { // disables the game loop if you hit the window's x button
 					gameActive = false;
 				}
+				else if (event.type == SDL_KEYDOWN){
+					inputHandler.processKeyDown(event.key.keysym.sym);
+				}
+				else if (event.type == SDL_KEYUP) {
+					inputHandler.processKeyUp(event.key.keysym.sym);
+				}
+				// game update code should go right here I think
 			}
 			ts.accumulator -= ts.timeStep;
 		}

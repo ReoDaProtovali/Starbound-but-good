@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="entity.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="renderwindow.cpp" />
     <ClCompile Include="ResourceLoader.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Mathutils.hpp" />
     <ClInclude Include="Renderwindow.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
