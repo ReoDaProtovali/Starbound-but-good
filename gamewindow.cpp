@@ -15,12 +15,7 @@ GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
 	}
 	res = ResourceLoader(renderer);
-	SDL_Rect defaultCameraPos;
-	defaultCameraPos.x = 0;
-	defaultCameraPos.y = 0;
-	defaultCameraPos.w = p_w;
-	defaultCameraPos.h = p_h;
-	cam = Camera(defaultCameraPos, 1);
+	cam = Camera(Vector2f(), Vector2i(100, 100));
 }
 
 
@@ -36,20 +31,21 @@ void GameWindow::renderEntity(Entity& p_entity) {
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
 void GameWindow::drawChunk(WorldChunk& p_chunk) {
-	int scale = cam.scale;
 	SDL_Rect src;
 	src.x = 0;
 	src.y = 0;
 	src.w = 8;
 	src.h = 8;
+	//std::cout << "xy scale: " << cam.xyscale.x << " " << cam.xyscale.y << " pos: " << cam.pos.x << " " << cam.pos.y << " frame:" << cam.frame.x << " " << cam.frame.y << " " << cam.frame.w << " " << cam.frame.h << std::endl;
 	Tile** tiles = p_chunk.getTiles();
 	for (int y = 0; y < 128; y++) {
 		for (int x = 0; x < 128; x++) {
 			SDL_Rect dst;
-			dst.x = std::floorf((x * 16 + cam.frame.x) * cam.scale);
-			dst.y = std::floorf((y * 16 + cam.frame.y) * cam.scale);
-			dst.w = std::ceilf(16 * cam.scale);
-			dst.h = std::ceilf(16 * cam.scale);
+			dst.x = std::floorf((p_chunk.worldPos.x * 128 + x + cam.pos.x) * cam.xyscale.x) - cam.frame.x;
+			dst.y = std::floorf((p_chunk.worldPos.y * 128 + y + cam.pos.y) * cam.xyscale.y) - cam.frame.y;
+			dst.w = std::ceilf(cam.xyscale.x);
+			dst.h = std::ceilf(cam.xyscale.y);
+			
 			SDL_RenderCopy(renderer, res.getTex(tiles[y][x].tileID), &src, &dst);
 		}
 	}

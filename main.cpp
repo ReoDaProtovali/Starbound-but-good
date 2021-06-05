@@ -34,7 +34,9 @@ int main(int argc, char* argv[]) {
 
 	World world = World();
 	WorldChunk& chunk = world.getChunk(Vector2i(0, 0));
+	WorldChunk& chunk1 = world.getChunk(Vector2i(1, 0));
 	chunk.fillRandom();
+	chunk1.fillRandom();
 
 
 	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
@@ -64,6 +66,7 @@ int main(int argc, char* argv[]) {
 		// render code goes here I think
 		window.clear();
 		window.drawChunk(world.getChunk(Vector2i(0, 0)));
+		window.drawChunk(world.getChunk(Vector2i(1, 0)));
 		window.display();
 		ts.processFrameEnd(window);
 	}

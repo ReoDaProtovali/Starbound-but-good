@@ -1,23 +1,33 @@
 #include "Camera.h"
 void Camera::testUpdate(InputHandler& p_inph, SDL_Window* p_window) {
-	SDL_GetWindowSize(p_window, &frame.w, &frame.h);
-	int speed = 3;
+
+	float speed = 0.5f;
 	if (p_inph.testKey(SDLK_q)) {
-		scale *= 0.96f;
+		globalScale *= 0.96f;
 	}
 	if (p_inph.testKey(SDLK_e)) {
-		scale *= 1.04f;
+		globalScale *= 1.04f;
 	}
+	Camera::recalculateView(p_window);
+
 	if (p_inph.testKey(SDLK_w)) {
-		frame.y += speed;
+		pos.y += speed;
 	}
 	if (p_inph.testKey(SDLK_a)) {
-		frame.x += speed;
+		pos.x += speed;
 	}
 	if (p_inph.testKey(SDLK_s)) {
-		frame.y -= speed;
+		pos.y -= speed;
 	}
 	if (p_inph.testKey(SDLK_d)) {
-		frame.x -= speed;
+		pos.x -= speed;
 	}
+}
+
+void Camera::recalculateView(SDL_Window* p_window) {
+	xyscale.x = aspectRatio * globalScale;
+	xyscale.y = (1 / aspectRatio) * globalScale;
+	SDL_GetWindowSize(p_window, &frame.w, &frame.h);
+	frame.x = std::floorf(pos.x - (float)frame.w / 2);
+	frame.y = std::floorf(pos.y - (float)frame.h / 2);
 }
