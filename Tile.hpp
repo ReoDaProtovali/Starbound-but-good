@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include <SDL_image.h>
-#include "Mathutils.hpp"
+#include "MathUtils.hpp"
 #include <vector>
 
 class Tile

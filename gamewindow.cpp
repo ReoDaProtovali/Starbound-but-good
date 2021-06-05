@@ -1,7 +1,7 @@
 
-#include "Renderwindow.hpp";
+#include "GameWindow.hpp";
 
-RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
+GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 	:window(NULL), renderer(NULL)
 {
 
@@ -15,10 +15,16 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
 	}
 	res = ResourceLoader(renderer);
+	SDL_Rect defaultCameraPos;
+	defaultCameraPos.x = 0;
+	defaultCameraPos.y = 0;
+	defaultCameraPos.w = p_w;
+	defaultCameraPos.h = p_h;
+	cam = Camera(defaultCameraPos, 1);
 }
 
 
-void RenderWindow::renderEntity(Entity& p_entity) {
+void GameWindow::renderEntity(Entity& p_entity) {
 	SDL_Rect src = p_entity.getSrcRect();
 
 	SDL_Rect dst;
@@ -29,8 +35,8 @@ void RenderWindow::renderEntity(Entity& p_entity) {
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
-void RenderWindow::drawChunk(WorldChunk& p_chunk) {
-	int scale = 4;
+void GameWindow::drawChunk(WorldChunk& p_chunk) {
+	int scale = cam.scale;
 	SDL_Rect src;
 	src.x = 0;
 	src.y = 0;
@@ -40,10 +46,10 @@ void RenderWindow::drawChunk(WorldChunk& p_chunk) {
 	for (int y = 0; y < 128; y++) {
 		for (int x = 0; x < 128; x++) {
 			SDL_Rect dst;
-			dst.x = x * 16;
-			dst.y = y * 16;
-			dst.w = 16;
-			dst.h = 16;
+			dst.x = std::floorf((x * 16 + cam.frame.x) * cam.scale);
+			dst.y = std::floorf((y * 16 + cam.frame.y) * cam.scale);
+			dst.w = std::ceilf(16 * cam.scale);
+			dst.h = std::ceilf(16 * cam.scale);
 			SDL_RenderCopy(renderer, res.getTex(tiles[y][x].tileID), &src, &dst);
 		}
 	}
@@ -57,17 +63,20 @@ void RenderWindow::drawChunk(WorldChunk& p_chunk) {
 
 	//
 }
-void RenderWindow::display() {
+void GameWindow::updateCamera() {
+	cam.testUpdate(inpHandler, window);
+}
+void GameWindow::display() {
 	SDL_RenderPresent(renderer);
 }
-void RenderWindow::clear() {
+void GameWindow::clear() {
 	SDL_RenderClear(renderer);
 }
-void RenderWindow::cleanUp() {
+void GameWindow::cleanUp() {
 	SDL_DestroyWindow(window);
 }
 
-int RenderWindow::getRefreshRate() {
+int GameWindow::getRefreshRate() {
 	int displayIndex = SDL_GetWindowDisplayIndex(window);
 	SDL_DisplayMode mode;
 	SDL_GetDisplayMode(displayIndex, 0, &mode);

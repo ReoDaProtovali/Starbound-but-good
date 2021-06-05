@@ -36,10 +36,10 @@
     <ClCompile Include="timestepper.cpp">
       <Filter>Source Files\Rendering and Updates</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceLoader.cpp">
+    <ClCompile Include="resourceloader.cpp">
       <Filter>Source Files\Rendering and Updates</Filter>
     </ClCompile>
-    <ClCompile Include="renderwindow.cpp">
+    <ClCompile Include="gamewindow.cpp">
       <Filter>Source Files\Rendering and Updates</Filter>
     </ClCompile>
     <ClCompile Include="InputHandler.cpp">
@@ -56,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="chunk.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\Rendering and Updates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,7 +77,7 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Mathutils.hpp">
+    <ClInclude Include="MathUtils.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Timestepper.h">
@@ -83,10 +86,13 @@
     <ClInclude Include="InputHandler.h">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
-    <ClInclude Include="Renderwindow.hpp">
+    <ClInclude Include="GameWindow.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
     <ClInclude Include="ResourceLoader.hpp">
+      <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
   </ItemGroup>

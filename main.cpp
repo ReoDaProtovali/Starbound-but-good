@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <iostream>
 #include <SDL_image.h>
-#include "Renderwindow.hpp"
+#include "GameWindow.hpp"
 #include "Entity.hpp"
 #include "Mathutils.hpp"
 #include "utils.h"
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 		std::cout << "somethin done goofed and SDL_image aint runnin gamer: " << IMG_GetError() << std::endl;
 	}
 
-	RenderWindow window = RenderWindow("Borstoind", 1280, 720);
+	GameWindow window = GameWindow("Borstoind", 1280, 720);
 
 	window.res.load("res/tiles/teststone.png"); // assigned id 1
 	window.res.load("res/tiles/testdirt.png"); // assigned id 2
@@ -36,7 +36,6 @@ int main(int argc, char* argv[]) {
 	WorldChunk& chunk = world.getChunk(Vector2i(0, 0));
 	chunk.fillRandom();
 
-	InputHandler inputHandler = InputHandler();
 
 	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
 
@@ -50,20 +49,21 @@ int main(int argc, char* argv[]) {
 					gameActive = false;
 				}
 				else if (event.type == SDL_KEYDOWN){
-					inputHandler.processKeyDown(event.key.keysym.sym);
+					window.inpHandler.processKeyDown(event.key.keysym.sym);
 				}
 				else if (event.type == SDL_KEYUP) {
-					inputHandler.processKeyUp(event.key.keysym.sym);
+					window.inpHandler.processKeyUp(event.key.keysym.sym);
 				}
-				// game update code should go right here I think
 			}
+			// game update code should go right here I think
+			window.updateCamera();
 			ts.accumulator -= ts.timeStep;
 		}
 		ts.calculateAlpha(); 
+
+		// render code goes here I think
 		window.clear();
 		window.drawChunk(world.getChunk(Vector2i(0, 0)));
-		// render code goes here I think
-
 		window.display();
 		ts.processFrameEnd(window);
 	}

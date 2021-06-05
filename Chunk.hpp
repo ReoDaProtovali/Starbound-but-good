@@ -1,7 +1,7 @@
 #pragma once
 #include "utils.h"
 #include "Tile.hpp"
-#include "Mathutils.hpp"
+#include "MathUtils.hpp"
 struct WorldChunk
 {
 	WorldChunk(Vector2i p_worldPos = Vector2i(0, 0), int p_worldID = 0);

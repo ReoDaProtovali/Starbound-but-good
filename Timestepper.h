@@ -1,7 +1,7 @@
 #pragma once
 #include "utils.h"
 #include "SDL.h"
-#include "Renderwindow.hpp"
+#include "GameWindow.hpp"
 
 class Timestepper {
 public:
@@ -9,7 +9,7 @@ public:
 	void processFrameStart();
 	bool accumulatorFull();
 	void calculateAlpha();
-	void processFrameEnd(RenderWindow& p_window);
+	void processFrameEnd(GameWindow& p_window);
 	float accumulator;
 	float timeStep;
 	float alpha;

@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <vector>
-#include "Mathutils.hpp"
+#include "MathUtils.hpp"
 
 class Entity
 {

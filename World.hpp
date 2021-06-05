@@ -4,6 +4,7 @@
 #include "Chunk.hpp"
 #include "Entity.hpp"
 #include <stdlib.h>
+#include <iostream>
 #include "utils.h"
 class WorldChunk;
 

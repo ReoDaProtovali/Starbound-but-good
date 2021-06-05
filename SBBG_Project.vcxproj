@@ -145,22 +145,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="renderwindow.cpp" />
-    <ClCompile Include="ResourceLoader.cpp" />
+    <ClCompile Include="gamewindow.cpp" />
+    <ClCompile Include="resourceloader.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timestepper.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="InputHandler.h" />
-    <ClInclude Include="Mathutils.hpp" />
-    <ClInclude Include="Renderwindow.hpp" />
+    <ClInclude Include="MathUtils.hpp" />
+    <ClInclude Include="GameWindow.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="Timestepper.h" />

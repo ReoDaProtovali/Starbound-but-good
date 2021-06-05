@@ -17,7 +17,7 @@ bool Timestepper::accumulatorFull() {
 void Timestepper::calculateAlpha() {
 	alpha = accumulator / timeStep;
 }
-void Timestepper::processFrameEnd(RenderWindow& p_window) {
+void Timestepper::processFrameEnd(GameWindow& p_window) {
 	int frameTicks = SDL_GetTicks() - startTicks;
 	if (frameTicks < 1000.0f / p_window.getRefreshRate()) {
 		SDL_Delay(1000.0f / p_window.getRefreshRate() - frameTicks);

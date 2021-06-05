@@ -1,6 +1,5 @@
 #pragma once
 #include <SDL.h>
-#include "Renderwindow.hpp"
 constexpr auto SIXTY_TIMES_PER_SECOND = 0.01666666666f;
 
 namespace utils {
