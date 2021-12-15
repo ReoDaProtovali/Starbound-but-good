@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
 	SDL_Window* window = gw.window;
 
 	gw.res.load("res/tiles/teststone.png"); // assigned id 1
-    gw.res.load("res/tiles/testdirt.png"); // assigned id 2
-    gw.res.load("res/tiles/tile1.png"); // assigned id 3
+        gw.res.load("res/tiles/testdirt.png"); // assigned id 2
+        gw.res.load("res/tiles/tile1.png"); // assigned id 3
 	gw.res.load("res/reohangsmall.png"); // assigned id 3
 	Uint16 meFound = gw.res.load("res/me.png"); // assigned id 4
 
