@@ -1,19 +1,18 @@
 #pragma once
 #include <vector>
 #include <SDL.h>
-#include <SDL_image.h>
+#include "MathUtils.hpp"
 #include <iostream>
 class ResourceLoader
 {
 public:
-	ResourceLoader() : renderer(NULL) {};
-	ResourceLoader(SDL_Renderer* p_renderer) : renderer(p_renderer) {};
+	ResourceLoader() {};
 	Uint16 load(const char* p_filepath);
-	SDL_Texture* getTex(Uint16 p_ID);
+	unsigned char* getTex(Uint16 p_ID);
+	Vector2i getDimensions(Uint16 p_ID);
 private:
 	Uint16 currentID = 1;
-	SDL_Renderer* renderer;
-	std::vector<SDL_Texture*> textures;
-	std::vector<std::string> IDs;
+	std::vector<unsigned char*> textures;
+	std::vector<Vector2i> dimensions;
 };
 

@@ -1,24 +1,27 @@
 #include "ResourceLoader.hpp"
+#define STB_IMAGE_IMPLEMENTATION   // use of stb functions once and for all
+#include "stb_image.h"
 
 Uint16 ResourceLoader::load(const char* p_filepath) {
-	SDL_Texture* texture = NULL;
-	texture = IMG_LoadTexture(renderer, p_filepath);
+	unsigned char* texture = NULL;
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
+	texture = stbi_load(p_filepath, &width, &height, &nrChannels, 0);
 
 	if (texture == NULL) {
-		std::cout << "Failed to load texture: " << SDL_GetError() << std::endl;
+		std::cout << "Failed to load texture" << std::endl;
 		return NULL;
 	}
 	else {
 		textures.push_back(texture);
-		return currentID;
-		currentID++;
+		dimensions.push_back(Vector2i(width, height));
+		return currentID++;
 	}
 }
-SDL_Texture* ResourceLoader::getTex(Uint16 p_ID) {
+
+unsigned char* ResourceLoader::getTex(Uint16 p_ID) {
 	return textures[p_ID];
-	//for (int i = 0; i < IDs.size(); i++) {
-	//	if (IDs[i] == p_ID) {
-	//		return textures[i];
-	//	}
-	//}
+}
+Vector2i ResourceLoader::getDimensions(Uint16 p_ID) {
+	return dimensions[p_ID];
 }

@@ -78,6 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\dev\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\dev\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -125,7 +127,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\dev\glew-2.2.0\lib\Release\x64;C:\dev\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,10 +162,12 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="GLUtils.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="MathUtils.hpp" />
     <ClInclude Include="GameWindow.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="Timestepper.h" />
     <ClInclude Include="utils.h" />
