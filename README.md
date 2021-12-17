@@ -1,2 +1,2 @@
 # Starbound-but-good
-cum
+cool
