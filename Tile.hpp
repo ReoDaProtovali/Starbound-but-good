@@ -3,7 +3,6 @@
 #define TILE_H
 
 #include <SDL.h>
-#include <SDL_image.h>
 #include "MathUtils.hpp"
 #include <vector>
 
@@ -16,8 +15,6 @@ public:
 	int tileID;
 private:
 	Vector2i chunkPos;
-	//SDL_Texture* defaultTextures;
-	//std::vector<SDL_Texture*> variationTextures;
 };
 
 #endif TILE_H

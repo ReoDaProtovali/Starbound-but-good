@@ -2,7 +2,7 @@
 #include "GameWindow.hpp";
 
 GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
-	:window(NULL), renderer(NULL), glContext(NULL)
+	:window(NULL), glContext(NULL)
 {
 	width = p_w;
 	height = p_h;
@@ -13,7 +13,6 @@ GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 	}
 	GameWindow::initGL();
 
-	cam = Camera(Vector2f(), Vector2i(100, 100));
 }
 
 void GameWindow::initGL() {
