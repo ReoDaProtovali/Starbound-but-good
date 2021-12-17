@@ -1,4 +1,7 @@
 #pragma once
+#ifndef TILE_H
+#define TILE_H
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include "MathUtils.hpp"
@@ -16,4 +19,6 @@ private:
 	//SDL_Texture* defaultTextures;
 	//std::vector<SDL_Texture*> variationTextures;
 };
+
+#endif TILE_H
 

@@ -150,23 +150,28 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="entity.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="gamewindow.cpp" />
     <ClCompile Include="resourceloader.cpp" />
+    <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timestepper.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
-    <ClInclude Include="GLUtils.h" />
+    <ClInclude Include="GLTesting.h" />
+    <ClInclude Include="GameConstants.h" />
+    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="GameAssets.hpp" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="MathUtils.hpp" />
     <ClInclude Include="GameWindow.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
+    <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="Timestepper.h" />

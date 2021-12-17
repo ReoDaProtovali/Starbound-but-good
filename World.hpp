@@ -1,4 +1,7 @@
 #pragma once
+#ifndef WORLD_H
+#define WORLD_H
+
 #include <vector>
 #include "Tile.hpp"
 #include "Chunk.hpp"
@@ -20,3 +23,4 @@ private:
 	std::vector<Entity> worldEntities;
 };
 
+#endif WORLD_H

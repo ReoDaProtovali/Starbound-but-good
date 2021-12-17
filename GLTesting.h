@@ -1,11 +1,15 @@
 #pragma once
 
+#ifndef GLTESTING_H
+#define GLTESTING_H
+
+#include <stdio.h>
+#include <iostream>
+
 #define GL_GLEXT_PROTOTYPES
 
 #include <SDL.h>
 #include <SDL_opengl.h>
-
-#include <stdio.h>
 
 typedef float t_mat4x4[16];
 
@@ -181,3 +185,5 @@ void handleVertexAttrBuffers(GLuint& vao, int p_width, int p_height) {
     glEnableVertexAttribArray(attrib_color);
     glEnableVertexAttribArray(attrib_texCoord);
 }
+
+#endif

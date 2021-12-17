@@ -2,7 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION   // use of stb functions once and for all
 #include "stb_image.h"
 
-Uint16 ResourceLoader::load(const char* p_filepath) {
+bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 	unsigned char* texture = NULL;
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
@@ -13,15 +13,17 @@ Uint16 ResourceLoader::load(const char* p_filepath) {
 		return NULL;
 	}
 	else {
-		textures.push_back(texture);
-		dimensions.push_back(Vector2i(width, height));
-		return currentID++;
+		Image loadedImage = Image(texture, Vector2i(width, height), p_ID);
+		images.push_back(loadedImage);
 	}
+	return 1;
 }
 
-unsigned char* ResourceLoader::getTex(Uint16 p_ID) {
-	return textures[p_ID];
-}
-Vector2i ResourceLoader::getDimensions(Uint16 p_ID) {
-	return dimensions[p_ID];
+Image ResourceLoader::getImage(TextureID p_ID) {
+	for (int i = 0; i < images.size(); i++) {
+		if (images[i].ID == p_ID) {
+			return images[i];
+		}
+	}
+	throw std::invalid_argument("Failed to get image: ID Not found.");
 }

@@ -60,6 +60,12 @@
     <ClCompile Include="camera.cpp">
       <Filter>Source Files\Rendering and Updates</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteSheet.cpp">
+      <Filter>Source Files\Rendering and Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chunk.hpp">
@@ -92,14 +98,23 @@
     <ClInclude Include="ResourceLoader.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Rendering and Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="GLUtils.h">
+    <ClInclude Include="GLTesting.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteSheet.h">
+      <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameConstants.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameAssets.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

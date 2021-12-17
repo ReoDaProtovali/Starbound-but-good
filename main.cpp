@@ -1,22 +1,19 @@
 #include <SDL.h>
 #include <iostream>
 #include <SDL_image.h>
+#include "utils.h"
+#include "GameConstants.h"
 #include "GameWindow.hpp"
 #include "Entity.hpp"
 #include "Mathutils.hpp"
-#include "utils.h"
-#include "GLUtils.h"
+#include "GLTesting.h"
 #include "World.hpp"
 #include "Timestepper.h"
 #include "ResourceLoader.hpp"
+#include "GameAssets.hpp"
 #include "InputHandler.h"
 
-typedef enum gameTexture {
-	STONE_TEXTURE,
-	DIRT_TEXTURE,
-	TILE_TEXTURE,
-	REOHANG_TEXTURE
-} gameTexture;
+
 
 
 
@@ -28,16 +25,20 @@ int main(int argc, char* argv[])
 	GameWindow gw = GameWindow("Borstoind", 1280, 720);
 	SDL_Window* window = gw.window;
 
-	gw.res.load("res/tiles/teststone.png"); // assigned id 1
-    gw.res.load("res/tiles/testdirt.png"); // assigned id 2
-    gw.res.load("res/tiles/tile1.png"); // assigned id 3
-	gw.res.load("res/reohangsmall.png"); // assigned id 3
-	Uint16 meFound = gw.res.load("res/me.png"); // assigned id 4
+	ResourceLoader res = ResourceLoader();
+
+	bool success = rl::loadRes(res);
+	if (!success) {
+		std::cout << "One or more images failed to load!" << std::endl;
+	}
+
+	bool meFound = res.load("res/me.png", TextureID::ME_TEXTURE);
 
 	if (!meFound) {
 		gameActive = false;
 	}
 
+	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::TESTSPRITESHEET_TEXTURE), Vector2i(8, 8), 4096);
 	SDL_GLContext& context = gw.glContext;
 
 	GLuint program = compileShaders();
@@ -57,10 +58,9 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	unsigned char* data = gw.res.getTex(DIRT_TEXTURE);
-	Vector2i d = gw.res.getDimensions(DIRT_TEXTURE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d.x, d.y, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // actually put the image data into the texture buffer
-	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA, only at RGB because i am dumb and exported the tile pngs as rgb
+	Image image = res.getImage(TextureID::TESTSPRITESHEET_TEXTURE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.dimensions.x, image.dimensions.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data); // actually put the image data into the texture buffer
+	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	// ----------------------------------------------------------------------------
 
 

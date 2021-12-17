@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <GL/GLU.h>
+
 #include "entity.hpp"
 #include "utils.h"
 #include "World.hpp"
@@ -22,16 +23,11 @@ class GameWindow
 {
 public:
 	GameWindow(const char* p_title, int p_w, int p_h);
+	void initGL();
 	void cleanUp();
-	void clear();
-	void renderEntity(Entity& p_entity); // gonna be moved
-	void drawChunk(WorldChunk& p_chunk); // outdated
-	void display();
-	void updateCamera();
 	int getRefreshRate();
 	int width;
 	int height;
-	ResourceLoader res;
 	Camera cam;
 	InputHandler inpHandler;
 	SDL_GLContext glContext;

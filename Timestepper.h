@@ -1,4 +1,8 @@
 #pragma once
+
+#ifndef TIMESTEPPER_H
+#define TIMESTEPPER_H
+
 #include "utils.h"
 #include "SDL.h"
 #include "GameWindow.hpp"
@@ -20,3 +24,5 @@ private:
 	int startTicks;
 	float currentTime;
 };
+
+#endif

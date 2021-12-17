@@ -1,4 +1,7 @@
 #pragma once
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <SDL.h>
 constexpr auto SIXTY_TIMES_PER_SECOND = 0.01666666666f;
 
@@ -10,3 +13,5 @@ namespace utils {
 	}
 
 }
+
+#endif UTILS_H
