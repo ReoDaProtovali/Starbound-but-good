@@ -149,13 +149,14 @@
   <ItemGroup>
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="entity.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="gamerenderer.cpp" />
+    <ClCompile Include="image.cpp" />
+    <ClCompile Include="inputhandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="gamewindow.cpp" />
     <ClCompile Include="resourceloader.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="SpriteSheet.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="spritesheet.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timestepper.cpp" />
     <ClCompile Include="world.cpp" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="GameRenderer.hpp" />
     <ClInclude Include="GLTesting.hpp" />
     <ClInclude Include="GameConstants.hpp" />
     <ClInclude Include="Image.hpp" />
@@ -177,6 +179,7 @@
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="Timestepper.hpp" />
     <ClInclude Include="utils.hpp" />
+    <ClInclude Include="Vertex.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -22,9 +22,6 @@
     <Filter Include="Header Files\Rendering and Updates">
       <UniqueIdentifier>{7f032046-e35f-49fb-bf11-eba8674f4912}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Rendering and Updates">
-      <UniqueIdentifier>{d88241da-33fe-4d03-ab07-ffbc3e86bb73}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Tile/Entity Related">
       <UniqueIdentifier>{772e5420-601e-4195-a37a-dcd9a4790ec3}</UniqueIdentifier>
     </Filter>
@@ -37,22 +34,22 @@
     <Filter Include="Shaders\Vertex Shaders">
       <UniqueIdentifier>{abac878b-50c2-4074-a061-79724252e9e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Game Updates">
+      <UniqueIdentifier>{a19b9057-c081-4958-aa9d-a9d10e46ce5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{d88241da-33fe-4d03-ab07-ffbc3e86bb73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="timestepper.cpp">
-      <Filter>Source Files\Rendering and Updates</Filter>
-    </ClCompile>
     <ClCompile Include="resourceloader.cpp">
-      <Filter>Source Files\Rendering and Updates</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="gamewindow.cpp">
-      <Filter>Source Files\Rendering and Updates</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHandler.cpp">
-      <Filter>Source Files\Rendering and Updates</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="world.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
@@ -66,14 +63,23 @@
     <ClCompile Include="chunk.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteSheet.cpp">
-      <Filter>Source Files\Rendering and Updates</Filter>
+    <ClCompile Include="spritesheet.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
+    <ClCompile Include="image.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Rendering and Updates</Filter>
+    <ClCompile Include="shader.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="gamerenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="inputhandler.cpp">
+      <Filter>Source Files\Game Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="timestepper.cpp">
+      <Filter>Source Files\Game Updates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +132,12 @@
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
     <ClInclude Include="Shader.hpp">
+      <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRenderer.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
   </ItemGroup>

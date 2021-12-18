@@ -2,6 +2,13 @@
 #ifndef GAMECONSTANTS_H
 #define GAMECONSTANTS_H
 
+#include <glm.hpp>
+#include <vector>
+#include "Vertex.hpp"
+
+#define vec3 glm::vec3
+#define vec2 glm::vec2
+
 typedef enum class TextureID {
 	NO_TEXTURE,
 	STONE_TEXTURE,
@@ -29,5 +36,6 @@ typedef enum t_attrib_id
 	attrib_position,
 	attrib_texCoord
 } t_attrib_id;
+
 
 #endif
