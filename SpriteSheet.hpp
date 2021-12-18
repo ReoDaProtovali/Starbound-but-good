@@ -1,6 +1,6 @@
 #pragma once
 #include "MathUtils.hpp";
-#include "GameConstants.h"
+#include "GameConstants.hpp"
 #include "Image.hpp"
 #include <string>
 #include <stdexcept>

@@ -1,4 +1,4 @@
-#include "Timestepper.h"
+#include "Timestepper.hpp"
 
 Timestepper::Timestepper(float p_timestep)
 	: timeStep(p_timestep), accumulator(0.0f), currentTime(utils::hireTimeInSeconds()), alpha(0.0f), startTicks(0)

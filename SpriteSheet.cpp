@@ -1,4 +1,4 @@
-#include "SpriteSheet.h"
+#include "SpriteSheet.hpp"
 
 void SpriteSheet::setMode(SheetMode mode) {
 	sheetMode = mode;

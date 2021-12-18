@@ -155,6 +155,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="gamewindow.cpp" />
     <ClCompile Include="resourceloader.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timestepper.cpp" />
@@ -163,19 +164,20 @@
   <ItemGroup>
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
-    <ClInclude Include="GLTesting.h" />
-    <ClInclude Include="GameConstants.h" />
+    <ClInclude Include="GLTesting.hpp" />
+    <ClInclude Include="GameConstants.hpp" />
     <ClInclude Include="Image.hpp" />
     <ClInclude Include="GameAssets.hpp" />
-    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="MathUtils.hpp" />
     <ClInclude Include="GameWindow.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
-    <ClInclude Include="SpriteSheet.h" />
+    <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="SpriteSheet.hpp" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Tile.hpp" />
-    <ClInclude Include="Timestepper.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="Timestepper.hpp" />
+    <ClInclude Include="utils.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>

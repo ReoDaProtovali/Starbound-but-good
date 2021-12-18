@@ -75,6 +75,9 @@
     <ClCompile Include="Image.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Rendering and Updates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chunk.hpp">
@@ -89,16 +92,16 @@
     <ClInclude Include="World.hpp">
       <Filter>Header Files\Tile/Entity Related</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="utils.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="MathUtils.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Timestepper.h">
+    <ClInclude Include="Timestepper.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
-    <ClInclude Include="InputHandler.h">
+    <ClInclude Include="InputHandler.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
     <ClInclude Include="GameWindow.hpp">
@@ -107,22 +110,25 @@
     <ClInclude Include="ResourceLoader.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
-    <ClInclude Include="GLTesting.h">
+    <ClInclude Include="GLTesting.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteSheet.h">
+    <ClInclude Include="SpriteSheet.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
-    <ClInclude Include="GameConstants.h">
+    <ClInclude Include="GameConstants.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="GameAssets.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
     <ClInclude Include="Image.hpp">
+      <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
   </ItemGroup>

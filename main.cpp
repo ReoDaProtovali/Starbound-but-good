@@ -1,16 +1,16 @@
 #include <SDL.h>
 #include <iostream>
-#include "utils.h"
-#include "GameConstants.h"
+#include "utils.hpp"
+#include "GameConstants.hpp"
 #include "GameWindow.hpp"
 #include "Entity.hpp"
 #include "Mathutils.hpp"
-#include "GLTesting.h"
+#include "GLTesting.hpp"
 #include "World.hpp"
-#include "Timestepper.h"
+#include "Timestepper.hpp"
 #include "ResourceLoader.hpp"
 #include "GameAssets.hpp"
-#include "InputHandler.h"
+#include "InputHandler.hpp"
 
 
 #include <glm.hpp>

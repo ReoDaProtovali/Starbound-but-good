@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "Camera.hpp"
 void Camera::testUpdate(InputHandler& p_inph, SDL_Window* p_window) {
 
 	float speed = 0.5f;
@@ -24,10 +24,3 @@ void Camera::testUpdate(InputHandler& p_inph, SDL_Window* p_window) {
 	}
 }
 
-void Camera::recalculateView(SDL_Window* p_window) {
-	xyscale.x = aspectRatio * globalScale;
-	xyscale.y = (1 / aspectRatio) * globalScale;
-	SDL_GetWindowSize(p_window, &frame.w, &frame.h);
-	frame.x = std::floorf(pos.x - (float)frame.w / 2);
-	frame.y = std::floorf(pos.y - (float)frame.h / 2);
-}

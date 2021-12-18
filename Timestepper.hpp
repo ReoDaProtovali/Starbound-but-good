@@ -3,7 +3,7 @@
 #ifndef TIMESTEPPER_H
 #define TIMESTEPPER_H
 
-#include "utils.h"
+#include "utils.hpp"
 #include "SDL.h"
 #include "GameWindow.hpp"
 
