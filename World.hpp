@@ -8,7 +8,7 @@
 #include "Entity.hpp"
 #include <stdlib.h>
 #include <iostream>
-#include "utils.h"
+#include "utils.hpp"
 class WorldChunk;
 
 class World

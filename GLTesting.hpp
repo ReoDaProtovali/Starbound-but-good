@@ -9,7 +9,7 @@
 
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include "utils.h"
+#include "utils.hpp"
 #include "glm/glm.hpp"
 
 typedef float t_mat4x4[16];

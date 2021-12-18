@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <stdexcept>
-#include "GameConstants.h"
+#include "GameConstants.hpp"
 #include "MathUtils.hpp"
 #include "Image.hpp"
 

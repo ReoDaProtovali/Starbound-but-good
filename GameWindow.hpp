@@ -5,12 +5,12 @@
 #include <GL/GLU.h>
 
 #include "entity.hpp"
-#include "utils.h"
+#include "utils.hpp"
 #include "World.hpp"
 #include "Chunk.hpp"
 #include "Tile.hpp"
 #include "ResourceLoader.hpp"
-#include "InputHandler.h"
+#include "InputHandler.hpp"
 #include <iostream>
 #include <math.h>
 

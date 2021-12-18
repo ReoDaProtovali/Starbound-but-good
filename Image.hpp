@@ -1,5 +1,5 @@
 #pragma once
-#include "GameConstants.h"
+#include "GameConstants.hpp"
 #include "MathUtils.hpp"
 struct Image
 {

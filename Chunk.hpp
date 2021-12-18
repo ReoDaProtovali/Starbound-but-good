@@ -3,8 +3,8 @@
 #ifndef CHUNK_H
 #define CHUNK_H
 
-#include "utils.h"
-#include "SpriteSheet.h"
+#include "utils.hpp"
+#include "SpriteSheet.hpp"
 #include "Tile.hpp"
 #include "MathUtils.hpp"
 

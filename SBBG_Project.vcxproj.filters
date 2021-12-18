@@ -66,9 +66,6 @@
     <ClCompile Include="chunk.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
-      <Filter>Source Files\Rendering and Updates</Filter>
-    </ClCompile>
     <ClCompile Include="SpriteSheet.cpp">
       <Filter>Source Files\Rendering and Updates</Filter>
     </ClCompile>
