@@ -4,12 +4,13 @@
 #define GLTESTING_H
 
 #include <stdio.h>
-#include <iostream>
 
 #define GL_GLEXT_PROTOTYPES
 
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include "utils.h"
+#include "glm/glm.hpp"
 
 typedef float t_mat4x4[16];
 
@@ -40,41 +41,10 @@ static inline void mat4x4_ortho(t_mat4x4 out, float left, float right, float bot
 #undef T
 }
 
-static const char* vertex_shader =
-"#version 330 core\n"
-"layout(location = 0) in vec2 aPos;\n"
-"layout(location = 1) in vec4 aColor;\n"
-"layout(location = 2) in vec2 aTexCoord;\n"
-
-"out vec4 ourColor;\n"
-"out vec2 TexCoord;\n"
-
-"void main()\n"
-"{\n"
-"    gl_Position = vec4(aPos, 0.0, 1.0);\n"
-"    ourColor = aColor;\n"
-"    TexCoord = aTexCoord;\n"
-"}\n";
-
-static const char* fragment_shader =
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-
-"in vec4 ourColor;\n"
-"in vec2 TexCoord;\n"
-
-"uniform sampler2D ourTexture;\n"
-
-"void main()\n"
-"{\n"
-"    FragColor = texture(ourTexture, TexCoord);\n"
-"    "
-"}\n";
 
 typedef enum t_attrib_id
 {
     attrib_position,
-    attrib_color,
     attrib_texCoord
 } t_attrib_id;
 
@@ -84,8 +54,10 @@ GLuint compileShaders() {
     vs = glCreateShader(GL_VERTEX_SHADER);
     fs = glCreateShader(GL_FRAGMENT_SHADER);
 
-    int length = strlen(vertex_shader);
-    glShaderSource(vs, 1, (const GLchar**)&vertex_shader, &length);
+    std::string vertexShader = utils::readFile("./ImageVS.glsl");
+    int vsLength = vertexShader.size();
+    const char* vertexShader_cstr = vertexShader.c_str();
+    glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength);
     glCompileShader(vs);
 
     GLint status;
@@ -98,18 +70,20 @@ GLuint compileShaders() {
         // The maxLength includes the NULL character
         std::vector<GLchar> errorLog(maxLength);
         glGetShaderInfoLog(vs, maxLength, &maxLength, &errorLog[0]);
-
+        std::cout << "Vertex shader compilation error" << std::endl;
         for (int i = 0; i < errorLog.size(); i++) {
             std::cout << errorLog[i];
         }
-        // Provide the infolog in whatever manor you deem best.
-        // Exit with failure.
+
         glDeleteShader(vs); // Don't leak the shader.
         return -1;
     }
 
-    length = strlen(fragment_shader);
-    glShaderSource(fs, 1, (const GLchar**)&fragment_shader, &length);
+    std::string fragmentShader = utils::readFile("./ImageFS.glsl");
+    std::cout << fragmentShader << std::endl;
+    int fsLength = fragmentShader.length();
+    const char* fragmentShader_cstr = fragmentShader.c_str();
+    glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength);
     glCompileShader(fs);
 
     glGetShaderiv(fs, GL_COMPILE_STATUS, &status);
@@ -122,6 +96,7 @@ GLuint compileShaders() {
         std::vector<GLchar> errorLog(maxLength);
         glGetShaderInfoLog(fs, maxLength, &maxLength, &errorLog[0]);
 
+        std::cout << "Fragment shader compilation error" << std::endl;
         for (int i = 0; i < errorLog.size(); i++) {
             std::cout << errorLog[i];
         }
@@ -140,7 +115,6 @@ GLuint compileShaders() {
 
 
     glBindAttribLocation(program, attrib_position, "i_position");
-    glBindAttribLocation(program, attrib_color, "i_color");
     glBindAttribLocation(program, attrib_texCoord, "i_texCoord");
     glLinkProgram(program);
 
@@ -149,14 +123,32 @@ GLuint compileShaders() {
     return program;
 }
 
+// this is probably illegal in some courts of law
+#define vec3 glm::vec3
+#define vec2 glm::vec2
+
+struct Vertex {
+    Vertex(vec3 p_pos, vec2 p_texCoord) : pos(p_pos), texCoord(p_texCoord) {}
+    vec3 pos;
+    vec2 texCoord;
+};
+
 void handleVertexAttrBuffers(GLuint& vao, int p_width, int p_height) {
 
-    const GLfloat vertices[] = {
-        // positions   // colors               / / texture coords
-        0.5f,  0.5f,   1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f,   // top right
-        0.5f, -0.5f,   0.0f, 1.0f, 0.0f, 1.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f,   0.0f, 1.0f    // top left 
+    
+    const Vertex vertices1[] = {
+        // positions             / / texture coords
+        Vertex(vec3(0.5, 0.5, 0.0), vec2(1.0, 1.0)),   // top right
+        Vertex(vec3(0.5, -0.5, 0.0), vec2(1.0, 0.0)), // bottom right
+        Vertex(vec3(-0.5, -0.5, 0.0), vec2(0.0, 0.0)), // bottom left
+        Vertex(vec3(-0.5, 0.5, 0.0), vec2(0.0, 1.0)) // top left
+    };
+    const Vertex vertices2[] = {
+        // positions             / / texture coords
+        Vertex(vec3(0.5, 0.5, 0.0), vec2(1.0, 1.0)),   // top right
+        Vertex(vec3(0.5, -0.5, 0.0), vec2(1.0, 0.0)), // bottom right
+        Vertex(vec3(-0.5, -0.5, 0.0), vec2(0.0, 0.0)), // bottom left
+        Vertex(vec3(-0.5, 0.5, 0.0), vec2(0.0, 1.0)) // top left
     };
 
     unsigned int indices[] = {  // note that we start from 0!
@@ -171,18 +163,18 @@ void handleVertexAttrBuffers(GLuint& vao, int p_width, int p_height) {
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
 
     unsigned int EBO;
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(attrib_position, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)0);
-    glVertexAttribPointer(attrib_color, 4,    GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)(2 * sizeof(GLfloat)));
-    glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)(6 * sizeof(GLfloat)));
+
+
+    glVertexAttribPointer(attrib_position, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(attrib_position);
-    glEnableVertexAttribArray(attrib_color);
     glEnableVertexAttribArray(attrib_texCoord);
 }
 

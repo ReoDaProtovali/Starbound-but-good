@@ -28,6 +28,15 @@
     <Filter Include="Source Files\Tile/Entity Related">
       <UniqueIdentifier>{772e5420-601e-4195-a37a-dcd9a4790ec3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{c69e26bf-55c9-4ea3-8bf7-e05d30333106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Fragment Shaders">
+      <UniqueIdentifier>{4d60c6af-b6ad-4878-9f41-addd9743c293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex Shaders">
+      <UniqueIdentifier>{abac878b-50c2-4074-a061-79724252e9e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -116,5 +125,13 @@
     <ClInclude Include="Image.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ImageFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="ImageVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
