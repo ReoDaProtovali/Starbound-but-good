@@ -24,4 +24,10 @@ enum class Corner {
 	BOTTOM_RIGHT
 };
 
+typedef enum t_attrib_id
+{
+	attrib_position,
+	attrib_texCoord
+} t_attrib_id;
+
 #endif
