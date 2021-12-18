@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::TESTSPRITESHEET_TEXTURE), Vector2i(8, 8), 4096);
 	SDL_GLContext& context = gw.glContext;
 
-	GLuint program = compileShaders();
+	GLuint program = compileShaders("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
 
 	GLuint vao; 
 	handleVertexAttrBuffers(vao, gw.width, gw.height); // hiding a lot of code behind here

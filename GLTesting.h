@@ -48,13 +48,13 @@ typedef enum t_attrib_id
     attrib_texCoord
 } t_attrib_id;
 
-GLuint compileShaders() {
+GLuint compileShaders(const char* vs_filePath, const char* fs_filePath) {
     GLuint vs, fs, program;
 
     vs = glCreateShader(GL_VERTEX_SHADER);
     fs = glCreateShader(GL_FRAGMENT_SHADER);
 
-    std::string vertexShader = utils::readFile("./ImageVS.glsl");
+    std::string vertexShader = utils::readFile(vs_filePath);
     int vsLength = vertexShader.size();
     const char* vertexShader_cstr = vertexShader.c_str();
     glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength);
@@ -79,8 +79,7 @@ GLuint compileShaders() {
         return -1;
     }
 
-    std::string fragmentShader = utils::readFile("./ImageFS.glsl");
-    std::cout << fragmentShader << std::endl;
+    std::string fragmentShader = utils::readFile(fs_filePath);
     int fsLength = fragmentShader.length();
     const char* fragmentShader_cstr = fragmentShader.c_str();
     glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength);
