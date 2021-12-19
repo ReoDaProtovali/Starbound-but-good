@@ -23,34 +23,43 @@ void SpriteSheet::nextFrame() {
 	}
 }
 
-Vector2f SpriteSheet::getTexCoords(unsigned short p_spriteIndex, Corner corner)
+glm::vec2 SpriteSheet::getTexCoords(unsigned short p_spriteIndex, Corner corner)
 {
-	Vector2i pixelPos = SpriteSheet::indexToPos(p_spriteIndex);
+	glm::ivec2 spritePos = SpriteSheet::indexToPos(p_spriteIndex);
+	// okay so
+
+	// the pixel position of the first sprite would be like
+	// 8, 0 of course
+	// the image is 512 by 512
+	// so to get the texture coord i should uhhhhh hmmm
+	// 
 	if (corner == Corner::TOP_LEFT) {
-		float x = (float)image.dimensions.x / (float)pixelPos.x;
-		float y = (float)image.dimensions.y / (float)pixelPos.y;
-		return Vector2f(x, y);
+		float x = (float)spritePos.x / (float)image.dimensions.x;
+		float y = (float)spritePos.y / (float)image.dimensions.y;
+		return glm::vec2(x, y);
 	}
 	if (corner == Corner::TOP_RIGHT) {
-		float x = (float)image.dimensions.x / ((float)pixelPos.x + spriteDimensions.x);
-		float y = (float)image.dimensions.y / ((float)pixelPos.y);
-		return Vector2f(x, y);
+		float x = ((float)spritePos.x + spriteDimensions.x) / (float)image.dimensions.x;
+		float y = ((float)spritePos.y) / (float)image.dimensions.y;
+		return glm::vec2(x, y);
 	}
 	if (corner == Corner::BOTTOM_LEFT) {
-		float x = (float)image.dimensions.x / ((float)pixelPos.x);
-		float y = (float)image.dimensions.y / ((float)pixelPos.y + spriteDimensions.y);
-		return Vector2f(x, y);
+		float x = ((float)spritePos.x) / (float)image.dimensions.x;
+		float y = ((float)spritePos.y + spriteDimensions.y) / (float)image.dimensions.y;
+		return glm::vec2(x, y);
 	}
 	if (corner == Corner::BOTTOM_RIGHT) {
-		float x = (float)image.dimensions.x / ((float)pixelPos.x + spriteDimensions.x);
-		float y = (float)image.dimensions.y / ((float)pixelPos.y + spriteDimensions.y);
-		return Vector2f(x, y);
+		float x = ((float)spritePos.x + spriteDimensions.x) / (float)image.dimensions.x;
+		float y = ((float)spritePos.y + spriteDimensions.y) / (float)image.dimensions.y;
+		return glm::vec2(x, y);
 	}
 }
 
-Vector2i SpriteSheet::indexToPos(unsigned short p_spriteIndex) {
+glm::ivec2 SpriteSheet::indexToPos(unsigned short p_spriteIndex) {
 	if (sheetMode == SheetMode::TILESHEET) {
-		return Vector2i(p_spriteIndex % (image.dimensions.x / spriteDimensions.x), p_spriteIndex / spriteDimensions.y);
+		return glm::ivec2(
+			(p_spriteIndex % (image.dimensions.x / spriteDimensions.x)) * spriteDimensions.x, // x pos
+			(p_spriteIndex / spriteDimensions.y) * spriteDimensions.y); // y pos
 	}
 }
 
@@ -63,8 +72,16 @@ void SpriteSheet::setCurrentSprite(unsigned short p_spriteIndex) {
 	}
 }
 
-void SpriteSheet::setSpriteDimensions(Vector2i p_dim)
+void SpriteSheet::setSpriteDimensions(glm::ivec2 p_dim)
 {
 	spriteDimensions = p_dim;
 }
 
+void SpriteSheet::setAnimation(unsigned short p_animationID) {
+	if (p_animationID >= animationCount) {
+		throw std::out_of_range("Animation requested is past the set animation count.");
+	}
+	else {
+		currentAnimation = p_animationID;
+	}
+}

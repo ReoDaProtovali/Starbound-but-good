@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdexcept>
 #include "GameConstants.hpp"
-#include "MathUtils.hpp"
 #include "Image.hpp"
 
 class ResourceLoader

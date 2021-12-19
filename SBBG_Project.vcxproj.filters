@@ -40,6 +40,9 @@
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{d88241da-33fe-4d03-ab07-ffbc3e86bb73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game Updates">
+      <UniqueIdentifier>{3c792938-b9c1-4821-82f9-0229c0ded4be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,6 +84,9 @@
     <ClCompile Include="timestepper.cpp">
       <Filter>Source Files\Game Updates</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chunk.hpp">
@@ -100,12 +106,6 @@
     </ClInclude>
     <ClInclude Include="MathUtils.hpp">
       <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Timestepper.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="InputHandler.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
     </ClInclude>
     <ClInclude Include="GameWindow.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
@@ -139,6 +139,15 @@
     </ClInclude>
     <ClInclude Include="GameRenderer.hpp">
       <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.hpp">
+      <Filter>Header Files\Rendering and Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.hpp">
+      <Filter>Header Files\Game Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Timestepper.hpp">
+      <Filter>Header Files\Game Updates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,9 +6,6 @@
 #include <vector>
 #include "Vertex.hpp"
 
-#define vec3 glm::vec3
-#define vec2 glm::vec2
-
 typedef enum class TextureID {
 	NO_TEXTURE,
 	STONE_TEXTURE,
@@ -16,7 +13,8 @@ typedef enum class TextureID {
 	TILE_TEXTURE,
 	REOHANG_TEXTURE,
 	TESTSPRITESHEET_TEXTURE,
-	ME_TEXTURE
+	ME_TEXTURE,
+	TILESHEET_TEXTURE
 } TextureID;
 
 enum class SheetMode {

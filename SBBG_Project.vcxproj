@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="GameRenderer.hpp" />

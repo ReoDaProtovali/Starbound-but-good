@@ -5,23 +5,14 @@
 
 #include <stdio.h>
 
-#define GL_GLEXT_PROTOTYPES
-
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include "GL/glew.h"
 #include <vector>
-#include "utils.hpp"
 #include "glm/glm.hpp"
 #include "GameConstants.hpp"
 #include "Shader.hpp"
 
 
-// this is probably illegal in some courts of law
-#define vec3 glm::vec3
-#define vec2 glm::vec2
-
-
-void handleVertexAttrBuffers(GLuint& p_vao, std::vector<Vertex>& p_vertices, std::vector<GLuint>& p_indices) {
+void handleVertexAttrBuffers(GLuint& p_vao, std::vector<Vertex>& p_vertices) {
 
 	glGenVertexArrays(1, &p_vao);
 	glBindVertexArray(p_vao);
@@ -30,6 +21,16 @@ void handleVertexAttrBuffers(GLuint& p_vao, std::vector<Vertex>& p_vertices, std
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, p_vertices.size() * sizeof(Vertex), p_vertices.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(attrib_position, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(attrib_position);
+	glEnableVertexAttribArray(attrib_texCoord);
+}
+void handleIndexAttrBuffers(GLuint& p_vao, std::vector<GLuint>& p_indices) {
+
+	glGenVertexArrays(1, &p_vao);
+	glBindVertexArray(p_vao);
 
 	unsigned int EBO;
 	glGenBuffers(1, &EBO);
@@ -41,7 +42,6 @@ void handleVertexAttrBuffers(GLuint& p_vao, std::vector<Vertex>& p_vertices, std
 	glEnableVertexAttribArray(attrib_position);
 	glEnableVertexAttribArray(attrib_texCoord);
 }
-
 
 void bufferImage(TextureID tex, ResourceLoader res) {
 	unsigned int texture;

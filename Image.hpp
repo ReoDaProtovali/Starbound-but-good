@@ -1,12 +1,13 @@
 #pragma once
 #include "GameConstants.hpp"
-#include "MathUtils.hpp"
+#include "glm/glm.hpp"
+
 struct Image
 {
-	Image() : data(nullptr), dimensions(Vector2i()), ID(TextureID::NO_TEXTURE) {};
-	Image(unsigned char* p_data, Vector2i p_dimensions, TextureID p_ID) : data(p_data), dimensions(p_dimensions), ID(p_ID) {};
+	Image() : data(nullptr), dimensions(glm::ivec2()), ID(TextureID::NO_TEXTURE) {};
+	Image(unsigned char* p_data, glm::ivec2 p_dimensions, TextureID p_ID) : data(p_data), dimensions(p_dimensions), ID(p_ID) {};
 	unsigned char* data;
-	Vector2i dimensions;
+	glm::ivec2 dimensions;
 	TextureID ID;
 };
 

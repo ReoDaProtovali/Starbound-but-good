@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include "utils.hpp"
+#include "glm/glm.hpp"
+
 class WorldChunk;
 
 class World
@@ -16,7 +18,7 @@ class World
 public:
 	World();
 	~World();
-	WorldChunk& getChunk(Vector2i p_worldPos);
+	WorldChunk& getChunk(glm::ivec2 p_worldPos);
 
 private:
 	std::vector<WorldChunk> chunks;

@@ -2,7 +2,7 @@
 #include "GameWindow.hpp";
 
 GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
-	:window(NULL), glContext(NULL)
+	:window(NULL)
 {
 	width = p_w;
 	height = p_h;
@@ -28,10 +28,10 @@ void GameWindow::initGL() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glContext = SDL_GL_CreateContext(window);
+	SDL_GLContext glContext = SDL_GL_CreateContext(window);
 	SDL_GL_MakeCurrent(window, glContext);
 
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.9, 0.9, 0.9, 0.0);
 	glViewport(0, 0, width, height);
 

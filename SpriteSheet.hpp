@@ -1,5 +1,5 @@
 #pragma once
-#include "MathUtils.hpp";
+#include "glm/glm.hpp"
 #include "GameConstants.hpp"
 #include "Image.hpp"
 #include <string>
@@ -12,13 +12,14 @@ class SpriteSheet
 		SpriteSheet()
 			: sheetMode(SheetMode::TILESHEET),
 			image(Image()),
+			spriteDimensions(glm::ivec2()),
 			currentSprite(NULL),
 			spriteCount(NULL),
 			currentAnimation(NULL),
 			animationCount(NULL),
 			frameCount(NULL) {};
 
-		SpriteSheet(Image p_image, Vector2i p_spriteDimensions, unsigned short p_spriteCount)
+		SpriteSheet(Image p_image, glm::ivec2 p_spriteDimensions, unsigned short p_spriteCount)
 			: sheetMode(SheetMode::TILESHEET),
 			image(p_image),
 			spriteDimensions(p_spriteDimensions),
@@ -32,16 +33,18 @@ class SpriteSheet
 		void setImage(Image p_image) { image = p_image; };
 		void setSpriteCount(unsigned short p_spriteCount) { spriteCount = p_spriteCount; };
 		void setCurrentSprite(unsigned short p_spriteIndex);
-		void setSpriteDimensions(Vector2i p_dim);
+		void setSpriteDimensions(glm::ivec2 p_dim);
 		void setMode(SheetMode mode);
 
 		void nextFrame();
-		Vector2i indexToPos(unsigned short p_spriteIndex);
-		Vector2f getTexCoords(unsigned short p_spriteID, Corner corner);
+		glm::ivec2 indexToPos(unsigned short p_spriteIndex);
+		glm::vec2 getTexCoords(unsigned short p_spriteID, Corner corner);
 		void setAnimation(unsigned short p_animationID);
+		Image image;
+
+
 	private:
 		SheetMode sheetMode;
-		Image image;
 		unsigned short currentSprite;
 		unsigned short spriteCount;
 
@@ -51,6 +54,6 @@ class SpriteSheet
 		unsigned short animationCount;
 
 
-		Vector2i spriteDimensions;
+		glm::ivec2 spriteDimensions;
 };
 

@@ -27,6 +27,5 @@ public:
 	int width;
 	int height;
 	InputHandler inpHandler;
-	SDL_GLContext glContext;
 	SDL_Window* window;
 };

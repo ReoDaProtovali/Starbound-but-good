@@ -18,17 +18,17 @@
 
 std::vector<Vertex> vertices1 = {
 	// positions             / / texture coords
-	Vertex(vec3(0.5, 0.5, 0.0), vec2(1.0, 1.0)),   // top right
-	Vertex(vec3(0.5, -0.5, 0.0), vec2(1.0, 0.0)), // bottom right
-	Vertex(vec3(-0.5, -0.5, 0.0), vec2(0.0, 0.0)), // bottom left
-	Vertex(vec3(-0.5, 0.5, 0.0), vec2(0.0, 1.0)) // top left
+	Vertex(glm::vec3(0.5, 0.5, 0.0), glm::vec2(1.0, 1.0)),   // top right
+	Vertex(glm::vec3(0.5, -0.5, 0.0), glm::vec2(1.0, 0.0)), // bottom right
+	Vertex(glm::vec3(-0.5, -0.5, 0.0), glm::vec2(0.0, 0.0)), // bottom left
+	Vertex(glm::vec3(-0.5, 0.5, 0.0), glm::vec2(0.0, 1.0)) // top left
 };
 std::vector<Vertex> vertices2 = {
 	// positions             / / texture coords
-	Vertex(vec3(0.5, 0.5, 0.0), vec2(1.0, 1.0)),   // top right
-	Vertex(vec3(0.5, -0.5, 0.0), vec2(1.0, 0.0)), // bottom right
-	Vertex(vec3(-0.5, -0.5, 0.0), vec2(0.0, 0.0)), // bottom left
-	Vertex(vec3(-0.5, 0.5, 0.0), vec2(0.0, 1.0)) // top left
+	Vertex(glm::vec3(0.5, 0.5, 0.0), glm::vec2(1.0, 1.0)),   // top right
+	Vertex(glm::vec3(0.5, -0.5, 0.0), glm::vec2(1.0, 0.0)), // bottom right
+	Vertex(glm::vec3(-0.5, -0.5, 0.0), glm::vec2(0.0, 0.0)), // bottom left
+	Vertex(glm::vec3(-0.5, 0.5, 0.0), glm::vec2(0.0, 1.0)) // top left
 };
 
 std::vector<GLuint> indices1 = {  // note that we start from 0!
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	bool gameActive = true;
 	SDL_Event event;
 
-	GameWindow gw = GameWindow("Borstoind", 1280, 720);
+	GameWindow gw = GameWindow("Borstoind", 1000, 1000);
 	SDL_Window* window = gw.window;
 
 	ResourceLoader res = ResourceLoader();
@@ -57,22 +57,26 @@ int main(int argc, char* argv[])
 		gameActive = false;
 	}
 
-	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::TESTSPRITESHEET_TEXTURE), Vector2i(8, 8), 4096);
 
-	SDL_GLContext& context = gw.glContext;
+	World world = World();
+	WorldChunk& chunk = world.getChunk(glm::ivec2(0, 0));
+	WorldChunk& chunk1 = world.getChunk(glm::ivec2(1, 0));
+	chunk.fillRandom();
+	chunk1.fillRandom();
+
+	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::TILESHEET_TEXTURE), glm::ivec2(8, 8), 4096);
 
 	Shader imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
 	GLuint vao; 
+	
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	bufferImage(TextureID::TILESHEET_TEXTURE, res);
 
+	GLuint chunk1VBO = chunk1.generateVBO(tileSheet);
 	// vertices1 and indices1 define two triangles, forming the square
-	handleVertexAttrBuffers(vao, vertices1, indices1); // hiding a lot of code behind here
-	bufferImage(TextureID::ME_TEXTURE, res);
+	//handleVertexAttrBuffers(vao, vertices1); // hiding a lot of code behind here
 
-	//World world = World();
-	//WorldChunk& chunk = world.getChunk(Vector2i(0, 0));
-	//WorldChunk& chunk1 = world.getChunk(Vector2i(1, 0));
-	//chunk.fillRandom();
-	//chunk1.fillRandom();
 
 	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
 
@@ -106,7 +110,8 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
 		glBindVertexArray(vao); // sets the vertex array object containing the test rectangle to active
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // draws the test rectangle
+		glDrawArrays(GL_TRIANGLES, 0, chunk1.verts.size());
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // draws the test rectangle
 
 		SDL_GL_SwapWindow(window); // i forgot what this does but I think it just means update the picture
 
