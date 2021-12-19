@@ -68,8 +68,8 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
 		renderer.cam.pos = glm::vec3(
-			64 + cos(seconds) * 64,
-			- 16 + sin(seconds) * 32,
+			32 + cos(seconds / 2.0) * 64,
+			0 + sin(seconds / 2.0) * 32,
 			1);
 		renderer.drawChunk(chunk, gw);
 		renderer.drawChunk(chunk1, gw);
