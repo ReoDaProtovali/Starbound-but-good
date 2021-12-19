@@ -26,7 +26,8 @@ int main(int argc, char* argv[])
 	SDL_Window* window = gw.window;
 
 	GameRenderer renderer = GameRenderer();
-	renderer.cam.setTileScale(16); // Sets the display width of a single tile to be 16px
+	//renderer.cam.setTileScale(16); // Sets the display width of a single tile to be 16px
+	renderer.cam.pos = glm::vec3(0.0, 0.0, 100.0); // testing having the cam further away
 
 	World world = World();
 	WorldChunk& chunk = world.getChunk(glm::ivec2(0, 0));
@@ -68,9 +69,13 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
 		renderer.cam.pos = glm::vec3(
-			32 + cos(seconds / 2.0) * 64,
-			0 + sin(seconds / 2.0) * 32,
-			1);
+			32 + cos(seconds / 2.0) * 100,
+			0 + sin(seconds / 2.0) * 80,
+			50);
+
+		renderer.cam.enableManualView();
+		renderer.cam.enablePerspective();
+		renderer.cam.lookAt(glm::vec3(32.0f, 0.0f, 0.0f));
 		renderer.drawChunk(chunk, gw);
 		renderer.drawChunk(chunk1, gw);
 
