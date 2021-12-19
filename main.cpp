@@ -64,12 +64,12 @@ int main(int argc, char* argv[])
 	chunk.fillRandom();
 	chunk1.fillRandom();
 
-	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::ME_TEXTURE), glm::ivec2(128,128), 1);
+	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::TILESHEET_TEXTURE), glm::ivec2(8, 8), 1);
 	Shader imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
 	GLuint vao; 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-	bufferImage(TextureID::ME_TEXTURE, res);
+	bufferImage(TextureID::TILESHEET_TEXTURE, res);
 	GLuint chunk1VBO = chunk1.generateVBO(tileSheet);
 
 	// vertices1 and indices1 define two triangles, forming the square
