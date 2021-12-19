@@ -74,9 +74,8 @@ int main(int argc, char* argv[])
 		renderer.drawChunk(chunk, gw);
 		renderer.drawChunk(chunk1, gw);
 
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // draws the test rectangle
 
-		SDL_GL_SwapWindow(window); // i forgot what this does but I think it just means update the picture
+		SDL_GL_SwapWindow(window); // Put the image buffer into the window
 
 		ts.processFrameEnd(gw); // for the timestepper (limited to vsync)
 	}

@@ -84,9 +84,6 @@
     <ClCompile Include="timestepper.cpp">
       <Filter>Source Files\Game Updates</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chunk.hpp">
