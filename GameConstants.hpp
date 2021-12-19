@@ -2,7 +2,7 @@
 #ifndef GAMECONSTANTS_H
 #define GAMECONSTANTS_H
 
-#include <glm.hpp>
+#include "glm/glm.hpp"
 #include <vector>
 #include "Vertex.hpp"
 

@@ -151,10 +151,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ImageFS.glsl">
+    <None Include="Shaders\ImageFS.glsl">
       <Filter>Shaders\Fragment Shaders</Filter>
     </None>
-    <None Include="ImageVS.glsl">
+    <None Include="Shaders\ImageVS.glsl">
       <Filter>Shaders\Vertex Shaders</Filter>
     </None>
   </ItemGroup>

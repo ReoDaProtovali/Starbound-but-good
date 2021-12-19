@@ -28,15 +28,17 @@ void WorldChunk::fillRandom() {
 	return;
 }
 GLuint WorldChunk::generateVBO(SpriteSheet p_spriteSheet) {
-
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (WorldChunk::tiles[y][x].tileID != 0) {
 				unsigned int tID = WorldChunk::tiles[y][x].tileID;
-				glm::vec3 pos_tl = glm::vec3((float)x, (float)y, 0.0f);
-				glm::vec3 pos_tr = glm::vec3((float)x + 1.0f, (float)y, 0.0f);
-				glm::vec3 pos_bl = glm::vec3((float)x, (float)y + 1.0f, 0.0f);
-				glm::vec3 pos_br = glm::vec3((float)x + 1.0f, (float)y + 1.0f, 0.0f);
+				float x_f = (float)x;
+				float y_f = (float)y;
+				float m_Off = chunkSize / 2.0;
+				glm::vec3 pos_tl = glm::vec3(x_f - m_Off, y_f - m_Off, 0.0f);
+				glm::vec3 pos_tr = glm::vec3(x_f + 1.001f - m_Off, y_f - m_Off, 0.0f);
+				glm::vec3 pos_bl = glm::vec3(x_f - m_Off, y_f + 1.001f - m_Off, 0.0f);
+				glm::vec3 pos_br = glm::vec3(x_f + 1.001f - m_Off, y_f + 1.001f - m_Off, 0.0f);
 				glm::vec2 tex_tl = p_spriteSheet.getTexCoords(tID, Corner::TOP_LEFT);
 				glm::vec2 tex_tr = p_spriteSheet.getTexCoords(tID, Corner::TOP_RIGHT);
 				glm::vec2 tex_bl = p_spriteSheet.getTexCoords(tID, Corner::BOTTOM_LEFT);
@@ -48,12 +50,6 @@ GLuint WorldChunk::generateVBO(SpriteSheet p_spriteSheet) {
 				Vertex v4 = Vertex(pos_bl, tex_bl); // Second triangle
 				Vertex v5 = Vertex(pos_tr, tex_tr);
 				Vertex v6 = Vertex(pos_br, tex_br);
-				//std::cout << v1.pos.x << " " << v1.pos.y << " " << v1.texCoord.x << " " << v1.texCoord.y << std::endl;
-				//std::cout << v2.pos.x << " " << v2.pos.y << " " << v2.texCoord.x << " " << v2.texCoord.y << std::endl;
-				//std::cout << v3.pos.x << " " << v3.pos.y << " " << v3.texCoord.x << " " << v3.texCoord.y << std::endl;
-				//std::cout << v4.pos.x << " " << v4.pos.y << " " << v4.texCoord.x << " " << v4.texCoord.y << std::endl;
-				//std::cout << v5.pos.x << " " << v5.pos.y << " " << v5.texCoord.x << " " << v5.texCoord.y << std::endl;
-				//std::cout << v6.pos.x << " " << v6.pos.y << " " << v6.texCoord.x << " " << v6.texCoord.y << std::endl;
 
 				WorldChunk::verts.insert(WorldChunk::verts.end(), { v1, v2, v3, v4, v5, v6 });
 			}

@@ -14,7 +14,7 @@
 #include "Shader.hpp"
 
 #include <glm.hpp>
-
+#include <gtc/matrix_transform.hpp>
 
 std::vector<Vertex> vertices1 = {
 	// positions             / / texture coords
@@ -64,16 +64,14 @@ int main(int argc, char* argv[])
 	chunk.fillRandom();
 	chunk1.fillRandom();
 
-	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::TILESHEET_TEXTURE), glm::ivec2(8, 8), 4096);
-
+	SpriteSheet tileSheet = SpriteSheet(res.getImage(TextureID::ME_TEXTURE), glm::ivec2(128,128), 1);
 	Shader imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
 	GLuint vao; 
-	
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-	bufferImage(TextureID::TILESHEET_TEXTURE, res);
-
+	bufferImage(TextureID::ME_TEXTURE, res);
 	GLuint chunk1VBO = chunk1.generateVBO(tileSheet);
+
 	// vertices1 and indices1 define two triangles, forming the square
 	//handleVertexAttrBuffers(vao, vertices1); // hiding a lot of code behind here
 
@@ -96,7 +94,7 @@ int main(int argc, char* argv[])
 				else if (event.type == SDL_KEYUP) {
 					gw.inpHandler.processKeyUp(event.key.keysym.sym);
 					if (event.key.keysym.sym == SDLK_ESCAPE)
-						return 0;
+						gameActive = false;
 					break;
 				}
 			}
@@ -109,7 +107,13 @@ int main(int argc, char* argv[])
 		// render code goes here I think
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
-		glBindVertexArray(vao); // sets the vertex array object containing the test rectangle to active
+		glBindVertexArray(vao); // sets the vertex array object containing the chunk data
+
+		glm::mat4 modelTransform = glm::mat4(1.0f);
+		modelTransform = glm::translate(modelTransform, glm::vec3(cos(SDL_GetTicks() / 2000.0), sin(SDL_GetTicks() / 2000.0), 0.0f));
+		modelTransform = glm::scale(modelTransform, glm::vec3(0.03, 0.03, 0.03));
+
+		imageShader.setMat4Uniform("model", modelTransform);
 		glDrawArrays(GL_TRIANGLES, 0, chunk1.verts.size());
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // draws the test rectangle
 
@@ -119,7 +123,7 @@ int main(int argc, char* argv[])
 	}
 
 	gw.cleanUp();
-	//world.~World();
+	world.~World();
 	SDL_Quit();
 
 	return 0;
