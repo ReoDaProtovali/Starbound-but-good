@@ -3,6 +3,7 @@
 #include "GameConstants.hpp"
 
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID) {
+	glGenVertexArrays(1, &VAO);
 	for (int y = 0; y < chunkSize; y++) {
 		tiles[y] = new Tile[chunkSize];
 	}
@@ -25,9 +26,11 @@ void WorldChunk::fillRandom() {
 			}
 		}
 	}
-	return;
+	vboIsCurrent = false;
 }
-GLuint WorldChunk::generateVBO(SpriteSheet p_spriteSheet) {
+GLuint WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
+	glBindVertexArray(VAO);
+
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (WorldChunk::tiles[y][x].tileID != 0) {
@@ -64,7 +67,12 @@ GLuint WorldChunk::generateVBO(SpriteSheet p_spriteSheet) {
 	glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(attrib_position);
 	glEnableVertexAttribArray(attrib_texCoord);
+	vboIsCurrent = true;
 	return VBO;
+}
+
+int WorldChunk::getVBOSize() {
+	return verts.size();
 }
 
 Tile** WorldChunk::getTiles() {

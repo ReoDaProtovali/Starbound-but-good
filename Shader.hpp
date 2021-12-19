@@ -8,6 +8,7 @@
 class Shader
 {
 	public:
+		Shader() : programID(GL_NONE){};
 		Shader(const char* vs_filePath, const char* fs_filePath);
 		GLuint compileShaders(const char* vs_filePath, const char* fs_filePath);
 		void use();

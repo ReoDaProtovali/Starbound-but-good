@@ -167,12 +167,10 @@
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="GameRenderer.hpp" />
-    <ClInclude Include="GLTesting.hpp" />
     <ClInclude Include="GameConstants.hpp" />
     <ClInclude Include="Image.hpp" />
     <ClInclude Include="GameAssets.hpp" />
     <ClInclude Include="InputHandler.hpp" />
-    <ClInclude Include="MathUtils.hpp" />
     <ClInclude Include="GameWindow.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
     <ClInclude Include="Shader.hpp" />

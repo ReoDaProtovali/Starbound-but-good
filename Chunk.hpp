@@ -19,14 +19,18 @@ struct WorldChunk
 	glm::ivec2 worldPos;
 	int worldID;
 	const int chunkSize = 64;
-	GLuint generateVBO(SpriteSheet p_spriteSheet);
-	void setChunkTile(glm::ivec2 p_chunkCoordinates);
-	void fillRandom();
-	std::vector<Vertex> verts;
 
+	void fillRandom();
+	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
+
+	GLuint generateVBO(SpriteSheet& p_spriteSheet);
+	int getVBOSize();
+	bool vboIsCurrent = false;
+	GLuint VAO;
 
 private:
 	Tile** tiles = new Tile*[128];
+	std::vector<Vertex> verts;
 
 };
 

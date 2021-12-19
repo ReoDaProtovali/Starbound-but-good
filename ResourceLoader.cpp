@@ -20,6 +20,15 @@ bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 	return 1;
 }
 
+Image ResourceLoader::getImage(TextureID p_ID, bool& success) {
+	for (int i = 0; i < images.size(); i++) {
+		if (images[i].ID == p_ID) {
+			success = true;
+			return images[i];
+		}
+	}
+	success = false;
+}
 Image ResourceLoader::getImage(TextureID p_ID) {
 	for (int i = 0; i < images.size(); i++) {
 		if (images[i].ID == p_ID) {

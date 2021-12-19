@@ -41,6 +41,9 @@ class SpriteSheet
 		glm::vec2 getTexCoords(unsigned short p_spriteID, Corner corner);
 		void setAnimation(unsigned short p_animationID);
 		Image image;
+		unsigned int glTexture = 0;
+		bool hasglTexture = false;
+		inline void setglTexture(unsigned int p_glTexID) { glTexture = p_glTexID; hasglTexture = true; };
 
 
 	private:

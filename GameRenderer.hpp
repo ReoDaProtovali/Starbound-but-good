@@ -15,22 +15,28 @@
 #include "GameConstants.hpp"
 #include "Chunk.hpp"
 #include "World.hpp"
+#include "GameWindow.hpp"
 
 
 class GameRenderer
 {
+public:
 	GameRenderer();
+	//GameRenderer(spriteShader);
+
 	ResourceLoader res;
 	SpriteSheet tileSheet;
 	SpriteSheet objectSheet;
 	SpriteSheet entitySheet;
 
-	Camera worldCam;
-	
-	Shader spriteShader;
+	void loadSpriteSheets();
+	unsigned int bufferImage(Image& p_image);
+
+	Camera cam = Camera();
+
 	Shader imageShader;
 
-	GLuint getChunkVAO(WorldChunk& p_chunk);
+	bool drawChunk(WorldChunk& p_chunk, GameWindow& p_window);
 	//GLuint draw
 
 };
