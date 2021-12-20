@@ -142,6 +142,11 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
+      <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
+      <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
+      <ObjectFileName>$(IntDir)obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,6 +156,21 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\dev\glew-2.2.0\lib\Release\x64;C:\dev\SDL2\lib\x64</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>ECHO ON
+echo Cleaning Project Directory
+del $(OutDir)SBBG_Project.iobj
+del $(OutDir)SBBG_Project.ipdb
+del $(OutDir)SBBG_Project.exe.recipe
+del $(OutDir)SBBG_Project.vcxproj.FileListAbsolute.txt
+rmdir /s /q $(OutDir)obj
+rmdir /s /q $(OutDir)SBBG_Project.tlog
+rmdir /s /q $(OutDir)res
+rmdir /s /q $(OutDir)shaders
+echo Moving game folders with build exe
+Xcopy /E /I shaders $(OutDir)shaders
+Xcopy /E /I res $(OutDir)res</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="chunk.cpp" />
