@@ -22,18 +22,26 @@ int main(int argc, char* argv[])
 	bool gameActive = true;
 	SDL_Event event;
 
-	GameWindow gw = GameWindow("Borstoind", 1000, 1000);
+	GameWindow gw = GameWindow("Borstoind");
 	SDL_Window* window = gw.window;
 
 	GameRenderer renderer = GameRenderer();
+	Camera& cam = renderer.cam;
 	//renderer.cam.setTileScale(16); // Sets the display width of a single tile to be 16px
 	renderer.cam.pos = glm::vec3(0.0, 0.0, 100.0); // testing having the cam further away
 
 	World world = World();
-	WorldChunk& chunk = world.getChunk(glm::ivec2(0, 0));
-	WorldChunk& chunk1 = world.getChunk(glm::ivec2(1, 0));
-	chunk.fillRandom();
-	chunk1.fillRandom();
+	world.genChunk(0, 0);
+	world.genChunk(1, 0);
+	world.genChunk(1, 1);
+	//world.logChunks();
+
+
+	bool success1, success2, success3;
+	WorldChunk& chunk1 = world.getChunk(glm::ivec2(0, 0), success1);
+	WorldChunk& chunk2 = world.getChunk(glm::ivec2(0, 1), success1);
+	WorldChunk& chunk3 = world.getChunk(glm::ivec2(1, 0), success2);
+	WorldChunk& chunk4 = world.getChunk(glm::ivec2(1, 1), success3);
 
 	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
 
@@ -65,19 +73,26 @@ int main(int argc, char* argv[])
 
 		// render code goes here I think
 
-		float seconds = SDL_GetTicks() / 1000.0;
+		float seconds = SDL_GetTicks() / 1000.0f;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
-		renderer.cam.pos = glm::vec3(
-			32 + cos(seconds / 2.0) * 100,
-			0 + sin(seconds / 2.0) * 80,
-			50);
+		//cam.scale = glm::vec2((sin(seconds) * 0.5 + 1) * 0.06f, (cos(seconds) * 0.5 + 1) * 0.06f);
+		cam.setGlobalPos(64.0f + cos(seconds) * 20, 32.0f + sin(seconds * 1.5) * 5);
+		//renderer.cam.pos = glm::vec3(
+		//	32.0 + cos(seconds / 2.0) * 20.0,
+		//	sin(seconds / 2.0) * 20.0,
+		//	1.0f);
 
-		renderer.cam.enableManualView();
-		renderer.cam.enablePerspective();
-		renderer.cam.lookAt(glm::vec3(32.0f, 0.0f, 0.0f));
-		renderer.drawChunk(chunk, gw);
+		//renderer.cam.lookForwards();
+		//renderer.cam.enableManualView();
+		//renderer.cam.enablePerspective();
+		//renderer.cam.lookAt(glm::vec3(32.0f, 0.0f, 0.0f));
 		renderer.drawChunk(chunk1, gw);
+		renderer.drawChunk(chunk2, gw);
+		renderer.drawChunk(chunk3, gw);
+		renderer.drawChunk(chunk4, gw);
+
+
 
 
 		SDL_GL_SwapWindow(window); // Put the image buffer into the window
@@ -86,7 +101,7 @@ int main(int argc, char* argv[])
 	}
 
 	gw.cleanUp();
-	world.~World();
+	//world.~World();
 	SDL_Quit();
 
 	return 0;

@@ -13,23 +13,29 @@
 #include <vector>
 struct WorldChunk
 {
-	WorldChunk(glm::ivec2 p_worldPos = glm::ivec2(0, 0), int p_worldID = 0);
+	WorldChunk(void) : worldID(-1),
+		worldPos(glm::ivec2()),
+		VAO(0),
+		tiles(nullptr) {};
+	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
 	Tile** getTiles();
 	void cleanUp();
-	glm::ivec2 worldPos;
-	int worldID;
-	const int chunkSize = 64;
 
 	void fillRandom();
 	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
 
 	GLuint generateVBO(SpriteSheet& p_spriteSheet);
 	int getVBOSize();
+
+	const int chunkSize = 64;
+	glm::ivec2 worldPos;
+	int worldID;
+
 	bool vboIsCurrent = false;
 	GLuint VAO;
 
 private:
-	Tile** tiles = new Tile*[128];
+	Tile** tiles;
 	std::vector<Vertex> verts;
 
 };

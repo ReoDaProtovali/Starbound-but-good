@@ -20,6 +20,6 @@ void Timestepper::calculateAlpha() {
 void Timestepper::processFrameEnd(GameWindow& p_window) {
 	int frameTicks = SDL_GetTicks() - startTicks;
 	if (frameTicks < 1000.0f / p_window.getRefreshRate()) {
-		SDL_Delay(1000.0f / p_window.getRefreshRate() - frameTicks);
+		SDL_Delay((Uint32)(1000.0f / p_window.getRefreshRate()) - frameTicks);
 	}
 }

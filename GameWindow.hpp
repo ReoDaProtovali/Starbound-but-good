@@ -16,11 +16,13 @@
 
 
 class World;
-class WorldChunk;
+struct WorldChunk;
 class GameWindow
 {
 public:
 	GameWindow(const char* p_title, int p_w, int p_h);
+	GameWindow(const char* p_title);
+
 	void initGL();
 	void cleanUp();
 	int getRefreshRate();
