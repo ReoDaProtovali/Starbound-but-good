@@ -31,17 +31,13 @@ int main(int argc, char* argv[])
 	renderer.cam.pos = glm::vec3(0.0, 0.0, 100.0); // testing having the cam further away
 
 	World world = World();
-	world.genChunk(0, 0);
-	world.genChunk(1, 0);
-	world.genChunk(1, 1);
-	//world.logChunks();
 
-
-	bool success1, success2, success3;
-	WorldChunk& chunk1 = world.getChunk(glm::ivec2(0, 0), success1);
-	WorldChunk& chunk2 = world.getChunk(glm::ivec2(0, 1), success1);
-	WorldChunk& chunk3 = world.getChunk(glm::ivec2(1, 0), success2);
-	WorldChunk& chunk4 = world.getChunk(glm::ivec2(1, 1), success3);
+	std::vector<WorldChunk> chunkArr;
+	int tempGenCount = 20;
+	for (int i = 0; i < tempGenCount; i++) { 
+		world.genChunk(i%5, i/5);
+		chunkArr.push_back(world.getChunk(glm::ivec2(i%5, i/5)));
+	}
 
 	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
 
@@ -77,7 +73,7 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
 		//cam.scale = glm::vec2((sin(seconds) * 0.5 + 1) * 0.06f, (cos(seconds) * 0.5 + 1) * 0.06f);
-		cam.setGlobalPos(64.0f + cos(seconds) * 20, 32.0f + sin(seconds * 1.5) * 5);
+		cam.setGlobalPos(200.0f + cos(seconds) * 20, -128.0f + sin(seconds * 1.5) * 5);
 		//renderer.cam.pos = glm::vec3(
 		//	32.0 + cos(seconds / 2.0) * 20.0,
 		//	sin(seconds / 2.0) * 20.0,
@@ -87,13 +83,11 @@ int main(int argc, char* argv[])
 		//renderer.cam.enableManualView();
 		//renderer.cam.enablePerspective();
 		//renderer.cam.lookAt(glm::vec3(32.0f, 0.0f, 0.0f));
-		renderer.drawChunk(chunk1, gw);
-		renderer.drawChunk(chunk2, gw);
-		renderer.drawChunk(chunk3, gw);
-		renderer.drawChunk(chunk4, gw);
 
 
-
+		for (int i = 0; i < tempGenCount; i++) { // god i hope this works
+			renderer.drawChunk(chunkArr[i], gw);
+		}
 
 		SDL_GL_SwapWindow(window); // Put the image buffer into the window
 
