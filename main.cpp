@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
 	std::vector<WorldChunk> chunkArr;
 	int tempGenCount = 20;
 	for (int i = 0; i < tempGenCount; i++) {
-		world.genChunk(i % 5, i / 4);
-		chunkArr.push_back(world.getChunk(glm::ivec2(i % 5, i / 4)));
+		world.genChunk(i % 5, i / 5);
+		chunkArr.push_back(world.getChunk(glm::ivec2(i % 5, i / 5)));
 	}
 	Uint32 updateTicks = 0;
 	Uint32 renderTicks = 0;
@@ -45,8 +45,9 @@ int main(int argc, char* argv[])
 	glm::vec2 currentPos = glm::vec2(0, 0);
 	// need to make a separate var to hold the camera pos, so it can be drawn with an offset
 	glm::vec2 camPosTest = glm::vec2(200.0f + cos((SDL_GetTicks() / 1000.0f)) * 20, -128.0f + sin((SDL_GetTicks() / 1000.0f) * 1.5) * 5);
+	const bool useInterpolation = true;
 
-	Timestepper ts = Timestepper(4); // sets the game update loop fps, at 8fps
+	Timestepper ts = Timestepper(8); // sets the game update loop fps, at 8fps
 	while (gameActive) {
 		ts.processFrameStart();
 		while (ts.accumulatorFull()) {
@@ -72,9 +73,15 @@ int main(int argc, char* argv[])
 
 			float seconds = (SDL_GetTicks() / 1000.0f);
 
-			lastPos = currentPos;
-			camPosTest = glm::vec2(200.0f + cos(seconds) * 20.0f, -128.0f + sin(seconds) * 20.0f); // move cam in a circle
-			currentPos = camPosTest;
+			if (useInterpolation) {
+				lastPos = currentPos;
+				camPosTest = glm::vec2(200.0f + cos(seconds) * 20.0f, -128.0f + sin(seconds) * 20.0f); // move cam in a circle
+				currentPos = camPosTest;
+			}
+			else {
+				cam.setGlobalPos(glm::vec2(200.0f + cos(seconds) * 20.0f, -128.0f + sin(seconds) * 20.0f));
+			}
+
 			//printf("%f", ts.alpha);
 		}
 		ts.calculateAlpha();
@@ -85,8 +92,10 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
 		// interpolates camera pos between game updates by guessing it based on the last position and alpha, test code
-		cam.setGlobalPos(utils::lerp(camPosTest, lastPos, ts.alpha));
-
+		if (useInterpolation) {
+			// offsets the tracked pos by the inverse of the last pos, effectively guessing where the next frame will move the camera
+			cam.setGlobalPos(utils::lerp(camPosTest, lastPos, ts.alpha));
+		}
 
 
 		for (int i = 0; i < tempGenCount; i++) { // god i hope this works
