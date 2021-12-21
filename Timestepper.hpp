@@ -7,16 +7,19 @@
 #include "SDL.h"
 #include "GameWindow.hpp"
 
+// i hate this class and i dont know why it works
 struct Timestepper {
-	Timestepper(float p_gameUpdateFPS);
+	Timestepper(int p_gameUpdateFPS, int p_renderFPS);
 	void processFrameStart();
 	bool accumulatorFull();
 	void calculateAlpha();
-	void processFrameEnd(GameWindow& p_window);
+	void processFrameEnd();
 	float accumulator;
-	float gameUpdateFPS;
+	int gameUpdateFPS;
+	int renderFPS;
 	float frameTime;
 	float alpha;
+	fpsGauge fg;
 	Uint32 startTicks;
 	Uint32 frameTicks;
 	float currentTime;

@@ -65,7 +65,6 @@ void GameWindow::initGL() {
 	{
 		std::cout << glewGetErrorString(glewInit()) << std::endl;
 	}
-
 }
 
 void GameWindow::cleanUp() {

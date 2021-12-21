@@ -34,77 +34,94 @@ int main(int argc, char* argv[])
 	World world = World();
 
 	std::vector<WorldChunk> chunkArr;
-	int tempGenCount = 20;
+	int tempGenCount = 60;
 	for (int i = 0; i < tempGenCount; i++) {
-		world.genChunk(i % 5, i / 5);
-		chunkArr.push_back(world.getChunk(glm::ivec2(i % 5, i / 5)));
+		world.genChunk(i % (int)sqrt(tempGenCount), i / (int)sqrt(tempGenCount));
+		chunkArr.push_back(world.getChunk(glm::ivec2(i % (int)sqrt(tempGenCount), i / (int)sqrt(tempGenCount))));
 	}
-	Uint32 updateTicks = 0;
-	Uint32 renderTicks = 0;
-	glm::vec2 lastPos = glm::vec2(0, 0);
-	glm::vec2 currentPos = glm::vec2(0, 0);
-	// need to make a separate var to hold the camera pos, so it can be drawn with an offset
-	glm::vec2 camPosTest = glm::vec2(200.0f + cos((SDL_GetTicks() / 1000.0f)) * 20, -128.0f + sin((SDL_GetTicks() / 1000.0f) * 1.5) * 5);
-	const bool useInterpolation = true;
 
-	Timestepper ts = Timestepper(8); // sets the game update loop fps, at 8fps
+
+	Timestepper ts = Timestepper(60, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	int printConsoleCounter = 0;
+	fpsGauge updateFPSGauge;
+	fpsGauge renderFPSGauge;
+	std::vector<float> updateFPSVec;
+	std::vector<float> renderFPSVec;
 	while (gameActive) {
 		ts.processFrameStart();
-		while (ts.accumulatorFull()) {
-			ts.accumulator = 0.0f;
-			while (SDL_PollEvent(&event)) {
-				if (event.type == SDL_QUIT) { // disables the game loop if you hit the window's x button
-					gameActive = false;
-				}
-				else if (event.type == SDL_KEYDOWN) {
-					gw.inpHandler.processKeyDown(event.key.keysym.sym);
-				}
-				else if (event.type == SDL_KEYUP) {
-					gw.inpHandler.processKeyUp(event.key.keysym.sym);
-					if (event.key.keysym.sym == SDLK_ESCAPE)
-						gameActive = false;
-					break;
-				}
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) { // disables the game loop if you hit the window's x button
+				gameActive = false;
 			}
+			else if (event.type == SDL_KEYDOWN) {
+				gw.inpHandler.processKeyDown(event.key.keysym.sym);
+			}
+			else if (event.type == SDL_KEYUP) {
+				gw.inpHandler.processKeyUp(event.key.keysym.sym);
+				if (event.key.keysym.sym == SDLK_ESCAPE)
+					gameActive = false;
+				break;
+			}
+		}
+		printConsoleCounter++;
+
+		while (ts.accumulatorFull()) {
+			ts.accumulator -= 1.0f / ts.gameUpdateFPS;
 			// game update code should go right here I think (limited to ts.gameUpdateFPS)
 
-			float renderFrametime = (SDL_GetTicks() - updateTicks) / 1000.0; // update frametime in seconds
-			updateTicks = SDL_GetTicks();
-
-			float seconds = (SDL_GetTicks() / 1000.0f);
-
-			if (useInterpolation) {
-				lastPos = currentPos;
-				camPosTest = glm::vec2(200.0f + cos(seconds) * 20.0f, -128.0f + sin(seconds) * 20.0f); // move cam in a circle
-				currentPos = camPosTest;
-			}
-			else {
-				cam.setGlobalPos(glm::vec2(200.0f + cos(seconds) * 20.0f, -128.0f + sin(seconds) * 20.0f));
+			updateFPSGauge.stopStopwatch();
+			updateFPSGauge.startStopwatch();
+			//if (updateFPSGauge.getSecondsElapsed() != 0) {
+				updateFPSVec.push_back(1.0f / updateFPSGauge.getSecondsElapsed());
+			//}
+			if (updateFPSVec.size() > (size_t)ts.gameUpdateFPS / 4) { // quarter second fps buffer
+				updateFPSVec.erase(updateFPSVec.begin());
 			}
 
-			//printf("%f", ts.alpha);
+			if (printConsoleCounter > ts.renderFPS) {
+				printConsoleCounter = 0;
+				system("CLS");
+				printf("Current Update FPS: %f \n", utils::averageVector(updateFPSVec));
+				printf("Current Draw FPS: %f \n", utils::averageVector(renderFPSVec));
+				//utils::logVector(updateFPSVec);
+			}
+			ts.processFrameStart();
+
 		}
 		ts.calculateAlpha();
-		float renderFrametime = (SDL_GetTicks() - renderTicks) / 1000.0; // render frametime in seconds
-		renderTicks = SDL_GetTicks();
 
 		// render code goes here I think
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
-		// interpolates camera pos between game updates by guessing it based on the last position and alpha, test code
-		if (useInterpolation) {
-			// offsets the tracked pos by the inverse of the last pos, effectively guessing where the next frame will move the camera
-			cam.setGlobalPos(utils::lerp(camPosTest, lastPos, ts.alpha));
+		renderFPSGauge.stopStopwatch();
+		renderFPSGauge.startStopwatch();
+		//if (renderFPSGauge.getSecondsElapsed() != 0) {
+			renderFPSVec.push_back(1.0f / renderFPSGauge.getSecondsElapsed());
+		//}
+		if (renderFPSVec.size() > (size_t)ts.renderFPS / 4) { // quarter second fps display buffer
+			renderFPSVec.erase(renderFPSVec.begin());
 		}
 
+		cam.scale = glm::vec2(0.5, 0.5);
+
+		if (gw.inpHandler.testKey(SDLK_w)) {
+			cam.pos.y += 1;
+		}
+		if (gw.inpHandler.testKey(SDLK_a)) {
+			cam.pos.x -= 1;
+		}
+		if (gw.inpHandler.testKey(SDLK_s)) {
+			cam.pos.y -= 1;
+		}
+		if (gw.inpHandler.testKey(SDLK_d)) {
+			cam.pos.x += 1;
+		}
 
 		for (int i = 0; i < tempGenCount; i++) { // god i hope this works
 			renderer.drawChunk(chunkArr[i], gw);
 		}
 
 		SDL_GL_SwapWindow(window); // Put the image buffer into the window
-
-		ts.processFrameEnd(gw); // for the timestepper (limited to vsync)
 	}
 
 	world.logChunks();

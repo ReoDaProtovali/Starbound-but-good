@@ -44,8 +44,6 @@ WorldChunk& World::getChunk(glm::ivec2 p_worldPos, bool& success) {
 		return it->second;
 	}
 	success = false;
-	return nullChunk;
-
 }
 WorldChunk& World::getChunk(glm::ivec2 p_worldPos) {
 
@@ -53,8 +51,6 @@ WorldChunk& World::getChunk(glm::ivec2 p_worldPos) {
 	if (it != chunkMap.end()) {
 		return it->second;
 	}
-	WorldChunk nullChunk;
-	return nullChunk;
 }
 World::~World() {
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();

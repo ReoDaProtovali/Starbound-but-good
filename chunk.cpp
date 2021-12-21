@@ -77,7 +77,7 @@ GLuint WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 }
 
 int WorldChunk::getVBOSize() {
-	return verts.size();
+	return (int)verts.size();
 }
 
 Tile** WorldChunk::getTiles() {

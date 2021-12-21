@@ -15,7 +15,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
     fs = glCreateShader(GL_FRAGMENT_SHADER);
 
     std::string vertexShader = utils::readFile(vs_filePath);
-    int vsLength = vertexShader.size();
+    int vsLength = (int)vertexShader.size();
     const char* vertexShader_cstr = vertexShader.c_str();
     glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength);
     glCompileShader(vs);
@@ -41,7 +41,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
     }
 
     std::string fragmentShader = utils::readFile(fs_filePath);
-    int fsLength = fragmentShader.length();
+    int fsLength = (int)fragmentShader.length();
     const char* fragmentShader_cstr = fragmentShader.c_str();
     glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength);
     glCompileShader(fs);
