@@ -1,36 +1,33 @@
 #pragma once
 #include <SDL.h>
-#include <SDL_image.h>
+#include <GL/glew.h>
 #include <SDL_opengl.h>
+#include <GL/GLU.h>
+
 #include "entity.hpp"
-#include "utils.h"
+#include "utils.hpp"
 #include "World.hpp"
 #include "Chunk.hpp"
 #include "Tile.hpp"
 #include "ResourceLoader.hpp"
-#include "Camera.h"
-#include "InputHandler.h"
+#include "InputHandler.hpp"
 #include <iostream>
 #include <math.h>
 
 
 class World;
-class WorldChunk;
+struct WorldChunk;
 class GameWindow
 {
 public:
 	GameWindow(const char* p_title, int p_w, int p_h);
+	GameWindow(const char* p_title);
+
+	void initGL();
 	void cleanUp();
-	void clear();
-	void renderEntity(Entity& p_entity);
-	void drawChunk(WorldChunk& p_chunk);
-	void display();
-	void updateCamera();
 	int getRefreshRate();
-	ResourceLoader res;
-	Camera cam;
+	int width;
+	int height;
 	InputHandler inpHandler;
-private:
 	SDL_Window* window;
-	SDL_Renderer* renderer;
 };

@@ -1,6 +1,6 @@
 #include "Tile.hpp"
 
 
-Vector2i Tile::getChunkPos() {
+glm::ivec2 Tile::getChunkPos() {
 	return chunkPos;
 }

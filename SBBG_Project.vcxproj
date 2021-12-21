@@ -47,7 +47,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -78,9 +78,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\dev\SDL2\include;$(SolutionDir)\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\dev\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)\glm;C:\dev\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\dev\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -125,7 +129,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\dev\glew-2.2.0\lib\Release\x64;C:\dev\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,38 +140,76 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
+      <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
+      <ObjectFileName>$(IntDir)obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\dev\glew-2.2.0\lib\Release\x64;C:\dev\SDL2\lib\x64</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>ECHO ON
+echo Cleaning Project Directory
+del $(OutDir)SBBG_Project.iobj
+del $(OutDir)SBBG_Project.ipdb
+del $(OutDir)SBBG_Project.exe.recipe
+del $(OutDir)SBBG_Project.vcxproj.FileListAbsolute.txt
+rmdir /s /q $(OutDir)obj
+rmdir /s /q $(OutDir)SBBG_Project.tlog
+rmdir /s /q $(OutDir)res
+rmdir /s /q $(OutDir)shaders
+echo Moving game folders with build exe
+Xcopy /E /I shaders $(OutDir)shaders
+Xcopy /E /I res $(OutDir)res</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="camera.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="entity.cpp" />
-    <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="gamerenderer.cpp" />
+    <ClCompile Include="image.cpp" />
+    <ClCompile Include="inputhandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="gamewindow.cpp" />
     <ClCompile Include="resourceloader.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="spritesheet.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timestepper.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
-    <ClInclude Include="InputHandler.h" />
-    <ClInclude Include="MathUtils.hpp" />
+    <ClInclude Include="GameRenderer.hpp" />
+    <ClInclude Include="GameConstants.hpp" />
+    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="GameAssets.hpp" />
+    <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="GameWindow.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
+    <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="SpriteSheet.hpp" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Tile.hpp" />
-    <ClInclude Include="Timestepper.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="Timestepper.hpp" />
+    <ClInclude Include="utils.hpp" />
+    <ClInclude Include="Vertex.hpp" />
     <ClInclude Include="World.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\ImageFS.glsl" />
+    <None Include="Shaders\ImageVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

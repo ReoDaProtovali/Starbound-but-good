@@ -1,19 +1,19 @@
 #pragma once
 #include <vector>
-#include <SDL.h>
-#include <SDL_image.h>
 #include <iostream>
+#include <stdexcept>
+#include "GameConstants.hpp"
+#include "Image.hpp"
+
 class ResourceLoader
 {
 public:
-	ResourceLoader() : renderer(NULL) {};
-	ResourceLoader(SDL_Renderer* p_renderer) : renderer(p_renderer) {};
-	Uint16 load(const char* p_filepath);
-	SDL_Texture* getTex(Uint16 p_ID);
+	ResourceLoader() {};
+	bool load(const char* p_filepath, TextureID p_assignedID);
+	Image getImage(TextureID p_ID); // throws exception if not found
+	Image getImage(TextureID p_ID, bool& success); // friendlier, success bool is passed by reference
+
 private:
-	Uint16 currentID = 1;
-	SDL_Renderer* renderer;
-	std::vector<SDL_Texture*> textures;
-	std::vector<std::string> IDs;
+	std::vector<Image> images;
 };
 

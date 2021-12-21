@@ -1,18 +1,45 @@
 #pragma once
-#include "utils.h"
+
+#ifndef CHUNK_H
+#define CHUNK_H
+
+#include "utils.hpp"
+#include "SpriteSheet.hpp"
 #include "Tile.hpp"
-#include "MathUtils.hpp"
+#include "Vertex.hpp"
+#include "GL/glew.h"
+#include "glm/glm.hpp"
+
+#include <vector>
 struct WorldChunk
 {
-	WorldChunk(Vector2i p_worldPos = Vector2i(0, 0), int p_worldID = 0);
+	WorldChunk(void) : worldID(-1),
+		worldPos(glm::ivec2()),
+		VAO(0),
+		tiles(nullptr), invalid(true) {};
+	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
 	Tile** getTiles();
 	void cleanUp();
-	Vector2i worldPos;
-	int worldID;
-	void setChunkTile(Vector2i p_chunkCoordinates);
+
 	void fillRandom();
+	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
+
+	GLuint generateVBO(SpriteSheet& p_spriteSheet);
+	int getVBOSize();
+
+	const int chunkSize = 64;
+	glm::ivec2 worldPos;
+	int worldID;
+
+	bool vboIsCurrent = false;
+	GLuint VAO;
+
+	bool invalid;
 
 private:
-	Tile** tiles = new Tile*[128];
+	Tile** tiles;
+	std::vector<Vertex> verts;
+
 };
 
+#endif
