@@ -43,11 +43,8 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
 	glBindVertexArray(p_chunk.VAO);
 	if (!tileSheet.hasglTexture) {
 		tileSheet.setglTexture(GameRenderer::bufferImage(tileSheet.image));
-		glBindTexture(GL_TEXTURE_2D, tileSheet.glTexture);
 	}
-	else {
-		glBindTexture(GL_TEXTURE_2D, tileSheet.glTexture);
-	}
+	glBindTexture(GL_TEXTURE_2D, tileSheet.glTexture);
 	glm::mat4 modelTransform = glm::mat4(1.0f);
 
 	// Matrix that transforms from local space to global space
