@@ -6,6 +6,7 @@
 #include "GameRenderer.hpp"
 #include "Entity.hpp"
 //#include "GLTesting.hpp"
+#include <cmath>
 #include "World.hpp"
 #include "Timestepper.hpp"
 #include "ResourceLoader.hpp"
@@ -34,19 +35,22 @@ int main(int argc, char* argv[])
 
 	std::vector<WorldChunk> chunkArr;
 	int tempGenCount = 20;
-	for (int i = 0; i < tempGenCount; i++) { 
-		world.genChunk(i%5, i/5);
-		chunkArr.push_back(world.getChunk(glm::ivec2(i%5, i/5)));
+	for (int i = 0; i < tempGenCount; i++) {
+		world.genChunk(i % 5, i / 4);
+		chunkArr.push_back(world.getChunk(glm::ivec2(i % 5, i / 4)));
 	}
+	Uint32 updateTicks = 0;
+	Uint32 renderTicks = 0;
+	glm::vec2 lastPos = glm::vec2(0, 0);
+	glm::vec2 currentPos = glm::vec2(0, 0);
+	// need to make a separate var to hold the camera pos, so it can be drawn with an offset
+	glm::vec2 camPosTest = glm::vec2(200.0f + cos((SDL_GetTicks() / 1000.0f)) * 20, -128.0f + sin((SDL_GetTicks() / 1000.0f) * 1.5) * 5);
 
-	Timestepper ts = Timestepper(SIXTY_TIMES_PER_SECOND); // limits updates to 60fps, multiply by some number to make it a fraction of 60, divide to make it a multiple
-
+	Timestepper ts = Timestepper(4); // sets the game update loop fps, at 8fps
 	while (gameActive) {
 		ts.processFrameStart();
-
 		while (ts.accumulatorFull()) {
-			glClear(GL_COLOR_BUFFER_BIT);
-
+			ts.accumulator = 0.0f;
 			while (SDL_PollEvent(&event)) {
 				if (event.type == SDL_QUIT) { // disables the game loop if you hit the window's x button
 					gameActive = false;
@@ -61,28 +65,28 @@ int main(int argc, char* argv[])
 					break;
 				}
 			}
-			// game update code should go right here I think (limited to 60fps)
+			// game update code should go right here I think (limited to ts.gameUpdateFPS)
 
-			ts.accumulator -= ts.timeStep;
+			float renderFrametime = (SDL_GetTicks() - updateTicks) / 1000.0; // update frametime in seconds
+			updateTicks = SDL_GetTicks();
+
+			float seconds = (SDL_GetTicks() / 1000.0f);
+
+			lastPos = currentPos;
+			camPosTest = glm::vec2(200.0f + cos(seconds) * 20.0f, -128.0f + sin(seconds) * 20.0f); // move cam in a circle
+			currentPos = camPosTest;
+			//printf("%f", ts.alpha);
 		}
 		ts.calculateAlpha();
+		float renderFrametime = (SDL_GetTicks() - renderTicks) / 1000.0; // render frametime in seconds
+		renderTicks = SDL_GetTicks();
 
 		// render code goes here I think
-
-		float seconds = SDL_GetTicks() / 1000.0f;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the window
 
-		//cam.scale = glm::vec2((sin(seconds) * 0.5 + 1) * 0.06f, (cos(seconds) * 0.5 + 1) * 0.06f);
-		cam.setGlobalPos(200.0f + cos(seconds) * 20, -128.0f + sin(seconds * 1.5) * 5);
-		//renderer.cam.pos = glm::vec3(
-		//	32.0 + cos(seconds / 2.0) * 20.0,
-		//	sin(seconds / 2.0) * 20.0,
-		//	1.0f);
+		// interpolates camera pos between game updates by guessing it based on the last position and alpha, test code
+		cam.setGlobalPos(utils::lerp(camPosTest, lastPos, ts.alpha));
 
-		//renderer.cam.lookForwards();
-		//renderer.cam.enableManualView();
-		//renderer.cam.enablePerspective();
-		//renderer.cam.lookAt(glm::vec3(32.0f, 0.0f, 0.0f));
 
 
 		for (int i = 0; i < tempGenCount; i++) { // god i hope this works
@@ -94,8 +98,9 @@ int main(int argc, char* argv[])
 		ts.processFrameEnd(gw); // for the timestepper (limited to vsync)
 	}
 
+	world.logChunks();
+	chunkArr.clear();
 	gw.cleanUp();
-	//world.~World();
 	SDL_Quit();
 
 	return 0;

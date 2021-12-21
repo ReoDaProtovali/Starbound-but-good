@@ -1,7 +1,7 @@
 #include "Timestepper.hpp"
 
-Timestepper::Timestepper(float p_timestep)
-	: timeStep(p_timestep), accumulator(0.0f), currentTime(utils::hireTimeInSeconds()), alpha(0.0f), startTicks(0)
+Timestepper::Timestepper(float p_gameUpdateFPS)
+	: gameUpdateFPS(p_gameUpdateFPS), accumulator(0.0f), currentTime(utils::hireTimeInSeconds()), alpha(0.0f), startTicks(0), frameTicks(0), frameTime(0.0f)
 {}
 void Timestepper::processFrameStart() {
 	startTicks = SDL_GetTicks();
@@ -11,15 +11,15 @@ void Timestepper::processFrameStart() {
 	accumulator += frameTime;
 }
 bool Timestepper::accumulatorFull() {
-	return accumulator >= timeStep;
+	return accumulator >= 1 / gameUpdateFPS;
 }
 
 void Timestepper::calculateAlpha() {
-	alpha = accumulator / timeStep;
+	alpha = accumulator * gameUpdateFPS; // did some quick maf, same thing as accumulator / (1 / gameUpdateFPS)
 }
 void Timestepper::processFrameEnd(GameWindow& p_window) {
-	int frameTicks = SDL_GetTicks() - startTicks;
-	if (frameTicks < 1000.0f / p_window.getRefreshRate()) {
+	frameTicks = SDL_GetTicks() - startTicks;
+	if (frameTicks < (1000.0f / p_window.getRefreshRate())) {
 		SDL_Delay((Uint32)(1000.0f / p_window.getRefreshRate()) - frameTicks);
 	}
 }

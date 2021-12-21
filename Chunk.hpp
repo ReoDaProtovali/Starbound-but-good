@@ -16,7 +16,7 @@ struct WorldChunk
 	WorldChunk(void) : worldID(-1),
 		worldPos(glm::ivec2()),
 		VAO(0),
-		tiles(nullptr) {};
+		tiles(nullptr), invalid(true) {};
 	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
 	Tile** getTiles();
 	void cleanUp();
@@ -33,6 +33,8 @@ struct WorldChunk
 
 	bool vboIsCurrent = false;
 	GLuint VAO;
+
+	bool invalid;
 
 private:
 	Tile** tiles;

@@ -2,7 +2,7 @@
 #include "glm/glm.hpp"
 #include "GameConstants.hpp"
 
-WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID) {
+WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
 	tiles = new Tile * [128];
 	glGenVertexArrays(1, &VAO);
 	for (int y = 0; y < chunkSize; y++) {
