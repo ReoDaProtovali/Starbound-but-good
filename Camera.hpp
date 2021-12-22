@@ -38,20 +38,26 @@ struct Camera
 		float hUnit = p_screenHeight / p_gameHeight;
 		float wUnit = p_screenWidth / p_gameWidth;
 		float finalUnit;
+		float otherUnit;
+
 		if (wUnit < hUnit) {
 			finalUnit = wUnit;
+			otherUnit = (1.0f / finalUnit);
 		}
 		else {
 			finalUnit = hUnit;
+			otherUnit = (1.0f / finalUnit);
 		}
 		float cw_scaled = scale * finalUnit;
 		float ch_scaled = scale * finalUnit * p_aspectRatio;
 		if (!perspective) {
+			float halfWindowWidth = (p_gameWidth / p_screenWidth) / 2;
+			float halfWindowHeight = (p_gameHeight / p_screenHeight) / 2;
 			proj = glm::ortho(
-				0.0f, // Left
-				cw_scaled, // Right
-				0.0f, // Bottom
-				ch_scaled, // Top
+				0.0f - halfWindowWidth * finalUnit * scale, // Left
+				cw_scaled - halfWindowWidth * finalUnit * scale, // Right
+				0.0f-halfWindowHeight * otherUnit * scale, // Bottom
+				ch_scaled - halfWindowHeight * otherUnit * scale, // Top
 				0.1f, 1000.0f);
 		}
 		else {
@@ -71,9 +77,6 @@ struct Camera
 	void setTileScale(int p_verticalTiles) {
 		scale = p_verticalTiles;
 	}
-	//void multScaleCentered(float mult) {
-	//	scale *= mult;
-	//}
 	void setGlobalPos(glm::vec2 p_globalPos) { // global pos is in the unit of tiles
 		glm::vec2 pos_yInv = glm::vec2(p_globalPos.x, -p_globalPos.y);
 		pos = glm::vec3(pos_yInv, pos.z);
