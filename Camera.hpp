@@ -33,43 +33,45 @@ struct Camera
 		target = pos - forward; // look forwards
 		view = glm::lookAt(pos, target, glm::vec3(0.0f, 1.0f, 0.0f));
 	}
-
-	glm::mat4 getTransformMat4(float p_aspectRatio, float p_screenWidth, float p_screenHeight, float p_gameWidth, float p_gameHeight) {
-		float hUnit = p_screenHeight / p_gameHeight;
-		float wUnit = p_screenWidth / p_gameWidth;
-		float finalUnit;
-		float otherUnit;
-
-		if (wUnit < hUnit) {
-			finalUnit = wUnit;
-			otherUnit = (1.0f / finalUnit);
+	void setDimensions(float p_aspectRatio) {
+		dimensions.x = 1;
+		dimensions.y = 1.0f / p_aspectRatio;
+	}
+	glm::mat4 getTransformMat4(float p_screenWidth, float p_screenHeight, float p_windowWidth, float p_windowHeight) {
+		float screenScaling = 1.0;
+		if (p_windowWidth < p_windowHeight) {
+			screenScaling = (p_screenHeight/p_windowHeight) * (p_screenWidth / p_screenHeight);
 		}
 		else {
-			finalUnit = hUnit;
-			otherUnit = (1.0f / finalUnit);
+			screenScaling = (p_screenWidth/p_windowWidth);
 		}
-		float cw_scaled = scale * finalUnit;
-		float ch_scaled = scale * finalUnit * p_aspectRatio;
 		if (!perspective) {
-			float halfWindowWidth = (p_gameWidth / p_screenWidth) / 2;
-			float halfWindowHeight = (p_gameHeight / p_screenHeight) / 2;
 			proj = glm::ortho(
-				0.0f - halfWindowWidth * finalUnit * scale, // Left
-				cw_scaled - halfWindowWidth * finalUnit * scale, // Right
-				0.0f-halfWindowHeight * otherUnit * scale, // Bottom
-				ch_scaled - halfWindowHeight * otherUnit * scale, // Top
+				0.0f,
+				(dimensions.x) * scale * screenScaling,
+				0.0f,
+				(dimensions.y) * scale * screenScaling,
 				0.1f, 1000.0f);
 		}
 		else {
-			proj = glm::perspective(glm::radians(45.0f), p_aspectRatio, 0.1f, 1000.0f);
+			proj = glm::perspective(glm::radians(45.0f), p_screenWidth / p_screenHeight, 0.1f, 1000.0f);
 		}
 		if (!manualView) {
 			lookForwards(); // default behavior, can be overriden by other view setting functions
 		}
+		glm::vec2 windowDims;
+		if (p_windowHeight < p_windowWidth) {
+			windowDims = glm::vec2(1.0f, p_windowHeight / p_windowWidth);
+		}
+		else {
+			windowDims = glm::vec2(p_windowWidth / p_windowHeight, 1.0f);
+		}
+		glm::vec2 screenCenterPos = glm::vec2(windowDims / 2.0f) * scale;
+		view = glm::translate(view, glm::vec3(screenCenterPos, 0.0f));
 		return proj * view;
 	}
 	glm::vec2 getFramePos() {
-		return glm::vec2(pos.x - dimensions.x / 2, pos.y + dimensions.y / 2);
+		return glm::vec2(pos.x - (dimensions.x / 2.0f) * scale, pos.y + (dimensions.y / 2.0f) * scale);
 	}
 	//void setFrame(glm::vec2 ) {
 	//	dimensions = p_gw.

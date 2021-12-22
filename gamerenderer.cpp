@@ -55,10 +55,11 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
 	// Matrix that transforms from global space, to view space, to clip space in one swoop
 	SDL_DisplayMode dm;
 	SDL_GetDesktopDisplayMode(0, &dm);
-	float aspect = (float)dm.h / (float)dm.w;
+	float aspect = (float)dm.w / (float)dm.h;
 	int w, h;
 	SDL_GetWindowSize(p_window.window, &w, &h);
-	glm::mat4 finalTransform = cam.getTransformMat4(aspect, (float)dm.w, (float)dm.h, (float)w, (float)h);
+	cam.setDimensions(aspect);
+	glm::mat4 finalTransform = cam.getTransformMat4(dm.w, dm.h, w, h);
 	imageShader.setMat4Uniform("transform", finalTransform);
 
 	glDrawArrays(GL_TRIANGLES, 0, p_chunk.getVBOSize());
