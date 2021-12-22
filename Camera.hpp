@@ -23,7 +23,7 @@ struct Camera
 		right = glm::normalize(glm::cross(upGuide, direction));
 		up = glm::cross(direction, right);
 		forward = glm::cross(right, up); // forward calculate normalized forward facing vector
-		scale = 20.0f; // default scaling of 1
+		scale = 20.0f; // default scaling of 20 tiles
 		dimensions = glm::vec2(100.0f, 100.0f);
 		lookForwards();
 	};
