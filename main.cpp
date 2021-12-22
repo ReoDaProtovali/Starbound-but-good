@@ -129,10 +129,10 @@ int main(int argc, char* argv[])
 		}
 
 		if (gw.inpHandler.testKey(SDLK_q)) {
-			cam.scale *= 0.992f;
+			cam.tileScale *= 0.992f;
 		}
 		if (gw.inpHandler.testKey(SDLK_e)) {
-			cam.scale *= 1.01f;
+			cam.tileScale *= 1.01f;
 
 		}
 

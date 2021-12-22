@@ -12,7 +12,7 @@ struct Camera
 		right = glm::normalize(glm::cross(upGuide, direction));
 		up = glm::cross(direction, right);
 		forward = glm::cross(right, up); // forward calculate normalized forward facing vector
-		scale = 20.0f; // default scaling of 20 tiles
+		tileScale = 20.0f; // default scaling of 20 tiles
 		lookForwards();
 	};
 	Camera(glm::vec3 p_pos) {
@@ -22,7 +22,8 @@ struct Camera
 		right = glm::normalize(glm::cross(upGuide, direction));
 		up = glm::cross(direction, right);
 		forward = glm::cross(right, up); // forward calculate normalized forward facing vector
-		scale = 20.0f; // default scaling of 20 tiles
+		tileScale = 20.0f; // default scaling of 20 tiles
+		
 		lookForwards();
 	};
 
@@ -48,9 +49,9 @@ struct Camera
 		if (!perspective) {
 			proj = glm::ortho(
 				0.0f,
-				(dimensions.x) * scale * screenScaling,
+				(dimensions.x) * tileScale * screenScaling,
 				0.0f,
-				(dimensions.y) * scale * screenScaling,
+				(dimensions.y) * tileScale * screenScaling,
 				0.1f, 1000.0f);
 		}
 		else {
@@ -66,18 +67,21 @@ struct Camera
 		else {
 			windowDims = glm::vec2(p_windowWidth / p_windowHeight, 1.0f);
 		}
-		glm::vec2 screenCenterPos = glm::vec2(windowDims / 2.0f) * scale;
+		glm::vec2 screenCenterPos = glm::vec2(windowDims / 2.0f) * tileScale;
+		setFrame(
+			pos.x - screenCenterPos.x,
+			pos.y - screenCenterPos.y,
+			screenCenterPos.x * 2.0f,
+			screenCenterPos.y * 2.0f
+		);
 		view = glm::translate(view, glm::vec3(screenCenterPos, 0.0f));
 		return proj * view;
 	}
-	glm::vec2 getFramePos() {
-		return glm::vec2(pos.x - (dimensions.x / 2.0f) * scale, pos.y + (dimensions.y / 2.0f) * scale);
+	void setFrame(float p_trX, float p_trY, float p_width, float p_height) {
+		frame = glm::vec4(p_trX, p_trY, p_trX + p_width, p_trY + p_height);
 	}
-	//void setFrame(glm::vec2 ) {
-	//	dimensions = p_gw.
-	//}
 	void setTileScale(int p_verticalTiles) {
-		scale = p_verticalTiles;
+		tileScale = p_verticalTiles;
 	}
 	void setGlobalPos(glm::vec2 p_globalPos) { // global pos is in the unit of tiles
 		glm::vec2 pos_yInv = glm::vec2(p_globalPos.x, -p_globalPos.y);
@@ -100,7 +104,8 @@ struct Camera
 	glm::mat4 proj;
 	glm::mat4 view;
 	glm::vec2 dimensions;
-	float scale;
+	glm::vec4 frame;
+	float tileScale;
 	bool manualView = false;
 	bool perspective = false;
 
