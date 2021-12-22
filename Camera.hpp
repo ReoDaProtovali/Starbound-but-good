@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 #include <gtc/matrix_transform.hpp>
-
+#include <algorithm>
 struct Camera
 {
 	Camera() {
@@ -13,7 +13,6 @@ struct Camera
 		up = glm::cross(direction, right);
 		forward = glm::cross(right, up); // forward calculate normalized forward facing vector
 		scale = 20.0f; // default scaling of 20 tiles
-		dimensions = glm::vec2();
 		lookForwards();
 	};
 	Camera(glm::vec3 p_pos) {
@@ -24,7 +23,6 @@ struct Camera
 		up = glm::cross(direction, right);
 		forward = glm::cross(right, up); // forward calculate normalized forward facing vector
 		scale = 20.0f; // default scaling of 20 tiles
-		dimensions = glm::vec2(100.0f, 100.0f);
 		lookForwards();
 	};
 
@@ -36,11 +34,25 @@ struct Camera
 		view = glm::lookAt(pos, target, glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
-	glm::mat4 getTransformMat4(float p_aspectRatio) {
-		float cw_scaled = scale;
-		float ch_scaled = scale * p_aspectRatio;
+	glm::mat4 getTransformMat4(float p_aspectRatio, float p_screenWidth, float p_screenHeight, float p_gameWidth, float p_gameHeight) {
+		float hUnit = p_screenHeight / p_gameHeight;
+		float wUnit = p_screenWidth / p_gameWidth;
+		float finalUnit;
+		if (wUnit < hUnit) {
+			finalUnit = wUnit;
+		}
+		else {
+			finalUnit = hUnit;
+		}
+		float cw_scaled = scale * finalUnit;
+		float ch_scaled = scale * finalUnit * p_aspectRatio;
 		if (!perspective) {
-			proj = glm::ortho(-cw_scaled / 2, cw_scaled / 2, -ch_scaled / 2, ch_scaled / 2, 0.1f, 1000.0f);
+			proj = glm::ortho(
+				0.0f, // Left
+				cw_scaled, // Right
+				0.0f, // Bottom
+				ch_scaled, // Top
+				0.1f, 1000.0f);
 		}
 		else {
 			proj = glm::perspective(glm::radians(45.0f), p_aspectRatio, 0.1f, 1000.0f);
@@ -59,6 +71,9 @@ struct Camera
 	void setTileScale(int p_verticalTiles) {
 		scale = p_verticalTiles;
 	}
+	//void multScaleCentered(float mult) {
+	//	scale *= mult;
+	//}
 	void setGlobalPos(glm::vec2 p_globalPos) { // global pos is in the unit of tiles
 		glm::vec2 pos_yInv = glm::vec2(p_globalPos.x, -p_globalPos.y);
 		pos = glm::vec3(pos_yInv, pos.z);

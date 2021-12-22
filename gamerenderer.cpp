@@ -58,7 +58,7 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
 	float aspect = (float)dm.h / (float)dm.w;
 	int w, h;
 	SDL_GetWindowSize(p_window.window, &w, &h);
-	glm::mat4 finalTransform = cam.getTransformMat4(aspect);
+	glm::mat4 finalTransform = cam.getTransformMat4(aspect, (float)dm.w, (float)dm.h, (float)w, (float)h);
 	imageShader.setMat4Uniform("transform", finalTransform);
 
 	glDrawArrays(GL_TRIANGLES, 0, p_chunk.getVBOSize());

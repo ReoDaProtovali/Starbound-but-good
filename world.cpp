@@ -25,7 +25,7 @@ bool World::genChunk(int p_chunkX, int p_chunkY)
 	return false;
 }
 bool World::autoGen(Camera& p_cam) {
-	printf("%i ", (int)((p_cam.getFramePos().y + p_cam.dimensions.y) / (float)CHUNKSIZE));
+	//printf("%i, %i ", (int)((p_cam.getFramePos().y + p_cam.dimensions.y) / (float)CHUNKSIZE), (int)((p_cam.getFramePos().x + p_cam.getFramePos().x) / (float)CHUNKSIZE));
 	//for (int i = 
 	//	(int)(p_cam.pos.y / (float)CHUNKSIZE);
 	//	i < (int)((p_cam.getFramePos().y + p_cam.dimensions.y) / (float)CHUNKSIZE);
