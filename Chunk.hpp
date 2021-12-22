@@ -27,7 +27,7 @@ struct WorldChunk
 	GLuint generateVBO(SpriteSheet& p_spriteSheet);
 	int getVBOSize();
 
-	const int chunkSize = 64;
+	const int chunkSize = CHUNKSIZE;
 	glm::ivec2 worldPos;
 	int worldID;
 

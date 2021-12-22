@@ -1,15 +1,15 @@
 #include "GameRenderer.hpp"
-GameRenderer::GameRenderer() {
+GameRenderer::GameRenderer(glm::vec3 p_pos) {
 	imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
 	res = ResourceLoader();
-
+	cam.pos = p_pos;
 	GameRenderer::loadSpriteSheets();
 }
 
 void GameRenderer::loadSpriteSheets() {
 	bool success = true;
 	success = GameRenderer::res.load("res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE) &&
-	GameRenderer::res.load("res/tiles/testsheet.png", TextureID::TESTSPRITESHEET_TEXTURE);
+		GameRenderer::res.load("res/tiles/testsheet.png", TextureID::TESTSPRITESHEET_TEXTURE);
 	if (!success) {
 		throw std::invalid_argument("One or more file not found");
 	}
@@ -53,7 +53,12 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
 	imageShader.setMat4Uniform("model", modelTransform);
 
 	// Matrix that transforms from global space, to view space, to clip space in one swoop
-	glm::mat4 finalTransform = cam.getTransformMat4((float)p_window.width, (float)p_window.height);
+	SDL_DisplayMode dm;
+	SDL_GetDesktopDisplayMode(0, &dm);
+	float aspect = (float)dm.h / (float)dm.w;
+	int w, h;
+	SDL_GetWindowSize(p_window.window, &w, &h);
+	glm::mat4 finalTransform = cam.getTransformMat4(aspect);
 	imageShader.setMat4Uniform("transform", finalTransform);
 
 	glDrawArrays(GL_TRIANGLES, 0, p_chunk.getVBOSize());

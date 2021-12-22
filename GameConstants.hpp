@@ -6,6 +6,7 @@
 #include <vector>
 #include "Vertex.hpp"
 
+constexpr auto CHUNKSIZE = 64;;
 typedef enum class TextureID {
 	NO_TEXTURE,
 	STONE_TEXTURE,

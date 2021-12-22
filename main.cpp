@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 	GameWindow gw = GameWindow("Borstoind");
 	SDL_Window* window = gw.window;
 
-	GameRenderer renderer = GameRenderer();
+	GameRenderer renderer = GameRenderer(glm::vec3(0.0f, 0.0f, 1.0f));
 	Camera& cam = renderer.cam;
 	//renderer.cam.setTileScale(16); // Sets the display width of a single tile to be 16px
 	renderer.cam.pos = glm::vec3(0.0, 0.0, 100.0); // testing having the cam further away
@@ -56,6 +56,16 @@ int main(int argc, char* argv[])
 			else if (event.type == SDL_KEYDOWN) {
 				gw.inpHandler.processKeyDown(event.key.keysym.sym);
 			}
+			else if (event.type == SDL_WINDOWEVENT) {
+				if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+					SDL_Log("Window %d resized to %dx%d",
+						event.window.windowID, event.window.data1,
+						event.window.data2);
+					gw.width = event.window.data1;
+					gw.height = event.window.data2;
+					SDL_SetWindowSize(window, gw.width, gw.height);
+				}
+			}
 			else if (event.type == SDL_KEYUP) {
 				gw.inpHandler.processKeyUp(event.key.keysym.sym);
 				if (event.key.keysym.sym == SDLK_ESCAPE)
@@ -84,6 +94,7 @@ int main(int argc, char* argv[])
 				printf("Current Update FPS: %f \n", utils::averageVector(updateFPSVec));
 				printf("Current Draw FPS: %f \n", utils::averageVector(renderFPSVec));
 				//utils::logVector(updateFPSVec);
+				//printf("Current Window Size: %ix%i", )
 			}
 			ts.processFrameStart();
 
@@ -102,7 +113,7 @@ int main(int argc, char* argv[])
 			renderFPSVec.erase(renderFPSVec.begin());
 		}
 
-		cam.scale = glm::vec2(0.5, 0.5);
+		//cam.scale = glm::vec2(0.5, 0.5);
 
 		if (gw.inpHandler.testKey(SDLK_w)) {
 			cam.pos.y += 1;
@@ -117,9 +128,20 @@ int main(int argc, char* argv[])
 			cam.pos.x += 1;
 		}
 
-		for (int i = 0; i < tempGenCount; i++) { // god i hope this works
-			renderer.drawChunk(chunkArr[i], gw);
+		if (gw.inpHandler.testKey(SDLK_q)) {
+			cam.scale *= 0.992f;
 		}
+		if (gw.inpHandler.testKey(SDLK_e)) {
+			cam.scale *= 1.01f;
+
+		}
+
+		world.autoGen(renderer.cam);
+		std::map<wc::ivec2, WorldChunk>::iterator it = world.chunkMap.begin();
+		while (it != world.chunkMap.end()) {
+			renderer.drawChunk(it->second, gw);
+			++it;
+		};
 
 		SDL_GL_SwapWindow(window); // Put the image buffer into the window
 	}

@@ -21,7 +21,7 @@
 class GameRenderer
 {
 public:
-	GameRenderer();
+	GameRenderer(glm::vec3 p_camPos);
 	//GameRenderer(spriteShader);
 
 	ResourceLoader res;
@@ -32,7 +32,7 @@ public:
 	void loadSpriteSheets();
 	unsigned int bufferImage(Image& p_image);
 
-	Camera cam = Camera();
+	Camera cam;
 
 	Shader imageShader;
 

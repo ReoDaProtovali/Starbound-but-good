@@ -62,6 +62,13 @@ namespace utils {
 	T clamp(T v, T p_min, T p_max) {
 		return std::min(std::max(v, p_min), p_max);
 	}
+	inline bool pointCollidingRect(glm::vec2 p_pointPos, glm::vec2 p_rectPos, glm::vec2 p_rectDim) {
+		glm::vec2 relativePos = p_rectPos - p_pointPos;
+		if ((relativePos.x <= p_rectDim.x) && (relativePos.y <= p_rectDim.y) && (relativePos.x > 0.0f) && (relativePos.y > 0.0f)) {
+			return true;
+		};
+		return false;
+	}
 }
 struct fpsGauge {
 	fpsGauge() {}
