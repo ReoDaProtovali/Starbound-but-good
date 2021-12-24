@@ -30,18 +30,14 @@ int main(int argc, char* argv[])
 	Camera& cam = renderer.cam;
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
 	//renderer.cam.setTileScale(16); // Sets the display width of a single tile to be 16px
-	renderer.cam.pos = glm::vec3(0.0, 0.0, 100.0); // testing having the cam further away
+	renderer.cam.pos = glm::vec3(0.0, 10.0 * CHUNKSIZE, 1.0); // testing having the cam further away
 	renderer.cam.tileScale = 128.0;
+	cam.updateFrame(gw.width, gw.height);
+
 
 	World world = World();
 
 	std::vector<WorldChunk> chunkArr;
-	int tempGenCount = 60;
-	for (int i = 0; i < tempGenCount; i++) {
-		world.genChunk(i % (int)sqrt(tempGenCount), i / (int)sqrt(tempGenCount));
-		chunkArr.push_back(world.getChunk(glm::ivec2(i % (int)sqrt(tempGenCount), i / (int)sqrt(tempGenCount))));
-	}
-
 
 	Timestepper ts = Timestepper(1, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0;
@@ -84,7 +80,7 @@ int main(int argc, char* argv[])
 			updateFPSGauge.stopStopwatch();
 			updateFPSGauge.startStopwatch();
 			//if (updateFPSGauge.getSecondsElapsed() != 0) {
-				updateFPSVec.push_back(1.0f / updateFPSGauge.getSecondsElapsed());
+			updateFPSVec.push_back(1.0f / updateFPSGauge.getSecondsElapsed());
 			//}
 			if (updateFPSVec.size() > (size_t)ts.gameUpdateFPS / 4) { // quarter second fps buffer
 				updateFPSVec.erase(updateFPSVec.begin());
@@ -95,8 +91,7 @@ int main(int argc, char* argv[])
 				system("CLS");
 				printf("Current Update FPS: %f \n", utils::averageVector(updateFPSVec));
 				printf("Current Draw FPS: %f \n", utils::averageVector(renderFPSVec));
-				//utils::logVector(updateFPSVec);
-				//printf("Current Window Size: %ix%i", )
+				printf("Cam Position: %f, %f \n", cam.pos.x, cam.pos.y);
 			}
 			ts.processFrameStart();
 
@@ -111,7 +106,7 @@ int main(int argc, char* argv[])
 		renderFPSGauge.stopStopwatch();
 		renderFPSGauge.startStopwatch();
 		//if (renderFPSGauge.getSecondsElapsed() != 0) {
-			renderFPSVec.push_back(1.0f / renderFPSGauge.getSecondsElapsed());
+		renderFPSVec.push_back(1.0f / renderFPSGauge.getSecondsElapsed());
 		//}
 		if (renderFPSVec.size() > (size_t)ts.renderFPS / 4) { // quarter second fps display buffer
 			renderFPSVec.erase(renderFPSVec.begin());
@@ -159,8 +154,8 @@ int main(int argc, char* argv[])
 				(chunkGlobalPos.y > cam.frame.y - 1 * CHUNKSIZE) &&
 				(chunkGlobalPos.y < cam.frame.w + 1 * CHUNKSIZE)
 				) {
-			renderer.drawChunk(it->second, gw);
-		}
+				renderer.drawChunk(it->second, gw);
+			}
 			++it;
 		};
 

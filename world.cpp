@@ -33,7 +33,9 @@ bool World::autoGen(Camera& p_cam) {
 			(int)(p_cam.frame.x / (float)CHUNKSIZE) - 2;
 			j < (int)((p_cam.frame.z) / (float)CHUNKSIZE) + 2;
 			j++) {
-			World::genChunk(j, i);
+			if ((i > 0) && (i < 12) && (j > -20) && (j < 20)) {
+				World::genChunk(j, i);
+			}
 		}
 	}
 	return false;
@@ -50,7 +52,7 @@ void World::logChunks() {
 }
 WorldChunk& World::getChunk(glm::ivec2 p_worldPos, bool& success) {
 	WorldChunk nullChunk;
-	if (chunkMap.size() == 0) { success = false; return nullChunk;  }
+	if (chunkMap.size() == 0) { success = false; return nullChunk; }
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.find(p_worldPos);
 	if (it != chunkMap.end()) {
 		success = true;
@@ -68,9 +70,9 @@ WorldChunk& World::getChunk(glm::ivec2 p_worldPos) {
 World::~World() {
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();
 	while (it != chunkMap.end()) {
-			std::cout << "Attempting to delete chunk at " << it->second.worldPos.x << ", " << it->second.worldPos.y << std::endl;
-			it->second.cleanUp();
-			it++;
+		std::cout << "Attempting to delete chunk at " << it->second.worldPos.x << ", " << it->second.worldPos.y << std::endl;
+		it->second.cleanUp();
+		it++;
 	}
 }
 
