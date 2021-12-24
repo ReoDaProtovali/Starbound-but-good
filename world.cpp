@@ -6,7 +6,7 @@ bool World::genChunk(glm::ivec2 p_worldPos)
 	World::getChunk(p_worldPos, chunkExists);
 	if (!chunkExists) {
 		WorldChunk chunk = WorldChunk(p_worldPos, 0);
-		chunk.fillRandom();
+		chunk.worldGenerate(p_worldPos);
 		chunkMap.insert(std::make_pair(p_worldPos, chunk));
 		return true;
 	}
@@ -18,7 +18,7 @@ bool World::genChunk(int p_chunkX, int p_chunkY)
 	World::getChunk(glm::ivec2(p_chunkX, p_chunkY), chunkExists);
 	if (!chunkExists) {
 		WorldChunk chunk = WorldChunk(glm::ivec2(p_chunkX, p_chunkY), 0);
-		chunk.fillRandom();
+		chunk.worldGenerate(glm::ivec2(p_chunkX, p_chunkY));
 		chunkMap.insert(std::make_pair(glm::ivec2(p_chunkX, p_chunkY), chunk));
 		return true;
 	}

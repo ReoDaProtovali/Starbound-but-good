@@ -64,6 +64,7 @@ namespace utils {
 	}
 	inline bool pointCollidingRect(glm::vec2 p_pointPos, glm::vec2 p_rectPos, glm::vec2 p_rectDim) {
 		glm::vec2 relativePos = p_rectPos - p_pointPos;
+		//printf("%f, %f \n", relativePos.x, relativePos.y);
 		if ((relativePos.x <= p_rectDim.x) && (relativePos.y <= p_rectDim.y) && (relativePos.x > 0.0f) && (relativePos.y > 0.0f)) {
 			return true;
 		};
@@ -71,7 +72,7 @@ namespace utils {
 	}
 }
 struct fpsGauge {
-	fpsGauge() {}
+	fpsGauge() { elapsed = 0; }
 	int start = SDL_GetTicks();
 	int elapsed;
 

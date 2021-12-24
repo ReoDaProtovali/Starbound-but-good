@@ -9,6 +9,7 @@
 #include "Vertex.hpp"
 #include "GL/glew.h"
 #include "glm/glm.hpp"
+#include <noise/noise.h>
 
 #include <vector>
 struct WorldChunk
@@ -21,7 +22,9 @@ struct WorldChunk
 	Tile** getTiles();
 	void cleanUp();
 
+	noise::module::Perlin noiseGenerator;
 	void fillRandom();
+	void worldGenerate(glm::ivec2 chunkPos);
 	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
 
 	GLuint generateVBO(SpriteSheet& p_spriteSheet);
@@ -35,6 +38,7 @@ struct WorldChunk
 	GLuint VAO;
 
 	bool invalid;
+	bool isEmpty = true;
 
 private:
 	Tile** tiles;

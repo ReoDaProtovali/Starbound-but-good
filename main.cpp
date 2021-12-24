@@ -28,8 +28,10 @@ int main(int argc, char* argv[])
 
 	GameRenderer renderer = GameRenderer(glm::vec3(0.0f, 0.0f, 1.0f));
 	Camera& cam = renderer.cam;
+	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
 	//renderer.cam.setTileScale(16); // Sets the display width of a single tile to be 16px
 	renderer.cam.pos = glm::vec3(0.0, 0.0, 100.0); // testing having the cam further away
+	renderer.cam.tileScale = 128.0;
 
 	World world = World();
 
@@ -41,7 +43,7 @@ int main(int argc, char* argv[])
 	}
 
 
-	Timestepper ts = Timestepper(60, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(1, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0;
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
@@ -99,6 +101,8 @@ int main(int argc, char* argv[])
 			ts.processFrameStart();
 
 		}
+		world.autoGen(renderer.cam);
+
 		ts.calculateAlpha();
 
 		// render code goes here I think
@@ -116,16 +120,16 @@ int main(int argc, char* argv[])
 		//cam.scale = glm::vec2(0.5, 0.5);
 
 		if (gw.inpHandler.testKey(SDLK_w)) {
-			cam.pos.y += 1;
+			camVelocity.y += 0.1;
 		}
 		if (gw.inpHandler.testKey(SDLK_a)) {
-			cam.pos.x -= 1;
+			camVelocity.x -= 0.1;
 		}
 		if (gw.inpHandler.testKey(SDLK_s)) {
-			cam.pos.y -= 1;
+			camVelocity.y -= 0.1;
 		}
 		if (gw.inpHandler.testKey(SDLK_d)) {
-			cam.pos.x += 1;
+			camVelocity.x += 0.1;
 		}
 
 		if (gw.inpHandler.testKey(SDLK_q)) {
@@ -133,13 +137,30 @@ int main(int argc, char* argv[])
 		}
 		if (gw.inpHandler.testKey(SDLK_e)) {
 			cam.tileScale *= 1.01f;
-
 		}
+		camVelocity *= 0.9;
+		cam.pos += glm::vec3(camVelocity, 0.0f);
 
-		world.autoGen(renderer.cam);
+		int w, h;
+		SDL_GetWindowSize(gw.window, &w, &h);
+		cam.updateFrame(w, h);
+		cam.lookAt(glm::vec3(0.0, 0.0, 0.0));
 		std::map<wc::ivec2, WorldChunk>::iterator it = world.chunkMap.begin();
 		while (it != world.chunkMap.end()) {
+			//printf("World Pos: %i, %i \n", it->second.worldPos.x, it->second.worldPos.y);
+			//printf("Cam Frame Pos1: %f, %f \n", cam.frame.x, cam.frame.y);
+			//printf("Cam Frame Pos2: %f, %f \n", cam.frame.z, cam.frame.w);
+
+			glm::vec2 chunkGlobalPos = it->second.worldPos * CHUNKSIZE;
+			if (
+				//(chunkGlobalPos.x > cam.frame.x) &&
+				(chunkGlobalPos.x > cam.frame.x - 1 * CHUNKSIZE) &&
+				(chunkGlobalPos.x < cam.frame.z + 1 * CHUNKSIZE) &&
+				(chunkGlobalPos.y > cam.frame.y - 1 * CHUNKSIZE) &&
+				(chunkGlobalPos.y < cam.frame.w + 1 * CHUNKSIZE)
+				) {
 			renderer.drawChunk(it->second, gw);
+		}
 			++it;
 		};
 

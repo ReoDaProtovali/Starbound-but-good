@@ -13,6 +13,7 @@ struct Camera
 		up = glm::cross(direction, right);
 		forward = glm::cross(right, up); // forward calculate normalized forward facing vector
 		tileScale = 20.0f; // default scaling of 20 tiles
+		frame = glm::vec4(-100.0, -100.0, 100.0, 100.0); // fixes a bug
 		lookForwards();
 	};
 	Camera(glm::vec3 p_pos) {
@@ -80,8 +81,24 @@ struct Camera
 	void setFrame(float p_trX, float p_trY, float p_width, float p_height) {
 		frame = glm::vec4(p_trX, p_trY, p_trX + p_width, p_trY + p_height);
 	}
+	void updateFrame(float p_windowHeight, float p_windowWidth) {
+		glm::vec2 windowDims;
+		if (p_windowHeight < p_windowWidth) {
+			windowDims = glm::vec2(1.0f, p_windowHeight / p_windowWidth);
+		}
+		else {
+			windowDims = glm::vec2(p_windowWidth / p_windowHeight, 1.0f);
+		}
+		glm::vec2 screenCenterPos = glm::vec2(windowDims / 2.0f) * tileScale;
+		setFrame(
+			pos.x - screenCenterPos.x,
+			pos.y - screenCenterPos.y,
+			screenCenterPos.x * 2.0f,
+			screenCenterPos.y * 2.0f
+		);
+	}
 	void setTileScale(int p_verticalTiles) {
-		tileScale = p_verticalTiles;
+		tileScale = (float)p_verticalTiles;
 	}
 	void setGlobalPos(glm::vec2 p_globalPos) { // global pos is in the unit of tiles
 		glm::vec2 pos_yInv = glm::vec2(p_globalPos.x, -p_globalPos.y);
