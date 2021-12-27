@@ -17,6 +17,8 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
+#include <semaphore>
+#include <thread>
 
 int main(int argc, char* argv[])
 {
@@ -39,7 +41,7 @@ int main(int argc, char* argv[])
 
 	std::vector<WorldChunk> chunkArr;
 
-	Timestepper ts = Timestepper(1, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(30, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0;
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
