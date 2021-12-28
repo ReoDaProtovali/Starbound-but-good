@@ -176,4 +176,7 @@
       <Filter>Shaders\Vertex Shaders</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
+  </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 	texture = stbi_load(p_filepath, &width, &height, &nrChannels, 0);
 
 	if (texture == NULL) {
-		std::cout << "Failed to load texture" << std::endl;
+		std::cout << "Failed to load image" << std::endl;
 		return NULL;
 	}
 	else {

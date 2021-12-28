@@ -1,0 +1,37 @@
+#TODO::
+
+CLEAN THE CODE UP, GET RID OF UNNECESSARY CODE / CONSOLIDATE, it should be readable somewhat
+Find a way to handle textures better, not on a class-by-class basis
+
+Make resourceloader use std::map instead of a vector
+Check for memory leaks, or at least figure out how to properly delete the Array2D data.
+
+Implement tile lighting, test using it within the shader
+	- Add a getTile method to the world class
+	- experiment with threading
+
+Add seamless tile connections, tile decor
+MAKE MORE TILES
+Add more tile properties
+Organized tile properties, json definable, figure out better ways to get properties of a specific tile
+
+World seeds, json definable world types, biomes, and more
+World chunk serialization, saving to disk
+
+Begin on entities, discuss how physics will work, convince reo that making a physics engine by hand will be a pain
+Add a player, work on block placing, breaking, basic item mechanics.
+perhaps meddle with particles, maybe
+
+Figure out how multi-tile objects placed within the world will work, accounting for chunk borders
+
+optimize, optimize, optimize
+
+LONG TERM::
+Liquid physics
+Full menu, game states, options, save data, races, planets, the like
+Space exploration
+Complementary dynamic light system, things like bloom, volumetrics, color multiplication for glow
+get more people hyped to learn c++ and opengl
+solid, defined modding engine, helpful for development also
+All basic game things should be able to be done using a coherent system, a layer of abstraction that allows easy expansion
+
