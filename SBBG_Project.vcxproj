@@ -124,6 +124,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,8 +179,11 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="inputhandler.cpp" />
+    <ClCompile Include="Lighting.cpp" />
+    <ClCompile Include="LightingSolver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="gamewindow.cpp" />
+    <ClCompile Include="pixmap.cpp" />
     <ClCompile Include="resourceloader.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="spritesheet.cpp" />
@@ -188,6 +192,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Array2D.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="Entity.hpp" />
@@ -197,6 +202,9 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="GameAssets.hpp" />
     <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="GameWindow.hpp" />
+    <ClInclude Include="Lighting.hpp" />
+    <ClInclude Include="LightingSolver.hpp" />
+    <ClInclude Include="Pixmap.hpp" />
     <ClInclude Include="ResourceLoader.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="SpriteSheet.hpp" />
@@ -208,8 +216,10 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\LightingFS.glsl" />
     <None Include="Shaders\ImageFS.glsl" />
     <None Include="Shaders\ImageVS.glsl" />
+    <None Include="Shaders\LightingVS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,7 +6,6 @@
 
 #include "entity.hpp"
 #include "utils.hpp"
-#include "World.hpp"
 #include "Chunk.hpp"
 #include "Tile.hpp"
 #include "ResourceLoader.hpp"
@@ -26,6 +25,7 @@ public:
 	void initGL();
 	void cleanUp();
 	int getRefreshRate();
+	void bindAsRenderTarget();
 	int width;
 	int height;
 	InputHandler inpHandler;

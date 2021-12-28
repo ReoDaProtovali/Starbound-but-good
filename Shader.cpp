@@ -95,11 +95,23 @@ void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 {
     glUniform1i(glGetUniformLocation(programID, p_name.c_str()), p_value);
 }
+void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
+{
+    glUniform1i(glGetUniformLocation(programID, p_name.c_str()), p_value);
+    uniforms.push_back(p_value);
+}
+bool Shader::texUniformExists(GLuint p_uniformID) {
+    for (GLuint ID : uniforms) {
+        if (ID == p_uniformID) {
+            return true;
+        }
+    }
+    return false;
+}
 void Shader::setFloatUniform(const std::string& p_name, GLfloat p_value) const
 {
     glUniform1f(glGetUniformLocation(programID, p_name.c_str()), p_value);
 }
-
 void Shader::setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const
 {
     glUniformMatrix4fv(glGetUniformLocation(programID, p_name.c_str()), 1, GL_FALSE, glm::value_ptr(p_value));

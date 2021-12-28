@@ -11,10 +11,12 @@
 #include "utils.hpp"
 #include "glm/glm.hpp"
 #include "Camera.hpp"
+#include "GameWindow.hpp"
+#include "GL/glew.h"
 #include <map>
 
 
-
+class GameRenderer;
 struct WorldChunk;
 namespace wc {
 	struct ivec2 { // this is scuffed but I dont know how else to set the comparison operator for a thing I didnt write
@@ -43,12 +45,12 @@ class World
 {
 public:
 	World() { std::cout << (wc::ivec2(1, 0) < wc::ivec2(1, 1)) << std::endl; };
-	~World();
 	bool genChunk(glm::ivec2 p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
 	bool autoGen(Camera& p_cam);
 	WorldChunk& getChunk(glm::ivec2 p_worldPos, bool& success);
 	WorldChunk& getChunk(glm::ivec2 p_worldPos);
+	void drawWorld(GameRenderer& renderer, GameWindow& gw);
 	void logSize();
 	void logChunks();
 	std::map<wc::ivec2, WorldChunk> chunkMap;

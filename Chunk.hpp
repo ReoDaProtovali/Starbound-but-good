@@ -12,21 +12,21 @@
 #include <noise/noise.h>
 
 #include <vector>
+#include "Array2D.hpp"
 struct WorldChunk
 {
 	WorldChunk(void) : worldID(-1),
 		worldPos(glm::ivec2()),
 		VAO(0),
-		tiles(nullptr), invalid(true) {};
+		tiles(Array2D<Tile>(0, 0)), invalid(true) {};
 	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
-	Tile** getTiles();
-	void cleanUp();
 
 	noise::module::Perlin noiseGenerator;
 	void fillRandom();
 	void worldGenerate(glm::ivec2 chunkPos);
 	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
 
+	Tile* getTiles();
 	GLuint generateVBO(SpriteSheet& p_spriteSheet);
 	int getVBOSize();
 
@@ -41,7 +41,7 @@ struct WorldChunk
 	bool isEmpty = true;
 
 private:
-	Tile** tiles;
+	Array2D<Tile> tiles;
 	std::vector<Vertex> verts;
 
 };

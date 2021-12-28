@@ -15,9 +15,11 @@ class Shader
 		void setBoolUniform(const std::string& p_name, bool p_value) const;
 		void setIntUniform(const std::string& p_name, GLint p_value) const;
 		void setFloatUniform(const std::string& p_name, GLfloat p_value) const;
+		void setTexUniform(const std::string& p_name, GLuint p_value);
 		void setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const;
-
+		bool texUniformExists(GLuint p_uniformID);
 		GLuint programID;
+		std::vector<GLuint> uniforms;
 
 };
 

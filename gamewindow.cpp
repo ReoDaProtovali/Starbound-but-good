@@ -1,4 +1,5 @@
 #include "GameWindow.hpp"
+#include "World.hpp"
 
 
 GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
@@ -70,7 +71,10 @@ void GameWindow::initGL() {
 void GameWindow::cleanUp() {
 	SDL_DestroyWindow(window);
 }
-
+void GameWindow::bindAsRenderTarget() {
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glViewport(0, 0, width, height);
+}
 int GameWindow::getRefreshRate() {
 	int displayIndex = SDL_GetWindowDisplayIndex(window);
 	SDL_DisplayMode mode;

@@ -1,4 +1,5 @@
 #include "World.hpp"
+#include "GameRenderer.hpp"
 
 bool World::genChunk(glm::ivec2 p_worldPos)
 {
@@ -67,12 +68,27 @@ WorldChunk& World::getChunk(glm::ivec2 p_worldPos) {
 		return it->second;
 	}
 }
-World::~World() {
+void World::drawWorld(GameRenderer& renderer, GameWindow& gw) {
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();
-	while (it != chunkMap.end()) {
-		std::cout << "Attempting to delete chunk at " << it->second.worldPos.x << ", " << it->second.worldPos.y << std::endl;
-		it->second.cleanUp();
-		it++;
-	}
+	while (it != chunkMap.end()) { // go through all the chunks in the world
+		glm::vec2 chunkGlobalPos = it->second.worldPos * CHUNKSIZE;
+		if (
+			(chunkGlobalPos.x > renderer.cam.frame.x - 1 * CHUNKSIZE) &&
+			(chunkGlobalPos.x < renderer.cam.frame.z + 1 * CHUNKSIZE) &&
+			(chunkGlobalPos.y > renderer.cam.frame.y - 1 * CHUNKSIZE) &&
+			(chunkGlobalPos.y < renderer.cam.frame.w + 1 * CHUNKSIZE)
+			) {
+			renderer.drawChunk(it->second, gw);
+		}
+		++it;
+	};
 }
+//World::~World() {
+//	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();
+//	while (it != chunkMap.end()) {
+//		std::cout << "Attempting to delete chunk at " << it->second.worldPos.x << ", " << it->second.worldPos.y << std::endl;
+//		it->second.cleanUp();
+//		it++;
+//	}
+//}
 

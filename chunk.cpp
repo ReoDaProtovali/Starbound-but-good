@@ -3,29 +3,20 @@
 #include "GameConstants.hpp"
 
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
-	tiles = new Tile * [128];
+	tiles = Array2D<Tile>(chunkSize, chunkSize);
 	glGenVertexArrays(1, &VAO);
-	for (int y = 0; y < chunkSize; y++) {
-		tiles[y] = new Tile[chunkSize];
-	}
+	
 	noiseGenerator.SetOctaveCount(10);
 	noiseGenerator.SetPersistence(0.54);
-}
-void WorldChunk::cleanUp() {
-	for (int y = 1; y < chunkSize; y++) {
-		//std::cout << typeid(tiles[y]).name()/*"THIS LINE OF CODE WAS EXECUTED"*/ << std::endl;
-		delete tiles[y];
-	}
-	delete tiles;
 }
 void WorldChunk::fillRandom() {
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (rand() % 10 > 5) {
-				tiles[y][x] = Tile(glm::ivec2(x, y), 1);
+				tiles(x, y) = Tile(glm::ivec2(x, y), 1);
 			}
 			else {
-				tiles[y][x] = Tile(glm::ivec2(x, y), 2);
+				tiles(x, y) = Tile(glm::ivec2(x, y), 2);
 			}
 		}
 	}
@@ -60,19 +51,19 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 			//std::cout << utils::clamp(globalY + surfaceLevel, 0.0f, 10.0f) / 10.0f << std::endl;
 			if (caveLayer2 < 0.05f + (utils::clamp(globalY - height + 64.0f, 0.0f, 10.0f) / 10.0f) + utils::clamp(globalY + 300.0f, 0.0f, 300.0f) / 350.0f) {
 				if (globalY > height) {
-					tiles[y][x] = Tile(glm::ivec2(x, y), 0);
+					tiles(x, y) = Tile(glm::ivec2(x, y), 0);
 				}
 				else {
 					if (globalY < -40.0 + height2) {
-						tiles[y][x] = Tile(glm::ivec2(x, y), 1);
+						tiles(x, y) = Tile(glm::ivec2(x, y), 1);
 					}
 					else {
-						tiles[y][x] = Tile(glm::ivec2(x, y), 2);
+						tiles(x, y) = Tile(glm::ivec2(x, y), 2);
 					}
 				}
 			}
 			else {
-				tiles[y][x] = Tile(glm::ivec2(x, y), 0);
+				tiles(x, y) = Tile(glm::ivec2(x, y), 0);
 			}
 		}
 	}
@@ -85,8 +76,8 @@ GLuint WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
-			if (WorldChunk::tiles[y][x].tileID != 0) {
-				unsigned int tID = WorldChunk::tiles[y][x].tileID;
+			if (tiles(x, y).tileID != 0) {
+				unsigned int tID = tiles(x, y).tileID;
 				float x_f = (float)x;
 				float y_f = (float)-y; // to make the model origin top left, I set the y to be negative
 				float imprecisionCorrection = 0.0005f; // removes occasional black lines that show up between tiles
@@ -129,8 +120,8 @@ int WorldChunk::getVBOSize() {
 	return (int)verts.size();
 }
 
-Tile** WorldChunk::getTiles() {
-	return tiles;
+Tile* WorldChunk::getTiles() {
+	return tiles.getData();
 }
 void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates) {
 	return;

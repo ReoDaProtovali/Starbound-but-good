@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 #include <vector>
 #include "Vertex.hpp"
-
+#include "GL/glew.h"
 constexpr auto CHUNKSIZE = 64;;
 typedef enum class TextureID {
 	NO_TEXTURE,
@@ -35,6 +35,5 @@ typedef enum t_attrib_id
 	attrib_position,
 	attrib_texCoord
 } t_attrib_id;
-
 
 #endif
