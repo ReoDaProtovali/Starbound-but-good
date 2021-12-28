@@ -34,6 +34,7 @@ void GameRenderer::loadSpriteSheets() {
 
 }
 void GameRenderer::initFBO() {
+	std::cout << "FBO init done" << std::endl;
 	glGenFramebuffers(1, &screenFBO);
 	glGenTextures(1, &screenColorTex);
 	glGenRenderbuffers(1, &depthBuffer);
@@ -60,6 +61,7 @@ void GameRenderer::initFBO() {
 	glDrawBuffers(1, DrawBuffers);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void GameRenderer::bindImage(Image& p_image, GLenum p_activeTexture) {
 	unsigned int texture;

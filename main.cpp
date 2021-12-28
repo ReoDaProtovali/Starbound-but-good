@@ -64,6 +64,7 @@ int main(int argc, char* argv[])
 	GameRenderer renderer = GameRenderer(sm.w, sm.h, ww, wh);
 
 	Camera& cam = renderer.cam;
+	//cam.pos = glm::vec3(0, 0, 0);
 	cam.updateFrame((float)gw.width, (float)gw.height); // actually, this is probably unneeded
 
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
@@ -177,17 +178,21 @@ int main(int argc, char* argv[])
 		cam.pos += glm::vec3(camVelocity, 0.0f);
 		cam.lookAt(glm::vec3(0.0, 0.0, 0.0));
 
-		//glBindFramebuffer(GL_FRAMEBUFFER, renderer.screenFBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, renderer.screenFBO);
+		//gw.bindAsRenderTarget();
+		glClearColor(0.8f, 0.8f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		world.drawWorld(renderer, gw);
+
 		//glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		//glViewport(0, 0, gw.width, gw.height);
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//world.drawWorld(renderer, gw);
 
 		gw.bindAsRenderTarget();
-		glClearColor(0.8f, 0.8f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		world.drawWorld(renderer, gw);
-		//renderer.doLighting();
+		glDisable(GL_DEPTH_TEST);
+		renderer.doLighting();
 
 		SDL_GL_SwapWindow(window); // Put the image buffer into the window
 	}

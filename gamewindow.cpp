@@ -21,7 +21,7 @@ GameWindow::GameWindow(const char* p_title)
 {
 
 
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 300, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 300, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -35,7 +35,7 @@ GameWindow::GameWindow(const char* p_title)
 	width = dm.w;
 	height = dm.h;
 
-	SDL_SetWindowSize(window, width / 2, height / 2);
+	//SDL_SetWindowSize(window, width / 2, height / 2);
 	GameWindow::initGL();
 
 }
