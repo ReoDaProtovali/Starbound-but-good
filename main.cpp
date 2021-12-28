@@ -179,10 +179,11 @@ int main(int argc, char* argv[])
 		cam.lookAt(glm::vec3(0.0, 0.0, 0.0));
 
 		glBindFramebuffer(GL_FRAMEBUFFER, renderer.screenFBO);
+		glDrawBuffers(1, renderer.DrawBuffers);
 		//gw.bindAsRenderTarget();
-		glClearColor(0.8f, 0.8f, 1.0f, 1.0f);
+		glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 		world.drawWorld(renderer, gw);
 
 		//glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -191,7 +192,9 @@ int main(int argc, char* argv[])
 		//world.drawWorld(renderer, gw);
 
 		gw.bindAsRenderTarget();
+		glDrawBuffer(GL_BACK);
 		glDisable(GL_DEPTH_TEST);
+		//glViewport(0, 0, gw.width, gw.height);
 		renderer.doLighting();
 
 		SDL_GL_SwapWindow(window); // Put the image buffer into the window

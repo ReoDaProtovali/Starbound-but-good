@@ -59,7 +59,6 @@ void Lighting::draw(GLuint p_screenColorTex, int p_screenWidth, int p_screenHeig
 		lightingShader.setTexUniform("lightmapTexture", 1);
 	}
 
-	glViewport(0, 0, p_screenWidth, p_screenHeight);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 }

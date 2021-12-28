@@ -34,7 +34,7 @@ void GameRenderer::loadSpriteSheets() {
 
 }
 void GameRenderer::initFBO() {
-	std::cout << "FBO init done" << std::endl;
+	std::cout << windowWidth << " " << windowHeight << std::endl;
 	glGenFramebuffers(1, &screenFBO);
 	glGenTextures(1, &screenColorTex);
 	glGenRenderbuffers(1, &depthBuffer);
@@ -62,6 +62,8 @@ void GameRenderer::initFBO() {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	std::cout << "Tex id: " << screenColorTex << std::endl;
+
 }
 void GameRenderer::bindImage(Image& p_image, GLenum p_activeTexture) {
 	unsigned int texture;
@@ -84,9 +86,12 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
 	glBindVertexArray(p_chunk.VAO);
 
 	imageShader.use();
-	if (!imageShader.texUniformExists(0)) {
-		imageShader.setTexUniform("ourTexture", 0);
-		bindImage(tileSheet.image, GL_TEXTURE0);
+	if (!imageShader.texUniformExists(2)) { 
+		// 0 and 1 are used by the screen texture and the lightmap, 
+		//and it doesn't work if they overlap for some reason, 
+		//even though they are different shaders
+		imageShader.setTexUniform("ourTexture", 2);
+		bindImage(tileSheet.image, GL_TEXTURE2);
 	}
 
 
