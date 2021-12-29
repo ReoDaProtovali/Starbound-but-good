@@ -2,6 +2,9 @@
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec2 aTexCoord;
 
+uniform sampler2D screenTexture;
+uniform sampler2D lightingTexture;
+
 out vec2 TexCoord;
 
 void main()

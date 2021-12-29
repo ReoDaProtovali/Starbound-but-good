@@ -97,8 +97,9 @@ void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 }
 void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
 {
+    std::cout << glGetUniformLocation(programID, p_name.c_str()) << std::endl;
     glUniform1i(glGetUniformLocation(programID, p_name.c_str()), p_value);
-    uniforms.push_back(p_value);
+   // uniforms.push_back(p_value);
 }
 bool Shader::texUniformExists(GLuint p_uniformID) {
     for (GLuint ID : uniforms) {

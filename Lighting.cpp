@@ -34,11 +34,11 @@ void Lighting::draw(GLuint p_screenColorTex, int p_screenWidth, int p_screenHeig
 	glBindVertexArray(quadVAO);
 	lightingShader.use();
 
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, p_screenColorTex);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, lightmapTex.ID);
 
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
