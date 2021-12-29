@@ -2,14 +2,14 @@
 
 glm::vec4 Pixmap::getPixel(int p_y, int p_x)
 {
-	if ((p_x < 0) || (p_x < width) || (p_y < 0) || (p_y > height)) {
+	if ((p_x < 0) || (p_x > width - 1) || (p_y < 0) || (p_y > height - 1)) {
 		return glm::vec4();
 	}
 	return pixels(p_x, p_y);
 }
 void Pixmap::setPixel(int p_x, int p_y, glm::vec4 p_color)
 {
-	if ((p_x < 0) || (p_x < width) || (p_y < 0) || (p_y > height)) {
+	if ((p_x < 0) || (p_x > width - 1) || (p_y < 0) || (p_y > height - 1)) {
 		return;
 	}
 	pixels(p_x, p_y) = p_color;

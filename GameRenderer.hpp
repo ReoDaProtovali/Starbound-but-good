@@ -11,6 +11,7 @@
 // Image handling
 #include "ResourceLoader.hpp" 
 #include "SpriteSheet.hpp"
+#include "Texture.hpp"
 
 // Game data handling
 #include "GameConstants.hpp"
@@ -38,6 +39,7 @@ public:
 	SpriteSheet tileSheet;
 	SpriteSheet objectSheet;
 	SpriteSheet entitySheet;
+	Texture tileSheetTexture;
 	GLuint screenFBO;
 	GLuint screenColorTex;
 	GLuint depthBuffer;

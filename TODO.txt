@@ -3,6 +3,8 @@
 CLEAN THE CODE UP, GET RID OF UNNECESSARY CODE / CONSOLIDATE, it should be readable somewhat
 Find a way to handle textures better, not on a class-by-class basis
 
+cut down on compiler warnings, they are ugly 
+
 Make resourceloader use std::map instead of a vector
 Check for memory leaks, or at least figure out how to properly delete the Array2D data.
 

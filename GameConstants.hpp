@@ -6,6 +6,7 @@
 #include <vector>
 #include "Vertex.hpp"
 #include "GL/glew.h"
+
 constexpr auto CHUNKSIZE = 64;;
 typedef enum class TextureID {
 	NO_TEXTURE,

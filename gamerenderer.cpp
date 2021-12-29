@@ -5,14 +5,21 @@ GameRenderer::GameRenderer(
 	unsigned int p_screenHeight,
 	unsigned int p_windowWidth,
 	unsigned int p_windowHeight) {
+
 	screenWidth = p_screenWidth;
 	screenHeight = p_screenHeight;
 	windowWidth = p_windowWidth;
 	windowHeight = p_windowHeight;
+
 	imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
+	imageShader.setTexUniform("ourTexture", 0);
+
 	res = ResourceLoader();
+
 	cam.pos = glm::vec3(0.0, 10.0 * CHUNKSIZE, 1.0);
 	cam.tileScale = 128.0;
+
+	lighting = Lighting(floorf(windowWidth / cam.tileScale), floorf(windowHeight / cam.tileScale));
 
 	GameRenderer::loadSpriteSheets();
 	GameRenderer::initFBO();
@@ -27,14 +34,15 @@ void GameRenderer::loadSpriteSheets() {
 	}
 	Image tileSheetImage = GameRenderer::res.getImage(TextureID::TILESHEET_TEXTURE);
 	tileSheet = SpriteSheet(tileSheetImage, glm::ivec2(8, 8), tileSheetImage.pixelCount() / (8 * 8));
-
+	tileSheetTexture = Texture(tileSheetImage);
+	//std::cout << tileSheetTexture.ID;
 	objectSheet = SpriteSheet(); // undefined for now
 
 	entitySheet = SpriteSheet(); // undefined for now
 
 }
 void GameRenderer::initFBO() {
-	std::cout << windowWidth << " " << windowHeight << std::endl;
+	//std::cout << windowWidth << " " << windowHeight << std::endl;
 	glGenFramebuffers(1, &screenFBO);
 	glGenTextures(1, &screenColorTex);
 	glGenRenderbuffers(1, &depthBuffer);
@@ -62,38 +70,21 @@ void GameRenderer::initFBO() {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	std::cout << "Tex id: " << screenColorTex << std::endl;
+	//std::cout << "Tex id: " << screenColorTex << std::endl;
 
-}
-void GameRenderer::bindImage(Image& p_image, GLenum p_activeTexture) {
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glActiveTexture(p_activeTexture);
-	glBindTexture(GL_TEXTURE_2D, texture); // into the main texture buffer
-
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, p_image.dimensions.x, p_image.dimensions.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, p_image.data); // actually put the image data into the texture buffer
-	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 }
 
 bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
 	if (!p_chunk.vboIsCurrent) { p_chunk.generateVBO(tileSheet); };
 	glBindVertexArray(p_chunk.VAO);
 
-	imageShader.use();
-	if (!imageShader.texUniformExists(2)) { 
-		// 0 and 1 are used by the screen texture and the lightmap, 
-		//and it doesn't work if they overlap for some reason, 
-		//even though they are different shaders
-		imageShader.setTexUniform("ourTexture", 2);
-		bindImage(tileSheet.image, GL_TEXTURE2);
-	}
+	imageShader.use(); // Use the shader that draws an image based on texture coordinates
 
+	// Set the active texture unit to 0, which was set to represent "ourTexture" within the shader
+	// this was done with "imageShader.setTexUniform("ourTexture", 0);"
+	glActiveTexture(GL_TEXTURE0); 
+	// Attach the actual texture to the main texture 2d buffer on unit 0
+	glBindTexture(GL_TEXTURE_2D, tileSheetTexture.ID);
 
 	// Matrix that transforms from local space to global space
 	glm::mat4 modelTransform = glm::mat4(1.0f); // Identity

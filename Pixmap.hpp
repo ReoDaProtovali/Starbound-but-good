@@ -10,7 +10,8 @@ public:
 	Pixmap(int p_width, int p_height) {
 		width = p_width;
 		height = p_height;
-		pixels.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		pixels = Array2D<glm::vec4>(p_width, p_height);
+		pixels.fill(glm::vec4(0.0f, 0.0f, 0.5f, 1.0f));
 	};
 	int width;
 	int height;

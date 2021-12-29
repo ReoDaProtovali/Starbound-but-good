@@ -179,14 +179,15 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="inputhandler.cpp" />
-    <ClCompile Include="Lighting.cpp" />
-    <ClCompile Include="LightingSolver.cpp" />
+    <ClCompile Include="lighting.cpp" />
+    <ClCompile Include="lightingsolver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="gamewindow.cpp" />
     <ClCompile Include="pixmap.cpp" />
     <ClCompile Include="resourceloader.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="spritesheet.cpp" />
+    <ClCompile Include="texture.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timestepper.cpp" />
     <ClCompile Include="world.cpp" />
@@ -209,6 +210,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="SpriteSheet.hpp" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="Timestepper.hpp" />
     <ClInclude Include="utils.hpp" />

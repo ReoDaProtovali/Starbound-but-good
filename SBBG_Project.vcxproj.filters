@@ -19,9 +19,6 @@
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{8938e4c6-ced9-4b6a-83db-e7fb88df3564}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Rendering and Updates">
-      <UniqueIdentifier>{7f032046-e35f-49fb-bf11-eba8674f4912}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Tile/Entity Related">
       <UniqueIdentifier>{772e5420-601e-4195-a37a-dcd9a4790ec3}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,9 @@
     </Filter>
     <Filter Include="Header Files\Game Updates">
       <UniqueIdentifier>{3c792938-b9c1-4821-82f9-0229c0ded4be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering">
+      <UniqueIdentifier>{7f032046-e35f-49fb-bf11-eba8674f4912}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -84,14 +84,17 @@
     <ClCompile Include="timestepper.cpp">
       <Filter>Source Files\Game Updates</Filter>
     </ClCompile>
-    <ClCompile Include="Lighting.cpp">
+    <ClCompile Include="lighting.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="LightingSolver.cpp">
+    <ClCompile Include="lightingsolver.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="pixmap.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,37 +114,37 @@
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="GameWindow.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ResourceLoader.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="SpriteSheet.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="GameConstants.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="GameAssets.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Image.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Shader.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="GameRenderer.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Camera.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="InputHandler.hpp">
       <Filter>Header Files\Game Updates</Filter>
@@ -150,16 +153,19 @@
       <Filter>Header Files\Game Updates</Filter>
     </ClInclude>
     <ClInclude Include="Lighting.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="LightingSolver.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Pixmap.hpp">
-      <Filter>Header Files\Rendering and Updates</Filter>
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Array2D.hpp">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
