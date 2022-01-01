@@ -78,7 +78,7 @@ void World::drawWorld(GameRenderer& renderer, GameWindow& gw) {
 			(chunkGlobalPos.y > renderer.cam.frame.y - 1 * CHUNKSIZE) &&
 			(chunkGlobalPos.y < renderer.cam.frame.w + 1 * CHUNKSIZE)
 			) {
-			renderer.drawChunk(it->second, gw);
+			renderer.drawChunk(it->second);
 		}
 		++it;
 	};

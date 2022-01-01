@@ -14,26 +14,11 @@ public:
 		framePos = glm::vec2(0, 0);
 		quadVAO = 0;
 	}
-	Lighting(unsigned int p_width, unsigned int p_height) {
-		lightmap = Pixmap(p_width, p_height);
-		//lightmap.clear();
-		lightmap.setPixel(3, 3, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		lightingShader = Shader("./Shaders/LightingVS.glsl", "./Shaders/LightingFS.glsl");
-		// bind the uniforms to texture units 0 and 1
-		lightingShader.setTexUniform("screenTexture", 0); 
-		lightingShader.setTexUniform("lightingTexture", 1);
-
-		glGenVertexArrays(1, &quadVAO);
-		genQuadVBO();
-		lightmapTex = Texture(p_width, p_height, lightmap.getData());
-		lightmapTex.setFiltering(GL_LINEAR);
-		//glm::vec4 testData = *lightmap.getData();
-		//std::cout << testData[1].a << std::endl;
-	}
+	Lighting(unsigned int p_width, unsigned int p_height);
 	void genQuadVBO();
 	void updateLightmapTex();
 
-	void draw(GLuint screenColorTex, int screenWidth, int screenHeight );
+	void draw(GLuint p_screenColorTex);
 private:
 
 	glm::vec2 framePos;

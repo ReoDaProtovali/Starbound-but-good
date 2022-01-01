@@ -18,6 +18,7 @@ public:
 	glm::vec4 getPixel(int p_y, int p_x);
 	void setPixel(int p_x, int p_y, glm::vec4 p_color);
 	void clear();
+	void fill(glm::vec4 p_color);
 	glm::vec4* getData();
 	void logPixmap();
 	

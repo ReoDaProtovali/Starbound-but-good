@@ -27,7 +27,6 @@ public:
 		unsigned int p_screenHeight,
 		unsigned int p_windowWidth,
 		unsigned int p_windowHeight);
-	//GameRenderer(spriteShader);
 
 	unsigned int windowWidth;
 	unsigned int windowHeight;
@@ -40,24 +39,22 @@ public:
 	SpriteSheet objectSheet;
 	SpriteSheet entitySheet;
 	Texture tileSheetTexture;
+
 	GLuint screenFBO;
 	GLuint screenColorTex;
-	GLuint depthBuffer;
+	GLuint depthBuffer; // shouldn't need to be used, unless for testing purposes
 
-	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 }; // only one color attachment (right now)
 
 
 	void loadSpriteSheets();
 	void initFBO();
-	void bindImage(Image& p_image, GLenum p_activeTexture);
 
 	Camera cam;
 
 	Shader imageShader;
 
-	bool drawChunk(WorldChunk& p_chunk, GameWindow& p_window);
+	bool drawChunk(WorldChunk& p_chunk);
 	void doLighting();
-	//GLuint draw
-
 };
 

@@ -74,7 +74,7 @@ void GameRenderer::initFBO() {
 
 }
 
-bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
+bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 	if (!p_chunk.vboIsCurrent) { p_chunk.generateVBO(tileSheet); };
 	glBindVertexArray(p_chunk.VAO);
 
@@ -111,5 +111,5 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk, GameWindow& p_window) {
 }
 
 void GameRenderer::doLighting() {
-	lighting.draw(screenColorTex, screenWidth, screenHeight);
+	lighting.draw(screenColorTex);
 }

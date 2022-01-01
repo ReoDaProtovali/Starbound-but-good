@@ -17,6 +17,10 @@ void Pixmap::setPixel(int p_x, int p_y, glm::vec4 p_color)
 void Pixmap::clear() {
 	pixels.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 }
+void Pixmap::fill(glm::vec4 p_color)
+{
+	pixels.fill(p_color);
+}
 glm::vec4* Pixmap::getData() {
 	return pixels.getData();
 }
