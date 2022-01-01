@@ -14,6 +14,7 @@ struct Timestepper {
 	bool accumulatorFull();
 	void calculateAlpha();
 	void processFrameEnd();
+
 	float accumulator;
 	int gameUpdateFPS;
 	int renderFPS;

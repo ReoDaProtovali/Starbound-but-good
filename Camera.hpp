@@ -17,7 +17,7 @@ struct Camera
 		lookForwards();
 	};
 	Camera(glm::vec3 p_pos) {
-		pos = p_pos; // starts 1 off the z axis by default
+		pos = p_pos;
 		target = glm::vec3(0.0f, 0.0f, 0.0f); // temporarily set the origin as the target to calculate the correct right and up
 		glm::vec3 direction = glm::normalize(pos - target);
 		right = glm::normalize(glm::cross(upGuide, direction));
@@ -97,8 +97,8 @@ struct Camera
 			screenCenterPos.y * 2.0f
 		);
 	}
-	void setTileScale(int p_verticalTiles) {
-		tileScale = (float)p_verticalTiles;
+	void setTileScale(float p_tileScale) {
+		tileScale = p_tileScale;
 	}
 	void setGlobalPos(glm::vec2 p_globalPos) { // global pos is in the unit of tiles
 		glm::vec2 pos_yInv = glm::vec2(p_globalPos.x, -p_globalPos.y);

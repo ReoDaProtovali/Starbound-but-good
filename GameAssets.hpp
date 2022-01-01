@@ -1,8 +1,9 @@
 #pragma once
-#ifndef GAMEASSETS_H
+#ifndef GAMEASSETS_H 
 #define GAMEASSETS_H
 
 #include "ResourceLoader.hpp"
+// THIS FILE IS UNUSED NOW, MIGHT MODERNIZE IT LATER
 
 namespace rl {
 	inline bool loadRes(ResourceLoader& p_res) {
