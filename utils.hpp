@@ -52,14 +52,14 @@ namespace utils {
 		return total / p_vec.size();
 	}
 	template <typename T>
-	void logVector(T p_vec) {
+	void logVector(T p_vec) { // careful what you toss in here, must be cout-able lol
 		for (int i = 0; i < p_vec.size(); i++) {
 			std::cout << p_vec[i] << ", ";
 		}
 		std::cout << std::endl;
 	}
 	template <typename T>
-	T clamp(T v, T p_min, T p_max) {
+	T clamp(T v, T p_min, T p_max) {  // make sure whatever you're passing in has a > operator
 		return std::min(std::max(v, p_min), p_max);
 	}
 	inline bool pointCollidingRect(glm::vec2 p_pointPos, glm::vec2 p_rectPos, glm::vec2 p_rectDim) {

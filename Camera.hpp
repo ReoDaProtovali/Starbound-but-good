@@ -16,7 +16,7 @@ public:
 
 	void setDimensions(float p_aspectRatio);
 
-	glm::mat4 getTransformMat4(float p_screenWidth, float p_screenHeight, float p_windowWidth, float p_windowHeight);
+	glm::mat4 getTransformMat4(float p_windowWidth, float p_windowHeight);
 
 	void setFrame(float p_trX, float p_trY, float p_width, float p_height);
 

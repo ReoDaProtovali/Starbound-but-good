@@ -32,9 +32,12 @@ int main(int argc, char* argv[])
 	bool gameActive = true;
 	SDL_Event event;
 
+
+#ifdef _DEBUG
 	int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	flag |= _CRTDBG_LEAK_CHECK_DF;
 	_CrtSetDbgFlag(flag);
+#endif
 
 	GameWindow gw = GameWindow("Borstoind");
 	SDL_Window* window = gw.window;
@@ -80,9 +83,9 @@ int main(int argc, char* argv[])
 					int h = event.window.data2;
 					gw.width = w;
 					gw.height = h;
-					cam.updateFrame((float)w, (float)h);
 					renderer.windowWidth = w;
 					renderer.windowHeight = h;
+					renderer.rescale();
 					glViewport(0, 0, w, h);
 				}
 			}
@@ -177,6 +180,6 @@ int main(int argc, char* argv[])
 	//world.logChunks();
 	gw.cleanUp();
 	SDL_Quit();
-	
+
 	return 0;
 }

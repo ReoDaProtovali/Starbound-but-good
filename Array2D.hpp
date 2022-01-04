@@ -14,18 +14,19 @@ public:
 		for (int i = 0; i < p_width * p_height; i++) {
 			data.push_back(p_defaultValue);
 		}
+
 		width = p_width;
 		height = p_height;
 	}
 	
 	T& operator()(int x, int y) {
-		return data[(y * width) + x];
+		return data[((y * width) + x)];
 	}
 	T operator()(int x, int y) const {
-		return data[(y * width) + x];
+		return data[((y * width) + x)];
 	}
 	void fill(T p_fillValue) {
-		for (int i = 0; i < width * height; i++) {
+		for (unsigned int i = 0; i < width * height; i++) {
 			data[i] = p_fillValue;
 		}
 	}

@@ -19,9 +19,10 @@ GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 GameWindow::GameWindow(const char* p_title)
 	:window(NULL)
 {
+	unsigned int defaultWidth = 1280 / 2;
+	unsigned int defaultHeight = 720 / 2;
 
-
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 300, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, defaultWidth, defaultHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -32,8 +33,8 @@ GameWindow::GameWindow(const char* p_title)
 		SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 	}
 
-	width = dm.w;
-	height = dm.h;
+	width = defaultWidth;
+	height = defaultHeight;
 
 	//SDL_SetWindowSize(window, width / 2, height / 2);
 	GameWindow::initGL();
@@ -53,7 +54,7 @@ void GameWindow::initGL() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	SDL_GLContext glContext = SDL_GL_CreateContext(window);
+	glContext = SDL_GL_CreateContext(window);
 	SDL_GL_MakeCurrent(window, glContext);
 
 	glEnable(GL_DEPTH_TEST);
@@ -69,6 +70,7 @@ void GameWindow::initGL() {
 }
 
 void GameWindow::cleanUp() {
+	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 }
 void GameWindow::bindAsRenderTarget() {

@@ -28,6 +28,7 @@ public:
 	void bindAsRenderTarget();
 	int width;
 	int height;
+	SDL_GLContext glContext;
 	InputHandler inpHandler;
 	SDL_Window* window;
 };

@@ -41,7 +41,7 @@ public:
 	Texture tileSheetTexture;
 
 	GLuint screenFBO;
-	GLuint screenColorTex;
+	Texture screenColorTex;
 	GLuint depthBuffer; // shouldn't need to be used, unless for testing purposes
 
 	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 }; // only one color attachment (right now)
@@ -51,6 +51,8 @@ public:
 	void initFBO();
 
 	void bindScreenFBOAsRenderTarget();
+
+	void rescale();
 
 	Camera cam;
 

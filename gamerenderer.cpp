@@ -17,9 +17,9 @@ GameRenderer::GameRenderer(
 	res = ResourceLoader();
 
 	cam.pos = glm::vec3(0.0, 10.0 * CHUNKSIZE, 1.0);
-	cam.tileScale = 128.0;
+	cam.tileScale = 4.0;
 
-	lighting = Lighting(floorf(windowWidth / cam.tileScale), floorf(windowHeight / cam.tileScale));
+	lighting = Lighting((unsigned int)(windowWidth / cam.tileScale), (unsigned int)(windowHeight / cam.tileScale));
 
 	GameRenderer::loadSpriteSheets();
 	GameRenderer::initFBO();
@@ -44,24 +44,14 @@ void GameRenderer::loadSpriteSheets() {
 void GameRenderer::initFBO() {
 	//std::cout << windowWidth << " " << windowHeight << std::endl;
 	glGenFramebuffers(1, &screenFBO);
-	glGenTextures(1, &screenColorTex);
 	glGenRenderbuffers(1, &depthBuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
 
-	glBindTexture(GL_TEXTURE_2D, screenColorTex);
-	glTexImage2D(GL_TEXTURE_2D,
-		0,
-		GL_RGBA,
-		windowWidth, windowHeight,
-		0,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE,
-		NULL);
+	screenColorTex.changeDimensions(windowWidth, windowHeight); // Allocates the texture
+	screenColorTex.setFiltering(GL_LINEAR);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenColorTex, 0);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenColorTex.ID, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, windowWidth, windowHeight);
@@ -76,8 +66,26 @@ void GameRenderer::initFBO() {
 
 void GameRenderer::bindScreenFBOAsRenderTarget()
 {
+	//printf("Width: %i, Height: %i \n", screenColorTex.width, screenColorTex.height);
+
+	glViewport(0, 0, windowWidth, windowHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
 	glDrawBuffers(1, DrawBuffers);
+}
+
+void GameRenderer::rescale()
+{
+	screenColorTex.changeDimensions(windowWidth, windowHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenColorTex.ID, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, windowWidth, windowHeight); // rescale depth buffer
+	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		throw std::exception("Frame buffer is not okie dokie");
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 }
 
 bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
@@ -104,18 +112,17 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 		);
 	imageShader.setMat4Uniform("model", modelTransform);
 
-	cam.setDimensions((float)screenWidth / (float)screenHeight);
+	cam.setDimensions((float)windowWidth / (float)windowHeight);
 
 	// Matrix that transforms from global space, to view space, to clip space in one swoop
-	glm::mat4 finalTransform = cam.getTransformMat4((float)screenWidth, (float)screenHeight, (float)windowWidth, (float)windowHeight);
+	glm::mat4 finalTransform = cam.getTransformMat4((float)windowWidth, (float)windowHeight);
 	imageShader.setMat4Uniform("transform", finalTransform);
 
-	//glViewport(0, 0, screenWidth, screenHeight);
 	glDrawArrays(GL_TRIANGLES, 0, p_chunk.getVBOSize());
 	glBindVertexArray(0);
 	return true;
 }
 
 void GameRenderer::doLighting() {
-	lighting.draw(screenColorTex);
+	lighting.draw(screenColorTex.ID);
 }

@@ -46,6 +46,7 @@ glm::vec2 SpriteSheet::getTexCoords(unsigned short p_spriteIndex, Corner corner)
 		y = ((float)spritePos.y + spriteDimensions.y) / (float)image.dimensions.y;
 		return glm::vec2(x, y);
 	}
+	return glm::vec2(-1.0f, -1.0f);
 }
 
 glm::ivec2 SpriteSheet::indexToPos(unsigned short p_spriteIndex) {
@@ -54,6 +55,7 @@ glm::ivec2 SpriteSheet::indexToPos(unsigned short p_spriteIndex) {
 			(p_spriteIndex % (image.dimensions.x / spriteDimensions.x)) * spriteDimensions.x, // x pos
 			(p_spriteIndex / spriteDimensions.y) * spriteDimensions.y); // y pos
 	}
+	return glm::vec2(-1.0f, -1.0f);
 }
 
 void SpriteSheet::setCurrentSprite(unsigned short p_spriteIndex) {

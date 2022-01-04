@@ -18,7 +18,8 @@ struct WorldChunk
 	WorldChunk(void) : worldID(-1),
 		worldPos(glm::ivec2()),
 		VAO(0),
-		tiles(Array2D<Tile>(0, 0, Tile())), invalid(true) {};
+		tiles(Array2D<Tile>()), 
+		invalid(true) {};
 	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
 
 	noise::module::Perlin noiseGenerator;
@@ -30,7 +31,7 @@ struct WorldChunk
 	GLuint generateVBO(SpriteSheet& p_spriteSheet);
 	int getVBOSize();
 
-	void destroy();
+
 
 	const int chunkSize = CHUNKSIZE;
 	glm::ivec2 worldPos;

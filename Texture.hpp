@@ -35,14 +35,18 @@ public:
 	void fromImage(Image& p_image);
 	void fromVec4Data(unsigned int p_width, unsigned int p_height, glm::vec4* p_data);
 
+	void changeDimensions(unsigned int p_width, unsigned int p_height); // Will delete existing texture data
+
 	void subVec4Data(glm::vec4* p_data);
+
+	unsigned int width;
+	unsigned int height;
 
 	GLuint ID;
 
 private:
 	bool initialized = false;
-	unsigned int width;
-	unsigned int height;
+
 	GLint filteringMode;
 	GLint wrappingMode;
 

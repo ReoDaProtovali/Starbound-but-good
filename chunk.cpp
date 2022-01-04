@@ -23,7 +23,7 @@ void WorldChunk::fillRandom() {
 	vboIsCurrent = false;
 }
 void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
-	float surfaceLevel = 10.0 * chunkSize;
+	float surfaceLevel = 10.0f * chunkSize;
 	float globalX;
 	float globalY; // tile positions
 	float height;
@@ -33,28 +33,28 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
-			globalX = p_chunkPos.x * chunkSize + x;
-			globalY = p_chunkPos.y * chunkSize - y - surfaceLevel;
+			globalX = (float)(p_chunkPos.x * chunkSize + x);
+			globalY = (float)(p_chunkPos.y * chunkSize - y) - surfaceLevel;
 			// detail level for the surface noise
 			noiseGenerator.SetOctaveCount(7);
 			// surface level
-			height = noiseGenerator.GetValue(globalX / 200.0f, 214.2, 2.0) * 40.0;
+			height = (float)noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 40.0f;
 			// The dirt level
 			// first noise is a scaled down version of the surface line            second noise is to make a dither effect between the layers
-			height2 = noiseGenerator.GetValue(globalX / 200.0f, 214.2, 2.0) * 20.0 - (5.0f * noiseGenerator.GetValue(globalX / 1.2f, globalY / 1.2f, 2.0));
-			float scale1 = 1 / 10.0;
-			float scale2 = 1 / 1.0;
+			height2 = (float)noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 20.0f - (float)(5.0f * noiseGenerator.GetValue(globalX / 1.2f, globalY / 1.2f, 2.0f));
+			float scale1 = 1 / 10.0f;
+			float scale2 = 1 / 1.0f;
 			noiseGenerator.SetOctaveCount(2);
-			caveLayer1 = noiseGenerator.GetValue((double)globalX * scale1, (double)globalY * scale1, 2.0) / 2.0;
+			caveLayer1 = (float)(noiseGenerator.GetValue((double)globalX * scale1, (double)globalY * scale1, 2.0) / 2.0);
 			noiseGenerator.SetOctaveCount(1);
-			caveLayer2 = noiseGenerator.GetValue(((double)globalX * scale1 * 0.7) + caveLayer1 * scale2, ((double)globalY * scale1 * 1.0) + caveLayer1 * scale2, 40.0f);
+			caveLayer2 = (float)noiseGenerator.GetValue(((double)globalX * scale1 * 0.7) + caveLayer1 * scale2, ((double)globalY * scale1 * 1.0) + caveLayer1 * scale2, 40.0f);
 			//std::cout << utils::clamp(globalY + surfaceLevel, 0.0f, 10.0f) / 10.0f << std::endl;
 			if (caveLayer2 < 0.05f + (utils::clamp(globalY - height + 64.0f, 0.0f, 10.0f) / 10.0f) + utils::clamp(globalY + 300.0f, 0.0f, 300.0f) / 350.0f) {
 				if (globalY > height) {
 					tiles(x, y) = Tile(glm::ivec2(x, y), 0);
 				}
 				else {
-					if (globalY < -40.0 + height2) {
+					if (globalY < -40.0f + height2) {
 						tiles(x, y) = Tile(glm::ivec2(x, y), 1);
 					}
 					else {

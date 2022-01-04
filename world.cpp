@@ -52,8 +52,7 @@ void World::logChunks() {
 	}
 }
 WorldChunk& World::getChunk(glm::ivec2 p_worldPos, bool& success) {
-	WorldChunk nullChunk;
-	if (chunkMap.size() == 0) { success = false; return nullChunk; }
+	if (chunkMap.size() == 0) { success = false; WorldChunk nullChunk; return nullChunk; } // don't know of a better thing to return yet, nullChunk is dealloced apon scope end
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.find(p_worldPos);
 	if (it != chunkMap.end()) {
 		success = true;
@@ -62,7 +61,6 @@ WorldChunk& World::getChunk(glm::ivec2 p_worldPos, bool& success) {
 	success = false;
 }
 WorldChunk& World::getChunk(glm::ivec2 p_worldPos) {
-
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.find(p_worldPos);
 	if (it != chunkMap.end()) {
 		return it->second;

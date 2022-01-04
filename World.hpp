@@ -48,6 +48,7 @@ public:
 	bool genChunk(glm::ivec2 p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
 	bool autoGen(Camera& p_cam);
+
 	WorldChunk& getChunk(glm::ivec2 p_worldPos, bool& success);
 	WorldChunk& getChunk(glm::ivec2 p_worldPos);
 	void drawWorld(GameRenderer& renderer, GameWindow& gw);
