@@ -26,17 +26,6 @@
 #include <thread>
 #include <chrono>
 
-#include "Array2D.hpp"
-//std::counting_semaphore<3> testSemaphore(3);
-
-//void threadWorker() {
-//	testSemaphore.acquire();
-//	using namespace std::chrono_literals;
-//	std::this_thread::sleep_for(2000ms);
-//	std::cout << "A Thread has completed work" << std::endl;
-//
-//	testSemaphore.release();
-//}
 
 int main(int argc, char* argv[])
 {
@@ -46,15 +35,6 @@ int main(int argc, char* argv[])
 	int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	flag |= _CRTDBG_LEAK_CHECK_DF;
 	_CrtSetDbgFlag(flag);
-	//std::cout << std::endl;
-	//std::thread t1(threadWorker);
-	//std::thread t2(threadWorker);
-	//std::thread t3(threadWorker);
-	//std::thread t4(threadWorker);
-	//std::thread t5(threadWorker);
-	//std::cout << std::endl;
-	//t5.join();
-	//std::cout << "All work done" << std::endl;
 
 	GameWindow gw = GameWindow("Borstoind");
 	SDL_Window* window = gw.window;
@@ -67,17 +47,14 @@ int main(int argc, char* argv[])
 	GameRenderer renderer = GameRenderer(sm.w, sm.h, ww, wh);
 
 	Camera& cam = renderer.cam;
-	//cam.pos = glm::vec3(0, 0, 0);
-	cam.updateFrame((float)gw.width, (float)gw.height); // actually, this is probably unneeded
+
+	//cam.updateFrame((float)gw.width, (float)gw.height); // actually, this is probably unneeded
 
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
-	//renderer.cam.setTileScale(16); // Sets the display width of a single tile to be 16px
-
-
 
 	World world = World();
 
-	Timestepper ts = Timestepper(5, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(30, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
@@ -98,6 +75,7 @@ int main(int argc, char* argv[])
 					SDL_Log("Window %d resized to %dx%d",
 						event.window.windowID, event.window.data1,
 						event.window.data2);
+
 					int w = event.window.data1;
 					int h = event.window.data2;
 					gw.width = w;
@@ -105,6 +83,7 @@ int main(int argc, char* argv[])
 					cam.updateFrame((float)w, (float)h);
 					renderer.windowWidth = w;
 					renderer.windowHeight = h;
+					glViewport(0, 0, w, h);
 				}
 			}
 			else if (event.type == SDL_KEYUP) {
@@ -149,9 +128,8 @@ int main(int argc, char* argv[])
 
 		renderFPSGauge.stopStopwatch();
 		renderFPSGauge.startStopwatch();
-		//if (renderFPSGauge.getSecondsElapsed() != 0) {
 		renderFPSVec.push_back(1.0f / renderFPSGauge.getSecondsElapsed());
-		//}
+
 		if (renderFPSVec.size() > (size_t)ts.renderFPS / 4) { // quarter second fps display buffer
 			renderFPSVec.erase(renderFPSVec.begin());
 		}
@@ -181,23 +159,16 @@ int main(int argc, char* argv[])
 		cam.pos += glm::vec3(camVelocity, 0.0f);
 		cam.lookAt(glm::vec3(0.0, 0.0, 0.0));
 
-		glBindFramebuffer(GL_FRAMEBUFFER, renderer.screenFBO);
-		glDrawBuffers(1, renderer.DrawBuffers);
-		//gw.bindAsRenderTarget();
+		renderer.bindScreenFBOAsRenderTarget();
 		glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 		world.drawWorld(renderer, gw);
-
-		//glDrawBuffer(GL_COLOR_ATTACHMENT0);
-		//glViewport(0, 0, gw.width, gw.height);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//world.drawWorld(renderer, gw);
 
 		gw.bindAsRenderTarget();
 		glDrawBuffer(GL_BACK);
 		glDisable(GL_DEPTH_TEST);
-		//glViewport(0, 0, gw.width, gw.height);
+
 		renderer.doLighting();
 
 		SDL_GL_SwapWindow(window); // Put the image buffer into the window

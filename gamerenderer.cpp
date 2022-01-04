@@ -74,6 +74,12 @@ void GameRenderer::initFBO() {
 
 }
 
+void GameRenderer::bindScreenFBOAsRenderTarget()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
+	glDrawBuffers(1, DrawBuffers);
+}
+
 bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 	if (!p_chunk.vboIsCurrent) { p_chunk.generateVBO(tileSheet); };
 	glBindVertexArray(p_chunk.VAO);

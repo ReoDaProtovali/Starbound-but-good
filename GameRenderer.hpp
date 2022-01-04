@@ -50,6 +50,8 @@ public:
 	void loadSpriteSheets();
 	void initFBO();
 
+	void bindScreenFBOAsRenderTarget();
+
 	Camera cam;
 
 	Shader imageShader;

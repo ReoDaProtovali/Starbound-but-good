@@ -1,0 +1,26 @@
+
+
+test semaphore code
+
+//std::counting_semaphore<3> testSemaphore(3);
+
+//void threadWorker() {
+//	testSemaphore.acquire();
+//	using namespace std::chrono_literals;
+//	std::this_thread::sleep_for(2000ms);
+//	std::cout << "A Thread has completed work" << std::endl;
+//
+//	testSemaphore.release();
+//}
+
+
+
+	//std::cout << std::endl;
+	//std::thread t1(threadWorker);
+	//std::thread t2(threadWorker);
+	//std::thread t3(threadWorker);
+	//std::thread t4(threadWorker);
+	//std::thread t5(threadWorker);
+	//std::cout << std::endl;
+	//t5.join();
+	//std::cout << "All work done" << std::endl;

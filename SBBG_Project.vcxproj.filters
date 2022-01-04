@@ -187,5 +187,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />
+    <Text Include="randomthings.txt" />
   </ItemGroup>
 </Project>

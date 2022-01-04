@@ -225,6 +225,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="Shaders\LightingVS.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="randomthings.txt" />
     <Text Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

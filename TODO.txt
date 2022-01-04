@@ -6,7 +6,6 @@ Find a way to handle textures better, not on a class-by-class basis
 cut down on compiler warnings, they are ugly 
 
 Make resourceloader use std::map instead of a vector
-Check for memory leaks, or at least figure out how to properly delete the Array2D data.
 
 Implement tile lighting, test using it within the shader
 	- Add a getTile method to the world class
@@ -37,3 +36,10 @@ get more people hyped to learn c++ and opengl
 solid, defined modding engine, helpful for development also
 All basic game things should be able to be done using a coherent system, a layer of abstraction that allows easy expansion
 
+
+
+
+COMPLETED::
+
+Check for memory leaks, or at least figure out how to properly delete the Array2D data.
+	- Storing Array2D data in a vector, avoiding using new by relying on standard library allocation and deallocation
