@@ -19,6 +19,8 @@ class Camera
 
 	void setFrame(float p_trX, float p_trY, float p_width, float p_height);
 
+	const glm::vec4 getFrame();
+	
 	void updateFrame(float p_windowHeight, float p_windowWidth);
 
 	void setTileScale(float p_tileScale);

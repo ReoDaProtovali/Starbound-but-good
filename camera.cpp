@@ -129,3 +129,7 @@ void Camera::setGlobalPos(float p_globalX, float p_globalY)
 { // global pos is in the unit of tiles
     pos = glm::vec3(p_globalX, -p_globalY, pos.z);
 }
+
+const glm::vec4 Camera::getFrame() {
+    return frame;
+}
