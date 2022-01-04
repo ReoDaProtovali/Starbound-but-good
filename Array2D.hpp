@@ -3,19 +3,16 @@
 #ifndef ARRAY2D_H
 #define ARRAY2D_H
 
+#include <vector>
+
 template<class T>
 class Array2D {
 public:
-	Array2D() { width = 0; height = 0; data = nullptr; }
-	Array2D(int p_width, int p_height) {
-		data = new T[p_width * p_height];
-		width = p_width;
-		height = p_height;
-	}
+	Array2D() { width = 0; height = 0; data = std::vector<T>(); }
 	Array2D(int p_width, int p_height, T p_defaultValue) {
-		data = new T[p_width * p_height];
+		data.reserve(p_width * p_height);
 		for (int i = 0; i < p_width * p_height; i++) {
-			data[i] = p_defaultValue;
+			data.push_back(p_defaultValue);
 		}
 		width = p_width;
 		height = p_height;
@@ -32,16 +29,14 @@ public:
 			data[i] = p_fillValue;
 		}
 	}
-	T* getData() {
+	std::vector<T>& getData() {
 		return data;
-	}
-	void cleanUp() {
-		delete[] data;
 	}
 	unsigned int width;
 	unsigned int height;
 private:
-	T* data;
+	std::vector<T> data;
+	bool hasData = false;
 };
 
 #endif

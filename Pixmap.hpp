@@ -10,8 +10,7 @@ public:
 	Pixmap(int p_width, int p_height) {
 		width = p_width;
 		height = p_height;
-		pixels = Array2D<glm::vec4>(p_width, p_height);
-		pixels.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		pixels = Array2D<glm::vec4>(p_width, p_height, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	};
 	int width;
 	int height;
@@ -21,9 +20,9 @@ public:
 	void fill(glm::vec4 p_color);
 	glm::vec4* getData();
 	void logPixmap();
-	
 
 private:
+	bool hasData = false;
 	Array2D<glm::vec4> pixels;
 };
 

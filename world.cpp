@@ -83,12 +83,12 @@ void World::drawWorld(GameRenderer& renderer, GameWindow& gw) {
 		++it;
 	};
 }
-World::~World() {
-	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();
-	while (it != chunkMap.end()) {
-		std::cout << "Attempting to delete chunk at " << it->second.worldPos.x << ", " << it->second.worldPos.y << std::endl;
-		it->second.destroy();
-		it++;
-	}
-}
+//World::~World() {
+//	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();
+//	while (it != chunkMap.end()) {
+//		std::cout << "Attempting to delete chunk at " << it->second.worldPos.x << ", " << it->second.worldPos.y << std::endl;
+//		it->second.destroy();
+//		it++;
+//	}
+//}
 

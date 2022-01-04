@@ -22,7 +22,7 @@ void Pixmap::fill(glm::vec4 p_color)
 	pixels.fill(p_color);
 }
 glm::vec4* Pixmap::getData() {
-	return pixels.getData();
+	return pixels.getData().data();
 }
 void Pixmap::logPixmap() {
 	for (int i = 0; i < height; i++) {

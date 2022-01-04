@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include <SDL.h>
 #include <iostream>
 #include "utils.hpp"
@@ -5,7 +9,7 @@
 #include "GameWindow.hpp"
 #include "GameRenderer.hpp"
 #include "Entity.hpp"
-//#include "GLTesting.hpp"
+
 #include <cmath>
 #include "World.hpp"
 #include "Timestepper.hpp"
@@ -39,6 +43,9 @@ int main(int argc, char* argv[])
 	bool gameActive = true;
 	SDL_Event event;
 
+	int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	flag |= _CRTDBG_LEAK_CHECK_DF;
+	_CrtSetDbgFlag(flag);
 	//std::cout << std::endl;
 	//std::thread t1(threadWorker);
 	//std::thread t2(threadWorker);
@@ -199,6 +206,6 @@ int main(int argc, char* argv[])
 	//world.logChunks();
 	gw.cleanUp();
 	SDL_Quit();
-
+	
 	return 0;
 }

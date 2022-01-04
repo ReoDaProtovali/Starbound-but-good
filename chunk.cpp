@@ -3,7 +3,7 @@
 #include "GameConstants.hpp"
 
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
-	tiles = Array2D<Tile>(chunkSize, chunkSize);
+	tiles = Array2D<Tile>(chunkSize, chunkSize, Tile());
 	glGenVertexArrays(1, &VAO);
 	
 	noiseGenerator.SetOctaveCount(10);
@@ -120,13 +120,8 @@ int WorldChunk::getVBOSize() {
 	return (int)verts.size();
 }
 
-void WorldChunk::destroy()
-{
-	tiles.cleanUp();
-}
-
 Tile* WorldChunk::getTiles() {
-	return tiles.getData();
+	return tiles.getData().data();
 }
 void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates) {
 	return;
