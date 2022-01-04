@@ -120,6 +120,11 @@ int WorldChunk::getVBOSize() {
 	return (int)verts.size();
 }
 
+void WorldChunk::destroy()
+{
+	tiles.cleanUp();
+}
+
 Tile* WorldChunk::getTiles() {
 	return tiles.getData();
 }

@@ -35,9 +35,9 @@ public:
 	T* getData() {
 		return data;
 	}
-	//~Array2D() {
-	//	delete[] data;
-	//}
+	void cleanUp() {
+		delete[] data;
+	}
 	unsigned int width;
 	unsigned int height;
 private:

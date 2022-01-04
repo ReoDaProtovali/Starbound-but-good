@@ -39,10 +39,6 @@ int main(int argc, char* argv[])
 	bool gameActive = true;
 	SDL_Event event;
 
-	Pixmap testPixmap = Pixmap(10, 10);
-	//testPixmap.logPixmap();
-
-
 	//std::cout << std::endl;
 	//std::thread t1(threadWorker);
 	//std::thread t2(threadWorker);

@@ -54,7 +54,7 @@ public:
 	void logSize();
 	void logChunks();
 	std::map<wc::ivec2, WorldChunk> chunkMap;
-
+	~World();
 private:
 	std::vector<Entity> worldEntities;
 };
