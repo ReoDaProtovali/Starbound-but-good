@@ -6,6 +6,7 @@
 
 class Camera
 {
+public:
 	Camera();
 	Camera(glm::vec3 p_pos);
 
@@ -20,7 +21,7 @@ class Camera
 	void setFrame(float p_trX, float p_trY, float p_width, float p_height);
 
 	const glm::vec4 getFrame();
-	
+
 	void updateFrame(float p_windowHeight, float p_windowWidth);
 
 	void setTileScale(float p_tileScale);
@@ -33,8 +34,11 @@ class Camera
 	void disableManualView() { manualView = false; }
 	void enablePerspective() { perspective = true; }
 	void disablePerspective() { perspective = false; }
+	glm::vec3 pos;
+	float tileScale;
+	float zRotation = 0;
 
-
+private:
 	glm::vec3 target;
 	glm::vec3 right;
 	glm::vec3 up;
@@ -46,11 +50,6 @@ class Camera
 	const glm::vec3 upGuide = glm::vec3(0.0f, 1.0f, 0.0f); // y axis is up
 	bool manualView = false;
 	bool perspective = false;
-
-	public:
-	glm::vec3 pos;
-	float tileScale;
-	float zRotation = 0;
 
 };
 
