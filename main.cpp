@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 				printf("Current Update FPS: %f \n", utils::averageVector(updateFPSVec));
 				printf("Current Draw FPS: %f \n", utils::averageVector(renderFPSVec));
 				printf("Cam Position: %f, %f \n", cam.pos.x, cam.pos.y);
-				printf("Cam Frame: X range-%f, %f   Y range-%f, %f\n", cam.frame.x, cam.frame.z, cam.frame.y, cam.frame.w);
+				printf("Cam Frame: X range-%f, %f   Y range-%f, %f\n", cam.getFrame().x, cam.getFrame().z, cam.getFrame().y, cam.getFrame().w);
 				printf("Screen Dimensions: Width-%i Height-%i\n", renderer.screenWidth, renderer.screenHeight);
 				printf("Window Dimensions: Width-%i Height-%i\n", renderer.windowWidth, renderer.windowHeight);
 

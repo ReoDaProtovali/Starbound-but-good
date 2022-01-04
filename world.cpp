@@ -27,12 +27,12 @@ bool World::genChunk(int p_chunkX, int p_chunkY)
 }
 bool World::autoGen(Camera& p_cam) {
 
-	for (int i = (int)(p_cam.frame.y / (float)CHUNKSIZE) - 2;
-		i < (int)((p_cam.frame.w) / (float)CHUNKSIZE) + 2;
+	for (int i = (int)(p_cam.getFrame().y / (float)CHUNKSIZE) - 2;
+		i < (int)((p_cam.getFrame().w) / (float)CHUNKSIZE) + 2;
 		i++) {
 		for (int j =
-			(int)(p_cam.frame.x / (float)CHUNKSIZE) - 2;
-			j < (int)((p_cam.frame.z) / (float)CHUNKSIZE) + 2;
+			(int)(p_cam.getFrame().x / (float)CHUNKSIZE) - 2;
+			j < (int)((p_cam.getFrame().z) / (float)CHUNKSIZE) + 2;
 			j++) {
 			if ((i > 0) && (i < 12) && (j > -20) && (j < 20)) {
 				World::genChunk(j, i);
@@ -73,10 +73,10 @@ void World::drawWorld(GameRenderer& renderer, GameWindow& gw) {
 	while (it != chunkMap.end()) { // go through all the chunks in the world
 		glm::vec2 chunkGlobalPos = it->second.worldPos * CHUNKSIZE;
 		if (
-			(chunkGlobalPos.x > renderer.cam.frame.x - 1 * CHUNKSIZE) &&
-			(chunkGlobalPos.x < renderer.cam.frame.z + 1 * CHUNKSIZE) &&
-			(chunkGlobalPos.y > renderer.cam.frame.y - 1 * CHUNKSIZE) &&
-			(chunkGlobalPos.y < renderer.cam.frame.w + 1 * CHUNKSIZE)
+			(chunkGlobalPos.x > renderer.cam.getFrame().x - 1 * CHUNKSIZE) &&
+			(chunkGlobalPos.x < renderer.cam.getFrame().z + 1 * CHUNKSIZE) &&
+			(chunkGlobalPos.y > renderer.cam.getFrame().y - 1 * CHUNKSIZE) &&
+			(chunkGlobalPos.y < renderer.cam.getFrame().w + 1 * CHUNKSIZE)
 			) {
 			renderer.drawChunk(it->second);
 		}
