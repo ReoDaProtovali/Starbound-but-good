@@ -175,6 +175,7 @@ Xcopy /E /I res $(OutDir)res</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="chunk.cpp" />
+    <ClInclude Include="camera.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="image.cpp" />

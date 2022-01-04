@@ -75,6 +75,9 @@
     <ClCompile Include="shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="gamerenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
