@@ -86,12 +86,12 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 	if (!p_chunk.vboIsCurrent) { p_chunk.generateVBO(tileSheet); };
 	glBindVertexArray(p_chunk.VAO);
 
-	imageShader.use(); // Use the shader that draws an image based on texture coordinates
+	imageShader.use();
 
 	// Set the active texture unit to 0, which was set to represent "ourTexture" within the shader
 	// this was done with "imageShader.setTexUniform("ourTexture", 0);"
 	glActiveTexture(GL_TEXTURE0); 
-	// Attach the actual texture to the main texture 2d buffer on unit 0
+	// Attach the actual texture to the main GL_TEXTURE_2D buffer on unit 0
 	glBindTexture(GL_TEXTURE_2D, tileSheetTexture.glID);
 
 	// Matrix that transforms from local space to global space

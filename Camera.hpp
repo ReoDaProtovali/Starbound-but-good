@@ -4,13 +4,10 @@
 #include <gtc/matrix_transform.hpp>
 #include <algorithm>
 
-/**
-* Camera wrapper for calculating the transformation matrix
-*
-* Provides more intuitive control over view, provides
-* the visible frame for rendering within screen, etc.
-*
-*/
+
+/// Camera wrapper for calculating the transformation matrix
+/// Provides more intuitive control over view, provides
+/// The visible frame for rendering within screen, etc.
 class Camera
 {
 public:
