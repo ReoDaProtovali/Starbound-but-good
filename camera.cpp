@@ -90,16 +90,16 @@ void Camera::setFrame(float p_trX, float p_trY, float p_width, float p_height)
 
 void Camera::updateFrame(float p_windowHeight, float p_windowWidth)
 {
-	glm::vec2 windowDims;
-	if (p_windowHeight < p_windowWidth)
+	float screenScaling = 1.0;
+	if (p_windowWidth < p_windowHeight)
 	{
-		windowDims = glm::vec2(1.0f, p_windowHeight / p_windowWidth);
+		screenScaling = p_windowWidth / p_windowHeight;
 	}
 	else
 	{
-		windowDims = glm::vec2(p_windowWidth / p_windowHeight, 1.0f);
+		screenScaling = 1.0f;
 	}
-	glm::vec2 screenCenterPos = glm::vec2(windowDims / 2.0f) * tileScale;
+	glm::vec2 screenCenterPos = glm::vec2((dimensions.x * screenScaling) / 2.0f, (dimensions.y * screenScaling) / 2.0f) * tileScale;
 	setFrame(
 		pos.x - screenCenterPos.x,
 		pos.y - screenCenterPos.y,

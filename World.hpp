@@ -51,6 +51,10 @@ public:
 
 	WorldChunk& getChunk(glm::ivec2 p_worldPos, bool& success);
 	WorldChunk& getChunk(glm::ivec2 p_worldPos);
+	bool removeChunk(glm::ivec2 p_worldPos);
+	void removeChunk();
+	void removeChunks();
+
 	void drawWorld(GameRenderer& renderer, GameWindow& gw);
 	void logSize();
 	void logChunks();

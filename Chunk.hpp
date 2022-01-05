@@ -18,6 +18,7 @@ struct WorldChunk
 	WorldChunk(void) : worldID(-1),
 		worldPos(glm::ivec2()),
 		VAO(0),
+		VBO(0),
 		tiles(Array2D<Tile>()), 
 		invalid(true) {};
 	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
@@ -28,10 +29,10 @@ struct WorldChunk
 	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
 
 	Tile* getTiles();
-	GLuint generateVBO(SpriteSheet& p_spriteSheet);
+	void generateVBO(SpriteSheet& p_spriteSheet);
 	int getVBOSize();
 
-
+	void remove();
 
 	const int chunkSize = CHUNKSIZE;
 	glm::ivec2 worldPos;
@@ -39,8 +40,9 @@ struct WorldChunk
 
 	bool vboIsCurrent = false;
 	GLuint VAO;
+	GLuint VBO;
 
-	bool invalid;
+	bool invalid = false;
 	bool isEmpty = true;
 
 private:

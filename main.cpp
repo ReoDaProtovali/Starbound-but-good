@@ -50,6 +50,8 @@ int main(int argc, char* argv[])
 	GameRenderer renderer = GameRenderer(sm.w, sm.h, ww, wh);
 
 	Camera& cam = renderer.cam;
+	cam.tileScale = 128.0f;
+	cam.updateFrame(wh, ww);
 
 	//cam.updateFrame((float)gw.width, (float)gw.height); // actually, this is probably unneeded
 
@@ -57,7 +59,7 @@ int main(int argc, char* argv[])
 
 	World world = World();
 
-	Timestepper ts = Timestepper(30, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(5, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
@@ -101,6 +103,7 @@ int main(int argc, char* argv[])
 		while (ts.accumulatorFull()) {
 			ts.accumulator -= 1.0f / ts.gameUpdateFPS;
 			// game update code should go right here I think (limited to ts.gameUpdateFPS)
+			if ((frame < 2600) && (frame > 230)) world.autoGen(renderer.cam);
 
 			updateFPSGauge.stopStopwatch(); // round trip time the update frame took
 			updateFPSGauge.startStopwatch();
@@ -121,7 +124,6 @@ int main(int argc, char* argv[])
 				printf("Window Dimensions: Width-%i Height-%i\n", renderer.windowWidth, renderer.windowHeight);
 
 			}
-			world.autoGen(renderer.cam);
 
 			ts.processFrameStart();
 		}
@@ -158,6 +160,11 @@ int main(int argc, char* argv[])
 		if (gw.inpHandler.testKey(SDLK_e)) {
 			cam.tileScale *= 1.01f;
 		}
+
+		if (gw.inpHandler.testKey(SDLK_1)) {
+			world.removeChunks();
+		}
+
 		camVelocity *= 0.9;
 		cam.pos += glm::vec3(camVelocity, 0.0f);
 		cam.lookAt(glm::vec3(0.0, 0.0, 0.0));
@@ -180,6 +187,7 @@ int main(int argc, char* argv[])
 	//world.logChunks();
 	gw.cleanUp();
 	SDL_Quit();
+	world.removeChunks();
 
 	return 0;
 }

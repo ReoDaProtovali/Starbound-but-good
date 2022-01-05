@@ -10,6 +10,8 @@ WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPo
 	noiseGenerator.SetPersistence(0.54);
 }
 void WorldChunk::fillRandom() {
+	isEmpty = false;
+
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (rand() % 10 > 5) {
@@ -23,6 +25,8 @@ void WorldChunk::fillRandom() {
 	vboIsCurrent = false;
 }
 void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
+	isEmpty = false;
+
 	float surfaceLevel = 10.0f * chunkSize;
 	float globalX;
 	float globalY; // tile positions
@@ -69,7 +73,9 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 	}
 	vboIsCurrent = false;
 }
-GLuint WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
+
+void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
+	if (isEmpty) return;
 	glBindVertexArray(VAO);
 
 	verts.reserve((size_t)chunkSize * chunkSize * 6);
@@ -103,7 +109,6 @@ GLuint WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 			}
 		}
 	}
-	GLuint VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(Vertex), verts.data(), GL_STATIC_DRAW);
@@ -113,7 +118,6 @@ GLuint WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 	glEnableVertexAttribArray(attrib_position);
 	glEnableVertexAttribArray(attrib_texCoord);
 	vboIsCurrent = true;
-	return VBO;
 }
 
 int WorldChunk::getVBOSize() {
@@ -123,6 +127,16 @@ int WorldChunk::getVBOSize() {
 Tile* WorldChunk::getTiles() {
 	return tiles.getData().data();
 }
+
 void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates) {
 	return;
+}
+
+void WorldChunk::remove() {
+	glDeleteBuffers(1, &VBO);
+	glDeleteVertexArrays(1, &VAO);
+	isEmpty = true;
+	invalid = true;
+	verts.clear();
+	verts.swap(verts);
 }

@@ -66,8 +66,34 @@ WorldChunk& World::getChunk(glm::ivec2 p_worldPos) {
 		return it->second;
 	}
 }
+bool World::removeChunk(glm::ivec2 p_worldPos)
+{
+
+	if (chunkMap.erase(p_worldPos) > 0) {
+		return true;
+	};
+	return false;
+}
+void World::removeChunk()
+{
+	auto eraseIter = chunkMap.begin();
+	if (eraseIter == chunkMap.end()) return;
+	eraseIter->second.remove();
+	std::advance(eraseIter, 1);
+	chunkMap.erase(chunkMap.begin(), eraseIter);
+}
+
+void World::removeChunks()
+{
+	auto it = chunkMap.begin();
+	while (it != chunkMap.end()) {
+		it->second.remove();
+		it++;
+	}
+	chunkMap.clear();
+}
 void World::drawWorld(GameRenderer& renderer, GameWindow& gw) {
-	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();
+	auto it = chunkMap.begin();
 	while (it != chunkMap.end()) { // go through all the chunks in the world
 		glm::vec2 chunkGlobalPos = it->second.worldPos * CHUNKSIZE;
 		if (

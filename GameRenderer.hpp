@@ -57,8 +57,11 @@ public:
 	Camera cam;
 
 	Shader imageShader;
-
+	
 	bool drawChunk(WorldChunk& p_chunk);
+	bool drawSprite(glm::vec2 p_worldPos, Texture p_spriteTex);
+	bool drawSprite(float p_spriteX, float p_spriteY, Texture p_spriteTex);
+
 	void doLighting();
 };
 

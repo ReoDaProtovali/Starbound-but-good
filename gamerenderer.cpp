@@ -16,8 +16,8 @@ GameRenderer::GameRenderer(
 
 	res = ResourceLoader();
 
-	cam.pos = glm::vec3(0.0, 10.0 * CHUNKSIZE, 1.0);
-	cam.tileScale = 4.0;
+	cam.pos = glm::vec3(0.0f, 10.0f * CHUNKSIZE, 1.0f);
+	cam.tileScale = 16.0f;
 
 	lighting = Lighting((unsigned int)(windowWidth / cam.tileScale), (unsigned int)(windowHeight / cam.tileScale));
 
@@ -35,14 +35,14 @@ void GameRenderer::loadSpriteSheets() {
 	Image tileSheetImage = GameRenderer::res.getImage(TextureID::TILESHEET_TEXTURE);
 	tileSheet = SpriteSheet(tileSheetImage, glm::ivec2(8, 8), tileSheetImage.pixelCount() / (8 * 8));
 	tileSheetTexture = Texture(tileSheetImage);
-	//std::cout << tileSheetTexture.ID;
+
 	objectSheet = SpriteSheet(); // undefined for now
 
 	entitySheet = SpriteSheet(); // undefined for now
 
 }
 void GameRenderer::initFBO() {
-	//std::cout << windowWidth << " " << windowHeight << std::endl;
+
 	glGenFramebuffers(1, &screenFBO);
 	glGenRenderbuffers(1, &depthBuffer);
 
@@ -120,6 +120,17 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 
 	glDrawArrays(GL_TRIANGLES, 0, p_chunk.getVBOSize());
 	glBindVertexArray(0);
+	return true;
+}
+
+bool GameRenderer::drawSprite(glm::vec2 p_worldPos, Texture p_spriteTex)
+{
+
+	return true;
+}
+
+bool GameRenderer::drawSprite(float p_spriteX, float p_spriteY, Texture p_spriteTex)
+{
 	return true;
 }
 
