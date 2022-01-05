@@ -43,6 +43,8 @@ public:
 
 	void subVec4Data(glm::vec4* p_data);
 
+	void remove();
+
 	unsigned int getPixelCount() { return width * height; }
 	unsigned int width;
 	unsigned int height;

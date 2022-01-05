@@ -32,12 +32,9 @@ int main(int argc, char* argv[])
 	bool gameActive = true;
 	SDL_Event event;
 
-
-#ifdef _DEBUG
-	int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG); // memory leak detection
 	flag |= _CRTDBG_LEAK_CHECK_DF;
 	_CrtSetDbgFlag(flag);
-#endif
 
 	GameWindow gw = GameWindow("Borstoind");
 	SDL_Window* window = gw.window;
@@ -59,7 +56,7 @@ int main(int argc, char* argv[])
 
 	World world = World();
 
-	Timestepper ts = Timestepper(10, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(20, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;

@@ -118,3 +118,8 @@ void Texture::subVec4Data(glm::vec4* p_data) {
 		throw std::exception("Texture not initialized, so data cannot be substituted.");
 	}
 }
+
+void Texture::remove() {
+	glDeleteTextures(1, &glID);
+	initialized = false;
+}
