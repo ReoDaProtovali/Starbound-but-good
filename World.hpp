@@ -45,7 +45,7 @@ namespace wc {
 class World
 {
 public:
-	World() { std::cout << (wc::ivec2(1, 0) < wc::ivec2(1, 1)) << std::endl; };
+	World() {};
 	bool genChunk(glm::ivec2 p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
 	void enqueueGen(glm::ivec2 p_chunkPos);

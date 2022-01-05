@@ -4,28 +4,16 @@
 
 #include <SDL.h>
 #include <iostream>
-#include "utils.hpp"
-#include "GameConstants.hpp"
 #include "GameWindow.hpp"
 #include "GameRenderer.hpp"
-#include "Entity.hpp"
 
 #include <cmath>
 #include "World.hpp"
 #include "Timestepper.hpp"
-#include "ResourceLoader.hpp"
-#include "GameAssets.hpp"
 #include "InputHandler.hpp"
-#include "Shader.hpp"
 
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
-
-#include "Pixmap.hpp"
-#include <semaphore>
-#include <thread>
-#include <chrono>
-
 
 int main(int argc, char* argv[])
 {

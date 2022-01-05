@@ -41,7 +41,6 @@ void GameRenderer::loadSpriteSheets() {
 
 }
 void GameRenderer::initFBO() {
-
 	glGenFramebuffers(1, &screenFBO);
 	glGenRenderbuffers(1, &depthBuffer);
 
@@ -59,14 +58,10 @@ void GameRenderer::initFBO() {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//std::cout << "Tex id: " << screenColorTex << std::endl;
-
 }
 
 void GameRenderer::bindScreenFBOAsRenderTarget()
 {
-	//printf("Width: %i, Height: %i \n", screenColorTex.width, screenColorTex.height);
-
 	glViewport(0, 0, windowWidth, windowHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
 	glDrawBuffers(1, DrawBuffers);
@@ -84,7 +79,7 @@ void GameRenderer::rescale()
 		throw std::exception("Frame buffer is not okie dokie");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
+	cam.updateFrame(windowWidth, windowHeight);
 }
 
 bool GameRenderer::drawChunk(WorldChunk& p_chunk) {

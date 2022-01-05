@@ -71,7 +71,6 @@ glm::mat4 Camera::getTransformMat4(float p_windowWidth, float p_windowHeight)
 	{
 		lookForwards(); // default behavior, can be overriden by other view setting functions
 	}
-	//std::cout << tileScale << std::endl;
 
 	glm::vec2 screenCenterPos = glm::vec2((dimensions.x * screenScaling) / 2.0f, (dimensions.y * screenScaling) / 2.0f) * tileScale;
 	setFrame(

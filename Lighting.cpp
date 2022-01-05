@@ -27,8 +27,6 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	genQuadVBO();
 	lightmapTex = Texture(p_width, p_height, lightmap.getData());
 	lightmapTex.setFiltering(GL_LINEAR);
-	//glm::vec4 testData = *lightmap.getData();
-	//std::cout << testData[1].a << std::endl;
 }
 void Lighting::genQuadVBO()
 {
@@ -50,8 +48,6 @@ void Lighting::updateLightmapTex() {
 
 void Lighting::draw(GLuint p_screenColorTex)
 {
-	//std::cout << p_screenColorTex << std::endl;
-	//std::cout << lightmapTex.ID << std::endl;
 	glBindVertexArray(quadVAO);
 	lightingShader.use();
 
@@ -60,7 +56,6 @@ void Lighting::draw(GLuint p_screenColorTex)
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, lightmapTex.glID);
-
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
