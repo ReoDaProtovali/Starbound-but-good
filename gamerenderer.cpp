@@ -32,9 +32,8 @@ void GameRenderer::loadSpriteSheets() {
 	if (!success) {
 		throw std::invalid_argument("One or more file not found");
 	}
-	Image tileSheetImage = GameRenderer::res.getImage(TextureID::TILESHEET_TEXTURE);
-	tileSheet = SpriteSheet(tileSheetImage, glm::ivec2(8, 8), tileSheetImage.pixelCount() / (8 * 8));
-	tileSheetTexture = Texture(tileSheetImage);
+	tileSheetTexture = GameRenderer::res.getTexture(TextureID::TILESHEET_TEXTURE);
+	tileSheet = SpriteSheet(tileSheetTexture, glm::ivec2(8, 8), tileSheetTexture.getPixelCount() / (8 * 8));
 
 	objectSheet = SpriteSheet(); // undefined for now
 
@@ -51,7 +50,7 @@ void GameRenderer::initFBO() {
 	screenColorTex.changeDimensions(windowWidth, windowHeight); // Allocates the texture
 	screenColorTex.setFiltering(GL_LINEAR);
 
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenColorTex.ID, 0);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenColorTex.glID, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, windowWidth, windowHeight);
@@ -77,7 +76,7 @@ void GameRenderer::rescale()
 {
 	screenColorTex.changeDimensions(windowWidth, windowHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenColorTex.ID, 0);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenColorTex.glID, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, windowWidth, windowHeight); // rescale depth buffer
 	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
@@ -98,7 +97,7 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 	// this was done with "imageShader.setTexUniform("ourTexture", 0);"
 	glActiveTexture(GL_TEXTURE0); 
 	// Attach the actual texture to the main texture 2d buffer on unit 0
-	glBindTexture(GL_TEXTURE_2D, tileSheetTexture.ID);
+	glBindTexture(GL_TEXTURE_2D, tileSheetTexture.glID);
 
 	// Matrix that transforms from local space to global space
 	glm::mat4 modelTransform = glm::mat4(1.0f); // Identity
@@ -135,5 +134,5 @@ bool GameRenderer::drawSprite(float p_spriteX, float p_spriteY, Texture p_sprite
 }
 
 void GameRenderer::doLighting() {
-	lighting.draw(screenColorTex.ID);
+	lighting.draw(screenColorTex.glID);
 }

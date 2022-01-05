@@ -13,10 +13,10 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	lightmap = Pixmap(p_width, p_height);
 
 	// just for testing
-	lightmap.fill(glm::vec4(0.7f, 0.7f, 0.7f, 1.0f));
-	lightmap.setPixel(3, 3, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	lightmap.setPixel(4, 3, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	lightmap.setPixel(5, 3, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	lightmap.fill(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	lightingShader = Shader("./Shaders/LightingVS.glsl", "./Shaders/LightingFS.glsl");
 	// bind the uniforms to texture units 0 and 1
@@ -59,7 +59,7 @@ void Lighting::draw(GLuint p_screenColorTex)
 	glBindTexture(GL_TEXTURE_2D, p_screenColorTex);
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, lightmapTex.ID);
+	glBindTexture(GL_TEXTURE_2D, lightmapTex.glID);
 
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);

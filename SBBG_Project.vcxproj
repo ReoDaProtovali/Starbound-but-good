@@ -178,7 +178,6 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
-    <ClCompile Include="image.cpp" />
     <ClCompile Include="inputhandler.cpp" />
     <ClCompile Include="lighting.cpp" />
     <ClCompile Include="lightingsolver.cpp" />
@@ -200,7 +199,6 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="GameRenderer.hpp" />
     <ClInclude Include="GameConstants.hpp" />
-    <ClInclude Include="Image.hpp" />
     <ClInclude Include="GameAssets.hpp" />
     <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="GameWindow.hpp" />

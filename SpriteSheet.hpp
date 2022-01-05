@@ -1,7 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "GameConstants.hpp"
-#include "Image.hpp"
+#include "Texture.hpp"
 #include <string>
 #include <stdexcept>
 
@@ -11,7 +11,7 @@ class SpriteSheet
 	public:
 		SpriteSheet()
 			: sheetMode(SheetMode::TILESHEET),
-			image(Image()),
+			texture(Texture()),
 			spriteDimensions(glm::ivec2()),
 			currentSprite(NULL),
 			spriteCount(NULL),
@@ -19,9 +19,9 @@ class SpriteSheet
 			animationCount(NULL),
 			frameCount(NULL) {};
 
-		SpriteSheet(Image p_image, glm::ivec2 p_spriteDimensions, unsigned short p_spriteCount)
+		SpriteSheet(Texture p_texture, glm::ivec2 p_spriteDimensions, unsigned short p_spriteCount)
 			: sheetMode(SheetMode::TILESHEET),
-			image(p_image),
+			texture(p_texture),
 			spriteDimensions(p_spriteDimensions),
 			currentSprite(NULL), 
 			spriteCount(p_spriteCount), 
@@ -30,7 +30,7 @@ class SpriteSheet
 			frameCount(1) {};
 
 
-		void setImage(Image p_image) { image = p_image; };
+		void setTexture(Texture p_texture) { texture = p_texture; };
 		void setSpriteCount(unsigned short p_spriteCount) { spriteCount = p_spriteCount; };
 		void setCurrentSprite(unsigned short p_spriteIndex);
 		void setSpriteDimensions(glm::ivec2 p_dim);
@@ -40,7 +40,7 @@ class SpriteSheet
 		glm::ivec2 indexToPos(unsigned short p_spriteIndex);
 		glm::vec2 getTexCoords(unsigned short p_spriteID, Corner corner);
 		void setAnimation(unsigned short p_animationID);
-		Image image;
+		Texture texture;
 		unsigned int glTexture = 0;
 		bool hasglTexture = false;
 		inline void setglTexture(unsigned int p_glTexID) { glTexture = p_glTexID; hasglTexture = true; };

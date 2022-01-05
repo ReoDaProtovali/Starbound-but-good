@@ -69,9 +69,6 @@
     <ClCompile Include="spritesheet.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="image.cpp">
-      <Filter>Source Files\Tile/Entity Related</Filter>
-    </ClCompile>
     <ClCompile Include="shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -132,9 +129,6 @@
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="GameAssets.hpp">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Shader.hpp">

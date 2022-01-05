@@ -30,20 +30,20 @@ glm::vec2 SpriteSheet::getTexCoords(unsigned short p_spriteIndex, Corner corner)
 	float x, y;
 	switch (corner) {
 	case Corner::TOP_LEFT:
-		x = (float)spritePos.x / (float)image.dimensions.x;
-		y = (float)spritePos.y / (float)image.dimensions.y;
+		x = (float)spritePos.x / (float)texture.width;
+		y = (float)spritePos.y / (float)texture.height;
 		return glm::vec2(x, y);
 	case Corner::TOP_RIGHT:
-		x = ((float)spritePos.x + spriteDimensions.x) / (float)image.dimensions.x;
-		y = ((float)spritePos.y) / (float)image.dimensions.y;
+		x = ((float)spritePos.x + spriteDimensions.x) / (float)texture.width;
+		y = ((float)spritePos.y) / (float)texture.height;
 		return glm::vec2(x, y);
 	case Corner::BOTTOM_LEFT:
-		x = ((float)spritePos.x) / (float)image.dimensions.x;
-		y = ((float)spritePos.y + spriteDimensions.y) / (float)image.dimensions.y;
+		x = ((float)spritePos.x) / (float)texture.width;
+		y = ((float)spritePos.y + spriteDimensions.y) / (float)texture.height;
 		return glm::vec2(x, y);
 	case Corner::BOTTOM_RIGHT:
-		x = ((float)spritePos.x + spriteDimensions.x) / (float)image.dimensions.x;
-		y = ((float)spritePos.y + spriteDimensions.y) / (float)image.dimensions.y;
+		x = ((float)spritePos.x + spriteDimensions.x) / (float)texture.width;
+		y = ((float)spritePos.y + spriteDimensions.y) / (float)texture.height;
 		return glm::vec2(x, y);
 	}
 	return glm::vec2(-1.0f, -1.0f);
@@ -52,7 +52,7 @@ glm::vec2 SpriteSheet::getTexCoords(unsigned short p_spriteIndex, Corner corner)
 glm::ivec2 SpriteSheet::indexToPos(unsigned short p_spriteIndex) {
 	if (sheetMode == SheetMode::TILESHEET) {
 		return glm::ivec2(
-			(p_spriteIndex % (image.dimensions.x / spriteDimensions.x)) * spriteDimensions.x, // x pos
+			(p_spriteIndex % (texture.width / spriteDimensions.x)) * spriteDimensions.x, // x pos
 			(p_spriteIndex / spriteDimensions.y) * spriteDimensions.y); // y pos
 	}
 	return glm::vec2(-1.0f, -1.0f);

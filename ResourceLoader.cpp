@@ -4,36 +4,39 @@
 #include "glm/glm.hpp"
 
 bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
-	unsigned char* texture = NULL;
+	if (textures.find(p_ID) != textures.end()) return true;
+	unsigned char* imageData = nullptr;
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(false);
-	texture = stbi_load(p_filepath, &width, &height, &nrChannels, 0);
+	imageData = stbi_load(p_filepath, &width, &height, &nrChannels, 0);
 
-	if (texture == NULL) {
+	if (imageData == nullptr) {
 		std::cout << "Failed to load image" << std::endl;
-		return NULL;
+		return false;
 	}
 	else {
-		Image loadedImage = Image(texture, glm::ivec2(width, height), p_ID);
-		images.push_back(loadedImage);
+		Texture loadedTexture = Texture(p_ID);
+		loadedTexture.fromByteData(width, height, imageData);
+		textures.insert(std::make_pair(p_ID, loadedTexture));
+
+		delete imageData;
 	}
-	return 1;
+	return true;
 }
 
-Image ResourceLoader::getImage(TextureID p_ID, bool& success) {
-	for (int i = 0; i < images.size(); i++) {
-		if (images[i].ID == p_ID) {
-			success = true;
-			return images[i];
-		}
+Texture ResourceLoader::getTexture(TextureID p_ID, bool& success) {
+	auto it = textures.find(p_ID);
+	if (it != textures.end()) {
+		success = true;
+		return it->second;
 	}
 	success = false;
+	return Texture();
 }
-Image ResourceLoader::getImage(TextureID p_ID) {
-	for (int i = 0; i < images.size(); i++) {
-		if (images[i].ID == p_ID) {
-			return images[i];
-		}
+Texture ResourceLoader::getTexture(TextureID p_ID) {
+	auto it = textures.find(p_ID);
+	if (it != textures.end()) {
+		return it->second;
 	}
 	throw std::invalid_argument("Failed to get image: ID Not found.");
 }
