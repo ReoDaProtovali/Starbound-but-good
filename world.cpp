@@ -25,6 +25,25 @@ bool World::genChunk(int p_chunkX, int p_chunkY)
 	}
 	return false;
 }
+void World::enqueueGen(glm::ivec2 p_chunkPos)
+{
+	//std::cout << loadQueue.size() << std::endl;
+	if (!World::chunkExistsAt(p_chunkPos)) {
+		loadQueue.push(p_chunkPos);
+	};
+}
+
+void World::genFromQueue()
+{
+	glm::ivec2 chunkPos;
+	if (!loadQueue.empty()) {
+		chunkPos = loadQueue.back();
+		loadQueue.pop();
+	}
+	else { return; }
+	genChunk(chunkPos);
+}
+
 bool World::autoGen(Camera& p_cam) {
 
 	for (int i = (int)(p_cam.getFrame().y / (float)CHUNKSIZE) - 2;
@@ -35,7 +54,7 @@ bool World::autoGen(Camera& p_cam) {
 			j < (int)((p_cam.getFrame().z) / (float)CHUNKSIZE) + 2;
 			j++) {
 			if ((i > 0) && (i < 12) && (j > -20) && (j < 20)) {
-				World::genChunk(j, i);
+				World::enqueueGen(glm::ivec2(j, i));
 			}
 		}
 	}
@@ -51,7 +70,7 @@ void World::logChunks() {
 		it++;
 	}
 }
-WorldChunk& World::getChunk(glm::ivec2 p_worldPos, bool& success) {
+WorldChunk& World::getChunk(glm::ivec2 p_worldPos, bool& success) { // actually gets the chunk
 	if (chunkMap.size() == 0) { success = false; WorldChunk nullChunk; return nullChunk; } // don't know of a better thing to return yet, nullChunk is dealloced apon scope end
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.find(p_worldPos);
 	if (it != chunkMap.end()) {
@@ -60,12 +79,14 @@ WorldChunk& World::getChunk(glm::ivec2 p_worldPos, bool& success) {
 	}
 	success = false;
 }
-WorldChunk& World::getChunk(glm::ivec2 p_worldPos) {
+bool World::chunkExistsAt(glm::ivec2 p_worldPos) { // tells you if a chunk exists
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.find(p_worldPos);
 	if (it != chunkMap.end()) {
-		return it->second;
+		return true;
 	}
+	return false;
 }
+
 bool World::removeChunk(glm::ivec2 p_worldPos)
 {
 

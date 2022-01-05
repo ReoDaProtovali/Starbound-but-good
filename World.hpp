@@ -14,6 +14,7 @@
 #include "GameWindow.hpp"
 #include "GL/glew.h"
 #include <map>
+#include <queue>
 
 
 class GameRenderer;
@@ -47,10 +48,12 @@ public:
 	World() { std::cout << (wc::ivec2(1, 0) < wc::ivec2(1, 1)) << std::endl; };
 	bool genChunk(glm::ivec2 p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
+	void enqueueGen(glm::ivec2 p_chunkPos);
+	void genFromQueue();
 	bool autoGen(Camera& p_cam);
 
 	WorldChunk& getChunk(glm::ivec2 p_worldPos, bool& success);
-	WorldChunk& getChunk(glm::ivec2 p_worldPos);
+	bool chunkExistsAt(glm::ivec2 p_worldPos);
 	bool removeChunk(glm::ivec2 p_worldPos);
 	void removeChunk();
 	void removeChunks();
@@ -61,6 +64,9 @@ public:
 	std::map<wc::ivec2, WorldChunk> chunkMap;
 private:
 	std::vector<Entity> worldEntities;
+	std::queue<glm::ivec2> loadQueue;
+
+
 };
 
 #endif WORLD_H

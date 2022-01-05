@@ -25,7 +25,7 @@ struct WorldChunk
 
 	noise::module::Perlin noiseGenerator;
 	void fillRandom();
-	void worldGenerate(glm::ivec2 chunkPos);
+	void worldGenerate(glm::ivec2 p_chunkPos);
 	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
 
 	Tile* getTiles();

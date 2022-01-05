@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 
 	Camera& cam = renderer.cam;
 	cam.tileScale = 128.0f;
-	cam.updateFrame(wh, ww);
+	cam.updateFrame((float)wh, (float)ww);
 
 	//cam.updateFrame((float)gw.width, (float)gw.height); // actually, this is probably unneeded
 
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
 	World world = World();
 
-	Timestepper ts = Timestepper(5, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(10, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
@@ -103,7 +103,8 @@ int main(int argc, char* argv[])
 		while (ts.accumulatorFull()) {
 			ts.accumulator -= 1.0f / ts.gameUpdateFPS;
 			// game update code should go right here I think (limited to ts.gameUpdateFPS)
-			if ((frame < 2600) && (frame > 230)) world.autoGen(renderer.cam);
+			world.autoGen(renderer.cam);
+			world.genFromQueue();
 
 			updateFPSGauge.stopStopwatch(); // round trip time the update frame took
 			updateFPSGauge.startStopwatch();
@@ -116,12 +117,12 @@ int main(int argc, char* argv[])
 			if (printConsoleCounter > ts.renderFPS) { // means the console updates every second
 				printConsoleCounter = 0;
 				system("CLS");
-				printf("Current Update FPS: %f \n", utils::averageVector(updateFPSVec));
-				printf("Current Draw FPS: %f \n", utils::averageVector(renderFPSVec));
-				printf("Cam Position: %f, %f \n", cam.pos.x, cam.pos.y);
-				printf("Cam Frame: X range-%f, %f   Y range-%f, %f\n", cam.getFrame().x, cam.getFrame().z, cam.getFrame().y, cam.getFrame().w);
-				printf("Screen Dimensions: Width-%i Height-%i\n", renderer.screenWidth, renderer.screenHeight);
-				printf("Window Dimensions: Width-%i Height-%i\n", renderer.windowWidth, renderer.windowHeight);
+				printf("Current Update FPS - %.2f \n", utils::averageVector(updateFPSVec));
+				printf("Current Draw FPS - %.2f \n", utils::averageVector(renderFPSVec));
+				printf("Cam Position - %.2f, %.2f \n", cam.pos.x, cam.pos.y);
+				printf("Cam Frame - X range: %.2f, %.2f   Y range: %.2f, %.2f\n", cam.getFrame().x, cam.getFrame().z, cam.getFrame().y, cam.getFrame().w);
+				printf("Screen Dimensions - Width: %i Height: %i\n", renderer.screenWidth, renderer.screenHeight);
+				printf("Window Dimensions - Width: %i Height: %i\n", renderer.windowWidth, renderer.windowHeight);
 
 			}
 
