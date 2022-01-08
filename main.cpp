@@ -44,13 +44,14 @@ int main(int argc, char* argv[])
 
 	World world = World();
 
-	Timestepper ts = Timestepper(30, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(60, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
 	std::vector<float> updateFPSVec;
 	std::vector<float> renderFPSVec;
-	unsigned int frame = 0;
+	unsigned int renderFrame = 0;
+	unsigned int updateFrame = 0;
 	while (gameActive) {
 		ts.processFrameStart();
 		while (SDL_PollEvent(&event)) {
@@ -84,12 +85,15 @@ int main(int argc, char* argv[])
 			}
 		}
 		printConsoleCounter++;
-		frame++;
+		renderFrame++;
 		while (ts.accumulatorFull()) {
 			ts.accumulator -= 1.0f / ts.gameUpdateFPS;
+			updateFrame++;
 			// game update code should go right here I think (limited to ts.gameUpdateFPS)
 			world.autoGen(renderer.cam);
-			world.genFromQueue();
+			if (updateFrame % 4 == 0) { // Generate a chunk every fourth update frame
+				world.genFromQueue();
+			}
 
 			updateFPSGauge.stopStopwatch(); // round trip time the update frame took
 			updateFPSGauge.startStopwatch();
@@ -99,7 +103,7 @@ int main(int argc, char* argv[])
 				updateFPSVec.erase(updateFPSVec.begin());
 			}
 
-			if (printConsoleCounter > ts.renderFPS && 0) { // means the console updates every second
+			if (printConsoleCounter > ts.renderFPS) { // means the console updates every second
 				printConsoleCounter = 0;
 				system("CLS");
 				printf("Current Update FPS - %.2f \n", utils::averageVector(updateFPSVec));
