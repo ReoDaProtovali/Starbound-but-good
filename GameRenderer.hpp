@@ -78,15 +78,14 @@ public:
 	* @returns A bool that indicated if the chunk was successfully drawn. Currently only returns true.
 	*/
 	bool drawChunk(WorldChunk& p_chunk);
-	/**
-	* Unimplemented
-	*/
+
+	/// Unimplemented
 	bool drawSprite(glm::vec2 p_worldPos, Texture p_spriteTex);
-	/**
-	* Unimplemented
-	*/
+	
+	/// Unimplemented
 	bool drawSprite(float p_spriteX, float p_spriteY, Texture p_spriteTex);
 
-	void doLighting();
+	/// Simply tells the lighting subclass to draw based on it's current values.
+	void drawLighting();
 };
 

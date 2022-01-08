@@ -9,7 +9,7 @@ template<class T>
 class Array2D {
 public:
 	Array2D() { width = 0; height = 0; data = std::vector<T>(); }
-	Array2D(int p_width, int p_height, T p_defaultValue) {
+	Array2D(size_t p_width, size_t p_height, T p_defaultValue) {
 		data.reserve(p_width * p_height);
 		for (int i = 0; i < p_width * p_height; i++) {
 			data.push_back(p_defaultValue);
@@ -33,8 +33,8 @@ public:
 	std::vector<T>& getData() {
 		return data;
 	}
-	unsigned int width;
-	unsigned int height;
+	size_t width;
+	size_t height;
 private:
 	std::vector<T> data;
 	bool hasData = false;

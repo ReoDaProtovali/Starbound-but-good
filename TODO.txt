@@ -3,9 +3,7 @@
 CLEAN THE CODE UP, GET RID OF UNNECESSARY CODE / CONSOLIDATE, it should be readable somewhat
 Find a way to handle textures better, not on a class-by-class basis
 
-cut down on compiler warnings, they are ugly 
-
-Make resourceloader use std::map instead of a vector
+Sort out the #pragma once's and include guards, pick one or the other and not both lol
 
 Implement tile lighting, test using it within the shader
 	- Add a getTile method to the world class
@@ -43,3 +41,5 @@ COMPLETED::
 
 Check for memory leaks, or at least figure out how to properly delete the Array2D data.
 	- Storing Array2D data in a vector, avoiding using new by relying on standard library allocation and deallocation
+cut down on compiler warnings, they are ugly 
+Make resourceloader use std::map instead of a vector

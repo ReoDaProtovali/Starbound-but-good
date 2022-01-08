@@ -24,13 +24,13 @@ bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 	return true;
 }
 
-Texture ResourceLoader::getTexture(TextureID p_ID, bool& success) {
+Texture ResourceLoader::getTexture(TextureID p_ID, bool& p_success) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {
-		success = true;
+		p_success = true;
 		return it->second;
 	}
-	success = false;
+	p_success = false;
 	return Texture();
 }
 Texture ResourceLoader::getTexture(TextureID p_ID) {

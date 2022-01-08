@@ -79,7 +79,7 @@ void GameRenderer::rescale()
 		throw std::exception("Frame buffer is not okie dokie");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	cam.updateFrame(windowWidth, windowHeight);
+	cam.updateFrame((float)windowWidth, (float)windowHeight);
 }
 
 bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
@@ -128,6 +128,6 @@ bool GameRenderer::drawSprite(float p_spriteX, float p_spriteY, Texture p_sprite
 	return true;
 }
 
-void GameRenderer::doLighting() {
+void GameRenderer::drawLighting() {
 	lighting.draw(screenColorTex.glID);
 }

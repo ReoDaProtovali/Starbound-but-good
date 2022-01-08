@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
 	World world = World();
 
-	Timestepper ts = Timestepper(20, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
+	Timestepper ts = Timestepper(30, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
 	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 				updateFPSVec.erase(updateFPSVec.begin());
 			}
 
-			if (printConsoleCounter > ts.renderFPS) { // means the console updates every second
+			if (printConsoleCounter > ts.renderFPS && 0) { // means the console updates every second
 				printConsoleCounter = 0;
 				system("CLS");
 				printf("Current Update FPS - %.2f \n", utils::averageVector(updateFPSVec));
@@ -165,9 +165,9 @@ int main(int argc, char* argv[])
 		glDrawBuffer(GL_BACK);
 		glDisable(GL_DEPTH_TEST);
 
-		renderer.doLighting();
+		renderer.drawLighting();
 
-		SDL_GL_SwapWindow(window); // Put the image buffer into the window
+		gw.displayNewFrame();
 	}
 
 	//world.logChunks();

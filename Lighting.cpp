@@ -48,15 +48,15 @@ void Lighting::updateLightmapTex() {
 
 void Lighting::draw(GLuint p_screenColorTex)
 {
-	glBindVertexArray(quadVAO);
-	lightingShader.use();
+	glBindVertexArray(quadVAO); // Bind the vertices of the quad screen overlay
+	lightingShader.use(); // Use the lighting shader for the subsequent glDrawArrays call
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, p_screenColorTex);
+	glBindTexture(GL_TEXTURE_2D, p_screenColorTex); // Screen color texture is bound to unit 0
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, lightmapTex.glID);
+	glBindTexture(GL_TEXTURE_2D, lightmapTex.glID); // Lightmap texture is bound to unit 1
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, 6); // 6 vertices in the quad overlay
 
 }
