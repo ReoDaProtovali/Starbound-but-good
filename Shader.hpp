@@ -24,10 +24,15 @@ class Shader
 		GLuint compileShaders(const char* vs_filePath, const char* fs_filePath);
 		/// Bind the shader for use with subsequent OpenGL draw calls.
 		void use();
+		/// A function that handles assigning a value to a uniform within the shader's program. In this case, a boolean.
 		void setBoolUniform(const std::string& p_name, bool p_value) const;
+		/// A function that handles assigning a value to a uniform within the shader's program. In this case, an integer.
 		void setIntUniform(const std::string& p_name, GLint p_value) const;
+		/// A function that handles assigning a value to a uniform within the shader's program. In this case, a float.
 		void setFloatUniform(const std::string& p_name, GLfloat p_value) const;
+		/// A function that handles assigning a value to a uniform within the shader's program. In this case, an OpenGL texture.
 		void setTexUniform(const std::string& p_name, GLuint p_value);
+		/// A function that handles assigning a value to a uniform within the shader's program. In this case, a 4x4 matrix.
 		void setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const;
 		bool texUniformExists(GLuint p_uniformID); /// Unused
 		GLuint programID; /// The OpenGL shader program ID

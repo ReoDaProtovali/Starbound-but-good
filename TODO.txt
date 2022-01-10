@@ -3,6 +3,10 @@
 CLEAN THE CODE UP, GET RID OF UNNECESSARY CODE / CONSOLIDATE, it should be readable somewhat
 Find a way to handle textures better, not on a class-by-class basis
 
+Allow variable attribute names to be passed into the generic shader
+
+Maybe encapsulate framebuffer creation and management to it's own class
+
 Sort out the #pragma once's and include guards, pick one or the other and not both lol
 
 Implement tile lighting, test using it within the shader

@@ -74,8 +74,8 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
     glDeleteShader(fs);
 
 
-    glBindAttribLocation(program, attrib_position, "i_position");
-    glBindAttribLocation(program, attrib_texCoord, "i_texCoord");
+    glBindAttribLocation(program, 0, "i_position"); // uh oh, gonna have to un-bake this into the shader code
+    glBindAttribLocation(program, 1, "i_texCoord");
     glLinkProgram(program);
 
     glUseProgram(program);

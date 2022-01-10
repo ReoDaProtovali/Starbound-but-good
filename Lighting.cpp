@@ -1,13 +1,5 @@
 #include "Lighting.hpp"
 #include "GameConstants.hpp"
-const GLfloat g_quad_vertex_buffer_data[] = {
-	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
-	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-	1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
-	1.0f,  1.0f, 0.0f,  1.0f, 1.0f
-};
 
 Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	lightmap = Pixmap(p_width, p_height);
@@ -23,23 +15,25 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	lightingShader.setTexUniform("screenTexture", 0);
 	lightingShader.setTexUniform("lightingTexture", 1);
 
-	glGenVertexArrays(1, &quadVAO);
-	genQuadVBO();
+
 	lightmapTex = Texture(p_width, p_height, lightmap.getData());
 	lightmapTex.setFiltering(GL_LINEAR);
-}
-void Lighting::genQuadVBO()
-{
-	glBindVertexArray(quadVAO);
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, 30 * sizeof(float), g_quad_vertex_buffer_data, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(attrib_position, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(attrib_position);
-	glEnableVertexAttribArray(attrib_texCoord);
+	overlayMesh.addAttrib(3); // Position attrib
+	overlayMesh.addAttrib(2); // Tex Coord attrib
+
+
+	overlayMesh.pushVertex({ // pushing the whole quad vertex array in one swoop
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // vertex 1
+		1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // vertex 2
+		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // vertex 3
+		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // vertex 4
+		1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // vertex 5
+		1.0f,  1.0f, 0.0f,  1.0f, 1.0f // vertex 6
+		});
+
+	overlayMesh.genVBO();
+
 }
 
 void Lighting::updateLightmapTex() {
@@ -48,7 +42,7 @@ void Lighting::updateLightmapTex() {
 
 void Lighting::draw(GLuint p_screenColorTex)
 {
-	glBindVertexArray(quadVAO); // Bind the vertices of the quad screen overlay
+	glBindVertexArray(overlayMesh.VAO); // Bind the vertices of the quad screen overlay
 	lightingShader.use(); // Use the lighting shader for the subsequent glDrawArrays call
 
 	glActiveTexture(GL_TEXTURE0);

@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 				updateFPSVec.erase(updateFPSVec.begin());
 			}
 
-			if (printConsoleCounter > ts.renderFPS) { // means the console updates every second
+			if (printConsoleCounter > ts.renderFPS && 0) { // means the console updates every second
 				printConsoleCounter = 0;
 				system("CLS");
 				printf("Current Update FPS - %.2f \n", utils::averageVector(updateFPSVec));

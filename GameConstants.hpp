@@ -4,11 +4,10 @@
 
 #include "glm/glm.hpp"
 #include <vector>
-#include "Vertex.hpp"
 #include "GL/glew.h"
 
-constexpr auto CHUNKSIZE = 64;;
-typedef enum class TextureID {
+constexpr auto CHUNKSIZE = 64;
+enum class TextureID {
 	NO_TEXTURE,
 	STONE_TEXTURE,
 	DIRT_TEXTURE,
@@ -17,10 +16,10 @@ typedef enum class TextureID {
 	TESTSPRITESHEET_TEXTURE,
 	ME_TEXTURE,
 	TILESHEET_TEXTURE
-} TextureID;
+};
 
 enum class SheetMode {
-	TILESHEET,
+	BASIC,
 	ANIMATION_ROWS
 };
 
@@ -30,11 +29,5 @@ enum class Corner {
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT
 };
-
-typedef enum t_attrib_id
-{
-	attrib_position,
-	attrib_texCoord
-} t_attrib_id;
 
 #endif

@@ -5,7 +5,7 @@ void SpriteSheet::setMode(SheetMode mode) {
 }
 
 void SpriteSheet::nextFrame() {
-	if (sheetMode == SheetMode::TILESHEET) {
+	if (sheetMode == SheetMode::BASIC) {
 		if (currentSprite + 1 > spriteCount) {
 			throw std::length_error("Tried to advance to next sprite past the end of the tilesheet.");
 		}
@@ -14,7 +14,7 @@ void SpriteSheet::nextFrame() {
 		}
 	}
 	else if (sheetMode == SheetMode::ANIMATION_ROWS) {
-		if (currentSprite + 1 > frameCount) {
+		if (currentSprite + 1 >= frameCount) {
 			currentSprite = 0;
 		}
 		else {
@@ -23,9 +23,9 @@ void SpriteSheet::nextFrame() {
 	}
 }
 
-glm::vec2 SpriteSheet::getTexCoords(unsigned short p_spriteIndex, Corner corner)
+glm::vec2 SpriteSheet::getTexCoords(Corner corner)
 {
-	glm::ivec2 spritePos = SpriteSheet::indexToPos(p_spriteIndex);
+	glm::ivec2 spritePos = SpriteSheet::indexToPos(currentSprite);
 	
 	float x, y;
 	switch (corner) {
@@ -50,10 +50,15 @@ glm::vec2 SpriteSheet::getTexCoords(unsigned short p_spriteIndex, Corner corner)
 }
 
 glm::ivec2 SpriteSheet::indexToPos(unsigned short p_spriteIndex) {
-	if (sheetMode == SheetMode::TILESHEET) {
+	if (sheetMode == SheetMode::BASIC) { // Basic mode, index starts at top left, and goes from top to bottom, left to right
 		return glm::ivec2(
 			(p_spriteIndex % (texture.width / spriteDimensions.x)) * spriteDimensions.x, // x pos
 			(p_spriteIndex / spriteDimensions.y) * spriteDimensions.y); // y pos
+	}
+	else if (sheetMode == SheetMode::ANIMATION_ROWS) {
+		return glm::ivec2(
+			(p_spriteIndex % (texture.width / spriteDimensions.x)) * spriteDimensions.x, // x pos
+			currentAnimation * spriteDimensions.y); // y pos
 	}
 	return glm::vec2(-1.0f, -1.0f);
 }

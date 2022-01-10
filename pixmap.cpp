@@ -25,8 +25,8 @@ glm::vec4* Pixmap::getData() {
 	return pixels.getData().data();
 }
 void Pixmap::logPixmap() {
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++) {
+	for (unsigned int i = 0; i < height; i++) {
+		for (unsigned int j = 0; j < width; j++) {
 			std::cout << pixels(j, i).r;
 			std::cout << " ";
 			std::cout << pixels(j, i).g;

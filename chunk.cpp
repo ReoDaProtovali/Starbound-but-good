@@ -4,8 +4,10 @@
 
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
 	tiles = Array2D<Tile>(chunkSize, chunkSize, Tile());
-	glGenVertexArrays(1, &VAO);
-	
+
+	tileMesh.addAttrib(3); // The position attribute, Three floats
+	tileMesh.addAttrib(2); // The texcoord attribute, two floats
+
 	noiseGenerator.SetOctaveCount(10);
 	noiseGenerator.SetPersistence(0.54);
 }
@@ -22,7 +24,7 @@ void WorldChunk::fillRandom() {
 			}
 		}
 	}
-	vboIsCurrent = false;
+	meshIsCurrent = false;
 }
 void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 	isEmpty = false;
@@ -71,19 +73,19 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 			}
 		}
 	}
-	vboIsCurrent = false;
+	meshIsCurrent = false;
 }
 
 void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 	if (isEmpty) return;
-	glBindVertexArray(VAO);
 
-	verts.reserve((size_t)chunkSize * chunkSize * 6);
-
+	tileMesh.reserve((size_t)chunkSize * chunkSize * 3); // reserve half a chunks worth of data idk
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (tiles(x, y).tileID != 0) {
 				unsigned int tID = tiles(x, y).tileID;
+				p_spriteSheet.setCurrentSprite(tID);
+
 				float x_f = (float)x;
 				float y_f = (float)-y; // to make the model origin top left, I set the y to be negative
 				float imprecisionCorrection = 0.0005f; // removes occasional black lines that show up between tiles
@@ -93,35 +95,45 @@ void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 				glm::vec3 pos_tr = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f - m_Off, 0.0f);
 				glm::vec3 pos_bl = glm::vec3(x_f - m_Off, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
 				glm::vec3 pos_br = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
-				glm::vec2 tex_tl = p_spriteSheet.getTexCoords(tID, Corner::TOP_LEFT) + imprecisionCorrection;
-				glm::vec2 tex_tr = p_spriteSheet.getTexCoords(tID, Corner::TOP_RIGHT) - glm::vec2(imprecisionCorrection, -imprecisionCorrection);
-				glm::vec2 tex_bl = p_spriteSheet.getTexCoords(tID, Corner::BOTTOM_LEFT) - glm::vec2(-imprecisionCorrection, imprecisionCorrection);
-				glm::vec2 tex_br = p_spriteSheet.getTexCoords(tID, Corner::BOTTOM_RIGHT) - imprecisionCorrection;
+				glm::vec2 tex_tl = p_spriteSheet.getTexCoords(Corner::TOP_LEFT) + imprecisionCorrection;
+				glm::vec2 tex_tr = p_spriteSheet.getTexCoords(Corner::TOP_RIGHT) - glm::vec2(imprecisionCorrection, -imprecisionCorrection);
+				glm::vec2 tex_bl = p_spriteSheet.getTexCoords(Corner::BOTTOM_LEFT) - glm::vec2(-imprecisionCorrection, imprecisionCorrection);
+				glm::vec2 tex_br = p_spriteSheet.getTexCoords(Corner::BOTTOM_RIGHT) - imprecisionCorrection;
 
-				Vertex v1 = Vertex(pos_tl, tex_tl); // First triangle
-				Vertex v2 = Vertex(pos_bl, tex_bl);
-				Vertex v3 = Vertex(pos_tr, tex_tr);
-				Vertex v4 = Vertex(pos_bl, tex_bl); // Second triangle
-				Vertex v5 = Vertex(pos_tr, tex_tr);
-				Vertex v6 = Vertex(pos_br, tex_br);
-
-				WorldChunk::verts.insert(WorldChunk::verts.end(), { v1, v2, v3, v4, v5, v6 });
+				tileMesh.pushVertex({ // First triangle
+					pos_tl.x, pos_tl.y, pos_tl.z,
+					tex_tl.x, tex_tl.y
+					});
+				tileMesh.pushVertex({
+					pos_bl.x, pos_bl.y, pos_bl.z,
+					tex_bl.x, tex_bl.y
+					});
+				tileMesh.pushVertex({
+					pos_tr.x, pos_tr.y, pos_tr.z,
+					tex_tr.x, tex_tr.y
+					});
+				tileMesh.pushVertex({
+					pos_bl.x, pos_bl.y, pos_bl.z,
+					tex_bl.x, tex_bl.y
+					});
+				tileMesh.pushVertex({
+					pos_tr.x, pos_tr.y, pos_tr.z,
+					tex_tr.x, tex_tr.y
+					});
+				tileMesh.pushVertex({
+					pos_br.x, pos_br.y, pos_br.z,
+					tex_br.x, tex_br.y
+					});
 			}
 		}
 	}
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(Vertex), verts.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(attrib_position, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(attrib_position);
-	glEnableVertexAttribArray(attrib_texCoord);
-	vboIsCurrent = true;
+	tileMesh.genVBO();
+	meshIsCurrent = true;
 }
 
-int WorldChunk::getVBOSize() {
-	return (int)verts.size();
+unsigned int WorldChunk::getVBOSize() {
+	return tileMesh.getTotalVBOSize();
 }
 
 Tile* WorldChunk::getTiles() {
@@ -133,10 +145,5 @@ void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates) {
 }
 
 void WorldChunk::remove() {
-	glDeleteBuffers(1, &VBO);
-	glDeleteVertexArrays(1, &VAO);
-	isEmpty = true;
-	invalid = true;
-	verts.clear();
-	verts.swap(verts);
+	tileMesh.remove();
 }

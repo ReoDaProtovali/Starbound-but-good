@@ -96,6 +96,9 @@
     <ClCompile Include="camera.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chunk.hpp">
@@ -134,9 +137,6 @@
     <ClInclude Include="Shader.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.hpp">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="GameRenderer.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -162,6 +162,9 @@
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Texture.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

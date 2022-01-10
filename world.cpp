@@ -66,7 +66,7 @@ void World::logSize() {
 void World::logChunks() {
 	std::map<wc::ivec2, WorldChunk>::iterator it = chunkMap.begin();
 	while (it != chunkMap.end()) {
-		std::cout << it->first.x << " " << it->first.y << " : " << it->second.VAO << std::endl;
+		std::cout << it->first.x << " " << it->first.y << " : " << it->second.tileMesh.VAO << std::endl;
 		it++;
 	}
 }

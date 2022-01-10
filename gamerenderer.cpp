@@ -34,6 +34,7 @@ void GameRenderer::loadSpriteSheets() {
 	}
 	tileSheetTexture = GameRenderer::res.getTexture(TextureID::TILESHEET_TEXTURE);
 	tileSheet = SpriteSheet(tileSheetTexture, glm::ivec2(8, 8), tileSheetTexture.getPixelCount() / (8 * 8));
+	tileSheet.setMode(SheetMode::BASIC);
 
 	objectSheet = SpriteSheet(); // undefined for now
 
@@ -83,8 +84,8 @@ void GameRenderer::rescale()
 }
 
 bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
-	if (!p_chunk.vboIsCurrent) { p_chunk.generateVBO(tileSheet); };
-	glBindVertexArray(p_chunk.VAO);
+	if (!p_chunk.meshIsCurrent) { p_chunk.generateVBO(tileSheet); };
+	glBindVertexArray(p_chunk.tileMesh.VAO);
 
 	imageShader.use();
 

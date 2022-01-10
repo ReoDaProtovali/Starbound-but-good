@@ -6,7 +6,7 @@
 #include "utils.hpp"
 #include "SpriteSheet.hpp"
 #include "Tile.hpp"
-#include "Vertex.hpp"
+#include "Mesh.hpp"
 #include "GL/glew.h"
 #include "glm/glm.hpp"
 #include <noise/noise.h>
@@ -17,8 +17,6 @@ struct WorldChunk
 {
 	WorldChunk(void) : worldID(-1),
 		worldPos(glm::ivec2()),
-		VAO(0),
-		VBO(0),
 		tiles(Array2D<Tile>()), 
 		invalid(true) {};
 	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
@@ -30,7 +28,7 @@ struct WorldChunk
 
 	Tile* getTiles();
 	void generateVBO(SpriteSheet& p_spriteSheet);
-	int getVBOSize();
+	unsigned int getVBOSize();
 
 	void remove();
 
@@ -38,16 +36,13 @@ struct WorldChunk
 	glm::ivec2 worldPos;
 	int worldID;
 
-	bool vboIsCurrent = false;
-	GLuint VAO;
-	GLuint VBO;
-
+	bool meshIsCurrent = false;
 	bool invalid = false;
 	bool isEmpty = true;
+	Mesh tileMesh;
 
 private:
 	Array2D<Tile> tiles;
-	std::vector<Vertex> verts;
 
 };
 
