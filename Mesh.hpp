@@ -17,7 +17,7 @@ public:
 	}
 	void reserve(size_t p_reserveAmount) { verts.reserve(p_reserveAmount); }
 	void addAttrib(GLuint p_size);
-	void pushVertex(std::initializer_list<GLfloat> p_attribs);
+	void pushVertices(std::initializer_list<GLfloat> p_attribs);
 	size_t getTotalVBOSize() { return verts.size(); }
 	void genVBO();
 

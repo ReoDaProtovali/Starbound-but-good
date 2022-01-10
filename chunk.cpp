@@ -100,27 +100,17 @@ void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 				glm::vec2 tex_bl = p_spriteSheet.getTexCoords(Corner::BOTTOM_LEFT) - glm::vec2(-imprecisionCorrection, imprecisionCorrection);
 				glm::vec2 tex_br = p_spriteSheet.getTexCoords(Corner::BOTTOM_RIGHT) - imprecisionCorrection;
 
-				tileMesh.pushVertex({ // First triangle
-					pos_tl.x, pos_tl.y, pos_tl.z,
-					tex_tl.x, tex_tl.y
-					});
-				tileMesh.pushVertex({
+				tileMesh.pushVertices({ // push all the calculated tile vertices
+					pos_tl.x, pos_tl.y, pos_tl.z, // Position attributes
+					tex_tl.x, tex_tl.y,           // Texcoord attributes
 					pos_bl.x, pos_bl.y, pos_bl.z,
-					tex_bl.x, tex_bl.y
-					});
-				tileMesh.pushVertex({
+					tex_bl.x, tex_bl.y,
 					pos_tr.x, pos_tr.y, pos_tr.z,
-					tex_tr.x, tex_tr.y
-					});
-				tileMesh.pushVertex({
+					tex_tr.x, tex_tr.y,
 					pos_bl.x, pos_bl.y, pos_bl.z,
-					tex_bl.x, tex_bl.y
-					});
-				tileMesh.pushVertex({
+					tex_bl.x, tex_bl.y,
 					pos_tr.x, pos_tr.y, pos_tr.z,
-					tex_tr.x, tex_tr.y
-					});
-				tileMesh.pushVertex({
+					tex_tr.x, tex_tr.y,
 					pos_br.x, pos_br.y, pos_br.z,
 					tex_br.x, tex_br.y
 					});

@@ -23,7 +23,7 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	overlayMesh.addAttrib(2); // Tex Coord attrib
 
 
-	overlayMesh.pushVertex({ // pushing the whole quad vertex array in one swoop
+	overlayMesh.pushVertices({ // pushing the whole quad vertex array in one swoop
 		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // vertex 1
 		1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // vertex 2
 		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // vertex 3

@@ -97,17 +97,18 @@ int main(int argc, char* argv[])
 
 			updateFPSGauge.stopStopwatch(); // round trip time the update frame took
 			updateFPSGauge.startStopwatch();
-			updateFPSVec.push_back(1.0f / updateFPSGauge.getSecondsElapsed()); // Used to get the average frametime
+			updateFPSVec.push_back(updateFPSGauge.getSecondsElapsed()); // Used to get the average frametime
 
 			if (updateFPSVec.size() > (size_t)ts.gameUpdateFPS / 4) { // quarter second fps counter buffer
 				updateFPSVec.erase(updateFPSVec.begin());
 			}
 
-			if (printConsoleCounter > ts.renderFPS && 0) { // means the console updates every second
+			if (printConsoleCounter > ts.renderFPS) { // means the console updates every second
 				printConsoleCounter = 0;
 				system("CLS");
-				printf("Current Update FPS - %.2f \n", utils::averageVector(updateFPSVec));
-				printf("Current Draw FPS - %.2f \n", utils::averageVector(renderFPSVec));
+				//utils::logVector(renderFPSVec);
+				printf("Current Update FPS - %.2f \n", 1.0f / utils::averageVector(updateFPSVec));
+				printf("Current Draw FPS - %.2f \n", 1.0f / utils::averageVector(renderFPSVec));
 				printf("Cam Position - %.2f, %.2f \n", cam.pos.x, cam.pos.y);
 				printf("Cam Frame - X range: %.2f, %.2f   Y range: %.2f, %.2f\n", cam.getFrame().x, cam.getFrame().z, cam.getFrame().y, cam.getFrame().w);
 				printf("Screen Dimensions - Width: %i Height: %i\n", renderer.screenWidth, renderer.screenHeight);
@@ -123,7 +124,7 @@ int main(int argc, char* argv[])
 
 		renderFPSGauge.stopStopwatch();
 		renderFPSGauge.startStopwatch();
-		renderFPSVec.push_back(1.0f / renderFPSGauge.getSecondsElapsed());
+		renderFPSVec.push_back(renderFPSGauge.getSecondsElapsed());
 
 		if (renderFPSVec.size() > (size_t)ts.renderFPS / 4) { // quarter second fps display buffer
 			renderFPSVec.erase(renderFPSVec.begin());

@@ -7,7 +7,7 @@ void Mesh::addAttrib(GLuint p_size)
 	attribSizes.push_back(p_size);
 }
 
-void Mesh::pushVertex(std::initializer_list<GLfloat> p_attribs)
+void Mesh::pushVertices(std::initializer_list<GLfloat> p_attribs)
 {
 	verts.insert(verts.end(), p_attribs);
 }
