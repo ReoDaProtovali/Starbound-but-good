@@ -88,6 +88,10 @@ struct fpsGauge {
 	float getSecondsElapsed() {
 		return (float)elapsed / 1000.0f;
 	}
+	/** Adds a new frametime to the gauge's buffer, removes any old ones.
+	* 
+	* @param maxBufferLength - The maximum length of the buffer before it starts removing old values
+	*/
 	void update(int maxBufferLength) {
 		stopStopwatch();
 		startStopwatch();
