@@ -18,6 +18,8 @@ GameRenderer::GameRenderer(
 
 	cam.pos = glm::vec3(0.0f, 10.0f * CHUNKSIZE, 1.0f);
 	cam.tileScale = 16.0f;
+	cam.updateFrame((float)windowWidth, (float)windowHeight);
+
 
 	lighting = Lighting((unsigned int)(windowWidth / cam.tileScale), (unsigned int)(windowHeight / cam.tileScale));
 

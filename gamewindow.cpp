@@ -9,7 +9,8 @@ GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 	width = p_w;
 	height = p_h;
 
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+
 	if (window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}

@@ -76,6 +76,7 @@ struct fpsGauge {
 	fpsGauge() { elapsed = 0; }
 	int start = SDL_GetTicks();
 	int elapsed;
+	std::vector<float> frametimeBuffer;
 
 	void startStopwatch() {
 		start = SDL_GetTicks();
@@ -87,6 +88,15 @@ struct fpsGauge {
 	float getSecondsElapsed() {
 		return (float)elapsed / 1000.0f;
 	}
+	void update(int maxBufferLength) {
+		stopStopwatch();
+		startStopwatch();
+		frametimeBuffer.push_back(getSecondsElapsed());
+		if (frametimeBuffer.size() > (size_t)maxBufferLength) { // quarter second fps display buffer
+			frametimeBuffer.erase(frametimeBuffer.begin());
+		}
+	}
+
 };
 
 #endif UTILS_H

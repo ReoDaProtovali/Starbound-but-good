@@ -15,6 +15,21 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
+#define GAME_UPDATE_SPEED 60
+#define FRAMES_BETWEEN_STAT_UPDATES 120
+
+/// Used for console stats
+int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
+fpsGauge updateFPSGauge;
+fpsGauge renderFPSGauge;
+void sendConsoleStats(Timestepper& ts, GameRenderer& renderer);
+
+
+// Declarations in advance for main functions
+void processTestInputs(InputHandler& inp, World& world, Camera& cam, glm::vec2& camVelocity);
+void gameRender(GameRenderer& renderer, GameWindow& gw, World& world);
+void gameUpdate(World& world, Camera& cam, int updateFrame);
+
 int main(int argc, char* argv[])
 {
 	bool gameActive = true;
@@ -24,32 +39,22 @@ int main(int argc, char* argv[])
 	flag |= _CRTDBG_LEAK_CHECK_DF;
 	_CrtSetDbgFlag(flag);
 
+	// Create the game window
 	GameWindow gw = GameWindow("Borstoind");
-	SDL_Window* window = gw.window;
-
 
 	SDL_DisplayMode sm;
-	SDL_GetDesktopDisplayMode(0, &sm);
-	int ww, wh;
-	SDL_GetWindowSize(window, &ww, &wh);
-	GameRenderer renderer = GameRenderer(sm.w, sm.h, ww, wh);
+	SDL_GetDesktopDisplayMode(0, &sm); // Gets the screen properties
+	GameRenderer renderer = GameRenderer(sm.w, sm.h, gw.width, gw.height);
 
-	Camera& cam = renderer.cam;
-	cam.tileScale = 128.0f;
-	cam.updateFrame((float)wh, (float)ww);
+	Camera& cam = renderer.cam; // aliasing the renderer camera for convenience
+	cam.tileScale = 128.0f; // Immediately changes the camera's scale to 128 tiles across
 
-	//cam.updateFrame((float)gw.width, (float)gw.height); // actually, this is probably unneeded
-
-	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
+	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f); // Temporary stand-in
 
 	World world = World();
 
-	Timestepper ts = Timestepper(60, gw.getRefreshRate()); // sets the game update loop fps, and you pass in the vsync fps for ease of use
-	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
-	fpsGauge updateFPSGauge;
-	fpsGauge renderFPSGauge;
-	std::vector<float> updateFPSVec;
-	std::vector<float> renderFPSVec;
+	Timestepper ts = Timestepper(GAME_UPDATE_SPEED, gw.getRefreshRate()); // sets the game update loop fps and vsync fps
+
 	unsigned int renderFrame = 0;
 	unsigned int updateFrame = 0;
 	while (gameActive) {
@@ -89,31 +94,14 @@ int main(int argc, char* argv[])
 		while (ts.accumulatorFull()) {
 			ts.accumulator -= 1.0f / ts.gameUpdateFPS;
 			updateFrame++;
-			// game update code should go right here I think (limited to ts.gameUpdateFPS)
-			world.autoGen(renderer.cam);
-			if (updateFrame % 4 == 0) { // Generate a chunk every fourth update frame
-				world.genFromQueue();
-			}
+			// Code to execute every update frame
+			gameUpdate(world, renderer.cam, updateFrame);
 
-			updateFPSGauge.stopStopwatch(); // round trip time the update frame took
-			updateFPSGauge.startStopwatch();
-			updateFPSVec.push_back(updateFPSGauge.getSecondsElapsed()); // Used to get the average frametime
+			updateFPSGauge.update(ts.gameUpdateFPS / 4);
 
-			if (updateFPSVec.size() > (size_t)ts.gameUpdateFPS / 4) { // quarter second fps counter buffer
-				updateFPSVec.erase(updateFPSVec.begin());
-			}
-
-			if (printConsoleCounter > ts.renderFPS) { // means the console updates every second
+			if (printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) { // means the console updates every second
 				printConsoleCounter = 0;
-				system("CLS");
-				//utils::logVector(renderFPSVec);
-				printf("Current Update FPS - %.2f \n", 1.0f / utils::averageVector(updateFPSVec));
-				printf("Current Draw FPS - %.2f \n", 1.0f / utils::averageVector(renderFPSVec));
-				printf("Cam Position - %.2f, %.2f \n", cam.pos.x, cam.pos.y);
-				printf("Cam Frame - X range: %.2f, %.2f   Y range: %.2f, %.2f\n", cam.getFrame().x, cam.getFrame().z, cam.getFrame().y, cam.getFrame().w);
-				printf("Screen Dimensions - Width: %i Height: %i\n", renderer.screenWidth, renderer.screenHeight);
-				printf("Window Dimensions - Width: %i Height: %i\n", renderer.windowWidth, renderer.windowHeight);
-
+				sendConsoleStats(ts, renderer);
 			}
 
 			ts.processFrameStart();
@@ -122,55 +110,13 @@ int main(int argc, char* argv[])
 
 		ts.calculateAlpha();
 
-		renderFPSGauge.stopStopwatch();
-		renderFPSGauge.startStopwatch();
-		renderFPSVec.push_back(renderFPSGauge.getSecondsElapsed());
+		renderFPSGauge.update(ts.renderFPS / 4);
 
-		if (renderFPSVec.size() > (size_t)ts.renderFPS / 4) { // quarter second fps display buffer
-			renderFPSVec.erase(renderFPSVec.begin());
-		}
-
-		//cam.scale = glm::vec2(0.5, 0.5);
-
-		if (gw.inpHandler.testKey(SDLK_w)) {
-			camVelocity.y += 0.1f;
-		}
-		if (gw.inpHandler.testKey(SDLK_a)) {
-			camVelocity.x -= 0.1f;
-		}
-		if (gw.inpHandler.testKey(SDLK_s)) {
-			camVelocity.y -= 0.1f;
-		}
-		if (gw.inpHandler.testKey(SDLK_d)) {
-			camVelocity.x += 0.1f;
-		}
-
-		if (gw.inpHandler.testKey(SDLK_q)) {
-			cam.tileScale *= 0.992f;
-		}
-		if (gw.inpHandler.testKey(SDLK_e)) {
-			cam.tileScale *= 1.01f;
-		}
-
-		if (gw.inpHandler.testKey(SDLK_1)) {
-			world.removeChunks();
-		}
-
+		processTestInputs(gw.inpHandler, world, cam, camVelocity);
 		camVelocity *= 0.9;
 		cam.pos += glm::vec3(camVelocity, 0.0f);
-		cam.lookAt(glm::vec3(0.0, 0.0, 0.0));
 
-		renderer.bindScreenFBOAsRenderTarget();
-		glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-		world.drawWorld(renderer, gw);
-
-		gw.bindAsRenderTarget();
-		glDrawBuffer(GL_BACK);
-		glDisable(GL_DEPTH_TEST);
-
-		renderer.drawLighting();
+		gameRender(renderer, gw, world);
 
 		gw.displayNewFrame();
 	}
@@ -181,4 +127,65 @@ int main(int argc, char* argv[])
 	world.removeChunks();
 
 	return 0;
+}
+
+
+void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
+
+	renderer.bindScreenFBOAsRenderTarget();
+	glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	world.drawWorld(renderer, gw);
+
+	gw.bindAsRenderTarget();
+	glDrawBuffer(GL_BACK);
+	glDisable(GL_DEPTH_TEST);
+
+	renderer.drawLighting();
+}
+
+void gameUpdate(World& world, Camera& cam, int updateFrame) {
+
+	world.autoGen(cam);
+	if (updateFrame % 2 == 0) { // Generate a chunk every fourth update frame
+		world.genFromQueue();
+	}
+}
+
+void processTestInputs(InputHandler& inp, World& world, Camera& cam, glm::vec2& camVelocity) {
+	if (inp.testKey(SDLK_w)) {
+		camVelocity.y += 0.1f;
+	}
+	if (inp.testKey(SDLK_a)) {
+		camVelocity.x -= 0.1f;
+	}
+	if (inp.testKey(SDLK_s)) {
+		camVelocity.y -= 0.1f;
+	}
+	if (inp.testKey(SDLK_d)) {
+		camVelocity.x += 0.1f;
+	}
+
+	if (inp.testKey(SDLK_q)) {
+		cam.tileScale *= 0.992f;
+	}
+	if (inp.testKey(SDLK_e)) {
+		cam.tileScale *= 1.01f;
+	}
+
+	if (inp.testKey(SDLK_1)) {
+		world.removeChunks();
+	}
+};
+
+
+void sendConsoleStats(Timestepper& ts, GameRenderer& renderer) {
+	system("CLS");
+	printf("Current Update FPS - %.2f \n", 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer));
+	printf("Current Draw FPS - %.2f \n", 1.0f / utils::averageVector(renderFPSGauge.frametimeBuffer));
+	printf("Cam Position - %.2f, %.2f \n", renderer.cam.pos.x, renderer.cam.pos.y);
+	printf("Cam Frame - X range: %.2f, %.2f   Y range: %.2f, %.2f\n", renderer.cam.getFrame().x, renderer.cam.getFrame().z, renderer.cam.getFrame().y, renderer.cam.getFrame().w);
+	printf("Screen Dimensions - Width: %i Height: %i\n", renderer.screenWidth, renderer.screenHeight);
+	printf("Window Dimensions - Width: %i Height: %i\n", renderer.windowWidth, renderer.windowHeight);
 }
