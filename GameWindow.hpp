@@ -44,6 +44,8 @@ public:
 	void displayNewFrame();
 	int width;
 	int height;
+	unsigned int screenWidth;
+	unsigned int screenHeight;
 	/// SDL managed OpenGL context. Not used for much outside of the constructor.
 	SDL_GLContext glContext;
 	/// The input handler for the game window. 

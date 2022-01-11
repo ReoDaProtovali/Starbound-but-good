@@ -1,15 +1,12 @@
 #include "GameRenderer.hpp"
 #include "GameWindow.hpp"
 GameRenderer::GameRenderer(
-	unsigned int p_screenWidth,
-	unsigned int p_screenHeight,
-	unsigned int p_windowWidth,
-	unsigned int p_windowHeight) {
+	GameWindow& p_window) {
 
-	screenWidth = p_screenWidth;
-	screenHeight = p_screenHeight;
-	windowWidth = p_windowWidth;
-	windowHeight = p_windowHeight;
+	windowWidth = p_window.width;
+	windowHeight = p_window.height;
+	screenWidth = p_window.screenWidth;
+	screenHeight = p_window.screenHeight;
 
 	imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
 	imageShader.setTexUniform("ourTexture", 0);

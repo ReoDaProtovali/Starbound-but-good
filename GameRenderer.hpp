@@ -27,10 +27,7 @@ class GameRenderer
 {
 public:
 	GameRenderer(
-		unsigned int p_screenWidth,
-		unsigned int p_screenHeight,
-		unsigned int p_windowWidth,
-		unsigned int p_windowHeight);
+		GameWindow& p_window);
 
 	unsigned int windowWidth;
 	unsigned int windowHeight;

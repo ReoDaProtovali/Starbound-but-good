@@ -36,6 +36,11 @@ GameWindow::GameWindow(const char* p_title)
 
 	width = defaultWidth;
 	height = defaultHeight;
+	int displayIndex = SDL_GetWindowDisplayIndex(window);
+	SDL_DisplayMode mode;
+	SDL_GetDisplayMode(displayIndex, 0, &mode);
+	screenWidth = mode.w;
+	screenHeight = mode.h;
 
 	//SDL_SetWindowSize(window, width / 2, height / 2);
 	GameWindow::initGL();

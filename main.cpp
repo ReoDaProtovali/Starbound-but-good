@@ -30,6 +30,10 @@ void processTestInputs(InputHandler& inp, World& world, Camera& cam, glm::vec2& 
 void gameRender(GameRenderer& renderer, GameWindow& gw, World& world);
 void gameUpdate(World& world, Camera& cam, int updateFrame);
 
+// Create the game window
+GameWindow gw = GameWindow("Borstoind");
+
+
 int main(int argc, char* argv[])
 {
 	bool gameActive = true;
@@ -39,12 +43,7 @@ int main(int argc, char* argv[])
 	flag |= _CRTDBG_LEAK_CHECK_DF;
 	_CrtSetDbgFlag(flag);
 
-	// Create the game window
-	GameWindow gw = GameWindow("Borstoind");
-
-	SDL_DisplayMode sm;
-	SDL_GetDesktopDisplayMode(0, &sm); // Gets the screen properties
-	GameRenderer renderer = GameRenderer(sm.w, sm.h, gw.width, gw.height);
+	GameRenderer renderer = GameRenderer(gw);
 
 	Camera& cam = renderer.cam; // aliasing the renderer camera for convenience
 	cam.tileScale = 128.0f; // Immediately changes the camera's scale to 128 tiles across
