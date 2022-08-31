@@ -13,6 +13,24 @@
 
 #include <vector>
 #include "Array2D.hpp"
+
+struct TestVert { // temporary schema
+	TestVert(GLfloat p_x, GLfloat p_y, GLfloat p_z, GLfloat p_u, GLfloat p_v) :
+		x(p_x), y(p_y), z(p_z), u(p_u), v(p_v) {};
+	GLfloat x;
+	GLfloat y;
+	GLfloat z;
+	GLfloat u;
+	GLfloat v;
+};
+struct TileVert {
+	TileVert(GLfloat p_x, GLfloat p_y, GLfloat p_z, GLuint p_id) :
+		x(p_x), y(p_y), z(p_z), id(p_id) {};
+	GLfloat x;
+	GLfloat y;
+	GLfloat z;
+	GLuint id;
+};
 struct WorldChunk
 {
 	WorldChunk(void) : worldID(-1),
@@ -39,7 +57,7 @@ struct WorldChunk
 	bool meshIsCurrent = false;
 	bool invalid = false;
 	bool isEmpty = true;
-	Mesh tileMesh;
+	Mesh<TestVert> tileMesh;
 
 private:
 	Array2D<Tile> tiles;

@@ -19,8 +19,8 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	lightmapTex = Texture(p_width, p_height, lightmap.getData());
 	lightmapTex.setFiltering(GL_LINEAR);
 
-	overlayMesh.addAttrib(3); // Position attrib
-	overlayMesh.addAttrib(2); // Tex Coord attrib
+	overlayMesh.addFloatAttrib(3); // Position attrib
+	overlayMesh.addFloatAttrib(2); // Tex Coord attrib
 
 
 	overlayMesh.pushVertices({ // pushing the whole quad vertex array in one swoop

@@ -5,7 +5,7 @@ Find a way to handle textures better, not on a class-by-class basis
 
 Allow variable attribute names to be passed into the generic shader
 
-Maybe encapsulate framebuffer creation and management to it's own class
+Maybe encapsulate framebuffer creation and management to its own class
 
 Sort out the #pragma once's and include guards, pick one or the other and not both lol
 
@@ -33,6 +33,7 @@ LONG TERM::
 Liquid physics
 Full menu, game states, options, save data, races, planets, the like
 Space exploration
+Ship building system
 Complementary dynamic light system, things like bloom, volumetrics, color multiplication for glow
 get more people hyped to learn c++ and opengl
 solid, defined modding engine, helpful for development also

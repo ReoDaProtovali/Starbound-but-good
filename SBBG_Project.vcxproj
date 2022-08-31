@@ -224,6 +224,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="Shaders\ImageFS.glsl" />
     <None Include="Shaders\ImageVS.glsl" />
     <None Include="Shaders\LightingVS.glsl" />
+    <None Include="TileVS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="randomthings.txt" />

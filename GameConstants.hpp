@@ -18,7 +18,7 @@ enum class TextureID {
 	TILESHEET_TEXTURE
 };
 
-enum class SheetMode {
+enum class SheetMode { // Sheet modes for CPU fetching. Better to use shaders in the future.
 	BASIC,
 	ANIMATION_ROWS
 };

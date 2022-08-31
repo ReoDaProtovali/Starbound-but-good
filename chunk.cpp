@@ -5,8 +5,8 @@
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
 	tiles = Array2D<Tile>(chunkSize, chunkSize, Tile());
 
-	tileMesh.addAttrib(3); // The position attribute, Three floats
-	tileMesh.addAttrib(2); // The texcoord attribute, two floats
+	tileMesh.addFloatAttrib(3); // The position attribute, Three floats
+	tileMesh.addFloatAttrib(2); // The texcoord attribute, two floats
 
 	noiseGenerator.SetOctaveCount(10);
 	noiseGenerator.SetPersistence(0.54);
@@ -101,18 +101,18 @@ void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 				glm::vec2 tex_br = p_spriteSheet.getTexCoords(Corner::BOTTOM_RIGHT) - imprecisionCorrection;
 
 				tileMesh.pushVertices({ // push all the calculated tile vertices
-					pos_tl.x, pos_tl.y, pos_tl.z, // Position attributes
-					tex_tl.x, tex_tl.y,           // Texcoord attributes
-					pos_bl.x, pos_bl.y, pos_bl.z,
-					tex_bl.x, tex_bl.y,
-					pos_tr.x, pos_tr.y, pos_tr.z,
-					tex_tr.x, tex_tr.y,
-					pos_bl.x, pos_bl.y, pos_bl.z,
-					tex_bl.x, tex_bl.y,
-					pos_tr.x, pos_tr.y, pos_tr.z,
-					tex_tr.x, tex_tr.y,
-					pos_br.x, pos_br.y, pos_br.z,
-					tex_br.x, tex_br.y
+					TestVert(pos_tl.x, pos_tl.y, pos_tl.z, // Position attributes
+					tex_tl.x, tex_tl.y),           // Texcoord attributes
+					TestVert(pos_bl.x, pos_bl.y, pos_bl.z,
+					tex_bl.x, tex_bl.y),
+					TestVert(pos_tr.x, pos_tr.y, pos_tr.z,
+					tex_tr.x, tex_tr.y),
+					TestVert(pos_bl.x, pos_bl.y, pos_bl.z,
+					tex_bl.x, tex_bl.y),
+					TestVert(pos_tr.x, pos_tr.y, pos_tr.z,
+					tex_tr.x, tex_tr.y),
+					TestVert(pos_br.x, pos_br.y, pos_br.z,
+					tex_br.x, tex_br.y)
 					});
 			}
 		}

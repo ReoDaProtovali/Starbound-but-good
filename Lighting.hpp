@@ -22,7 +22,7 @@ private:
 	glm::vec2 framePos;
 	glm::vec2 frameDim;
 
-	Mesh overlayMesh;
+	Mesh<GLfloat> overlayMesh;
 	Shader lightingShader;
 	Pixmap lightmap;
 	Texture lightmapTex;
