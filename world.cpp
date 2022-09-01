@@ -53,7 +53,7 @@ bool World::autoGen(Camera& p_cam) {
 			(int)(p_cam.getFrame().x / (float)CHUNKSIZE) - 2;
 			j < (int)((p_cam.getFrame().z) / (float)CHUNKSIZE) + 2;
 			j++) {
-			if ((i > 0) && (i < 12) && (j > -20) && (j < 20)) {
+			if ((i > 0) && (i < 24) && (j > -40) && (j < 40)) {
 				World::enqueueGen(glm::ivec2(j, i));
 			}
 		}

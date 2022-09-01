@@ -34,7 +34,6 @@ class Shader
 		void setTexUniform(const std::string& p_name, GLuint p_value);
 		/// A function that handles assigning a value to a uniform within the shader's program. In this case, a 4x4 matrix.
 		void setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const;
-		bool texUniformExists(GLuint p_uniformID); /// Unused
 		GLuint programID; /// The OpenGL shader program ID
 		std::vector<GLuint> uniforms; /// Unused
 

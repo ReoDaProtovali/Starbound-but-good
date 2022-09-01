@@ -89,7 +89,7 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 	meshIsCurrent = false;
 }
 
-void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
+void WorldChunk::generateVBO() {
 	if (isEmpty) return;
 
 	tileMesh.reserve((size_t)chunkSize * chunkSize * 3); // reserve half a chunks worth of data idk
@@ -97,28 +97,13 @@ void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (tiles(x, y).tileID != 0) {
 				unsigned int tID = tiles(x, y).tileID;
-				//p_spriteSheet.setCurrentSprite(tID);
 
-				float x_f = (float)x;
-				float y_f = (float)-y; // to make the model origin top left, I set the y to be negative
-				//float imprecisionCorrection = 0.0005f; // removes occasional black lines that show up between tiles
-
-				//float m_Off = 0.0f; // set this to chunkSize / 2.0 if you want the chunk origin relative to the center
-				//glm::vec3 pos_tl = glm::vec3(x_f - m_Off, y_f - m_Off, 0.0f);
-				//glm::vec3 pos_tr = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f - m_Off, 0.0f);
-				//glm::vec3 pos_bl = glm::vec3(x_f - m_Off, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
-				//glm::vec3 pos_br = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
-				//glm::vec2 tex_tl = p_spriteSheet.getTexCoords(Corner::TOP_LEFT) + imprecisionCorrection;
-				//glm::vec2 tex_tr = p_spriteSheet.getTexCoords(Corner::TOP_RIGHT) - glm::vec2(imprecisionCorrection, -imprecisionCorrection);
-				//glm::vec2 tex_bl = p_spriteSheet.getTexCoords(Corner::BOTTOM_LEFT) - glm::vec2(-imprecisionCorrection, imprecisionCorrection);
-				//glm::vec2 tex_br = p_spriteSheet.getTexCoords(Corner::BOTTOM_RIGHT) - imprecisionCorrection;
 
 				glm::uvec3 pos_tl = glm::uvec3(x, y, 0);
 				glm::uvec3 pos_tr = glm::uvec3(x + 1, y, 0);
 				glm::uvec3 pos_bl = glm::uvec3(x, y + 1, 0);
 				glm::uvec3 pos_br = glm::uvec3(x + 1, y + 1, 0);
 
-				//std::cout << pos_tl.x << " " << pos_tl.y << " " << pos_tl.z << std::endl;
 
 				tileMesh.pushVertices({ // push all the calculated tile vertices
 					TileVert(pos_tl.x, pos_tl.y, pos_tl.z, // Position attributes

@@ -6,6 +6,7 @@ out vec2 TexCoord;
 
 uniform mat4 model;
 uniform mat4 transform;
+uniform sampler2D tileSheet;
 
 void main()
 {

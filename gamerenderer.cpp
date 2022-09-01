@@ -101,12 +101,12 @@ void GameRenderer::rescale()
 }
 
 bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
-	if (!p_chunk.meshIsCurrent) { p_chunk.generateVBO(tileSheet); };
+	if (!p_chunk.meshIsCurrent) { p_chunk.generateVBO(); };
 	glBindVertexArray(p_chunk.tileMesh.VAO);
 
 	tileShader.use();
 
-	// Set the active texture unit to 0, which was set to represent "ourTexture" within the shader
+	// Set the active texture unit to 0, which was set to represent "tileSheet" within the shader
 	// this was done with "tileShader.setTexUniform("tileSheet", 0);"
 	glActiveTexture(GL_TEXTURE0); 
 	// Attach the actual texture to the main GL_TEXTURE_2D buffer on unit 0
