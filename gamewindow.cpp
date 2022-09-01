@@ -5,7 +5,9 @@
 GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 	:window(NULL)
 {
-
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Creating game window titled \"" << p_title << "\"" << std::endl;
+#endif
 	width = p_w;
 	height = p_h;
 
@@ -48,6 +50,9 @@ GameWindow::GameWindow(const char* p_title)
 }
 
 void GameWindow::initGL() {
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Initializing OpenGL 3.2..." << std::endl;
+#endif
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8); // Bit depth of 8 bytes

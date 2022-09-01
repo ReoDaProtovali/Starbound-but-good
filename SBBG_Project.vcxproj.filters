@@ -96,9 +96,6 @@
     <ClCompile Include="camera.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="mesh.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chunk.hpp">
@@ -181,8 +178,11 @@
     <None Include="Shaders\LightingVS.glsl">
       <Filter>Shaders\Vertex Shaders</Filter>
     </None>
-    <None Include="TileVS.glsl">
+    <None Include="Shaders\TileVS.glsl">
       <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="Shaders\TileFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

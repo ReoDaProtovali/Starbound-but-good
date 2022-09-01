@@ -3,10 +3,23 @@
 #include "GameConstants.hpp"
 
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
+
+	//system("CLS");
+	//TileVert testvert = TileVert(20, 12, 32, 29339);
+
+	//std::cout << "As an unsigned integer: " << testvert.xyzID << std::endl;
+
+	//std::cout << "Components:" << std::endl;
+	//glm::uvec4 out = testvert.toUvec4();
+	//std::cout << out.x << std::endl;
+	//std::cout << out.y << std::endl;
+	//std::cout << out.z << std::endl;
+	//std::cout << out.w << std::endl;
+
+
 	tiles = Array2D<Tile>(chunkSize, chunkSize, Tile());
 
-	tileMesh.addFloatAttrib(3); // The position attribute, Three floats
-	tileMesh.addFloatAttrib(2); // The texcoord attribute, two floats
+	tileMesh.addUintAttrib(1); // xyzID, one uint
 
 	noiseGenerator.SetOctaveCount(10);
 	noiseGenerator.SetPersistence(0.54);
@@ -84,35 +97,42 @@ void WorldChunk::generateVBO(SpriteSheet& p_spriteSheet) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (tiles(x, y).tileID != 0) {
 				unsigned int tID = tiles(x, y).tileID;
-				p_spriteSheet.setCurrentSprite(tID);
+				//p_spriteSheet.setCurrentSprite(tID);
 
 				float x_f = (float)x;
 				float y_f = (float)-y; // to make the model origin top left, I set the y to be negative
-				float imprecisionCorrection = 0.0005f; // removes occasional black lines that show up between tiles
+				//float imprecisionCorrection = 0.0005f; // removes occasional black lines that show up between tiles
 
-				float m_Off = 0.0f; // set this to chunkSize / 2.0 if you want the chunk origin relative to the center
-				glm::vec3 pos_tl = glm::vec3(x_f - m_Off, y_f - m_Off, 0.0f);
-				glm::vec3 pos_tr = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f - m_Off, 0.0f);
-				glm::vec3 pos_bl = glm::vec3(x_f - m_Off, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
-				glm::vec3 pos_br = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
-				glm::vec2 tex_tl = p_spriteSheet.getTexCoords(Corner::TOP_LEFT) + imprecisionCorrection;
-				glm::vec2 tex_tr = p_spriteSheet.getTexCoords(Corner::TOP_RIGHT) - glm::vec2(imprecisionCorrection, -imprecisionCorrection);
-				glm::vec2 tex_bl = p_spriteSheet.getTexCoords(Corner::BOTTOM_LEFT) - glm::vec2(-imprecisionCorrection, imprecisionCorrection);
-				glm::vec2 tex_br = p_spriteSheet.getTexCoords(Corner::BOTTOM_RIGHT) - imprecisionCorrection;
+				//float m_Off = 0.0f; // set this to chunkSize / 2.0 if you want the chunk origin relative to the center
+				//glm::vec3 pos_tl = glm::vec3(x_f - m_Off, y_f - m_Off, 0.0f);
+				//glm::vec3 pos_tr = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f - m_Off, 0.0f);
+				//glm::vec3 pos_bl = glm::vec3(x_f - m_Off, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
+				//glm::vec3 pos_br = glm::vec3(x_f + 1.0f - m_Off + imprecisionCorrection, y_f + 1.0f - m_Off + imprecisionCorrection, 0.0f);
+				//glm::vec2 tex_tl = p_spriteSheet.getTexCoords(Corner::TOP_LEFT) + imprecisionCorrection;
+				//glm::vec2 tex_tr = p_spriteSheet.getTexCoords(Corner::TOP_RIGHT) - glm::vec2(imprecisionCorrection, -imprecisionCorrection);
+				//glm::vec2 tex_bl = p_spriteSheet.getTexCoords(Corner::BOTTOM_LEFT) - glm::vec2(-imprecisionCorrection, imprecisionCorrection);
+				//glm::vec2 tex_br = p_spriteSheet.getTexCoords(Corner::BOTTOM_RIGHT) - imprecisionCorrection;
+
+				glm::uvec3 pos_tl = glm::uvec3(x, y, 0);
+				glm::uvec3 pos_tr = glm::uvec3(x + 1, y, 0);
+				glm::uvec3 pos_bl = glm::uvec3(x, y + 1, 0);
+				glm::uvec3 pos_br = glm::uvec3(x + 1, y + 1, 0);
+
+				//std::cout << pos_tl.x << " " << pos_tl.y << " " << pos_tl.z << std::endl;
 
 				tileMesh.pushVertices({ // push all the calculated tile vertices
-					TestVert(pos_tl.x, pos_tl.y, pos_tl.z, // Position attributes
-					tex_tl.x, tex_tl.y),           // Texcoord attributes
-					TestVert(pos_bl.x, pos_bl.y, pos_bl.z,
-					tex_bl.x, tex_bl.y),
-					TestVert(pos_tr.x, pos_tr.y, pos_tr.z,
-					tex_tr.x, tex_tr.y),
-					TestVert(pos_bl.x, pos_bl.y, pos_bl.z,
-					tex_bl.x, tex_bl.y),
-					TestVert(pos_tr.x, pos_tr.y, pos_tr.z,
-					tex_tr.x, tex_tr.y),
-					TestVert(pos_br.x, pos_br.y, pos_br.z,
-					tex_br.x, tex_br.y)
+					TileVert(pos_tl.x, pos_tl.y, pos_tl.z, // Position attributes
+					tID),           // ID Attribute
+					TileVert(pos_bl.x, pos_bl.y, pos_bl.z,
+					tID),
+					TileVert(pos_tr.x, pos_tr.y, pos_tr.z,
+					tID),
+					TileVert(pos_bl.x, pos_bl.y, pos_bl.z,
+					tID),
+					TileVert(pos_tr.x, pos_tr.y, pos_tr.z,
+					tID),
+					TileVert(pos_br.x, pos_br.y, pos_br.z,
+					tID)
 					});
 			}
 		}

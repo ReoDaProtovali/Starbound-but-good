@@ -1,23 +1,35 @@
 #include "GameRenderer.hpp"
 #include "GameWindow.hpp"
+
 GameRenderer::GameRenderer(
 	GameWindow& p_window) {
 
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "GameRenderer instantiated..." << std::endl;
+#endif
 	windowWidth = p_window.width;
 	windowHeight = p_window.height;
 	screenWidth = p_window.screenWidth;
 	screenHeight = p_window.screenHeight;
 
 	imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
-	imageShader.setTexUniform("ourTexture", 0);
+	imageShader.setTexUniform("imageTexture", 0);
 
+	tileShader = Shader("./Shaders/TileVS.glsl", "./Shaders/TileFS.glsl");
+	tileShader.setTexUniform("tileSheet", 0);
+
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Creating Resource loader..." << std::endl;
+#endif
 	res = ResourceLoader();
 
 	cam.pos = glm::vec3(0.0f, 10.0f * CHUNKSIZE, 1.0f);
 	cam.tileScale = 16.0f;
 	cam.updateFrame((float)windowWidth, (float)windowHeight);
 
-
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Creating lighting subsystem..." << std::endl;
+#endif
 	lighting = Lighting((unsigned int)(windowWidth / cam.tileScale), (unsigned int)(windowHeight / cam.tileScale));
 
 	GameRenderer::loadSpriteSheets();
@@ -26,10 +38,13 @@ GameRenderer::GameRenderer(
 
 void GameRenderer::loadSpriteSheets() {
 	bool success = true;
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Loading renderer resources..." << std::endl;
+#endif
 	success = GameRenderer::res.load("res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE) &&
 		GameRenderer::res.load("res/tiles/testsheet.png", TextureID::TESTSPRITESHEET_TEXTURE);
 	if (!success) {
-		throw std::invalid_argument("One or more file not found");
+		throw std::invalid_argument("One or more files not found");
 	}
 	tileSheetTexture = GameRenderer::res.getTexture(TextureID::TILESHEET_TEXTURE);
 	tileSheet = SpriteSheet(tileSheetTexture, glm::ivec2(8, 8), tileSheetTexture.getPixelCount() / (8 * 8));
@@ -41,6 +56,9 @@ void GameRenderer::loadSpriteSheets() {
 
 }
 void GameRenderer::initFBO() {
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Initializing screen frame buffer..." << std::endl;
+#endif
 	glGenFramebuffers(1, &screenFBO);
 	glGenRenderbuffers(1, &depthBuffer);
 
@@ -86,10 +104,10 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 	if (!p_chunk.meshIsCurrent) { p_chunk.generateVBO(tileSheet); };
 	glBindVertexArray(p_chunk.tileMesh.VAO);
 
-	imageShader.use();
+	tileShader.use();
 
 	// Set the active texture unit to 0, which was set to represent "ourTexture" within the shader
-	// this was done with "imageShader.setTexUniform("ourTexture", 0);"
+	// this was done with "tileShader.setTexUniform("tileSheet", 0);"
 	glActiveTexture(GL_TEXTURE0); 
 	// Attach the actual texture to the main GL_TEXTURE_2D buffer on unit 0
 	glBindTexture(GL_TEXTURE_2D, tileSheetTexture.glID);
@@ -104,13 +122,13 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 				0
 			)
 		);
-	imageShader.setMat4Uniform("model", modelTransform);
+	tileShader.setMat4Uniform("model", modelTransform);
 
 	cam.setDimensions((float)windowWidth / (float)windowHeight);
 
 	// Matrix that transforms from global space, to view space, to clip space in one swoop
 	glm::mat4 finalTransform = cam.getTransformMat4((float)windowWidth, (float)windowHeight);
-	imageShader.setMat4Uniform("transform", finalTransform);
+	tileShader.setMat4Uniform("transform", finalTransform);
 
 	glDrawArrays(GL_TRIANGLES, 0, p_chunk.getVBOSize());
 	glBindVertexArray(0);

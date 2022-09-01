@@ -20,7 +20,7 @@ struct Attrib {
 template <class T>
 class Mesh
 {
-	std::vector<T> verts; // Vert data in any form you deem fit.
+	std::vector<T> verts; // Vert data in any container you deem fit.
 	
 	std::vector<Attrib> attribList; // List of attributes the shader uses.
 	unsigned int totalVertSize = 0;

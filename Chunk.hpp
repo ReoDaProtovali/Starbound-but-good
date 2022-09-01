@@ -23,13 +23,41 @@ struct TestVert { // temporary schema
 	GLfloat u;
 	GLfloat v;
 };
-struct TileVert {
-	TileVert(GLfloat p_x, GLfloat p_y, GLfloat p_z, GLuint p_id) :
-		x(p_x), y(p_y), z(p_z), id(p_id) {};
-	GLfloat x;
-	GLfloat y;
-	GLfloat z;
-	GLuint id;
+struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID is 15 bit. (insanity)
+	TileVert() {};
+	TileVert(Uint32 p_x, Uint32 p_y, Uint32 p_z, Uint32 p_id) { /// compact version
+		xyzID |= (0xFC000000 & (p_x << 26)) | (0x3F00000 & (p_y << 20)) | (0xF8000 & (p_z << 15)) | (0x7FFF & (p_id));
+	}
+	Uint32 xyzID = 0; // 32 bit unsigned integer storing multiple components
+
+	void set5BitX(Uint32 p_x) {
+		Uint32 shifted = p_x << 26; // Bit shift the input 26 places such that the first 6 bits are aligned
+		Uint32 bitmask = 0b11111100000000000000000000000000; // Only modify selected bits
+		xyzID |= bitmask & shifted; // Delete extraneous data and set the bits correctly
+	}
+	void set5BitY(Uint32 p_y) {
+		Uint32 shifted = p_y << 20; // Bit shift the input 20 places such that the first 6 bits are aligned
+		Uint32 bitmask = 0b00000011111100000000000000000000; // Only modify selected bits
+		xyzID |= bitmask & shifted; // Delete extraneous data and set the bits correctly
+	}
+	void set5BitZ(Uint32 p_z) {
+		Uint32 shifted = p_z << 15; // Bit shift the input 15 places such that the first 5 bits are aligned
+		Uint32 bitmask = 0b00000000000011111000000000000000; // Only modify selected bits
+		xyzID |= bitmask & shifted; // Delete extraneous data and set the bits correctly
+	}
+	void set16BitID(Uint32 p_id) {
+		Uint32 shifted = p_id; // Input is where it should be, just needs trimmed
+		GLuint bitmask = 0b00000000000000000111111111111111; // Only modify selected bits
+		xyzID |= bitmask & shifted; // Delete extraneous data and set the bits correctly
+	}
+
+	glm::uvec4 toUvec4() { // undoes the packing and formats nicely
+		Uint32 x = (0xFC000000 & xyzID) >> 26;
+		Uint32 y = (0x3F00000 & xyzID) >> 20;
+		Uint32 z = (0xF8000 & xyzID) >> 15;
+		Uint32 ID = (0x7FFF & xyzID);
+		return glm::uvec4(x, y, z, ID);
+	}
 };
 struct WorldChunk
 {
@@ -57,7 +85,7 @@ struct WorldChunk
 	bool meshIsCurrent = false;
 	bool invalid = false;
 	bool isEmpty = true;
-	Mesh<TestVert> tileMesh;
+	Mesh<TileVert> tileMesh;
 
 private:
 	Array2D<Tile> tiles;

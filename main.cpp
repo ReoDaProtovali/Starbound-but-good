@@ -17,6 +17,7 @@
 
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 120
+#define DISABLE_RUNTIME_CONSOLE true
 
 /// Used for console stats
 int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
@@ -50,10 +51,16 @@ int main(int argc, char* argv[])
 
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f); // Temporary stand-in
 
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Creating world container..." << std::endl;
+#endif
 	World world = World();
 
 	Timestepper ts = Timestepper(GAME_UPDATE_SPEED, gw.getRefreshRate()); // sets the game update loop fps and vsync fps
 
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Main loop running." << std::endl;
+#endif
 	unsigned int renderFrame = 0;
 	unsigned int updateFrame = 0;
 	while (gameActive) {
@@ -98,7 +105,7 @@ int main(int argc, char* argv[])
 
 			updateFPSGauge.update(ts.gameUpdateFPS / 4);
 
-			if (printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) { // means the console updates every second
+			if ((printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
 				printConsoleCounter = 0;
 				sendConsoleStats(ts, renderer);
 			}

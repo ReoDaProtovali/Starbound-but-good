@@ -39,7 +39,8 @@ public:
 	void fromByteData(unsigned int p_width, unsigned int p_height, unsigned char* p_data);
 	void fromVec4Data(unsigned int p_width, unsigned int p_height, glm::vec4* p_data);
 
-	void changeDimensions(unsigned int p_width, unsigned int p_height); // Will delete existing texture data
+	/// Will delete existing texture data
+	void changeDimensions(unsigned int p_width, unsigned int p_height); 
 
 	void subVec4Data(glm::vec4* p_data);
 

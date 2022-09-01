@@ -67,6 +67,8 @@ public:
 
 	/// The shader program that simply draws an image based on given vertex UVs.
 	Shader imageShader;
+	/// Uses packed chunk coordinates and block IDs
+	Shader tileShader;
 	
 	/**
 	* Draws a single WorldChunk to the currently bound buffer.

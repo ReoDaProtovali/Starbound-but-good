@@ -6,7 +6,9 @@
 #include <vector>
 #include "GL/glew.h"
 
-constexpr auto CHUNKSIZE = 64;
+#define LOADLOGGING_ENABLED
+
+constexpr auto CHUNKSIZE = 32;
 enum class TextureID {
 	NO_TEXTURE,
 	STONE_TEXTURE,

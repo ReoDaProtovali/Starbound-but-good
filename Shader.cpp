@@ -5,7 +5,7 @@
 
 Shader::Shader(const char* vs_filePath, const char* fs_filePath)
 {
-    programID = compileShaders(vs_filePath, fs_filePath);
+    programID = Shader::compileShaders(vs_filePath, fs_filePath);
 }
 
 GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) {
@@ -13,7 +13,9 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 
     vs = glCreateShader(GL_VERTEX_SHADER);
     fs = glCreateShader(GL_FRAGMENT_SHADER);
-
+#ifdef LOADLOGGING_ENABLED
+    std::cout << "Compiling shaders: Vertex - " << vs_filePath << " Fragment - " << fs_filePath << std::endl;
+#endif
     std::string vertexShader = utils::readFile(vs_filePath);
     int vsLength = (int)vertexShader.size();
     const char* vertexShader_cstr = vertexShader.c_str();
@@ -65,7 +67,9 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
         glDeleteShader(fs); // Don't leak the shader.
         return -1;
     }
-
+#ifdef LOADLOGGING_ENABLED
+    std::cout << "Shader compilation successful. Attaching to program..." << std::endl;
+#endif
     program = glCreateProgram();
     glAttachShader(program, vs);
     glAttachShader(program, fs);
@@ -74,8 +78,8 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
     glDeleteShader(fs);
 
 
-    glBindAttribLocation(program, 0, "i_position"); // uh oh, gonna have to un-bake this into the shader code
-    glBindAttribLocation(program, 1, "i_texCoord");
+    //glBindAttribLocation(program, 0, "i_position"); // uh oh, gonna have to un-bake this into the shader code
+    //glBindAttribLocation(program, 1, "i_texCoord"); // oh sweet, it's not required if I use layout specifiers
     glLinkProgram(program);
 
     glUseProgram(program);
@@ -97,7 +101,7 @@ void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 }
 void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
 {
-    std::cout << glGetUniformLocation(programID, p_name.c_str()) << std::endl;
+    //std::cout << glGetUniformLocation(programID, p_name.c_str()) << std::endl;
     glUniform1i(glGetUniformLocation(programID, p_name.c_str()), p_value);
    // uniforms.push_back(p_value);
 }

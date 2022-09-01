@@ -4,6 +4,9 @@
 #include "glm/glm.hpp"
 
 bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Loading image resource at " << p_filepath << " with ID " << (unsigned int)p_ID << std::endl;
+#endif
 	if (textures.find(p_ID) != textures.end()) return true;
 	unsigned char* imageData = nullptr;
 	int width, height, nrChannels;
