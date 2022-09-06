@@ -1,6 +1,5 @@
 #pragma once
 #include "glm/glm.hpp"
-#include "GameConstants.hpp"
 #include "Texture.hpp"
 #include <string>
 #include <stdexcept>

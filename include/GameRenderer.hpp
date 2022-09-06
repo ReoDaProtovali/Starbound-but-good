@@ -3,20 +3,15 @@
 #include <vector>
 
 // Rendering handling
-#include "Shader.hpp" // includes glew
 #include "Camera.hpp"
 #include "glm/glm.hpp"
 #include "Lighting.hpp"
-#include "Mesh.hpp"
 
+#include "Chunk.hpp"
 // Image handling
 #include "ResourceLoader.hpp" 
 #include "SpriteSheet.hpp"
-#include "Texture.hpp"
 
-// Game data handling
-#include "GameConstants.hpp"
-#include "Chunk.hpp"
 
 class Lighting;
 class GameWindow;

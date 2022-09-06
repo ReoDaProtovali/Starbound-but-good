@@ -4,10 +4,8 @@
 #include <SDL_opengl.h>
 #include <GL/GLU.h>
 
-#include "entity.hpp"
 #include "utils.hpp"
 #include "Chunk.hpp"
-#include "Tile.hpp"
 #include "ResourceLoader.hpp"
 #include "InputHandler.hpp"
 #include <iostream>

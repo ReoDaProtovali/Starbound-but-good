@@ -4,7 +4,7 @@
 #define CHUNK_H
 
 #include "utils.hpp"
-#include "SpriteSheet.hpp"
+#include "GameConstants.hpp"
 #include "Tile.hpp"
 #include "Mesh.hpp"
 #include "GL/glew.h"

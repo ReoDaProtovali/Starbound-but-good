@@ -1,21 +1,7 @@
 #include "Chunk.hpp"
 #include "glm/glm.hpp"
-#include "GameConstants.hpp"
 
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
-
-	//system("CLS");
-	//TileVert testvert = TileVert(20, 12, 32, 29339);
-
-	//std::cout << "As an unsigned integer: " << testvert.xyzID << std::endl;
-
-	//std::cout << "Components:" << std::endl;
-	//glm::uvec4 out = testvert.toUvec4();
-	//std::cout << out.x << std::endl;
-	//std::cout << out.y << std::endl;
-	//std::cout << out.z << std::endl;
-	//std::cout << out.w << std::endl;
-
 
 	tiles = Array2D<Tile>(chunkSize, chunkSize, Tile());
 

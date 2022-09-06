@@ -57,10 +57,6 @@ public:
 		if (!VBOInitialized) {
 			glGenBuffers(1, &VBO);
 		}
-		else {
-			glDeleteBuffers(1, &VBO);
-			glGenBuffers(1, &VBO);
-		}
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(T) * verts.size(), verts.data(), GL_STATIC_DRAW);
 

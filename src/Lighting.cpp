@@ -10,7 +10,7 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-	lightingShader = Shader("./Shaders/LightingVS.glsl", "./Shaders/LightingFS.glsl");
+	lightingShader = Shader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl");
 	// bind the uniforms to texture units 0 and 1
 	lightingShader.setTexUniform("screenTexture", 0);
 	lightingShader.setTexUniform("lightingTexture", 1);

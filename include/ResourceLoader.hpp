@@ -2,7 +2,6 @@
 #include <vector>
 #include <iostream>
 #include <stdexcept>
-#include "GameConstants.hpp"
 #include "Texture.hpp"
 #include <map>
 

@@ -12,10 +12,10 @@ GameRenderer::GameRenderer(
 	screenWidth = p_window.screenWidth;
 	screenHeight = p_window.screenHeight;
 
-	imageShader = Shader("./Shaders/ImageVS.glsl", "./Shaders/ImageFS.glsl");
+	imageShader = Shader("./src/Shaders/ImageVS.glsl", "./src/Shaders/ImageFS.glsl");
 	imageShader.setTexUniform("imageTexture", 0);
 
-	tileShader = Shader("./Shaders/TileVS.glsl", "./Shaders/TileFS.glsl");
+	tileShader = Shader("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl");
 	tileShader.setTexUniform("tileSheet", 0);
 
 #ifdef LOADLOGGING_ENABLED

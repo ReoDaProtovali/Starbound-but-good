@@ -5,10 +5,9 @@
 #include <vector>
 #include "Tile.hpp"
 #include "Chunk.hpp"
-#include "Entity.hpp"
 #include <stdlib.h>
 #include <iostream>
-#include "utils.hpp"
+//#include "utils.hpp"
 #include "glm/glm.hpp"
 #include "Camera.hpp"
 #include "GameWindow.hpp"
@@ -63,7 +62,7 @@ public:
 	void logChunks();
 	std::map<wc::ivec2, WorldChunk> chunkMap;
 private:
-	std::vector<Entity> worldEntities;
+	//std::vector<Entity> worldEntities;
 	std::queue<glm::ivec2> loadQueue;
 
 

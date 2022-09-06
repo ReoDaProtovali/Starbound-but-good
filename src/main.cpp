@@ -17,7 +17,7 @@
 
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 120
-#define DISABLE_RUNTIME_CONSOLE false
+#define DISABLE_RUNTIME_CONSOLE true
 
 /// Used for console stats
 int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
@@ -166,7 +166,7 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
 void gameUpdate(World& world, Camera& cam, int updateFrame) {
 
 	world.autoGen(cam);
-	if (updateFrame % 2 == 0) { // Generate a chunk every fourth update frame
+	if (updateFrame % 2 == 0 || 1) { // Generate a chunk every fourth update frame
 		world.genFromQueue();
 	}
 }

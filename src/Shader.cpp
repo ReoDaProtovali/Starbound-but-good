@@ -2,6 +2,7 @@
 #include "GameConstants.hpp"
 #include "utils.hpp"
 #include <gtc/type_ptr.hpp>
+#include <exception>
 
 Shader::Shader(const char* vs_filePath, const char* fs_filePath)
 {
@@ -39,6 +40,8 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 		}
 
 		glDeleteShader(vs); // Don't leak the shader.
+
+		throw new std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
 
@@ -65,6 +68,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 		// Provide the infolog in whatever manor you deem best.
 		// Exit with failure.
 		glDeleteShader(fs); // Don't leak the shader.
+		throw new std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
 #ifdef LOADLOGGING_ENABLED
