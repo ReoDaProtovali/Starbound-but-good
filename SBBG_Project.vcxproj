@@ -204,6 +204,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="GameAssets.hpp" />
     <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="GameWindow.hpp" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="Lighting.hpp" />
     <ClInclude Include="LightingSolver.hpp" />
     <ClInclude Include="Mesh.hpp" />

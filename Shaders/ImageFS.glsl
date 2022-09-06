@@ -7,5 +7,7 @@ uniform sampler2D imageTexture;
 void main()
 {
     // Literally just takes the color of the image at TexCoord and outputs it
-     FragColor = texture(imageTexture, TexCoord);
+    vec4 col = texture(imageTexture, TexCoord);
+    //if (col.a == 0.0f) discard;
+     FragColor = col;
 }

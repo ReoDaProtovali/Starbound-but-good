@@ -51,6 +51,7 @@ public:
 	};
 
 	size_t getTotalVBOSize() { return verts.size(); }
+
 	void genVBO() {
 		glBindVertexArray(VAO);
 		if (!VBOInitialized) {
@@ -82,6 +83,15 @@ public:
 		}
 		VBOInitialized = true;
 	};
+
+	void subVBOData(GLuint p_startIndex, GLuint p_endIndex, T* p_data) {
+		glBindVertexArray(VAO);
+		if (!VBOInitialized) {
+			glGenBuffers(1, &VBO);
+		}
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferSubData(GL_ARRAY_BUFFER, p_startIndex * sizeof(T), (p_endIndex - p_startIndex) * sizeof(T), p_data);
+	}
 
 	void remove() {
 		glDeleteBuffers(1, &VBO);

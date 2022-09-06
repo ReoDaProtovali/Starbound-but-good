@@ -17,7 +17,7 @@
 
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 120
-#define DISABLE_RUNTIME_CONSOLE true
+#define DISABLE_RUNTIME_CONSOLE false
 
 /// Used for console stats
 int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
@@ -140,14 +140,26 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
 
 	renderer.bindScreenFBOAsRenderTarget();
 	glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	renderer.cam.setDimensions((float)renderer.windowWidth / (float)renderer.windowHeight);
 	world.drawWorld(renderer, gw);
+
+	renderer.drawSprite(
+		glm::vec3(-16.0f, 315.0f, 2.0f), // Position XYZ
+		glm::vec2(4.0f, 4.0f), // Dimensions Width by Height
+		renderer.res.getTexture(TextureID::REO_TEST) // Texture
+	);
+
+	glm::vec4 frame = renderer.cam.getFrame();
+	renderer.drawSprite(glm::vec3(frame.x, frame.y, 2.0f), glm::vec2(frame.z - frame.x, frame.w - frame.y), renderer.res.getTexture(TextureID::CAMERA_FRAME_TEXTURE));
+
+
 
 	gw.bindAsRenderTarget();
 	glDrawBuffer(GL_BACK);
 	glDisable(GL_DEPTH_TEST);
-
 	renderer.drawLighting();
 }
 
@@ -160,17 +172,18 @@ void gameUpdate(World& world, Camera& cam, int updateFrame) {
 }
 
 void processTestInputs(InputHandler& inp, World& world, Camera& cam, glm::vec2& camVelocity) {
+	float camSpeed = 0.05f;
 	if (inp.testKey(SDLK_w)) {
-		camVelocity.y += 0.1f;
+		camVelocity.y += camSpeed;
 	}
 	if (inp.testKey(SDLK_a)) {
-		camVelocity.x -= 0.1f;
+		camVelocity.x -= camSpeed;
 	}
 	if (inp.testKey(SDLK_s)) {
-		camVelocity.y -= 0.1f;
+		camVelocity.y -= camSpeed;
 	}
 	if (inp.testKey(SDLK_d)) {
-		camVelocity.x += 0.1f;
+		camVelocity.x += camSpeed;
 	}
 
 	if (inp.testKey(SDLK_q)) {

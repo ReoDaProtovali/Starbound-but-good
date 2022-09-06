@@ -2,7 +2,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 layout(location = 0) in uint xyzID;
 
-out vec2 TexCoord;
+out vec2 FragCoord;
 
 uniform mat4 model;
 uniform mat4 transform;
@@ -16,5 +16,5 @@ void main()
     uint aID = 32767u & xyzID;
     gl_Position = transform * model * vec4(chunkXYZ, 1.0);
     float fID = float(aID);
-    TexCoord = vec2((sin(fID / 2) + 1) / 2, (cos(fID / 2) + 1) / 2);
+    FragCoord = vec2(aID, (cos(fID / 2) + 1) / 2);
 }
