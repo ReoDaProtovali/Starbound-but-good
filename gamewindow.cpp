@@ -63,9 +63,6 @@ void GameWindow::initGL() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-	glEnable(GL_BLEND); // Transparency blending
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glContext = SDL_GL_CreateContext(window);
 	SDL_GL_MakeCurrent(window, glContext); // Attach OpenGL context to the window
 
@@ -76,6 +73,8 @@ void GameWindow::initGL() {
 		std::cout << glewGetErrorString(glewInit()) << std::endl;
 	}
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.9f, 0.9f, 0.9f, 0.0f);
 	glViewport(0, 0, width, height);

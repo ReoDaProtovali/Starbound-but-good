@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "glm/glm.hpp"
 #include "Lighting.hpp"
+#include "Mesh.hpp"
 
 // Image handling
 #include "ResourceLoader.hpp" 
@@ -40,6 +41,9 @@ public:
 	SpriteSheet objectSheet;
 	SpriteSheet entitySheet;
 	Texture tileSheetTexture;
+
+	Mesh<GLfloat> genericSpriteMesh;
+	Texture cameraFrameTexture;
 
 	/// Used for rendering the screen to a separate texture, so the lighting texture can be overlaid.
 	GLuint screenFBO;
@@ -78,11 +82,7 @@ public:
 	*/
 	bool drawChunk(WorldChunk& p_chunk);
 
-	/// Unimplemented
-	bool drawSprite(glm::vec2 p_worldPos, Texture p_spriteTex);
-	
-	/// Unimplemented
-	bool drawSprite(float p_spriteX, float p_spriteY, Texture p_spriteTex);
+	void drawSprite(glm::vec3 p_worldPos, glm::vec2 p_dimensions, Texture p_spriteTex);
 
 	/// Simply tells the lighting subclass to draw based on it's current values.
 	void drawLighting();
