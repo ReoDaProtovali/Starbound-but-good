@@ -1,7 +1,9 @@
 #pragma once
-
-#include "glm/glm.hpp"
-#include <gtc/matrix_transform.hpp>
+#include <util/ext/glm/vec2.hpp>
+#include <util/ext/glm/vec3.hpp>
+#include <util/ext/glm/vec4.hpp>
+#include <util/ext/glm/mat4x4.hpp>
+#include <util/ext/glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 
 
@@ -41,19 +43,25 @@ public:
 	void lookForwards();
 
 	/**
-	* Modifies the aspect of the camera, which in most cases should be the window dimensions.
+	* Modifies the aspect of the camera, which in most cases should be the aspect of the window.
 	*
 	* @param p_aspectRatio - Aspect ratio should be in the form of width / height.
 	*/
 	void setDimensions(float p_aspectRatio);
 
 	/**
+	* I got tired of constantly setting the dimensions to be that of the window every time I drew, so I'm keeping record of them within the camera now.
+	*
+	* @param p_pixelDimensions - A vec2 containing the camera dimensions in pixels.
+	*/
+	void setPixelDimensions(glm::vec2 p_pixelDimensions) { pixelDimensions = p_pixelDimensions; };
+	/**
 	* Generates a mat4 based on the camera and window's state.
 	*
 	* @param p_windowWidth, p_windowHeight - The camera's view window dimensions.
 	* @returns glm::mat4 - To be used for position transformations, is equivalent to proj * view.
 	*/
-	glm::mat4 getTransformMat4(float p_windowWidth, float p_windowHeight);
+	glm::mat4 getTransformMat4();
 
 	/**
 	* Used internally. Sets the camera's frame values, of course
@@ -71,11 +79,10 @@ public:
 	const glm::vec4 getFrame();
 
 	/**
-	* Used to update the camera's frame value based on game window size. Should be done at some point after a window resize.
+	* Used to update the camera's frame value based on camera's pixel dimensions. Should be done at some point after a window resize.
 	*
-	* @param p_windowHeight, p_windowWidth - Window dimensions, in pixels.
 	*/
-	void updateFrame(float p_windowHeight, float p_windowWidth);
+	void updateFrame();
 
 	/**
 	* Sets the tile scale for the camera.
@@ -88,24 +95,24 @@ public:
 
 	/**
 	* Sets the global XY position for the camera. The Z position remains unchanged. Based around the center of the camera frame.
-	* 
+	*
 	* @param p_globalPos - A vector containing the x and y coordinates to translate to (in tiles).
 	*/
 	void setGlobalPos(glm::vec2 p_globalPos);
 
 	/**
 	* Sets the global XY position for the camera. The Z position remains unchanged. Based around the center of the camera frame.
-	* 
-	* @param p_globalX, p_globalY - float x and y positions to translate to (in tiles). 
+	*
+	* @param p_globalX, p_globalY - float x and y positions to translate to (in tiles).
 	*/
 	void setGlobalPos(float p_globalX, float p_globalY);
 
 	/// Enables manually changing the view matrix without it defaulting to lookForwards();
-	void enableManualView() { manualView = true; } 
+	void enableManualView() { manualView = true; }
 	/// Ignores changes to the view matrix, and defaults to lookForwards();
-	void disableManualView() { manualView = false; } 
+	void disableManualView() { manualView = false; }
 	/// Switches projection matrix from ortho to perspective, with an FOV of 90 by default. Should also use manual view when setting this, or else it's mostly useless.
-	void enablePerspective() { perspective = true; } 
+	void enablePerspective() { perspective = true; }
 	/// Disables perspective projection, and defaults to orthographic.
 	void disablePerspective() { perspective = false; }
 
@@ -118,13 +125,14 @@ public:
 
 private:
 	/// used for lookAt and lookForwards, represents a position the camera is targeting.
-	glm::vec3 target; 
+	glm::vec3 target;
 	glm::vec3 right; /* Used within constructor. The vector facing right relative to the camera's view. */
 	glm::vec3 up; /* Used within constructor. The vector facing upwards relative to the camera's view */
 	glm::vec3 forward; /* Used within constructor, represents the vector pointing straight out from the middle of the camera view. */
 	glm::mat4 proj;
 	/// Camera dimensions. Best normalized to the aspect ratio of the window. X is width, Y is height.
 	glm::vec2 dimensions;
+	glm::vec2 pixelDimensions;
 	/// A vec4 representing the camera's frame. the x and y represent the top left corner coords, z and w represent the bottom right corner coords.
 	glm::vec4 frame;
 	/// A consntant value telling the camera what the vertical axis is. In this case, it's the y axis.

@@ -3,16 +3,18 @@
 #ifndef CHUNK_H
 #define CHUNK_H
 
-#include "utils.hpp"
+#include <GL/glew.h>
+#include "util/utils.hpp"
 #include "GameConstants.hpp"
+#include "Framework/Graphics/Mesh.hpp"
 #include "Tile.hpp"
-#include "Mesh.hpp"
-#include "GL/glew.h"
-#include "glm/glm.hpp"
+#include <util/ext/glm/vec2.hpp>
+#include <util/ext/glm/vec3.hpp>
+#include <util/ext/glm/vec4.hpp>
 #include <noise/noise.h>
 
 #include <vector>
-#include "Array2D.hpp"
+#include "util/Array2D.hpp"
 
 struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID is 15 bit. (insanity)
 	TileVert() {};

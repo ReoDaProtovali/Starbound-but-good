@@ -3,9 +3,9 @@
 #ifndef  TEXTURE_H
 #define TEXTURE_H
 
-#include "utils.hpp"
+#include "util/utils.hpp"
 #include "GameConstants.hpp"
-#include "GL/glew.h"
+#include <GL/glew.h>
 
 class Texture // Handles the actual GL textures, doesn't contain image data, but a GL ID
 {

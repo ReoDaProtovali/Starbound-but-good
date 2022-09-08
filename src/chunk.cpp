@@ -1,5 +1,5 @@
 #include "Chunk.hpp"
-#include "glm/glm.hpp"
+#include <util/ext/glm/glm.hpp>
 
 WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
 

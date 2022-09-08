@@ -24,12 +24,12 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 
 
 	overlayMesh.pushVertices({ // pushing the whole quad vertex array in one swoop
-		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // vertex 1
-		1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // vertex 2
-		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // vertex 3
-		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // vertex 4
-		1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // vertex 5
-		1.0f,  1.0f, 0.0f,  1.0f, 1.0f // vertex 6
+		-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, // vertex 1
+		1.0f, -1.0f, 1.0f,  1.0f, 0.0f, // vertex 2
+		-1.0f,  1.0f, 1.0f, 0.0f, 1.0f, // vertex 3
+		-1.0f,  1.0f, 1.0f, 0.0f, 1.0f, // vertex 4
+		1.0f, -1.0f, 1.0f,  1.0f, 0.0f, // vertex 5
+		1.0f,  1.0f, 1.0f,  1.0f, 1.0f // vertex 6
 		});
 
 	overlayMesh.genVBO();

@@ -1,8 +1,8 @@
 #pragma once
-#include "glm/glm.hpp"
+//#include <util/ext/glm/glm.hpp>
 #include <iostream>
 #include "GameConstants.hpp"
-#include "Texture.hpp"
+#include "Framework/Graphics/Texture.hpp"
 
 class AtlasBuilder {
 

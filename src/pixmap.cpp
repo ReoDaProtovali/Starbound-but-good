@@ -1,4 +1,4 @@
-#include "Pixmap.hpp"
+#include "Framework/Graphics/Pixmap.hpp"
 
 glm::vec4 Pixmap::getPixel(unsigned int p_x, unsigned int p_y)
 {

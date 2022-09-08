@@ -43,12 +43,12 @@ void Camera::setDimensions(float p_aspectRatio)
 	dimensions.y = 1.0f / p_aspectRatio;
 }
 
-glm::mat4 Camera::getTransformMat4(float p_windowWidth, float p_windowHeight)
+glm::mat4 Camera::getTransformMat4()
 {
 	float screenScaling = 1.0;
-	if (p_windowWidth < p_windowHeight)
+	if (pixelDimensions.x < pixelDimensions.y)
 	{
-		screenScaling = p_windowWidth / p_windowHeight;
+		screenScaling = pixelDimensions.x / pixelDimensions.y;
 	}
 	else
 	{
@@ -65,7 +65,7 @@ glm::mat4 Camera::getTransformMat4(float p_windowWidth, float p_windowHeight)
 	}
 	else
 	{
-		proj = glm::perspective(glm::radians(45.0f), p_windowWidth / p_windowHeight, 0.1f, 1000.0f);
+		proj = glm::perspective(glm::radians(45.0f), pixelDimensions.x / pixelDimensions.y, 0.1f, 1000.0f);
 	}
 	if (!manualView)
 	{
@@ -87,12 +87,12 @@ void Camera::setFrame(float p_trX, float p_trY, float p_width, float p_height)
 	frame = glm::vec4(p_trX, p_trY, p_trX + p_width, p_trY + p_height);
 }
 
-void Camera::updateFrame(float p_windowHeight, float p_windowWidth)
+void Camera::updateFrame()
 {
 	float screenScaling = 1.0;
-	if (p_windowWidth < p_windowHeight)
+	if (pixelDimensions.x < pixelDimensions.y)
 	{
-		screenScaling = p_windowWidth / p_windowHeight;
+		screenScaling = pixelDimensions.x / pixelDimensions.y;
 	}
 	else
 	{

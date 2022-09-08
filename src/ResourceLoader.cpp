@@ -1,13 +1,17 @@
 #include "ResourceLoader.hpp"
 #define STB_IMAGE_IMPLEMENTATION   // use of stb functions once and for all
-#include "stb_image.h"
-#include "glm/glm.hpp"
+#include <util/ext/stb_image.h>
+#include <util/ext/glm/glm.hpp>
+#include "GameConstants.hpp"
 
 bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 #ifdef LOADLOGGING_ENABLED
 	std::cout << "Loading image resource at " << p_filepath << " with ID " << (unsigned int)p_ID << std::endl;
 #endif
-	if (textures.find(p_ID) != textures.end()) return true;
+	if (textures.find(p_ID) != textures.end()) {
+		std::cout << "Texture with ID " << (unsigned int)p_ID << " already exists." << std::endl;
+		return true;
+	};
 	unsigned char* imageData = nullptr;
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(false);

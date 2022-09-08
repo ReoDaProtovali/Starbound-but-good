@@ -4,13 +4,12 @@
 #include <SDL_opengl.h>
 #include <GL/GLU.h>
 
-#include "utils.hpp"
+#include "util/utils.hpp"
 #include "Chunk.hpp"
 #include "ResourceLoader.hpp"
 #include "InputHandler.hpp"
 #include <iostream>
 #include <math.h>
-
 
 class World;
 struct WorldChunk;

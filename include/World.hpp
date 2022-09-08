@@ -7,11 +7,11 @@
 #include "Chunk.hpp"
 #include <stdlib.h>
 #include <iostream>
-//#include "utils.hpp"
-#include "glm/glm.hpp"
+//#include "util/utils.hpp"
+#include <util/ext/glm/glm.hpp>
 #include "Camera.hpp"
 #include "GameWindow.hpp"
-#include "GL/glew.h"
+#include <GL/glew.h>
 #include <map>
 #include <queue>
 

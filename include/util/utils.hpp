@@ -11,7 +11,7 @@
 #include <ctime>
 #include <algorithm>
 #include <vector>
-#include "glm/vec2.hpp"
+#include <util/ext/glm/glm.hpp>
 #include <numeric>
 
 constexpr auto SIXTY_TIMES_PER_SECOND = 0.01666666666f;

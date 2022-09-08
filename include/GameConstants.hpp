@@ -1,10 +1,9 @@
-#pragma once
 #ifndef GAMECONSTANTS_H
 #define GAMECONSTANTS_H
 
-#include "glm/glm.hpp"
+#include <util/ext/glm/glm.hpp>
 #include <vector>
-#include "GL/glew.h"
+#include <GL/glew.h>
 
 #define LOADLOGGING_ENABLED
 

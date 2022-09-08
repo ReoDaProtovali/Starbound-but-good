@@ -1,12 +1,18 @@
-#include "Shader.hpp"
+#include "Framework/Graphics/Shader.hpp"
 #include "GameConstants.hpp"
-#include "utils.hpp"
-#include <gtc/type_ptr.hpp>
+#include "util/utils.hpp"
+#include <util/ext/glm/gtc/type_ptr.hpp>
 #include <exception>
 
 Shader::Shader(const char* vs_filePath, const char* fs_filePath)
 {
 	programID = Shader::compileShaders(vs_filePath, fs_filePath);
+}
+
+Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath)
+{
+	programID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
+
 }
 
 GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) {
@@ -81,9 +87,116 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 	glDeleteShader(vs);
 	glDeleteShader(fs);
 
+	glLinkProgram(program);
 
-	//glBindAttribLocation(program, 0, "i_position"); // uh oh, gonna have to un-bake this into the shader code
-	//glBindAttribLocation(program, 1, "i_texCoord"); // oh sweet, it's not required if I use layout specifiers
+	glUseProgram(program);
+
+	return program;
+}
+
+GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath)
+{
+	GLuint vs, gs, fs, program;
+
+	vs = glCreateShader(GL_VERTEX_SHADER);
+	gs = glCreateShader(GL_GEOMETRY_SHADER);
+	fs = glCreateShader(GL_FRAGMENT_SHADER);
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Compiling shaders: Vertex - " << vs_filePath << " Geometry - " << gs_filePath << " Fragment - " << fs_filePath << std::endl;
+#endif
+	std::string vertexShader = utils::readFile(vs_filePath);
+	int vsLength = (int)vertexShader.size();
+	const char* vertexShader_cstr = vertexShader.c_str();
+	glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength);
+	glCompileShader(vs);
+
+	GLint status;
+
+	glGetShaderiv(vs, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(vs, maxLength, &maxLength, &errorLog[0]);
+		std::cout << "Vertex shader compilation error" << std::endl;
+		for (int i = 0; i < errorLog.size(); i++) {
+			std::cout << errorLog[i];
+		}
+
+		glDeleteShader(vs); // Don't leak the shader.
+
+		throw new std::runtime_error("Shader was unable to compile.");
+		return -1;
+	}
+
+	std::string geometryShader = utils::readFile(gs_filePath);
+	int gsLength = (int)geometryShader.size();
+	const char* geometryShader_cstr = geometryShader.c_str();
+	glShaderSource(gs, 1, (const GLchar**)&geometryShader_cstr, &gsLength);
+	glCompileShader(gs);
+
+
+	glGetShaderiv(gs, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(gs, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(gs, maxLength, &maxLength, &errorLog[0]);
+		std::cout << "Vertex shader compilation error" << std::endl;
+		for (int i = 0; i < errorLog.size(); i++) {
+			std::cout << errorLog[i];
+		}
+
+		glDeleteShader(gs); // Don't leak the shader.
+
+		throw new std::runtime_error("Shader was unable to compile.");
+		return -1;
+	}
+
+	std::string fragmentShader = utils::readFile(fs_filePath);
+	int fsLength = (int)fragmentShader.length();
+	const char* fragmentShader_cstr = fragmentShader.c_str();
+	glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength);
+	glCompileShader(fs);
+
+	glGetShaderiv(fs, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(fs, maxLength, &maxLength, &errorLog[0]);
+
+		std::cout << "Fragment shader compilation error" << std::endl;
+		for (int i = 0; i < errorLog.size(); i++) {
+			std::cout << errorLog[i];
+		}
+		// Provide the infolog in whatever manor you deem best.
+		// Exit with failure.
+		glDeleteShader(fs); // Don't leak the shader.
+		throw new std::runtime_error("Shader was unable to compile.");
+		return -1;
+	}
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Shader compilation successful. Attaching to program..." << std::endl;
+#endif
+	program = glCreateProgram();
+	glAttachShader(program, vs);
+	glAttachShader(program, gs);
+	glAttachShader(program, fs);
+
+	glDeleteShader(vs);
+	glDeleteShader(gs);
+	glDeleteShader(fs);
+
 	glLinkProgram(program);
 
 	glUseProgram(program);

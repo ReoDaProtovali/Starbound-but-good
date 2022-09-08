@@ -12,12 +12,12 @@
 #include "Timestepper.hpp"
 #include "InputHandler.hpp"
 
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
+#include <util/ext/glm/glm.hpp>
+#include <util/ext/glm/gtc/matrix_transform.hpp>
 
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 120
-#define DISABLE_RUNTIME_CONSOLE true
+#define DISABLE_RUNTIME_CONSOLE false
 
 /// Used for console stats
 int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
 #endif
 	unsigned int renderFrame = 0;
 	unsigned int updateFrame = 0;
+
+	///////////////////////////////////////////////////////
 	while (gameActive) {
 		ts.processFrameStart();
 		while (SDL_PollEvent(&event)) {
@@ -140,21 +142,21 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
 
 	renderer.bindScreenFBOAsRenderTarget();
 	glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
-	glEnable(GL_DEPTH_TEST);
+	 glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	renderer.cam.setDimensions((float)renderer.windowWidth / (float)renderer.windowHeight);
 	world.drawWorld(renderer, gw);
 
+
+
+	glm::vec4 frame = renderer.cam.getFrame();
+	renderer.drawSprite(glm::vec3(frame.x, frame.y, 2.0f), glm::vec2(frame.z - frame.x, frame.w - frame.y), renderer.res.getTexture(TextureID::CAMERA_FRAME_TEXTURE));
 	renderer.drawSprite(
 		glm::vec3(-16.0f, 315.0f, 2.0f), // Position XYZ
 		glm::vec2(4.0f, 4.0f), // Dimensions Width by Height
 		renderer.res.getTexture(TextureID::REO_TEST) // Texture
 	);
-
-	glm::vec4 frame = renderer.cam.getFrame();
-	renderer.drawSprite(glm::vec3(frame.x, frame.y, 2.0f), glm::vec2(frame.z - frame.x, frame.w - frame.y), renderer.res.getTexture(TextureID::CAMERA_FRAME_TEXTURE));
-
 
 
 	gw.bindAsRenderTarget();

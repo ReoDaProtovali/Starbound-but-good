@@ -1,10 +1,10 @@
 #pragma once
-#include "glm/glm.hpp"
-#include "Pixmap.hpp"
-#include "GL/glew.h"
-#include "Shader.hpp"
-#include "Mesh.hpp"
-#include "Texture.hpp"
+#include <util/ext/glm/glm.hpp>
+#include "Framework/Graphics/Pixmap.hpp"
+#include <GL/glew.h>
+#include "Framework/Graphics/Shader.hpp"
+#include "Framework/Graphics/Mesh.hpp"
+#include "Framework/Graphics/Texture.hpp"
 
 class Lighting
 {

@@ -4,8 +4,9 @@
 
 // Rendering handling
 #include "Camera.hpp"
-#include "glm/glm.hpp"
+#include <util/ext/glm/glm.hpp>
 #include "Lighting.hpp"
+#include "Framework/Graphics/FrameBuffer.hpp"
 
 #include "Chunk.hpp"
 // Image handling
@@ -22,8 +23,7 @@ class GameWindow;
 class GameRenderer
 {
 public:
-	GameRenderer(
-		GameWindow& p_window);
+	GameRenderer(GameWindow& p_window);
 
 	unsigned int windowWidth;
 	unsigned int windowHeight;
@@ -32,28 +32,16 @@ public:
 
 	ResourceLoader res;
 	Lighting lighting;
-	SpriteSheet tileSheet;
-	SpriteSheet objectSheet;
-	SpriteSheet entitySheet;
+	//SpriteSheet tileSheet;
+	//SpriteSheet objectSheet;
+	//SpriteSheet entitySheet;
 	Texture tileSheetTexture;
 
 	Mesh<GLfloat> genericSpriteMesh;
 	Texture cameraFrameTexture;
 
 	/// Used for rendering the screen to a separate texture, so the lighting texture can be overlaid.
-	GLuint screenFBO;
-	/// Texture that contains the screen color before lighting or other overlay effects
-	Texture screenColorTex;
-	/// The GL buffer ID for the screen's depth buffer.
-	GLuint depthBuffer;
-	/// Color attatchments being drawn to by the shaders, for multiple shader outputs if required
-	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-
-	/// Loads each of the pre - defined spritesheets, temporary until a more modular system is made
-	void loadSpriteSheets();
-
-	/// Creates the Frame Buffer Object, and binds the screenColorTex and depthBuffer.
-	void initFBO();
+	FrameBuffer screenFBO;
 
 	/// Sets the class-defined screenFBO as the render target for subsequent gl draw calls.
 	void bindScreenFBOAsRenderTarget();

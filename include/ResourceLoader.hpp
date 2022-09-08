@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <stdexcept>
-#include "Texture.hpp"
+#include "Framework/Graphics/Texture.hpp"
 #include <map>
 
 /// Handles loading PNG images from files and stores them internally as textures. Allows for retrieval of them later via TextureID.

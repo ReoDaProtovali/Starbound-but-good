@@ -3,7 +3,7 @@
 #define TILE_H
 
 #include <SDL.h>
-#include "glm/vec2.hpp"
+#include <util/ext/glm/vec2.hpp>
 #include <vector>
 
 class Tile

@@ -1,5 +1,5 @@
 #pragma once
-#include "GL/glew.h"
+#include <GL/glew.h>
 #include <vector>
 #include <initializer_list>
 
@@ -72,6 +72,11 @@ public:
 			case GL_UNSIGNED_INT:
 				glVertexAttribIPointer(i, attribList[i].size, GL_UNSIGNED_INT, totalVertSize, (void*)currentOffset);
 				currentOffset += (GLint)(attribList[i].size * sizeof(GLuint));
+				break;
+			case GL_UNSIGNED_BYTE:
+				glVertexAttribIPointer(i, attribList[i].size, GL_UNSIGNED_BYTE, totalVertSize, (void*)currentOffset);
+				currentOffset += (GLint)(attribList[i].size * sizeof(GLubyte));
+				break;
 			default:
 				break;
 			}

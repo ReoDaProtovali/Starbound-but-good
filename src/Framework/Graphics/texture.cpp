@@ -1,5 +1,5 @@
-#include "Texture.hpp"
-#include "utils.hpp"
+#include "Framework/Graphics/Texture.hpp"
+#include "util/utils.hpp"
 
 void Texture::setFiltering(GLint mode) {
 	filteringMode = mode;

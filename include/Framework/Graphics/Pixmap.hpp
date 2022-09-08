@@ -1,8 +1,8 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include <util/ext/glm/glm.hpp>
 #include <iostream>
-#include "Array2D.hpp"
+#include "util/Array2D.hpp"
 
 /// A class that allows for simple modification of image data using the CPU.
 class Pixmap

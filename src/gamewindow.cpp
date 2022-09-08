@@ -78,6 +78,8 @@ void GameWindow::initGL() {
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.9f, 0.9f, 0.9f, 0.0f);
 	glViewport(0, 0, width, height);
+
+	//SDL_GL_SetSwapInterval(0);
 }
 
 void GameWindow::cleanUp() {

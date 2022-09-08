@@ -3,8 +3,7 @@
 #ifndef TIMESTEPPER_H
 #define TIMESTEPPER_H
 
-#include "utils.hpp"
-#include "SDL.h"
+#include "util/utils.hpp"
 #include "GameWindow.hpp"
 
 // i hate this class and i dont know why it works

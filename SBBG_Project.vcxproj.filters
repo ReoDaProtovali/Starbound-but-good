@@ -60,7 +60,7 @@
     <ClCompile Include="src\world.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
-    <ClCompile Include="src\texture.cpp">
+    <ClCompile Include="src\Framework\Graphics\texture.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\camera.cpp">
@@ -69,19 +69,19 @@
     <ClCompile Include="src\gamerenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Lighting.cpp">
+    <ClCompile Include="src\lighting.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\LightingSolver.cpp">
+    <ClCompile Include="src\lightingsolver.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\pixmap.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shader.cpp">
+    <ClCompile Include="src\shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\SpriteSheet.cpp">
+    <ClCompile Include="src\spritesheet.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\timestepper.cpp">
@@ -93,11 +93,8 @@
     <ClCompile Include="src\atlasbuilder.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\ResourceLoader.cpp">
+    <ClCompile Include="src\resourceloader.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework.cpp">
-      <Filter>Source Files\Framework</Filter>
     </ClCompile>
     <ClCompile Include="src\gamewindow.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -105,24 +102,33 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\TransformObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\framework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\Mesh.hpp">
+    <ClInclude Include="include\Framework\Graphics\Mesh.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\Pixmap.hpp">
+    <ClInclude Include="include\Framework\Graphics\Pixmap.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\Shader.hpp">
+    <ClInclude Include="include\Framework\Graphics\Shader.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="include\SpriteSheet.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\Texture.hpp">
+    <ClInclude Include="include\Framework\Graphics\Texture.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="include\Camera.hpp">
@@ -146,13 +152,13 @@
     <ClInclude Include="include\GameConstants.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\json.hpp">
+    <ClInclude Include="include\util\ext\json.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\utils.hpp">
+    <ClInclude Include="include\util\utils.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\Array2D.hpp">
+    <ClInclude Include="include\util\Array2D.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="include\InputHandler.hpp">
@@ -170,32 +176,57 @@
     <ClInclude Include="include\ResourceLoader.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\Framework.hpp">
-      <Filter>Header Files\Framework</Filter>
+    <ClInclude Include="include\GenericMeshes.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GenericShaders.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\FrameworkDraw.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\TransformObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GenericDraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Sprite.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\RenderState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\ext\stb_image.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\ImageFS.glsl">
-      <Filter>Shaders\Fragment Shaders</Filter>
-    </None>
-    <None Include="Shaders\ImageVS.glsl">
-      <Filter>Shaders\Vertex Shaders</Filter>
-    </None>
-    <None Include="Shaders\LightingFS.glsl">
-      <Filter>Shaders\Fragment Shaders</Filter>
-    </None>
-    <None Include="Shaders\LightingVS.glsl">
-      <Filter>Shaders\Vertex Shaders</Filter>
-    </None>
-    <None Include="Shaders\TileVS.glsl">
-      <Filter>Shaders\Vertex Shaders</Filter>
-    </None>
-    <None Include="Shaders\TileFS.glsl">
-      <Filter>Shaders\Fragment Shaders</Filter>
-    </None>
+    <Text Include="docs\TODO.txt" />
+    <Text Include="docs\randomthings.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="TODO.txt" />
-    <Text Include="randomthings.txt" />
+    <None Include="src\Shaders\ImageFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\LightingFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TileFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TileVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\ImageVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\LightingVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\testGS.glsl" />
   </ItemGroup>
 </Project>
