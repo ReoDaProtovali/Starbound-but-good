@@ -1,4 +1,4 @@
-#include "Framework/Graphics/Shader.hpp"
+#include "Framework\Graphics\Shader.hpp"
 #include "GameConstants.hpp"
 #include "util/utils.hpp"
 #include <util/ext/glm/gtc/type_ptr.hpp>
@@ -148,7 +148,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 		// The maxLength includes the NULL character
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(gs, maxLength, &maxLength, &errorLog[0]);
-		std::cout << "Vertex shader compilation error" << std::endl;
+		std::cout << "Geometry shader compilation error" << std::endl;
 		for (int i = 0; i < errorLog.size(); i++) {
 			std::cout << errorLog[i];
 		}

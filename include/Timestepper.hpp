@@ -4,11 +4,10 @@
 #define TIMESTEPPER_H
 
 #include "util/utils.hpp"
-#include "GameWindow.hpp"
 
 // i hate this class and i dont know why it works
 struct Timestepper {
-	Timestepper(int p_gameUpdateFPS, int p_renderFPS);
+	Timestepper(int p_gameUpdateFPS);
 	void processFrameStart();
 	bool accumulatorFull();
 	void calculateAlpha();
@@ -16,7 +15,6 @@ struct Timestepper {
 
 	float accumulator;
 	int gameUpdateFPS;
-	int renderFPS;
 	float frameTime;
 	float alpha;
 	fpsGauge fg;

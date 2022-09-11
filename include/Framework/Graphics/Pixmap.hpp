@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef PIXMAP_H
+#define PIXMAP_H
 #include <util/ext/glm/glm.hpp>
 #include <iostream>
 #include "util/Array2D.hpp"
@@ -49,3 +49,4 @@ private:
 	Array2D<glm::vec4> pixels;
 };
 
+#endif

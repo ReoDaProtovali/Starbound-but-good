@@ -1,5 +1,5 @@
 #include "GameRenderer.hpp"
-#include "GameWindow.hpp"
+#include "Framework/Window/GameWindow.hpp"
 
 GameRenderer::GameRenderer(
 	GameWindow& p_window) {
@@ -12,7 +12,7 @@ GameRenderer::GameRenderer(
 	screenWidth = p_window.screenWidth;
 	screenHeight = p_window.screenHeight;
 
-	imageShader = Shader("./src/Shaders/ImageVS.glsl", "./src/Shaders/ImageFS.glsl");
+	imageShader = Shader("./src/Shaders/ImageVS.glsl","./src/Shaders/ImageFS.glsl");
 	imageShader.setTexUniform("imageTexture", 0);
 
 	tileShader = Shader("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl");
@@ -58,7 +58,7 @@ GameRenderer::GameRenderer(
 
 void GameRenderer::bindScreenFBOAsRenderTarget()
 {
-	screenFBO.bindAsRenderTarget();
+	screenFBO.bind();
 }
 
 void GameRenderer::rescale()
@@ -107,5 +107,5 @@ void GameRenderer::drawSprite(glm::vec3 p_worldPos, glm::vec2 p_dimensions, Text
 }
 
 void GameRenderer::drawLighting() {
-	lighting.draw(screenFBO.getColorTexID());
+	lighting.draw(screenFBO.getColorTexID(0));
 }

@@ -127,7 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(SolutionDir)include\glm;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\daysh\source\repos\Starbound-but-good\include;$(SolutionDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <DisableSpecificWarnings>26812;4312;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -147,7 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(SolutionDir)include\glm;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
       <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
@@ -180,21 +180,24 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\Framework\Graphics\DrawSurface.hpp" />
     <ClCompile Include="src\Framework\framework.cpp" />
+    <ClCompile Include="src\Framework\Graphics\DrawStates.cpp" />
+    <ClCompile Include="src\Framework\Graphics\drawsurface.cpp" />
     <ClCompile Include="src\Framework\Graphics\framebuffer.cpp" />
     <ClCompile Include="src\Framework\Graphics\TransformObject.cpp" />
     <ClCompile Include="src\atlasbuilder.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />
     <ClCompile Include="src\gamerenderer.cpp" />
-    <ClCompile Include="src\gamewindow.cpp" />
+    <ClCompile Include="src\Framework\Window\gamewindow.cpp" />
     <ClCompile Include="src\inputhandler.cpp" />
     <ClCompile Include="src\lighting.cpp" />
     <ClCompile Include="src\lightingsolver.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pixmap.cpp" />
     <ClCompile Include="src\resourceloader.cpp" />
-    <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\Framework\Graphics\shader.cpp" />
     <ClCompile Include="src\spritesheet.cpp" />
     <ClCompile Include="src\Framework\Graphics\texture.cpp" />
     <ClCompile Include="src\tile.cpp" />
@@ -202,21 +205,24 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
+    <ClInclude Include="include\Framework\Graphics\BlendMode.hpp" />
+    <ClInclude Include="include\Framework\Graphics\DrawObject.hpp" />
+    <ClInclude Include="include\Framework\Graphics\GlCheck.hpp" />
     <ClInclude Include="include\util\Array2D.hpp" />
     <ClInclude Include="include\AtlasBuilder.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Chunk.hpp" />
     <ClInclude Include="include\Framework\FrameworkDraw.hpp" />
     <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp" />
-    <ClInclude Include="include\Framework\Graphics\GenericDraw.h" />
-    <ClInclude Include="include\Framework\Graphics\RenderState.hpp" />
+    <ClInclude Include="include\Framework\Graphics\DrawStates.hpp" />
     <ClInclude Include="include\Framework\Graphics\Sprite.hpp" />
     <ClInclude Include="include\Framework\Graphics\TransformObject.hpp" />
     <ClInclude Include="include\GameConstants.hpp" />
     <ClInclude Include="include\GameRenderer.hpp" />
-    <ClInclude Include="include\GameWindow.hpp" />
+    <ClInclude Include="include\Framework\Window\GameWindow.hpp" />
     <ClInclude Include="include\GenericShaders.hpp" />
-    <ClInclude Include="include\GenericMeshes.hpp" />
+    <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp" />
     <ClInclude Include="include\InputHandler.hpp" />
     <ClInclude Include="include\util\ext\json.hpp" />
     <ClInclude Include="include\Lighting.hpp" />
@@ -242,7 +248,6 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\ImageVS.glsl" />
     <None Include="src\Shaders\LightingFS.glsl" />
     <None Include="src\Shaders\LightingVS.glsl" />
-    <None Include="src\Shaders\testGS.glsl" />
     <None Include="src\Shaders\TileFS.glsl" />
     <None Include="src\Shaders\TileVS.glsl" />
   </ItemGroup>

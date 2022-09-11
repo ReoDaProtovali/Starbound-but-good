@@ -10,7 +10,7 @@
 //#include "util/utils.hpp"
 #include <util/ext/glm/glm.hpp>
 #include "Camera.hpp"
-#include "GameWindow.hpp"
+#include "Framework/Window/GameWindow.hpp"
 #include <GL/glew.h>
 #include <map>
 #include <queue>

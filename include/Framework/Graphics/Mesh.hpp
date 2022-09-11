@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESH_H
+#define MESH_H
 #include <GL/glew.h>
 #include <vector>
 #include <initializer_list>
@@ -45,6 +46,12 @@ public:
 		attribList.push_back(Attrib(p_size, GL_UNSIGNED_INT));
 	}; 
 
+	/// Size specifies number of bytes required for the attribute.
+	void addUbyteAttrib(GLubyte p_size) {
+		totalVertSize += sizeof(GLubyte) * p_size;
+		attribList.push_back(Attrib(p_size, GL_UNSIGNED_BYTE));
+	};
+
 	/// Simply adds a vertex of type T to the end of the mesh list.
 	void pushVertices(std::initializer_list<T> p_attribs) {
 		verts.insert(verts.end(), p_attribs);
@@ -64,8 +71,8 @@ public:
 
 		for (unsigned int i = 0; i < attribList.size(); i++) {
 
-			switch (attribList[i].type) {
-			case GL_FLOAT:
+			switch (attribList[i].type) { // Will add more attribute types as I need them.
+			case GL_FLOAT: 
 				glVertexAttribPointer(i, attribList[i].size, GL_FLOAT, GL_FALSE, totalVertSize, (void*)currentOffset);
 				currentOffset += (GLint)(attribList[i].size * sizeof(GLfloat));
 				break;
@@ -108,3 +115,4 @@ public:
 
 };
 
+#endif

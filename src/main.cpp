@@ -4,8 +4,9 @@
 
 #include <SDL.h>
 #include <iostream>
-#include "GameWindow.hpp"
+#include "Framework/Window/GameWindow.hpp"
 #include "GameRenderer.hpp"
+#include "GameConstants.hpp"
 
 #include <cmath>
 #include "World.hpp"
@@ -15,9 +16,6 @@
 #include <util/ext/glm/glm.hpp>
 #include <util/ext/glm/gtc/matrix_transform.hpp>
 
-#define GAME_UPDATE_SPEED 60
-#define FRAMES_BETWEEN_STAT_UPDATES 120
-#define DISABLE_RUNTIME_CONSOLE false
 
 /// Used for console stats
 int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
@@ -56,8 +54,8 @@ int main(int argc, char* argv[])
 #endif
 	World world = World();
 
-	Timestepper ts = Timestepper(GAME_UPDATE_SPEED, gw.getRefreshRate()); // sets the game update loop fps and vsync fps
-
+	Timestepper ts = Timestepper(GAME_UPDATE_SPEED); // sets the game update loop fps
+	gw.setVSync(true);
 #ifdef LOADLOGGING_ENABLED
 	std::cout << "Main loop running." << std::endl;
 #endif
@@ -97,20 +95,21 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}
-		printConsoleCounter++;
 		renderFrame++;
 		while (ts.accumulatorFull()) {
 			ts.accumulator -= 1.0f / ts.gameUpdateFPS;
 			updateFrame++;
+			printConsoleCounter++;
 			// Code to execute every update frame
 			gameUpdate(world, renderer.cam, updateFrame);
-
-			updateFPSGauge.update(ts.gameUpdateFPS / 4);
 
 			if ((printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
 				printConsoleCounter = 0;
 				sendConsoleStats(ts, renderer);
 			}
+
+			updateFPSGauge.update(ts.gameUpdateFPS / 4);
+
 
 			ts.processFrameStart();
 		}
@@ -118,7 +117,7 @@ int main(int argc, char* argv[])
 
 		ts.calculateAlpha();
 
-		renderFPSGauge.update(ts.renderFPS / 4);
+		renderFPSGauge.update(100); // 100 frame long value buffer
 
 		processTestInputs(gw.inpHandler, world, cam, camVelocity);
 		camVelocity *= 0.9;
@@ -142,7 +141,7 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
 
 	renderer.bindScreenFBOAsRenderTarget();
 	glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
-	 glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	renderer.cam.setDimensions((float)renderer.windowWidth / (float)renderer.windowHeight);
@@ -151,15 +150,15 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
 
 
 	glm::vec4 frame = renderer.cam.getFrame();
-	renderer.drawSprite(glm::vec3(frame.x, frame.y, 2.0f), glm::vec2(frame.z - frame.x, frame.w - frame.y), renderer.res.getTexture(TextureID::CAMERA_FRAME_TEXTURE));
-	renderer.drawSprite(
-		glm::vec3(-16.0f, 315.0f, 2.0f), // Position XYZ
-		glm::vec2(4.0f, 4.0f), // Dimensions Width by Height
-		renderer.res.getTexture(TextureID::REO_TEST) // Texture
-	);
+	//renderer.drawSprite(glm::vec3(frame.x, frame.y, 2.0f), glm::vec2(frame.z - frame.x, frame.w - frame.y), renderer.res.getTexture(TextureID::CAMERA_FRAME_TEXTURE));
+	//renderer.drawSprite(
+	//	glm::vec3(-16.0f, 315.0f, 2.0f), // Position XYZ
+	//	glm::vec2(4.0f, 4.0f), // Dimensions Width by Height
+	//	renderer.res.getTexture(TextureID::REO_TEST) // Texture
+	//);
 
 
-	gw.bindAsRenderTarget();
+	gw.bind();
 	glDrawBuffer(GL_BACK);
 	glDisable(GL_DEPTH_TEST);
 	renderer.drawLighting();

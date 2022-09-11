@@ -1,7 +1,7 @@
 #include "Timestepper.hpp"
 
-Timestepper::Timestepper(int p_gameUpdateFPS, int p_renderFPS)
-	: renderFPS(p_renderFPS), gameUpdateFPS(p_gameUpdateFPS), accumulator(0.0f), currentTime(utils::hireTimeInSeconds()), alpha(0.0f), startTicks(0), frameTicks(0), frameTime(0.0f)
+Timestepper::Timestepper(int p_gameUpdateFPS)
+	: gameUpdateFPS(p_gameUpdateFPS), accumulator(0.0f), currentTime(utils::hireTimeInSeconds()), alpha(0.0f), startTicks(0), frameTicks(0), frameTime(0.0f)
 {}
 void Timestepper::processFrameStart() {
 	fg.stopStopwatch();

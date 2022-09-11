@@ -1,7 +1,11 @@
-#pragma once
+#ifndef SPRITE_H
+#define SPRITE_H
 #include "TransformObject.hpp"
-namespace fw {
-	class Sprite : public TransformObject {
+#include "DrawObject.hpp"
 
-	};
-}
+
+class Sprite : public TransformObject, public DrawObject {
+
+};
+
+#endif

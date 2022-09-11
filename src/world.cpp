@@ -117,14 +117,14 @@ void World::drawWorld(GameRenderer& renderer, GameWindow& gw) {
 	auto it = chunkMap.begin();
 	while (it != chunkMap.end()) { // go through all the chunks in the world
 		glm::vec2 chunkGlobalPos = it->second.worldPos * CHUNKSIZE;
-		if (
-			(chunkGlobalPos.x >= renderer.cam.getFrame().x - 2 * CHUNKSIZE) &&
-			(chunkGlobalPos.x <= renderer.cam.getFrame().z + 2 * CHUNKSIZE) &&
-			(chunkGlobalPos.y >= renderer.cam.getFrame().y - 2 * CHUNKSIZE) &&
-			(chunkGlobalPos.y <= renderer.cam.getFrame().w + 2 * CHUNKSIZE)
-			) {
+		//if (
+		//	(chunkGlobalPos.x >= renderer.cam.getFrame().x - 2 * CHUNKSIZE) &&
+		//	(chunkGlobalPos.x <= renderer.cam.getFrame().z + 2 * CHUNKSIZE) &&
+		//	(chunkGlobalPos.y >= renderer.cam.getFrame().y - 2 * CHUNKSIZE) &&
+		//	(chunkGlobalPos.y <= renderer.cam.getFrame().w + 2 * CHUNKSIZE)
+		//	) {
 			renderer.drawChunk(it->second);
-		}
+		//}
 		++it;
 	};
 }

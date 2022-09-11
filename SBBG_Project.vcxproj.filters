@@ -78,7 +78,7 @@
     <ClCompile Include="src\pixmap.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\shader.cpp">
+    <ClCompile Include="src\Framework\Graphics\shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\spritesheet.cpp">
@@ -96,7 +96,7 @@
     <ClCompile Include="src\resourceloader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\gamewindow.cpp">
+    <ClCompile Include="src\Framework\Window\gamewindow.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -109,6 +109,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Framework\Graphics\framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Framework\Graphics\DrawSurface.hpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\drawsurface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\DrawStates.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +176,7 @@
     <ClInclude Include="include\Timestepper.hpp">
       <Filter>Header Files\Game Updates</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameWindow.hpp">
+    <ClInclude Include="include\Framework\Window\GameWindow.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="include\AtlasBuilder.hpp">
@@ -176,7 +185,7 @@
     <ClInclude Include="include\ResourceLoader.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\GenericMeshes.hpp">
+    <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="include\GenericShaders.hpp">
@@ -188,19 +197,28 @@
     <ClInclude Include="include\Framework\Graphics\TransformObject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\GenericDraw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Framework\Graphics\Sprite.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\RenderState.hpp">
+    <ClInclude Include="include\Framework\Graphics\DrawStates.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\util\ext\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\DrawObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GlCheck.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\FrameworkConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\BlendMode.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -227,6 +245,5 @@
     <None Include="src\Shaders\LightingVS.glsl">
       <Filter>Shaders\Vertex Shaders</Filter>
     </None>
-    <None Include="src\Shaders\testGS.glsl" />
   </ItemGroup>
 </Project>

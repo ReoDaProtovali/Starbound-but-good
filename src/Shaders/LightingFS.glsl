@@ -10,7 +10,6 @@ void main()
 {
      vec4 screenCol = texture(screenTexture, TexCoord);
      vec4 lightingCol = texture(lightingTexture, TexCoord);
-     float centerDist = length(vec2(0.5f, 0.5f) - TexCoord.xy) * 2 - 0.2f;
-     FragColor = vec4(screenCol.rgb, 1.0f) * lightingCol; //* vec4(1.0f, 2.0f, 1.0f, 1.0f);
+     FragColor = vec4(screenCol.rgb + lightingCol.xyz, 1.0f); //* vec4(1.0f, 2.0f, 1.0f, 1.0f);
      //FragColor = lightingCol;
 }

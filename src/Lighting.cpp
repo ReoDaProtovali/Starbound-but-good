@@ -5,7 +5,7 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 	lightmap = Pixmap(p_width, p_height);
 
 	// just for testing
-	lightmap.fill(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	lightmap.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 	lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));

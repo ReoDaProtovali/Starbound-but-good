@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SHADER_H
+#define SHADER_H
 
 #include <GL/glew.h>
 #include <util/ext/glm/glm.hpp>
@@ -51,3 +52,4 @@ public:
 	std::vector<GLuint> uniforms; /// Unused
 };
 
+#endif

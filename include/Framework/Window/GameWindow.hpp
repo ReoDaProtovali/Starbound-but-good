@@ -1,19 +1,18 @@
-#pragma once
+#ifndef GAMEWINDOW_H
+#define GAMEWINDOW_H
 #include <SDL.h>
 #include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <GL/GLU.h>
 
+#include "Framework/Graphics/DrawSurface.hpp"
 #include "util/utils.hpp"
-#include "Chunk.hpp"
-#include "ResourceLoader.hpp"
 #include "InputHandler.hpp"
 #include <iostream>
 #include <math.h>
 
-class World;
-struct WorldChunk;
-class GameWindow
+class DrawSurface;
+class GameWindow : public DrawSurface
 {
 public:
 	/** Constructor
@@ -27,7 +26,7 @@ public:
 	*/
 	GameWindow(const char* p_title);
 
-	/// Does all the work to initialize OpenGL rendering for SDL and GLEW
+	/// Attaches GL to SDL window
 	void initGL();
 	/// Deletes the window when we are done using it.
 	void cleanUp();
@@ -35,18 +34,26 @@ public:
 	* @returns The refresh rate of the screen the window is on.
 	*/
 	int getRefreshRate();
-	/// Tells all subsequent draw calls to render directly to the display window.
-	void bindAsRenderTarget();
+
+	// Used to disable the framerate limit.
+	void setVSync(bool enabled);
 	// Swaps the doublebuffer, and shows the new frame.
 	void displayNewFrame();
+
 	int width;
 	int height;
 	unsigned int screenWidth;
 	unsigned int screenHeight;
-	/// SDL managed OpenGL context. Not used for much outside of the constructor.
-	SDL_GLContext glContext;
+
+	static bool OpenGLInitialized;
+
 	/// The input handler for the game window. 
 	InputHandler inpHandler;
+private:
+	/// SDL managed OpenGL context. Not used for much outside of the constructor.
+	SDL_GLContext glContext;
+
 	/// A pointer to the SDL window, used internally in most cases.
 	SDL_Window* window;
 };
+#endif

@@ -1,5 +1,5 @@
 #pragma once
-#include "Shader.hpp"
+#include "Framework/Graphics/Shader.hpp"
 
 // I don't know how to namespace this without instantiating a class, because each shader needs its uniforms set, and you need a function scope to do that.
 // I'll settle for using the constructor of a struct to accomplish that.
