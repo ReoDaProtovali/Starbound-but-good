@@ -10,10 +10,12 @@
 // Pretty much contains everything you need to know about drawing apart from the mesh.
 // Warning, members become invalid if the thing they point to get deleted. Make sure all pointers are assigned before drawing.
 class DrawStates {
+public:
 	DrawStates() :
-		transform(nullptr),
-		shader(nullptr)
+		shader(nullptr),
+		transform(glm::mat4(1.0f))
 	{};
+	~DrawStates();
 
 	DrawStates(glm::mat4& p_transform);
 	DrawStates(Texture& p_texture);
@@ -23,16 +25,29 @@ class DrawStates {
 	DrawStates(glm::mat4& p_transform, Texture& p_texture, Shader& p_shader, BlendMode p_blendMode = BlendMode());
 	DrawStates(glm::mat4& p_transform, std::initializer_list<Texture*> p_textures, Shader& p_shader, BlendMode p_blendMode = BlendMode());
 
-	// Just a function for convenience, so you don't have to worry about indexing the texure vector if you're only utilizing one texture as in most cases.
-	void bindTexture(Texture& p_texture);
-	bool checkIfInitialized() { return transformPointerSet && textureAdded && shaderPointerSet; };
+	void setTransform(glm::mat4 p_transform);
+	// Sets the internal shader to use.
+	// Reference overload.
+	void attachShader(Shader& p_shader);
+	// Sets the internal shader to use.
+	// Pointer overload.
+	void attachShader(Shader* p_shader);
 
-private:
+	void setBlendMode(BlendMode p_blendMode);
+
+	// Just a function for convenience, so you don't have to worry about indexing the texure vector if you're only utilizing one texture as in most cases.
+	// Reference overload
+	void attachTexture(Texture& p_texture);
+	// Just a function for convenience, so you don't have to worry about indexing the texure vector if you're only utilizing one texture as in most cases.
+	// Pointer overload
+	void attachTexture(Texture* p_texture);
+
+	bool checkIfInitialized() { return textureAdded && shaderPointerSet; };
+
 	// Pointers, because we want them to reflect the values of their outside variables so we don't need to update the draw states every time one changes.
 
 	// The modelview matrix used the shader.
-	glm::mat4* transform;
-	bool transformPointerSet = false; // nullptr checking
+	glm::mat4 transform;
 
 	// Supports multiple textures for one shader. Should never be added to or removed from after initialization.
 	std::vector<Texture*> textures;

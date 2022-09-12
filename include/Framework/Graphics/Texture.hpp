@@ -64,13 +64,13 @@ public:
 
 	GLuint glID;
 	TextureID texID;
+	GLenum type;
 
 private:
 	bool initialized = false;
 
 	GLint filteringMode;
 	GLint wrappingMode;
-	GLenum type;
 
 };
 

@@ -4,8 +4,8 @@
 #include "Framework/Graphics/DrawStates.hpp"
 #include "Framework/Graphics/DrawSurface.hpp"
 
+//class DrawSurface;
 // Polymorphic Interface to allow draw surfaces to draw classes that inherit from this, regardless of higher type
-class DrawSurface;
 struct DrawObject {
 	DrawObject() {};
 	

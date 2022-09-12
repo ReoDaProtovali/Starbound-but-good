@@ -9,12 +9,22 @@ Shader::Shader(const char* vs_filePath, const char* fs_filePath)
 	programID = Shader::compileShaders(vs_filePath, fs_filePath);
 }
 
+Shader::Shader(const char* vs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms)
+{
+	programID = Shader::compileShaders(vs_filePath, fs_filePath);
+	Shader::setUniforms(p_uniforms);
+}
+
 Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath)
 {
 	programID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
 
 }
-
+Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms)
+{
+	programID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
+	Shader::setUniforms(p_uniforms);
+}
 GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) {
 	GLuint vs, fs, program;
 
@@ -208,6 +218,29 @@ void Shader::use() {
 	glUseProgram(programID);
 }
 
+void Shader::setUniforms(std::vector<Uniform> p_uniforms) {
+	for (size_t i = 0; i < p_uniforms.size(); i++) {
+		switch (p_uniforms[i].type) {
+		case UniformTypes::TEX:
+			Shader::setTexUniform(p_uniforms[i].name, p_uniforms[i].intValue);
+			break;
+		case UniformTypes::INT:
+			Shader::setIntUniform(p_uniforms[i].name, p_uniforms[i].intValue);
+			break;
+		case UniformTypes::BOOL:
+			Shader::setBoolUniform(p_uniforms[i].name, (bool)p_uniforms[i].intValue);
+			break;
+		case UniformTypes::FLOAT:
+			Shader::setFloatUniform(p_uniforms[i].name, p_uniforms[i].floatValue);
+			break;
+		case UniformTypes::MAT4:
+			Shader::setMat4Uniform(p_uniforms[i].name, p_uniforms[i].mat4Value);
+			break;
+		default:
+			throw new std::runtime_error("Attempted to set uniform with invalid type.");
+		}
+	}
+}
 void Shader::setBoolUniform(const std::string& p_name, bool p_value) const
 {
 	GLint loc = glGetUniformLocation(programID, p_name.c_str());

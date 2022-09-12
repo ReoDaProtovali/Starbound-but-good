@@ -61,7 +61,7 @@ public:
 	* @param p_windowWidth, p_windowHeight - The camera's view window dimensions.
 	* @returns glm::mat4 - To be used for position transformations, is equivalent to proj * view.
 	*/
-	glm::mat4 getTransformMat4();
+	glm::mat4 getTransform();
 
 	/**
 	* Used internally. Sets the camera's frame values, of course

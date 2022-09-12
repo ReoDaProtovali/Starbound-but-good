@@ -43,7 +43,7 @@ void Camera::setDimensions(float p_aspectRatio)
 	dimensions.y = 1.0f / p_aspectRatio;
 }
 
-glm::mat4 Camera::getTransformMat4()
+glm::mat4 Camera::getTransform()
 {
 	float screenScaling = 1.0;
 	if (pixelDimensions.x < pixelDimensions.y)

@@ -12,12 +12,35 @@ GameRenderer::GameRenderer(
 	screenWidth = p_window.screenWidth;
 	screenHeight = p_window.screenHeight;
 
-	imageShader = Shader("./src/Shaders/ImageVS.glsl","./src/Shaders/ImageFS.glsl");
-	imageShader.setTexUniform("imageTexture", 0);
+	gs.init();
 
+	// Will be moved ------------------------------------------------------------
 	tileShader = Shader("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl");
 	tileShader.setTexUniform("tileSheet", 0);
+	// --------------------------------------------------------------------------
 
+	cam.pos = glm::vec3(-16.0f, 315.0f, 32.0f);
+	cam.tileScale = 16.0f;
+	cam.setPixelDimensions(glm::vec2(windowWidth, windowHeight));
+	cam.updateFrame();
+
+	loadTextures();
+	testReoSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
+	testReoSprite.attachShader(gs.imageShader);
+	testReoTexture = res.getTexture(TextureID::REO_TEST);
+	testReoSprite.attachTexture(&testReoTexture);
+
+#ifdef LOADLOGGING_ENABLED
+	std::cout << "Creating lighting subsystem..." << std::endl;
+#endif
+	lighting = Lighting((unsigned int)(windowWidth / cam.tileScale), (unsigned int)(windowHeight / cam.tileScale));
+
+	screenFBO.setDimensions(windowWidth, windowHeight); // Initializes
+
+}
+
+// Will be changed ----------------------------------------------------------
+void GameRenderer::loadTextures() {
 #ifdef LOADLOGGING_ENABLED
 	std::cout << "Creating Resource loader..." << std::endl;
 #endif
@@ -27,38 +50,17 @@ GameRenderer::GameRenderer(
 	res.load("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
 
 	tileSheetTexture = Texture(res.getTexture(TextureID::TILESHEET_TEXTURE));
-	//tileSheet.setTexture();
-
-	cam.pos = glm::vec3(-16.0f, 315.0f, 32.0f);
-	cam.tileScale = 16.0f;
-	cam.setPixelDimensions(glm::vec2(windowWidth, windowHeight));
-	cam.updateFrame();
-
-#ifdef LOADLOGGING_ENABLED
-	std::cout << "Creating lighting subsystem..." << std::endl;
-#endif
-	lighting = Lighting((unsigned int)(windowWidth / cam.tileScale), (unsigned int)(windowHeight / cam.tileScale));
-
-	//// Testing purposes
-	//genericSpriteMesh.addFloatAttrib(3);
-	//genericSpriteMesh.addFloatAttrib(2);
-	//genericSpriteMesh.pushVertices({
-	//	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // vertex 1
-	//	1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // vertex 2
-	//	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // vertex 3
-	//	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // vertex 4
-	//	1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // vertex 5
-	//	1.0f,  1.0f, 0.0f,  1.0f, 1.0f // vertex 6
-	//	});
-	//genericSpriteMesh.genVBO();
-
-	screenFBO.setDimensions(windowWidth, windowHeight); // Initializes
-
 }
+// --------------------------------------------------------------------------
 
 void GameRenderer::bindScreenFBOAsRenderTarget()
 {
 	screenFBO.bind();
+}
+
+void GameRenderer::setClearColor(glm::vec4 p_col)
+{
+	screenFBO.setClearColor(p_col);
 }
 
 void GameRenderer::rescale()
@@ -68,6 +70,7 @@ void GameRenderer::rescale()
 	cam.updateFrame();
 }
 
+// Will be moved ------------------------------------------------------------
 bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 	if (!p_chunk.meshIsCurrent) { p_chunk.generateVBO(); };
 	glBindVertexArray(p_chunk.tileMesh.VAO);
@@ -93,19 +96,47 @@ bool GameRenderer::drawChunk(WorldChunk& p_chunk) {
 
 
 	// Matrix that transforms from global space, to view space, to clip space in one swoop
-	glm::mat4 finalTransform = cam.getTransformMat4();
+	glm::mat4 finalTransform = cam.getTransform();
 	tileShader.setMat4Uniform("transform", finalTransform);
 
 	glDrawArrays(GL_TRIANGLES, 0, p_chunk.getVBOSize());
 	glBindVertexArray(0);
 	return true;
 }
+// --------------------------------------------------------------------------
 
-void GameRenderer::drawSprite(glm::vec3 p_worldPos, glm::vec2 p_dimensions, Texture p_spriteTex)
-{
-
-}
 
 void GameRenderer::drawLighting() {
 	lighting.draw(screenFBO.getColorTexID(0));
+}
+
+void GameRenderer::testDraw()
+{
+	// it's a bit bad to use the depth test function here, but I haven't moved it into the DrawSurface class yet so whatevs
+	glDisable(GL_DEPTH_TEST);
+	testFrame++;
+
+	// DrawStates just contains everything opengl needs to know in order to draw.
+	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
+	DrawStates state;
+
+	glm::vec3 camPos = cam.pos;
+
+	testReoSprite.setOriginRelative(OriginLoc::CENTER);
+
+	for (float theta = (float)M_PI * 2.f; theta > 0.f; theta -= (float)M_PI / 64.f) {
+		// cool lil polar function
+		float r = 8.f + 8.f * std::cos(2.f * theta * testFrame / 400.0f + testFrame / 160.f);
+
+		float x = std::cos(theta) * r;
+		float y = std::sin(theta) * r;
+
+		testReoSprite.setPosition(glm::vec3(x + cam.pos.x, y + cam.pos.y, 2.f));
+		testReoSprite.setRotation(theta * 3.f + testFrame / 40.f);
+
+		testReoSprite.calculateTransform();
+		state.setTransform(cam.getTransform() * testReoSprite.getTransform());
+		testReoSprite.draw(screenFBO, state);
+	}
+	glEnable(GL_DEPTH_TEST);
 }

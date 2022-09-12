@@ -44,6 +44,8 @@ int main(int argc, char* argv[])
 
 	GameRenderer renderer = GameRenderer(gw);
 
+
+
 	Camera& cam = renderer.cam; // aliasing the renderer camera for convenience
 	cam.tileScale = 128.0f; // Immediately changes the camera's scale to 128 tiles across
 
@@ -140,22 +142,15 @@ int main(int argc, char* argv[])
 void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
 
 	renderer.bindScreenFBOAsRenderTarget();
-	glClearColor(0.8f, 0.8f, 1.0f, 0.0f);
+	renderer.setClearColor(glm::vec4(0.8f, 0.8f, 1.0f, 0.0f));
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	renderer.cam.setDimensions((float)renderer.windowWidth / (float)renderer.windowHeight);
 	world.drawWorld(renderer, gw);
-
-
+	renderer.testDraw();
 
 	glm::vec4 frame = renderer.cam.getFrame();
-	//renderer.drawSprite(glm::vec3(frame.x, frame.y, 2.0f), glm::vec2(frame.z - frame.x, frame.w - frame.y), renderer.res.getTexture(TextureID::CAMERA_FRAME_TEXTURE));
-	//renderer.drawSprite(
-	//	glm::vec3(-16.0f, 315.0f, 2.0f), // Position XYZ
-	//	glm::vec2(4.0f, 4.0f), // Dimensions Width by Height
-	//	renderer.res.getTexture(TextureID::REO_TEST) // Texture
-	//);
 
 
 	gw.bind();

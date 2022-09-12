@@ -77,7 +77,6 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>C:\dev\libnoisedll\bin;C:\dev\SDL2\lib\x86;$(SolutionDir)lib;$(LibraryPath)</LibraryPath>
     <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
@@ -182,10 +181,12 @@ Xcopy /E /I res $(OutDir)res</Command>
   <ItemGroup>
     <ClCompile Include="include\Framework\Graphics\DrawSurface.hpp" />
     <ClCompile Include="src\Framework\framework.cpp" />
-    <ClCompile Include="src\Framework\Graphics\DrawStates.cpp" />
+    <ClCompile Include="src\Framework\Graphics\drawstates.cpp" />
     <ClCompile Include="src\Framework\Graphics\drawsurface.cpp" />
     <ClCompile Include="src\Framework\Graphics\framebuffer.cpp" />
-    <ClCompile Include="src\Framework\Graphics\TransformObject.cpp" />
+    <ClCompile Include="src\Framework\Graphics\genericshaders.cpp" />
+    <ClCompile Include="src\Framework\Graphics\sprite.cpp" />
+    <ClCompile Include="src\Framework\Graphics\transformobject.cpp" />
     <ClCompile Include="src\atlasbuilder.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />
@@ -209,6 +210,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Framework\Graphics\BlendMode.hpp" />
     <ClInclude Include="include\Framework\Graphics\DrawObject.hpp" />
     <ClInclude Include="include\Framework\Graphics\GlCheck.hpp" />
+    <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Uniform.hpp" />
     <ClInclude Include="include\util\Array2D.hpp" />
     <ClInclude Include="include\AtlasBuilder.hpp" />
     <ClInclude Include="include\Camera.hpp" />
@@ -221,7 +224,6 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\GameConstants.hpp" />
     <ClInclude Include="include\GameRenderer.hpp" />
     <ClInclude Include="include\Framework\Window\GameWindow.hpp" />
-    <ClInclude Include="include\GenericShaders.hpp" />
     <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp" />
     <ClInclude Include="include\InputHandler.hpp" />
     <ClInclude Include="include\util\ext\json.hpp" />
@@ -236,6 +238,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Tile.hpp" />
     <ClInclude Include="include\Timestepper.hpp" />
     <ClInclude Include="include\util\ext\stb_image.h" />
+    <ClInclude Include="include\util\Rect.hpp" />
     <ClInclude Include="include\util\utils.hpp" />
     <ClInclude Include="include\World.hpp" />
   </ItemGroup>

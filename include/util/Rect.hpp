@@ -1,0 +1,40 @@
+#pragma once
+#include <util/ext/glm/vec2.hpp>
+
+// a very simple rectangle class that just makes coordinate calculations less convoluted.
+// WARNING! Y axis increases as you move up, so bottom left is at 0, 0
+struct Rect {
+	Rect(): xy(glm::vec2(0.f)), wh(glm::vec2(0.f)) {};
+	Rect(float p_x, float p_y, float p_w, float p_h) {
+		xy = glm::vec2(p_x, p_y);
+		wh = glm::vec2(p_w, p_h);
+	}
+
+	// functions to get corners of the rect.
+	// Gets the top left coordinate of the rectangle as a vec2.
+	const glm::vec2 getBL() {
+		return xy;
+	}
+	// Gets the top right coordinate of the rectangle as a vec2.
+	const glm::vec2 getBR() {
+		return glm::vec2(xy.x + wh.x, xy.y);
+	}
+	// Gets the bottom right coordinate of the rectangle as a vec2.
+	const glm::vec2 getTL() {
+		return glm::vec2(xy.x, xy.y + wh.y);
+	}
+	// Gets the bottom right coordinate of the rectangle as a vec2.
+	const glm::vec2 getTR() {
+		return glm::vec2(xy.x + wh.x, xy.y + wh.y);
+	}
+	// Gets the midpoint of the box.
+	const glm::vec2 getCenter() {
+		return glm::vec2(xy.x + wh.x / 2.f, xy.y + wh.y / 2.f);
+	}
+	// Defined internally with x, y, width, and height.
+	const float getArea() {
+		return (wh.x * wh.y);
+	}
+	glm::vec2 xy;
+	glm::vec2 wh;
+};

@@ -1,4 +1,8 @@
-#include "../include/Framework/Graphics/DrawSurface.hpp"
+// i hate this f-ing bug
+// and i hate even more that switching these two fixes it
+#include "Framework/Graphics/DrawSurface.hpp"
+#include "../../../include/Framework/Graphics/DrawSurface.hpp"
+
 #include <iostream>
 
 bool DrawSurface::openGLInitialized = false;
@@ -36,13 +40,7 @@ void DrawSurface::insureOpenGLInit()
 
 }
 
-void DrawSurface::draw(DrawObject& p_obj, DrawStates& p_states)
-{
-	p_obj.draw(*this, p_states);
-}
-
-template<typename T>
-void DrawSurface::draw(Mesh<T> p_mesh, GLenum p_primitiveType, DrawStates& p_states) {
+void DrawSurface::draw(Mesh<float> p_mesh, GLenum p_primitiveType, DrawStates& p_states) {
 	if (!p_states.checkIfInitialized()) return;
 	useViewport();
 
@@ -51,7 +49,7 @@ void DrawSurface::draw(Mesh<T> p_mesh, GLenum p_primitiveType, DrawStates& p_sta
 
 	// Bind all textures to the correct texture units
 	for (size_t i = 0; i < p_states.textures.size(); i++) {
-		glCheck(glActiveTexture(p_states.textures[i]->glID));
+		glCheck(glActiveTexture(GL_TEXTURE0 + i));
 		glCheck(glBindTexture(p_states.textures[i]->type, p_states.textures[i]->glID));
 	}
 
@@ -65,14 +63,14 @@ void DrawSurface::draw(Mesh<T> p_mesh, GLenum p_primitiveType, DrawStates& p_sta
 	}
 
 	// We'll assume that every shader uses a transform matrix, because that's pretty much a given.
-	p_states.shader->setMat4Uniform("transform", *p_states.transform);
+	p_states.shader->setMat4Uniform("transform", p_states.transform);
 
 	glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
 
 	glBindVertexArray(0);
 	// Unbind all textures
 	for (size_t i = 0; i < p_states.textures.size(); i++) {
-		glCheck(glActiveTexture(p_states.textures[i]->glID));
+		glCheck(glActiveTexture(GL_TEXTURE0 + i));
 		glBindTexture(p_states.textures[i]->type, 0);
 	}
 };
