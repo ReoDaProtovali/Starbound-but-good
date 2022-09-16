@@ -84,10 +84,10 @@ int main(int argc, char* argv[])
 					int h = event.window.data2;
 					gw.width = w;
 					gw.height = h;
+					gw.setViewport(0, 0, w, h);
 					renderer.windowWidth = w;
 					renderer.windowHeight = h;
 					renderer.rescale();
-					glViewport(0, 0, w, h);
 				}
 			}
 			else if (event.type == SDL_KEYUP) {
@@ -148,7 +148,7 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, World& world) {
 
 	renderer.cam.setDimensions((float)renderer.windowWidth / (float)renderer.windowHeight);
 	world.drawWorld(renderer, gw);
-	renderer.testDraw();
+	//renderer.testDraw();
 
 	glm::vec4 frame = renderer.cam.getFrame();
 

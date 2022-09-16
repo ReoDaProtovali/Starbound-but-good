@@ -40,6 +40,7 @@ public:
 	// Swaps the doublebuffer, and shows the new frame.
 	void displayNewFrame();
 
+
 	int width;
 	int height;
 	unsigned int screenWidth;

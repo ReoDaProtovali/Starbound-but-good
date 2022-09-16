@@ -1,7 +1,7 @@
 // i hate this f-ing bug
 // and i hate even more that switching these two fixes it
-#include "Framework/Graphics/DrawSurface.hpp"
 #include "../../../include/Framework/Graphics/DrawSurface.hpp"
+#include "Framework/Graphics/DrawSurface.hpp"
 
 #include <iostream>
 
@@ -75,11 +75,12 @@ void DrawSurface::draw(Mesh<float> p_mesh, GLenum p_primitiveType, DrawStates& p
 	}
 };
 
-void DrawSurface::setViewport(int p_x, int p_y, int p_w, int p_h)
+void DrawSurface::setViewport(int p_x1, int p_y1, int p_x2, int p_y2)
 {
-	viewport = glm::ivec4(p_x, p_y, p_w, p_h);
+	viewport = glm::ivec4(p_x1, p_y1, p_x2, p_y2);
 }
 void DrawSurface::useViewport() {
+	//std::cout << viewport.z << " " << viewport.w << std::endl;
 	glViewport(viewport.x, viewport.y, viewport.z, viewport.w);
 }
 void DrawSurface::setClearColor(glm::vec4 p_col) {

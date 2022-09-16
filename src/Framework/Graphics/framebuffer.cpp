@@ -11,7 +11,6 @@ void FrameBuffer::setDimensions(unsigned int p_width, unsigned int p_height)
 	dimensions.x = p_width;
 	dimensions.y = p_height;
 	viewport = glm::ivec4(0, 0, p_width, p_height);
-	useViewport();
 	if (!initialized) {
 		init();
 	}
@@ -31,13 +30,14 @@ void FrameBuffer::setDimensions(unsigned int p_width, unsigned int p_height)
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	useViewport();
+
 }
 
 void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 {
 	dimensions = p_dimensions;
 	viewport = glm::ivec4(0, 0, p_dimensions.x, p_dimensions.y);
-	useViewport();
 	if (!initialized) {
 		init();
 	}
@@ -47,6 +47,8 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 		// only supports 2d color attachments for now. logical assumption.
 		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorTextures[i].glID, 0));
 	}
+
+
 	if (useDepth) {
 		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, glDepthBuffer));
 		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, dimensions.x, dimensions.y)); // rescale depth buffer
@@ -54,7 +56,8 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 	}
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	useViewport();
 }
 
 void FrameBuffer::init() {
