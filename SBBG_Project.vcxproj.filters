@@ -57,7 +57,7 @@
     <ClCompile Include="src\tile.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
-    <ClCompile Include="src\world.cpp">
+    <ClCompile Include="src\chunkmanager.cpp">
       <Filter>Source Files\Tile/Entity Related</Filter>
     </ClCompile>
     <ClCompile Include="src\Framework\Graphics\texture.cpp">
@@ -158,7 +158,7 @@
     <ClInclude Include="include\Tile.hpp">
       <Filter>Header Files\Tile/Entity Related</Filter>
     </ClInclude>
-    <ClInclude Include="include\World.hpp">
+    <ClInclude Include="include\ChunkManager.hpp">
       <Filter>Header Files\Tile/Entity Related</Filter>
     </ClInclude>
     <ClInclude Include="include\Chunk.hpp">
@@ -210,9 +210,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\util\ext\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\DrawObject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Framework\Graphics\GlCheck.hpp">

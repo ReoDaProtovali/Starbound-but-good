@@ -32,6 +32,7 @@ public:
 	// Overwrites old rotation
 	void setRotation(float radians);
 
+	void setRotationAxis(glm::vec3 p_axis);
 	// xy scale
 	void setScale(glm::vec2 p_scaleFactors);
 
@@ -45,7 +46,7 @@ public:
 
 	void calculateTransform();
 
-	glm::mat4 getTransform();
+	glm::mat4 getObjectTransform();
 
 
 
@@ -53,6 +54,7 @@ protected:
 	glm::vec2 origin;
 	glm::vec3 position; // Decided to give it a z axis, as this is handy for certain effects and layering.
 	float rotation; // Rotation does not affect the z axis. I can make a 3d transform object if needed later. Strictly radians.
+	glm::vec3 rotationAxis;
 	glm::vec2 scale; // xy
 	glm::mat4 transform;
 	bool transformOutOfDate = true;

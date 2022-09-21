@@ -1,12 +1,17 @@
 #include "Chunk.hpp"
 #include <util/ext/glm/glm.hpp>
+#include <stdexcept>
 
-WorldChunk::WorldChunk(glm::ivec2 p_worldPos, int p_worldID) :worldPos(p_worldPos), worldID(p_worldID), invalid(false) {
+WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :worldPos(p_chunkPos), worldID(p_worldID), invalid(false) {
 
 	tiles = Array2D<Tile>(chunkSize, chunkSize, Tile());
 
+	setPosition(glm::vec3((float)p_chunkPos.x * chunkSize, (float)p_chunkPos.y * chunkSize, 0.f));
+	calculateTransform();
 	tileMesh.addUintAttrib(1); // xyzID, one uint
 
+	//fillRandom();
+	//generateVBO();
 	noiseGenerator.SetOctaveCount(10);
 	noiseGenerator.SetPersistence(0.54);
 }
@@ -25,8 +30,8 @@ void WorldChunk::fillRandom() {
 	}
 	meshIsCurrent = false;
 }
-void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
-	isEmpty = false;
+void WorldChunk::worldGenerate() {
+	isEmpty = true;
 
 	float surfaceLevel = 10.0f * chunkSize;
 	float globalX;
@@ -38,8 +43,8 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
-			globalX = (float)(p_chunkPos.x * chunkSize + x);
-			globalY = (float)(p_chunkPos.y * chunkSize - y) - surfaceLevel;
+			globalX = (float)(worldPos.x * chunkSize + x);
+			globalY = (float)(worldPos.y * chunkSize - y) - surfaceLevel;
 			// detail level for the surface noise
 			noiseGenerator.SetOctaveCount(7);
 			// surface level
@@ -61,9 +66,11 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 				else {
 					if (globalY < -40.0f + height2) {
 						tiles(x, y) = Tile(glm::ivec2(x, y), 1);
+						isEmpty = false;
 					}
 					else {
 						tiles(x, y) = Tile(glm::ivec2(x, y), 2);
+						isEmpty = false;
 					}
 				}
 			}
@@ -78,7 +85,7 @@ void WorldChunk::worldGenerate(glm::ivec2 p_chunkPos) {
 void WorldChunk::generateVBO() {
 	if (isEmpty) return;
 
-	tileMesh.reserve((size_t)chunkSize * chunkSize * 3); // reserve half a chunks worth of data idk
+	tileMesh.reserve((size_t)chunkSize * chunkSize * sizeof(TileVert)); // reserve half a chunks worth of data idk
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (tiles(x, y).tileID != 0) {
@@ -121,10 +128,22 @@ Tile* WorldChunk::getTiles() {
 	return tiles.getData().data();
 }
 
-void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates) {
+void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates, unsigned int p_tileID) {
+	tiles(p_chunkCoordinates.x, p_chunkCoordinates.y) = Tile(p_chunkCoordinates, p_tileID);
 	return;
 }
 
 void WorldChunk::remove() {
 	tileMesh.remove();
+}
+
+void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
+{
+	if (!p_drawStates.checkIfInitialized()) throw new std::runtime_error("Tried to draw with invalid draw states.");
+
+	DrawStates newStates = DrawStates(p_drawStates);
+	
+	newStates.setTransform(p_drawStates.transform * transform);
+
+	p_target.draw(tileMesh, GL_TRIANGLES, newStates);
 }

@@ -19,28 +19,29 @@ bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 
 	if (imageData == nullptr) {
 		std::cout << "Failed to load image" << std::endl;
+		throw std::runtime_error("what");
 		return false;
 	}
 	else {
 		Texture loadedTexture = Texture(p_ID);
 		loadedTexture.fromByteData(width, height, imageData);
-		textures.insert(std::make_pair(p_ID, loadedTexture));
+		textures.insert(std::make_pair(p_ID, std::make_shared<Texture>(loadedTexture)));
 
 		delete imageData;
 	}
 	return true;
 }
 
-Texture ResourceLoader::getTexture(TextureID p_ID, bool& p_success) {
+std::shared_ptr<Texture> ResourceLoader::getTexture(TextureID p_ID, bool& p_success) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {
 		p_success = true;
 		return it->second;
 	}
 	p_success = false;
-	return Texture();
+	return std::make_shared<Texture>(Texture());
 }
-Texture ResourceLoader::getTexture(TextureID p_ID) {
+std::shared_ptr<Texture> ResourceLoader::getTexture(TextureID p_ID) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {
 		return it->second;

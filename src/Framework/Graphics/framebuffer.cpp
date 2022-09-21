@@ -95,6 +95,7 @@ void FrameBuffer::setColorAttachments(std::initializer_list<GLenum> p_attachment
 	DrawBuffers = p_attachments;
 }
 
+
 GLenum FrameBuffer::getColorTexID(size_t p_index)
 {
 	if (p_index > colorTextures.size() - 1) throw std::exception("Tried to get frame buffer color attachment outside of range.");

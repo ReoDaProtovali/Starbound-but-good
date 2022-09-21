@@ -1,5 +1,6 @@
 #include "Framework\Graphics\Shader.hpp"
 #include "GameConstants.hpp"
+#include "Framework/Graphics/GlCheck.hpp"
 #include "util/utils.hpp"
 #include <util/ext/glm/gtc/type_ptr.hpp>
 #include <exception>
@@ -36,8 +37,8 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 	std::string vertexShader = utils::readFile(vs_filePath);
 	int vsLength = (int)vertexShader.size();
 	const char* vertexShader_cstr = vertexShader.c_str();
-	glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength);
-	glCompileShader(vs);
+	glCheck(glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength));
+	glCheck(glCompileShader(vs));
 
 	GLint status;
 
@@ -55,7 +56,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 			std::cout << errorLog[i];
 		}
 
-		glDeleteShader(vs); // Don't leak the shader.
+		glCheck(glDeleteShader(vs)); // Don't leak the shader.
 
 		throw new std::runtime_error("Shader was unable to compile.");
 		return -1;
@@ -64,8 +65,8 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 	std::string fragmentShader = utils::readFile(fs_filePath);
 	int fsLength = (int)fragmentShader.length();
 	const char* fragmentShader_cstr = fragmentShader.c_str();
-	glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength);
-	glCompileShader(fs);
+	glCheck(glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength));
+	glCheck(glCompileShader(fs));
 
 	glGetShaderiv(fs, GL_COMPILE_STATUS, &status);
 	if (status == GL_FALSE)
@@ -83,7 +84,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 		}
 		// Provide the infolog in whatever manor you deem best.
 		// Exit with failure.
-		glDeleteShader(fs); // Don't leak the shader.
+		glCheck(glDeleteShader(fs)); // Don't leak the shader.
 		throw new std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
@@ -91,15 +92,15 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 	std::cout << "Shader compilation successful. Attaching to program..." << std::endl;
 #endif
 	program = glCreateProgram();
-	glAttachShader(program, vs);
-	glAttachShader(program, fs);
+	glCheck(glAttachShader(program, vs));
+	glCheck(glAttachShader(program, fs));
 
-	glDeleteShader(vs);
-	glDeleteShader(fs);
+	glCheck(glDeleteShader(vs));
+	glCheck(glDeleteShader(fs));
 
-	glLinkProgram(program);
+	glCheck(glLinkProgram(program));
 
-	glUseProgram(program);
+	glCheck(glUseProgram(program));
 
 	return program;
 }

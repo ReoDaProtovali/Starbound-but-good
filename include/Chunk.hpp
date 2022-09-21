@@ -7,6 +7,10 @@
 #include "util/utils.hpp"
 #include "GameConstants.hpp"
 #include "Framework/Graphics/Mesh.hpp"
+#include "Framework/Graphics/DrawSurface.hpp"
+#include "Framework/Graphics/TransformObject.hpp"
+
+
 #include "Tile.hpp"
 #include <util/ext/glm/vec2.hpp>
 #include <util/ext/glm/vec3.hpp>
@@ -15,6 +19,23 @@
 
 #include <vector>
 #include "util/Array2D.hpp"
+
+struct ChunkPos {
+	ChunkPos() { x = -1; y = -1; }
+	ChunkPos(int p_x, int p_y) : x(p_x), y(p_y) {};
+	friend bool operator<(const ChunkPos& pos1, const ChunkPos& pos2) {
+		if (pos1.y < pos2.y) return true;
+		if (pos1.y > pos2.y) return false;
+		if (pos1.x < pos2.x) return true;
+		else return false;
+	}
+	friend bool operator==(const ChunkPos& pos1, const ChunkPos& pos2) {
+		if (pos1.x == pos2.x && pos1.y == pos2.y) return true;
+		return false;
+	}
+	int x;
+	int y;
+};
 
 struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID is 15 bit. (insanity)
 	TileVert() {};
@@ -52,18 +73,18 @@ struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID i
 		return glm::uvec4(x, y, z, ID);
 	}
 };
-struct WorldChunk
+struct WorldChunk : public TransformObject
 {
 	WorldChunk(void) : worldID(-1),
-		worldPos(glm::ivec2()),
+		worldPos(ChunkPos(9999, 9999)),
 		tiles(Array2D<Tile>()), 
 		invalid(true) {};
-	WorldChunk(glm::ivec2 p_worldPos, int p_worldID);
+	WorldChunk(ChunkPos p_chunkPos, int p_worldID);
 
 	noise::module::Perlin noiseGenerator;
 	void fillRandom();
-	void worldGenerate(glm::ivec2 p_chunkPos);
-	void setChunkTile(glm::ivec2 p_chunkCoordinates); // unimplemented
+	void worldGenerate();
+	void setChunkTile(glm::ivec2 p_chunkCoordinates, unsigned int p_tileID); // unimplemented
 
 	Tile* getTiles();
 	void generateVBO();
@@ -72,13 +93,15 @@ struct WorldChunk
 	void remove();
 
 	const int chunkSize = CHUNKSIZE;
-	glm::ivec2 worldPos;
+	ChunkPos worldPos;
 	int worldID;
 
 	bool meshIsCurrent = false;
 	bool invalid = false;
 	bool isEmpty = true;
 	Mesh<TileVert> tileMesh;
+
+	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
 private:
 	Array2D<Tile> tiles;

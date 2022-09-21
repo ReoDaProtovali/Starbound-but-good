@@ -59,8 +59,6 @@ GameWindow::GameWindow(const char* p_title)
 void GameWindow::initGL() {
 	glContext = SDL_GL_CreateContext(window);
 	SDL_GL_MakeCurrent(window, glContext); // Attach OpenGL context to the window
-	insureOpenGLInit();
-
 }
 
 void GameWindow::cleanUp() {

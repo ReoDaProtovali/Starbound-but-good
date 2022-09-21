@@ -79,6 +79,12 @@ public:
 	const glm::vec4 getFrame();
 
 	/**
+	* Getter for the camera's frame dimensions. Camera frame units are in tiles.
+	*
+	* @returns A vec2 representing the width and height of the frame.
+	*/
+	const glm::vec2 getFrameDimensions();
+	/**
 	* Used to update the camera's frame value based on camera's pixel dimensions. Should be done at some point after a window resize.
 	*
 	*/

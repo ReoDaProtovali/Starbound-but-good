@@ -18,6 +18,7 @@ TransformObject::TransformObject() :
 	origin(glm::vec2(0.f, 0.f)),
 	position(glm::vec3(0.f, 0.f, 0.f)),
 	rotation(0.f),
+	rotationAxis(glm::vec3(0.f, 0.f, 1.f)),
 	scale(glm::vec2(1.f, 1.f)),
 	transform(glm::mat4(1.f))
 {}
@@ -64,6 +65,10 @@ void TransformObject::setRotation(float radians)
 	rotation = fwrapUnsigned(radians, 3.141592653589f * 2.f);
 	transformOutOfDate = true;
 }
+void TransformObject::setRotationAxis(glm::vec3 p_axis)
+{
+	rotationAxis = glm::vec3(p_axis);
+}
 void TransformObject::setScale(glm::vec2 p_scaleFactors)
 {
 	scale = p_scaleFactors;
@@ -92,8 +97,8 @@ void TransformObject::calculateTransform()
 
 		// Translate to world space.
 		transform = glm::translate(glm::mat4(1.0f), position);
-		// Rotate along z axis, because in most cases that's the axis the camera is looking through.
-		transform = glm::rotate(transform, rotation, glm::vec3(0.f, 0.f, 1.f));
+		// Rotate along axis
+		transform = glm::rotate(transform, rotation, rotationAxis);
 		// Do the scaling.
 		transform = glm::scale(transform, glm::vec3(scale, 1.f));
 		// Transform to the origin, *technically* done first
@@ -103,21 +108,8 @@ void TransformObject::calculateTransform()
 	}
 }
 
-glm::mat4 TransformObject::getTransform()
+glm::mat4 TransformObject::getObjectTransform()
 {
-	if (transformOutOfDate) {
-		// Matrix multiplication is non-commutative, so it needs to be done in TRS order in this case. It's always the reverse order than you expect it to be.
-
-		// Translate to world space.
-		transform = glm::translate(glm::mat4(1.0f), position);
-		// Rotate along z axis, because in most cases that's the axis the camera is looking through.
-		transform = glm::rotate(transform, rotation, glm::vec3(0.f, 0.f, 1.f));
-		// Do the scaling.
-		transform = glm::scale(transform, glm::vec3(scale, 1.f));
-		// Transform to the origin, *technically* done first
-		transform = glm::translate(transform, glm::vec3(-origin, 0.f));
-
-		transformOutOfDate = false;
-	}
+	calculateTransform();
 	return transform;
 }

@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "Framework/Graphics/Texture.hpp"
 #include <map>
+#include <memory>
 
 /// Handles loading PNG images from files and stores them internally as textures. Allows for retrieval of them later via TextureID.
 class ResourceLoader
@@ -20,15 +21,15 @@ public:
 	/** Get a texture from the resource loader's texture pool. Throws an exception if the TextureID has no associated texture.
 	* @param p_ID - The TextureID associated with the Texture you want to access.
 	*/
-	Texture getTexture(TextureID p_ID);
+	std::shared_ptr<Texture> getTexture(TextureID p_ID);
 	/** Get a texture from the resource loader's texture pool.
 	* @param p_ID - The TextureID associated with the Texture you want to access.
 	* @param success - a reference to a boolean, sets it to false if the given ID has no associated texture, otherwise sets it to true.
 	*/
-	Texture getTexture(TextureID p_ID, bool& p_success); // friendlier, success bool is passed by reference
+	std::shared_ptr<Texture> getTexture(TextureID p_ID, bool& p_success); // friendlier, success bool is passed by reference
 
 private:
 	/// A standard library map that stores pairs of textures and their respective IDs.
-	std::map<TextureID, Texture> textures;
+	std::map<TextureID, std::shared_ptr<Texture>> textures;
 };
 

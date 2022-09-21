@@ -1,5 +1,6 @@
 #pragma once
 #include "Shader.hpp"
+#include <memory>
 
 // I need to wrap all the generic shaders in a class so I can instantiate it after opengl initilizes and re-use them in various places without recompiling.
 struct GenericShaders {
@@ -13,5 +14,5 @@ struct GenericShaders {
 	// vec2 texcoord
 	// Uniforms:
 	// imageTexture: 0
-	Shader imageShader;
+	std::shared_ptr<Shader> imageShader;
 };

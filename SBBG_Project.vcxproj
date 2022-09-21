@@ -203,12 +203,11 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\Framework\Graphics\texture.cpp" />
     <ClCompile Include="src\tile.cpp" />
     <ClCompile Include="src\timestepper.cpp" />
-    <ClCompile Include="src\world.cpp" />
+    <ClCompile Include="src\chunkmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
     <ClInclude Include="include\Framework\Graphics\BlendMode.hpp" />
-    <ClInclude Include="include\Framework\Graphics\DrawObject.hpp" />
     <ClInclude Include="include\Framework\Graphics\GlCheck.hpp" />
     <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp" />
     <ClInclude Include="include\Framework\Graphics\Uniform.hpp" />
@@ -240,7 +239,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\util\ext\stb_image.h" />
     <ClInclude Include="include\util\Rect.hpp" />
     <ClInclude Include="include\util\utils.hpp" />
-    <ClInclude Include="include\World.hpp" />
+    <ClInclude Include="include\ChunkManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\randomthings.txt" />

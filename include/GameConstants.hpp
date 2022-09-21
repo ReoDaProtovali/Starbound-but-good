@@ -22,6 +22,11 @@ enum class TextureID {
 	TILESHEET_TEXTURE
 };
 
+enum DefaultTileID {
+	EMPTY,
+	STONE,
+	DIRT
+};
 enum class SheetMode { // Sheet modes for CPU fetching. Better to use shaders in the future.
 	BASIC,
 	ANIMATION_ROWS

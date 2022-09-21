@@ -87,6 +87,11 @@ void Camera::setFrame(float p_trX, float p_trY, float p_width, float p_height)
 	frame = glm::vec4(p_trX, p_trY, p_trX + p_width, p_trY + p_height);
 }
 
+const glm::vec2 Camera::getFrameDimensions()
+{
+	return glm::vec2(frame.z - frame.x, frame.y - frame.w);
+}
+
 void Camera::updateFrame()
 {
 	float screenScaling = 1.0;
