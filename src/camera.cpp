@@ -2,45 +2,48 @@
 #include <iostream>
 Camera::Camera()
 {
-	pos = glm::vec3(0.0f, 0.0f, 1.0f);    // starts 1 off the z axis by default
-	target = glm::vec3(0.0f, 0.0f, 0.0f); // temporarily set the origin as the target to calculate the correct right and up
+	Camera::pos = glm::vec3(0.0f, 0.0f, 1.0f);    // starts 1 off the z axis by default
+	Camera::target = glm::vec3(0.0f, 0.0f, 0.0f); // temporarily set the origin as the target to calculate the correct right and up
 	glm::vec3 direction = glm::normalize(pos - target);
-	right = glm::normalize(glm::cross(upGuide, direction));
-	up = glm::cross(direction, right);
-	forward = glm::cross(right, up);                 // forward calculate normalized forward facing vector
-	tileScale = 20.0f;                               // default scaling of 20 tiles
-	frame = glm::vec4(-100.0, -100.0, 100.0, 100.0); // fixes a bug
+	Camera::right = glm::normalize(glm::cross(upGuide, direction));
+	Camera::up = glm::cross(direction, right);
+	Camera::forward = glm::cross(right, up);                 // forward calculate normalized forward facing vector
+	Camera::tileScale = 20.0f;                               // default scaling of 20 tiles
+	Camera::frame = glm::vec4(-100.0, -100.0, 100.0, 100.0); // fixes a bug
 	lookForwards();
 }
 
 Camera::Camera(glm::vec3 p_pos)
 {
-	pos = p_pos;
-	target = glm::vec3(0.0f, 0.0f, 0.0f); // temporarily set the origin as the target to calculate the correct right and up
+	Camera::pos = p_pos;
+	Camera::target = glm::vec3(0.0f, 0.0f, 0.0f); // temporarily set the origin as the target to calculate the correct right and up
 	glm::vec3 direction = glm::normalize(pos - target);
-	right = glm::normalize(glm::cross(upGuide, direction));
-	up = glm::cross(direction, right);
-	forward = glm::cross(right, up); // forward calculate normalized forward facing vector
-	tileScale = 20.0f;               // default scaling of 20 tiles
+	Camera::right = glm::normalize(glm::cross(upGuide, direction));
+	Camera::up = glm::cross(direction, right);
+	Camera::forward = glm::cross(right, up); // forward calculate normalized forward facing vector
+	Camera::tileScale = 20.0f;               // default scaling of 20 tiles
 
 	lookForwards();
 };
 
 void Camera::lookAt(glm::vec3 p_target)
 {
-	view = glm::lookAt(pos, p_target, glm::vec3(0.0f, 1.0f, 0.0f));
+	Camera::view = glm::lookAt(pos, p_target, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void Camera::lookForwards()
 {
-	target = pos - forward; // look forwards
-	view = glm::lookAt(pos, target, glm::vec3(0.0f, 1.0f, 0.0f));
+	Camera::target = pos - forward; // look forwards
+	Camera::view = glm::lookAt(pos, target, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void Camera::setDimensions(float p_aspectRatio)
+void Camera::setDimensions(unsigned int p_windowWidth, unsigned int p_windowHeight)
 {
-	dimensions.x = 1.0f;
-	dimensions.y = 1.0f / p_aspectRatio;
+	Camera::dimensions.x = 1.0f;
+	Camera::dimensions.y = 1.0f / (float(p_windowWidth) / float(p_windowHeight));
+	pixelDimensions.x = p_windowWidth;
+	pixelDimensions.y = p_windowHeight;
+	updateFrame();
 }
 
 glm::mat4 Camera::getTransform()
@@ -84,7 +87,7 @@ glm::mat4 Camera::getTransform()
 
 void Camera::setFrame(float p_trX, float p_trY, float p_width, float p_height)
 {
-	frame = glm::vec4(p_trX, p_trY, p_trX + p_width, p_trY + p_height);
+	Camera::frame = glm::vec4(p_trX, p_trY, p_trX + p_width, p_trY + p_height);
 }
 
 const glm::vec2 Camera::getFrameDimensions()
@@ -113,7 +116,7 @@ void Camera::updateFrame()
 
 void Camera::setTileScale(float p_tileScale)
 {
-	tileScale = p_tileScale;
+	Camera::tileScale = p_tileScale;
 }
 
 void Camera::setGlobalPos(glm::vec2 p_globalPos)

@@ -7,9 +7,9 @@ Lighting::Lighting(unsigned int p_width, unsigned int p_height) {
 
 	// just for testing
 	lightmap.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	//lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	//lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	//lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	lightingShader = Shader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl");
 	// bind the uniforms to texture units 0 and 1
@@ -65,5 +65,5 @@ void Lighting::draw(DrawSurface& p_target, GLuint p_screenColorTex)
 	glCheck(glBindTexture(GL_TEXTURE_2D, lightmapTex.glID)); // Lightmap texture is bound to unit 1
 
 	glCheck(glDrawArrays(GL_TRIANGLES, 0, 6)); // 6 vertices in the quad overlay
-
+	
 }

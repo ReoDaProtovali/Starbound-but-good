@@ -55,11 +55,11 @@ public:
 		glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
 
 		glBindVertexArray(0);
-		// // Unbind all textures
-		//for (size_t i = 0; i < p_states.textures.size(); i++) {
-		//	glCheck(glActiveTexture(GL_TEXTURE0 + i));
-		//	glBindTexture(p_states.textures[i]->type, 0);
-		//}
+		// Unbind all textures
+		for (size_t i = 0; i < p_states.textures.size(); i++) {
+			glCheck(glActiveTexture(GL_TEXTURE0 + i));
+			glBindTexture(p_states.textures[i]->type, 0);
+		}
 	};
 
 	void setViewport(int p_x1, int p_y1, int p_x2, int p_y2) {

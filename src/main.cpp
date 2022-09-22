@@ -16,7 +16,6 @@
 #include <util/ext/glm/glm.hpp>
 #include <util/ext/glm/gtc/matrix_transform.hpp>
 
-
 /// Used for console stats
 int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
 int lastChunkDrawnCount = 0;
@@ -27,7 +26,7 @@ void sendConsoleStats(Timestepper& ts, GameRenderer& renderer, ChunkManager& wor
 
 // Declarations in advance for main functions
 void initGL();
-void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm::vec2& camVelocity);
+void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm::vec2& camVelocity, GameRenderer& renderer);
 void gameRender(GameRenderer& renderer, GameWindow& gw, ChunkManager& world);
 void gameUpdate(ChunkManager& world, Camera& cam, int updateFrame);
 
@@ -103,7 +102,7 @@ int main(int argc, char* argv[])
 				updateFrame++;
 				printConsoleCounter++;
 				// Code to execute every update frame
-				gameUpdate(world, renderer.cam, updateFrame);
+				gameUpdate(world, *renderer.cam, updateFrame);
 
 				if ((printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
 					printConsoleCounter = 0;
@@ -121,9 +120,9 @@ int main(int argc, char* argv[])
 
 			renderFPSGauge.update(100); // 100 frame long value buffer
 
-			processTestInputs(gw.inpHandler, world, renderer.cam, camVelocity);
+			processTestInputs(gw.inpHandler, world, *renderer.cam, camVelocity, renderer);
 			camVelocity *= 0.9;
-			renderer.cam.pos += glm::vec3(camVelocity, 0.0f);
+			renderer.cam->pos += glm::vec3(camVelocity, 0.0f);
 
 			gameRender(renderer, gw, world);
 
@@ -149,7 +148,6 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, ChunkManager& world) {
 	glEnable(GL_DEPTH_TEST);
 	renderer.screenFBO.clear();
 
-	renderer.cam.setDimensions((float)renderer.windowWidth / (float)renderer.windowHeight);
 	lastChunkDrawnCount = renderer.drawWorld(world, gw);
 	renderer.testDraw();
 
@@ -167,7 +165,7 @@ void gameUpdate(ChunkManager& world, Camera& cam, int updateFrame) {
 	}
 }
 
-void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm::vec2& camVelocity) {
+void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm::vec2& camVelocity, GameRenderer& renderer) {
 	float camSpeed = 0.05f;
 	if (inp.testKey(SDLK_w)) {
 		camVelocity.y += camSpeed;
@@ -206,6 +204,10 @@ void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm:
 	if (inp.testKey(SDLK_2)) {
 		world.logChunks();
 	}
+
+	if (inp.testKeyDown(SDLK_3)) {
+		renderer.swapCameras();
+	}
 };
 
 
@@ -213,22 +215,13 @@ void sendConsoleStats(Timestepper& ts, GameRenderer& renderer, ChunkManager& wor
 	system("CLS");
 	printf("Current Update FPS - %.2f \n", 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer));
 	printf("Current Draw FPS - %.2f \n", 1.0f / utils::averageVector(renderFPSGauge.frametimeBuffer));
-	printf("Cam Position - %.2f, %.2f \n", renderer.cam.pos.x, renderer.cam.pos.y);
-	printf("Cam Frame - X range: %.2f, %.2f   Y range: %.2f, %.2f\n", renderer.cam.getFrame().x, renderer.cam.getFrame().z, renderer.cam.getFrame().y, renderer.cam.getFrame().w);
+	printf("Cam Position - %.2f, %.2f \n", renderer.cam->pos.x, renderer.cam->pos.y);
+	printf("Cam Frame - X range: %.2f, %.2f   Y range: %.2f, %.2f\n", renderer.cam->getFrame().x, renderer.cam->getFrame().z, renderer.cam->getFrame().y, renderer.cam->getFrame().w);
 	printf("Screen Dimensions - Width: %i Height: %i\n", renderer.screenWidth, renderer.screenHeight);
 	printf("Window Dimensions - Width: %i Height: %i\n", renderer.windowWidth, renderer.windowHeight);
 	printf("Chunk Count: %i \n", world.getChunkCount());
 	printf("Empty Chunk Count: %i \n", world.getEmptyChunkCount());
 	printf("Number of chunks drawn: %i \n", lastChunkDrawnCount);
-
-
-	//bool finished = false;
-	//while (!finished) {
-	//	WorldChunk& logChunk = world.fetchFromFrame(renderer.cam.getFrame(), finished);
-	//	if (!logChunk.invalid) {
-	//		printf("Chunk In Frame at: x-%i y-%i \n", logChunk.worldPos.x, logChunk.worldPos.y);
-	//	}
-	//}
 }
 
 // i am so sorry I do not know a better place to put this

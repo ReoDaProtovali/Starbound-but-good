@@ -43,18 +43,12 @@ public:
 	void lookForwards();
 
 	/**
-	* Modifies the aspect of the camera, which in most cases should be the aspect of the window.
+	* Sets up the dimensions of the camera correctly
 	*
-	* @param p_aspectRatio - Aspect ratio should be in the form of width / height.
+	* @param p_windowWidth, p_windowHeight
 	*/
-	void setDimensions(float p_aspectRatio);
+	void setDimensions(unsigned int p_windowWidth, unsigned int p_windowHeight);
 
-	/**
-	* I got tired of constantly setting the dimensions to be that of the window every time I drew, so I'm keeping record of them within the camera now.
-	*
-	* @param p_pixelDimensions - A vec2 containing the camera dimensions in pixels.
-	*/
-	void setPixelDimensions(glm::vec2 p_pixelDimensions) { pixelDimensions = p_pixelDimensions; };
 	/**
 	* Generates a mat4 based on the camera and window's state.
 	*

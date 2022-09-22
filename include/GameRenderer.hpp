@@ -53,28 +53,31 @@ public:
 	// TEST ----------------------------------------------------------------------------
 	Sprite testReoSprite;
 	std::shared_ptr<Texture> testReoTexture;
+	Sprite cameraFrameSprite;
+	std::shared_ptr<Texture> cameraFrameTexture;
 	float testFrame = 0;
 	void testDraw();
+	void swapCameras();
 
 
 	// ---------------------------------------------------------------------------------
 
 	/// The camera is bound directly to the renderer for now.
-	Camera cam;
+	std::shared_ptr<Camera> cam;
+	std::shared_ptr<Camera> overviewCam;
+
 	/// Used for rendering the screen to a separate texture, so the lighting texture can be overlaid.
 	FrameBuffer screenFBO;
 private:
+
+	std::weak_ptr<Camera> currentCamera;
+	bool cameraToggle = false;
 
 	ResourceLoader res;
 	// Do not know a better way to group these.
 	GenericShaders gs;
 	Lighting lighting;
 	std::shared_ptr<Texture> tileSheetTexture;
-
-	//Mesh<GLfloat> genericSpriteMesh;
-	std::shared_ptr<Texture> cameraFrameTexture;
-
-
 
 	/// Uses packed chunk coordinates and block IDs
 	std::shared_ptr<Shader> tileShader;

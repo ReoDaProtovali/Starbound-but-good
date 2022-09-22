@@ -29,7 +29,7 @@ class Mesh
 public:
 	Mesh<T>() {
 		glGenVertexArrays(1, &VAO);
-		std::cout << "Generated Vertex array " << VAO << std::endl;
+		//std::cout << "Generated Vertex array " << VAO << std::endl;
 	}
 
 	/// Allows you to skip a few memory allocations if you reserve it right off the bat.
@@ -113,7 +113,6 @@ public:
 	GLuint VBO = 0;
 	GLuint VAO = 0;
 	bool VBOInitialized = false;
-
 };
 
 #endif

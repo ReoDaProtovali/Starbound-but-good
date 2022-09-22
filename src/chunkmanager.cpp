@@ -107,8 +107,8 @@ std::weak_ptr<WorldChunk> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, bo
 {
 	// Frame should never change between calls to this function, always use within a while loop
 	const float x = p_viewFrame.x - (float)CHUNKSIZE, y = p_viewFrame.y + (float)CHUNKSIZE, z = p_viewFrame.z + (float)CHUNKSIZE, w = p_viewFrame.w + (float)CHUNKSIZE;
-	const float tileWidth = z - x + (float)CHUNKSIZE * 2;
-	const float tileHeight = w - y + (float)CHUNKSIZE * 2;
+	const float tileWidth = z - x + (float)CHUNKSIZE;
+	const float tileHeight = w - y + (float)CHUNKSIZE;
 	// Width and height, in chunks. Always positive.
 	const int chunkWidth = (int)(tileWidth / (float)CHUNKSIZE);
 	const int chunkHeight = (int)(tileHeight / (float)CHUNKSIZE);

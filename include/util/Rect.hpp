@@ -10,6 +10,9 @@ struct Rect {
 		wh = glm::vec2(p_w, p_h);
 	}
 
+	bool operator==(const Rect& rect2) {
+		return (xy == rect2.xy && wh == rect2.wh);
+	}
 	// functions to get corners of the rect.
 	// Gets the top left coordinate of the rectangle as a vec2.
 	const glm::vec2 getBL() {

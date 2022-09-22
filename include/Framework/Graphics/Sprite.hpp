@@ -24,10 +24,10 @@ public:
 
 	// We don't want to override the setorigin class of the inherited class, so we name it something different
 	void setOriginRelative(OriginLoc p_origin);
+	void setBounds(Rect p_bounds);
 	Rect bounds;
 private:
 	Mesh<GLfloat> spriteMesh;
-
 	// Optional attachments directly to the sprite, so you don't have to worry about setting your drawStates properly before draw().
 	std::shared_ptr<Shader> attachedShader;
 	std::shared_ptr<Texture> attachedTexture;

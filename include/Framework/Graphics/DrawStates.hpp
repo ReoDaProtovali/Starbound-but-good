@@ -17,6 +17,7 @@ public:
 
 	~DrawStates() {
 		for (int i = 0; i < textures.size(); i++) {
+			if (textures[i].expired()) continue;
 			textures[i].reset();
 		}
 	}

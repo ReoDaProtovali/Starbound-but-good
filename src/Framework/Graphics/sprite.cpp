@@ -47,8 +47,6 @@ void Sprite::attachTexture(std::shared_ptr<Texture> p_texture)
 
 void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
-	glm::vec3 test = position;
-	glm::vec2 test2 = origin;
 	DrawStates newStates = DrawStates(p_drawStates);
 	if (attachedShader) {
 		newStates.attachShader(attachedShader);
@@ -64,4 +62,24 @@ void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 void Sprite::setOriginRelative(OriginLoc p_origin)
 {
 	setOrigin(bounds, p_origin);
+}
+
+void Sprite::setBounds(Rect p_bounds)
+{
+	if (bounds == p_bounds) return;
+	bounds = p_bounds;
+	glm::vec2 tl = bounds.getTL();
+	glm::vec2 tr = bounds.getTR();
+	glm::vec2 bl = bounds.getBL();
+	glm::vec2 br = bounds.getBR();
+
+	std::vector<GLfloat> newVBOData = {
+		tl.x, tl.y, 0.0f, 0.0f, 0.0f, // vertex 1
+		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 2
+		bl.x, bl.y, 0.0f, 0.0f, 1.0f, // vertex 3
+		bl.x, bl.y, 0.0f, 0.0f, 1.0f, // vertex 4
+		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 5
+		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
+	};
+	spriteMesh.subVBOData(0, 30, newVBOData.data());
 }

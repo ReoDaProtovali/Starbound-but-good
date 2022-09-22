@@ -7,11 +7,14 @@
 class InputHandler
 {
 public:
-	InputHandler() {};
+	InputHandler() {
+	};
 	void processKeyDown(int p_sym);
 	void processKeyUp(int p_sym);
 	bool testKey(int p_sym);
+	bool testKeyDown(int p_sym);
 private:
 	std::vector<int> keys;
+	std::vector<int> keyDowns;
 };
 
