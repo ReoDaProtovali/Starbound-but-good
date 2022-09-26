@@ -1,5 +1,16 @@
 #include "Framework/Graphics/Pixmap.hpp"
 
+Pixmap::Pixmap()
+{
+}
+
+Pixmap::Pixmap(unsigned int p_width, unsigned int p_height) :
+	width(p_width),
+	height(p_height),
+	pixels(p_width, p_height, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
+{
+}
+
 glm::vec4 Pixmap::getPixel(unsigned int p_x, unsigned int p_y)
 {
 	if ((p_x < 0) || (p_x > width - 1) || (p_y < 0) || (p_y > height - 1)) {

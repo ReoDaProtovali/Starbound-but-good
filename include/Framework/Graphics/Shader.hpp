@@ -35,6 +35,8 @@ public:
 	* @param p_uniforms - A vector containing uniform objects, defined just above within Shader.hpp. Used to allow single-line init.
 	*/
 	Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath);
+	// Destructor, which deletes the shader program.
+	~Shader();
 	/** Compiles and sets the Shader's program ID.
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
@@ -61,9 +63,12 @@ public:
 	void setTexUniform(const std::string& p_name, GLuint p_value);
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a 4x4 matrix.
 	void setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const;
-
+	// Used to set a list of uniforms using uniform objects.
 	void setUniforms(std::vector<Uniform> p_uniforms);
-	GLuint programID; /// The OpenGL shader program ID
+	// Don't leak your shader programs!
+	void remove();
+
+	GLuint programID = 0; /// The OpenGL shader program ID
 };
 
 #endif

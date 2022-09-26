@@ -1,6 +1,31 @@
 #include "Framework\Graphics\Texture.hpp"
 #include "util/utils.hpp"
 
+Texture::Texture()
+{
+}
+Texture::Texture(TextureID p_assignedID) :
+	texID(p_assignedID)
+{
+}
+Texture::Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data) :
+	width(p_width),
+	height(p_height)
+{
+	fromVec4Data(width, height, p_data);
+}
+Texture::Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data, GLenum p_type) :
+	width(p_width),
+	height(p_height),
+	type(p_type)
+{
+	fromVec4Data(width, height, p_data);
+}
+//Texture::~Texture()
+//{
+//	remove();
+//}
+
 void Texture::setFiltering(GLint p_mode) {
 	filteringMode = p_mode;
 	if (initialized) {
@@ -125,6 +150,9 @@ void Texture::subVec4Data(glm::vec4* p_data) {
 }
 
 void Texture::remove() {
+#ifdef DELETELOGGING_ENABLED
+	std::cout << "Texture removed " << glID << std::endl;
+#endif
 	glDeleteTextures(1, &glID);
 	initialized = false;
 }

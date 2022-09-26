@@ -4,6 +4,14 @@
 #include <util/ext/glm/glm.hpp>
 #include "GameConstants.hpp"
 
+
+ResourceLoader::~ResourceLoader()
+{
+	std::map<TextureID, std::shared_ptr<Texture>>::iterator it;
+	for (it = textures.begin(); it != textures.end(); it++) {
+		it->second->remove();
+	}
+}
 bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 #ifdef LOADLOGGING_ENABLED
 	std::cout << "Loading image resource at " << p_filepath << " with ID " << (unsigned int)p_ID << std::endl;

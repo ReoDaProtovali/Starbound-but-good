@@ -2,11 +2,11 @@
 #define GAMECONSTANTS_H
 
 #include "Framework/FrameworkConstants.hpp"
-#define LOADLOGGING_ENABLED
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 120
 #define DISABLE_RUNTIME_CONSOLE false
-#define DEBUG
+#define LOADLOGGING_ENABLED
+#define DELETELOGGING_ENABLED
 
 constexpr auto CHUNKSIZE = 32;
 enum class TextureID {

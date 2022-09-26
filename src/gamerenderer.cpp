@@ -1,32 +1,30 @@
 #include "GameRenderer.hpp"
 #include "Framework/Window/GameWindow.hpp"
 
-GameRenderer::GameRenderer(
-	GameWindow& p_window) {
+GameRenderer::GameRenderer(const GameWindow& p_window) :
+	windowWidth(p_window.width),
+	windowHeight(p_window.height),
+	screenWidth(p_window.screenWidth),
+	screenHeight(p_window.screenHeight)
+{
 
 #ifdef LOADLOGGING_ENABLED
 	std::cout << "GameRenderer instantiated..." << std::endl;
 #endif
-	windowWidth = p_window.width;
-	windowHeight = p_window.height;
-	screenWidth = p_window.screenWidth;
-	screenHeight = p_window.screenHeight;
 
-	gs.init();
-
-	cam = std::make_shared<Camera>(Camera());
+	cam = std::make_shared<Camera>();
 	cam->pos = glm::vec3(-16.0f, 315.0f, 32.0f);
 	cam->tileScale = 128.0f;
 	cam->setDimensions(windowWidth, windowHeight);
 
 	currentCamera = cam;
 
-	overviewCam = std::make_shared<Camera>(Camera());
+	overviewCam = std::make_shared<Camera>();
 	overviewCam->pos = glm::vec3(-16.0f, 315.0f, 32.0f);
 	overviewCam->tileScale = 1024.0f;
 	overviewCam->setDimensions(windowWidth, windowHeight);
 
-
+	auto& gs = GenericShaders::Get();
 	loadTextures();
 	testReoSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
 	testReoSprite.attachShader(gs.imageShader);
@@ -38,17 +36,26 @@ GameRenderer::GameRenderer(
 	cameraFrameTexture = res.getTexture(TextureID::CAMERA_FRAME_TEXTURE);
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
 
-	tileShader = std::make_shared<Shader>(Shader("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl"));
+	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
+	tileShader = std::make_shared<Shader>("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl");
 	tileShader->setTexUniform("tileSheet", 0);
 	worldDrawStates.attachShader(tileShader);
+
+	//screenFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
 
 
 #ifdef LOADLOGGING_ENABLED
 	std::cout << "Creating lighting subsystem..." << std::endl;
 #endif
-	lighting = Lighting((unsigned int)(5), (unsigned int)(5));
+
+	lighting.setDims(5, 5);
 
 	screenFBO.setDimensions(windowWidth, windowHeight); // Initializes
+
+}
+
+GameRenderer::~GameRenderer()
+{
 
 }
 
@@ -78,6 +85,11 @@ void GameRenderer::setClearColor(glm::vec4 p_col)
 	screenFBO.setClearColor(p_col);
 }
 
+void GameRenderer::clearScreen()
+{
+	screenFBO.clear();
+}
+
 void GameRenderer::rescale()
 {
 	screenFBO.setDimensions(windowWidth, windowHeight);
@@ -96,7 +108,6 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 		if (auto drawChunk = weakChunk.lock()) {
 			if (!(drawChunk->invalid || drawChunk->isEmpty)) {
 				drawnChunkCount++;
-				//printf("Chunk In Frame at: x-%i y-%i \n", drawChunk.worldPos.x, drawChunk.worldPos.y);
 				if (!drawChunk->meshIsCurrent) drawChunk->generateVBO();
 				worldDrawStates.setTransform(currentCamera.lock()->getTransform());
 				drawChunk->draw(screenFBO, worldDrawStates);
@@ -128,10 +139,10 @@ void GameRenderer::testDraw()
 	testReoSprite.draw(screenFBO, state);
 
 	//cameraFrameSprite = Sprite(glm::vec3(cam.pos.x, cam.pos.y, 2.0f), Rect(cam.getFrame().x, cam.getFrame().y, cam.getFrame().z, cam.getFrame().w));
-	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
-	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	cameraFrameSprite.draw(screenFBO, state);
+	//cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
+	//cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
+	//cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
+	//cameraFrameSprite.draw(screenFBO, state);
 
 	glEnable(GL_DEPTH_TEST);
 }

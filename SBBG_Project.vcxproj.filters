@@ -114,9 +114,6 @@
     <ClCompile Include="include\Framework\Graphics\DrawSurface.hpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\drawsurface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Framework\Graphics\sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

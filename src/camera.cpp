@@ -1,27 +1,26 @@
 #include "Camera.hpp"
 #include <iostream>
-Camera::Camera()
+Camera::Camera() :
+	pos(0.0f, 0.0f, 1.0f), // starts 1 off the z axis by default
+	target(0.0f, 0.0f, 0.0f), // temporarily set the origin as the target to calculate the correct right and up
+	tileScale(20.f)
 {
-	Camera::pos = glm::vec3(0.0f, 0.0f, 1.0f);    // starts 1 off the z axis by default
-	Camera::target = glm::vec3(0.0f, 0.0f, 0.0f); // temporarily set the origin as the target to calculate the correct right and up
-	glm::vec3 direction = glm::normalize(pos - target);
-	Camera::right = glm::normalize(glm::cross(upGuide, direction));
-	Camera::up = glm::cross(direction, right);
-	Camera::forward = glm::cross(right, up);                 // forward calculate normalized forward facing vector
-	Camera::tileScale = 20.0f;                               // default scaling of 20 tiles
-	Camera::frame = glm::vec4(-100.0, -100.0, 100.0, 100.0); // fixes a bug
-	lookForwards();
-}
-
-Camera::Camera(glm::vec3 p_pos)
-{
-	Camera::pos = p_pos;
-	Camera::target = glm::vec3(0.0f, 0.0f, 0.0f); // temporarily set the origin as the target to calculate the correct right and up
 	glm::vec3 direction = glm::normalize(pos - target);
 	Camera::right = glm::normalize(glm::cross(upGuide, direction));
 	Camera::up = glm::cross(direction, right);
 	Camera::forward = glm::cross(right, up); // forward calculate normalized forward facing vector
-	Camera::tileScale = 20.0f;               // default scaling of 20 tiles
+	lookForwards();
+}
+
+Camera::Camera(glm::vec3 p_pos) :
+	pos(p_pos),
+	target(0.f, 0.f, 0.f), // temporarily set the origin as the target to calculate the correct right and up
+	tileScale(20.f)
+{
+	glm::vec3 direction = glm::normalize(pos - target);
+	Camera::right = glm::normalize(glm::cross(upGuide, direction));
+	Camera::up = glm::cross(direction, right);
+	Camera::forward = glm::cross(right, up); // forward calculate normalized forward facing vector
 
 	lookForwards();
 };
@@ -41,8 +40,8 @@ void Camera::setDimensions(unsigned int p_windowWidth, unsigned int p_windowHeig
 {
 	Camera::dimensions.x = 1.0f;
 	Camera::dimensions.y = 1.0f / (float(p_windowWidth) / float(p_windowHeight));
-	pixelDimensions.x = p_windowWidth;
-	pixelDimensions.y = p_windowHeight;
+	pixelDimensions.x = (float)p_windowWidth;
+	pixelDimensions.y = (float)p_windowHeight;
 	updateFrame();
 }
 

@@ -23,13 +23,11 @@ GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 
 }
 GameWindow::GameWindow(const char* p_title)
-	:window(NULL)
+	:window(NULL),
+	width(1280),
+	height(720)
 {
-
-	unsigned int defaultWidth = 1280;
-	unsigned int defaultHeight = 720;
-
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, defaultWidth, defaultHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -40,11 +38,11 @@ GameWindow::GameWindow(const char* p_title)
 		SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 	}
 
-	width = defaultWidth;
-	height = defaultHeight;
+
 	int displayIndex = SDL_GetWindowDisplayIndex(window);
 	SDL_DisplayMode mode;
 	SDL_GetDisplayMode(displayIndex, 0, &mode);
+
 	screenWidth = mode.w;
 	screenHeight = mode.h;
 
@@ -65,9 +63,9 @@ void GameWindow::cleanUp() {
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 }
-void GameWindow::setVSync(bool enabled)
+void GameWindow::setVSync(bool p_enabled)
 {
-	SDL_GL_SetSwapInterval((int)enabled);
+	SDL_GL_SetSwapInterval((int)p_enabled);
 }
 void GameWindow::displayNewFrame()
 {

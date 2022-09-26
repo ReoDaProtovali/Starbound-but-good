@@ -18,9 +18,9 @@
 class ChunkManager
 {
 public:
-	ChunkManager() { 
-		nullChunk = std::make_shared<WorldChunk>(WorldChunk()); 
-	};
+	// init the null chunk for functions that return a chunk that doesn't exist
+	ChunkManager() : nullChunk(std::make_shared<WorldChunk>(WorldChunk())) {};
+
 	bool genChunk(ChunkPos p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
 	void enqueueGen(ChunkPos p_chunkPos);
@@ -43,7 +43,7 @@ public:
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 	void logSize();
-	int getChunkCount() { return chunkList.size(); }
+	int getChunkCount() { return (int)chunkList.size(); }
 	int getEmptyChunkCount();
 	void logChunks();
 

@@ -30,20 +30,25 @@ void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm:
 void gameRender(GameRenderer& renderer, GameWindow& gw, ChunkManager& world);
 void gameUpdate(ChunkManager& world, Camera& cam, int updateFrame);
 
-// Create the game window
-GameWindow gw = GameWindow("Borstoind");
+
 
 
 int main(int argc, char* argv[])
 {
 	try {
-		initGL();
 		bool gameActive = true;
 		SDL_Event event;
 
+#ifdef DEBUG
+		std::cout << "Debug mode active! \n";
 		int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG); // memory leak detection
 		flag |= _CRTDBG_LEAK_CHECK_DF;
 		_CrtSetDbgFlag(flag);
+#endif
+
+		// Create the game window
+		GameWindow gw = GameWindow("Borstoind");
+		initGL();
 
 		GameRenderer renderer = GameRenderer(gw);
 
@@ -57,6 +62,7 @@ int main(int argc, char* argv[])
 
 		Timestepper ts = Timestepper(GAME_UPDATE_SPEED); // sets the game update loop fps
 		gw.setVSync(true);
+
 #ifdef LOADLOGGING_ENABLED
 		std::cout << "Main loop running." << std::endl;
 #endif
@@ -104,6 +110,9 @@ int main(int argc, char* argv[])
 				// Code to execute every update frame
 				gameUpdate(world, *renderer.cam, updateFrame);
 
+
+				camVelocity *= 0.95;
+
 				if ((printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
 					printConsoleCounter = 0;
 					sendConsoleStats(ts, renderer, world);
@@ -118,11 +127,12 @@ int main(int argc, char* argv[])
 
 			ts.calculateAlpha();
 
-			renderFPSGauge.update(100); // 100 frame long value buffer
-
 			processTestInputs(gw.inpHandler, world, *renderer.cam, camVelocity, renderer);
-			camVelocity *= 0.9;
-			renderer.cam->pos += glm::vec3(camVelocity, 0.0f);
+
+			renderer.cam->pos += glm::vec3(camVelocity * renderer.cam->tileScale * 0.05f, 0.f);
+
+
+			renderFPSGauge.update(100); // 100 frame long value buffer
 
 			gameRender(renderer, gw, world);
 
@@ -143,15 +153,16 @@ int main(int argc, char* argv[])
 
 void gameRender(GameRenderer& renderer, GameWindow& gw, ChunkManager& world) {
 
-	//renderer.bindScreenFBOAsRenderTarget();
+	renderer.bindScreenFBOAsRenderTarget();
 	renderer.setClearColor(glm::vec4(0.8f, 0.8f, 1.0f, 0.0f));
 	glEnable(GL_DEPTH_TEST);
-	renderer.screenFBO.clear();
+	renderer.clearScreen();
 
 	lastChunkDrawnCount = renderer.drawWorld(world, gw);
 	renderer.testDraw();
 
 	gw.bind();
+	gw.clear();
 	glDrawBuffer(GL_BACK);
 	glDisable(GL_DEPTH_TEST);
 	renderer.drawLighting();
@@ -166,7 +177,7 @@ void gameUpdate(ChunkManager& world, Camera& cam, int updateFrame) {
 }
 
 void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm::vec2& camVelocity, GameRenderer& renderer) {
-	float camSpeed = 0.05f;
+	float camSpeed = 0.01f;
 	if (inp.testKey(SDLK_w)) {
 		camVelocity.y += camSpeed;
 		cam.updateFrame();

@@ -12,6 +12,8 @@ class ResourceLoader
 public:
 	/// Default constructor. Does nothing.
 	ResourceLoader() {};
+	// Deletes all managed textures
+	~ResourceLoader();
 	/** Loads a texture into the texture pool.
 	* @param p_filepath - The filepath to the texture. In standard directory notation, folders separated by "/"
 	* @param p_assignedID - The enum TextureID you want the image file to be associated with, for retrieval later.

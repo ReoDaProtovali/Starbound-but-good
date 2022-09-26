@@ -56,6 +56,7 @@ void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 	}
 	// Multiply it with the existing state transform, just in case it's relative to another coordinate system. Model space to world space.
 	newStates.setTransform(p_drawStates.transform * getObjectTransform());
+
 	p_target.draw(spriteMesh, GL_TRIANGLES, newStates);
 }
 

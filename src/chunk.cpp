@@ -2,9 +2,14 @@
 #include <util/ext/glm/glm.hpp>
 #include <stdexcept>
 
-WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :worldPos(p_chunkPos), worldID(p_worldID), invalid(false) {
+noise::module::Perlin WorldChunk::noiseGenerator;
 
-	tiles = Array2D<Tile>(chunkSize, chunkSize, Tile());
+WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) : 
+	worldPos(p_chunkPos),
+	worldID(p_worldID),
+	invalid(false),
+	tiles(chunkSize, chunkSize, Tile())
+{
 
 	setPosition(glm::vec3((float)p_chunkPos.x * chunkSize, (float)p_chunkPos.y * chunkSize, 0.f));
 	calculateTransform();
@@ -121,7 +126,7 @@ void WorldChunk::generateVBO() {
 }
 
 unsigned int WorldChunk::getVBOSize() {
-	return tileMesh.getTotalVBOSize();
+	return (uint16_t) tileMesh.getTotalVBOSize();
 }
 
 Tile* WorldChunk::getTiles() {

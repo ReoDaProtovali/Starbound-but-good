@@ -36,7 +36,7 @@ public:
 	int getRefreshRate();
 
 	// Used to disable the framerate limit.
-	void setVSync(bool enabled);
+	void setVSync(bool p_enabled);
 	// Swaps the doublebuffer, and shows the new frame.
 	void displayNewFrame();
 

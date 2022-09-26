@@ -75,13 +75,14 @@ struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID i
 };
 struct WorldChunk : public TransformObject
 {
-	WorldChunk(void) : worldID(-1),
+	// Invalid constructor
+	WorldChunk(void) : 
+		worldID(-1),
 		worldPos(ChunkPos(9999, 9999)),
-		tiles(Array2D<Tile>()), 
 		invalid(true) {};
+
 	WorldChunk(ChunkPos p_chunkPos, int p_worldID);
 
-	noise::module::Perlin noiseGenerator;
 	void fillRandom();
 	void worldGenerate();
 	void setChunkTile(glm::ivec2 p_chunkCoordinates, unsigned int p_tileID); // unimplemented
@@ -105,6 +106,7 @@ struct WorldChunk : public TransformObject
 
 private:
 	Array2D<Tile> tiles;
+	static noise::module::Perlin noiseGenerator;
 
 };
 

@@ -1,4 +1,4 @@
-#include "Framework\Graphics\Shader.hpp"
+#include "Framework/Graphics/Shader.hpp"
 #include "GameConstants.hpp"
 #include "Framework/Graphics/GlCheck.hpp"
 #include "util/utils.hpp"
@@ -20,6 +20,10 @@ Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_
 {
 	programID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
 
+}
+Shader::~Shader()
+{
+	remove();
 }
 Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms)
 {
@@ -241,6 +245,13 @@ void Shader::setUniforms(std::vector<Uniform> p_uniforms) {
 			throw new std::runtime_error("Attempted to set uniform with invalid type.");
 		}
 	}
+}
+void Shader::remove()
+{
+#ifdef DELETELOGGING_ENABLED
+	std::cout << "Deleted shader: " << programID << std::endl;
+#endif
+	glDeleteProgram(programID);
 }
 void Shader::setBoolUniform(const std::string& p_name, bool p_value) const
 {

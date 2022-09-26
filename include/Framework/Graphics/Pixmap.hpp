@@ -11,23 +11,15 @@ public:
 	/** Default constructor. 
 	* Width and height of 0px, uninitialized data array.
 	*/
-	Pixmap() {
-		width = 0;
-		height = 0;
-		pixels = Array2D<glm::vec4>();
-	}
+	Pixmap();
 	/** Constructor with initialized width and height. 
 	* By default, every pixel is set to black.
 	* @param p_width, p_height - The width and height of the pixmap.
 	*/
-	Pixmap(unsigned int p_width, unsigned int p_height) {
-		width = p_width;
-		height = p_height;
-		pixels = Array2D<glm::vec4>(p_width, p_height, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	}
+	Pixmap(unsigned int p_width, unsigned int p_height);
 
-	unsigned int width;
-	unsigned int height;
+	unsigned int width = 0;
+	unsigned int height = 0;
 
 	/// Returns an RGBA vec4 based on a given x and y position.
 	/// Attempting to get a pixel outside of the image's dimensions returns an uninitialized vec4.

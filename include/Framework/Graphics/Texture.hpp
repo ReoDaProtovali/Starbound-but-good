@@ -7,43 +7,16 @@
 #include "GameConstants.hpp"
 #include <GL/glew.h>
 
+
 class Texture // Handles the actual GL textures, doesn't contain image data, but a GL ID
 {
 public:
-	Texture() {
-		glID = 999;
-		texID = TextureID::NO_TEXTURE;
-		width = 0;
-		height = 0;
-		filteringMode = GL_NEAREST;
-		wrappingMode = GL_REPEAT;
-		type = GL_TEXTURE_2D;
-	};
-	Texture(TextureID p_assignedID) {
-		glID = 999;
-		texID = p_assignedID;
-		width = 0;
-		height = 0;
-		filteringMode = GL_NEAREST;
-		wrappingMode = GL_REPEAT;
-		type = GL_TEXTURE_2D;
-	};
-	Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data) {
-		width = p_width;
-		height = p_height;
-		filteringMode = GL_NEAREST;
-		wrappingMode = GL_REPEAT;
-		type = GL_TEXTURE_2D;
-		fromVec4Data(p_width, p_height, p_data);
-	}
-	Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data, GLenum p_type) {
-		width = p_width;
-		height = p_height;
-		filteringMode = GL_NEAREST;
-		wrappingMode = GL_REPEAT;
-		type = p_type;
-		fromVec4Data(p_width, p_height, p_data);
-	}
+	Texture();
+	Texture(TextureID p_assignedID);
+	Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data);
+	Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data, GLenum p_type);
+	// Texture copying is not super recommended
+	// Texture(const Texture&) = delete;
 	void setFiltering(GLint p_mode);
 	void setWrapping(GLint p_mode);
 	void setType(GLenum p_type);
@@ -59,18 +32,20 @@ public:
 	void remove();
 
 	unsigned int getPixelCount() { return width * height; }
-	unsigned int width;
-	unsigned int height;
+	unsigned int width = 0;
+	unsigned int height = 0;
 
-	GLuint glID;
-	TextureID texID;
-	GLenum type;
+	GLuint glID = 0;
+	TextureID texID = TextureID::NO_TEXTURE;
+	GLenum type = GL_TEXTURE_2D;
 
 private:
 	bool initialized = false;
+	// Used for managing when the OpenGL texture gets deleted, much like a shared_ptr
+	int refCount = 0;
 
-	GLint filteringMode;
-	GLint wrappingMode;
+	GLint filteringMode = GL_NEAREST;
+	GLint wrappingMode = GL_REPEAT;
 
 };
 

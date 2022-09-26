@@ -27,7 +27,8 @@ class GameWindow;
 class GameRenderer
 {
 public:
-	GameRenderer(GameWindow& p_window);
+	GameRenderer(const GameWindow& p_window);
+	~GameRenderer();
 
 	unsigned int windowWidth;
 	unsigned int windowHeight;
@@ -42,6 +43,8 @@ public:
 
 	// temporary
 	void setClearColor(glm::vec4 p_col);
+
+	void clearScreen();
 	/// Handles what to do when the window changes size, relies on the values of windowWidth and windowHeight being up to date.
 	void rescale();
 	
@@ -58,29 +61,28 @@ public:
 	float testFrame = 0;
 	void testDraw();
 	void swapCameras();
-
-
-	// ---------------------------------------------------------------------------------
-
 	/// The camera is bound directly to the renderer for now.
 	std::shared_ptr<Camera> cam;
 	std::shared_ptr<Camera> overviewCam;
 
+	// ---------------------------------------------------------------------------------
+
+
+	Lighting& lighting = Lighting::Get();
 	/// Used for rendering the screen to a separate texture, so the lighting texture can be overlaid.
-	FrameBuffer screenFBO;
 private:
 
 	std::weak_ptr<Camera> currentCamera;
 	bool cameraToggle = false;
 
 	ResourceLoader res;
-	// Do not know a better way to group these.
-	GenericShaders gs;
-	Lighting lighting;
+
 	std::shared_ptr<Texture> tileSheetTexture;
 
 	/// Uses packed chunk coordinates and block IDs
 	std::shared_ptr<Shader> tileShader;
+	FrameBuffer screenFBO;
+
 	DrawStates worldDrawStates;
 	
 };

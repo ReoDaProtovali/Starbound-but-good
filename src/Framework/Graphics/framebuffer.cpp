@@ -83,7 +83,7 @@ void FrameBuffer::init() {
 		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, dimensions.x, dimensions.y));
 		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glDepthBuffer));
 	}
-	glCheck(glDrawBuffers(DrawBuffers.size(), DrawBuffers.data()));
+	glCheck(glDrawBuffers((GLsizei)DrawBuffers.size(), DrawBuffers.data()));
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

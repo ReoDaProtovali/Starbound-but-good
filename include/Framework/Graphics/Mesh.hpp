@@ -15,48 +15,78 @@ struct Attrib {
 	GLuint size;
 	GLenum type;
 };
+
 /// A container for managing vertex buffers and VAOs, allows easy attribute assigning and more
 /// Templated for the vertex data being passed in, capable of holding a combination of float/int in a packed struct as well as single types. Only supports float and uint for now.
 /// Trust me it's much less complicated if I move all the .cpp code into the .hpp file. shush.
 template <class T>
-class Mesh
+struct Mesh
 {
 	std::vector<T> verts; // Vert data in any container you deem fit.
+	//std::vector<GLuint> indices;
 	
 	std::vector<Attrib> attribList; // List of attributes the shader uses.
 	unsigned int totalVertSize = 0;
 
-public:
+	GLuint VBO = 0;
+	GLuint VAO = 0;
+	//GLuint IBO = 0;
+
+	//GLenum streamType = GL_STATIC_DRAW;
+
+	bool VBOInitialized = false;
+	//bool IBOInitialized = false;
+
 	Mesh<T>() {
 		glGenVertexArrays(1, &VAO);
 		//std::cout << "Generated Vertex array " << VAO << std::endl;
 	}
-
+	~Mesh<T>() {
+		glDeleteBuffers(1, &VAO);
+#ifdef DELETELOGGING_ENABLED
+		if (VBOInitialized) {
+			std::cout << "Deleted VBO " << VBO << std::endl;
+			glDeleteBuffers(1, &VBO);
+		}
+#endif
+	}
 	/// Allows you to skip a few memory allocations if you reserve it right off the bat.
 	void reserve(size_t p_reserveAmount) { verts.reserve(p_reserveAmount); }
+
+	//void setStreamType(GLenum p_type) {
+	//	if (p_type != GL_STREAM_DRAW || p_type != GL_DYNAMIC_DRAW || p_type != GL_STATIC_DRAW) {
+	//		throw std::runtime_error("Used an invalid enum to set a stream type.");
+	//		return;
+	//	}
+	//	streamType = p_type;
+	//}
 
 	/// Size specifies number of floats required for the attribute.
 	void addFloatAttrib(GLuint p_size) {
 		totalVertSize += sizeof(GLfloat) * p_size;
-		attribList.push_back(Attrib(p_size, GL_FLOAT));
+		attribList.emplace_back(p_size, GL_FLOAT);
 	}; 
 
 	/// Size specifies number of uints required for the attribute.
 	void addUintAttrib(GLuint p_size) { 
 		totalVertSize += sizeof(GLuint) * p_size;
-		attribList.push_back(Attrib(p_size, GL_UNSIGNED_INT));
+		attribList.emplace_back(p_size, GL_UNSIGNED_INT);
 	}; 
 
 	/// Size specifies number of bytes required for the attribute.
 	void addUbyteAttrib(GLubyte p_size) {
 		totalVertSize += sizeof(GLubyte) * p_size;
-		attribList.push_back(Attrib(p_size, GL_UNSIGNED_BYTE));
+		attribList.emplace_back(p_size, GL_UNSIGNED_BYTE);
 	};
 
 	/// Simply adds a vertex of type T to the end of the mesh list.
-	void pushVertices(std::initializer_list<T> p_attribs) {
+	void pushVertices(const std::initializer_list<T>& p_attribs) {
 		verts.insert(verts.end(), p_attribs);
 	};
+
+	//void pushIndices(const std::initializer_list<GLuint>& p_attribs) {
+	//	indices.insert(verts.end(), p_attribs);
+	//}
 
 	size_t getTotalVBOSize() { return verts.size(); }
 
@@ -90,8 +120,19 @@ public:
 			}
 			glEnableVertexAttribArray(i);
 		}
+		//glEnableVertexAttribArray(0);
 		VBOInitialized = true;
 	};
+
+	//void genIBO() {
+	//	glBindVertexArray(VAO);
+	//	if (!IBOInitialized) {
+	//		glGenBuffers(1, &IBO);
+	//	}
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T) * indices.size(), indices.data(), streamType);
+	//	glEnableVertexAttribArray(0);
+	//}
 
 	void subVBOData(GLuint p_startIndex, GLuint p_endIndex, T* p_data) {
 		glBindVertexArray(VAO);
@@ -109,10 +150,6 @@ public:
 		verts.clear();
 		verts.swap(verts);
 	};
-
-	GLuint VBO = 0;
-	GLuint VAO = 0;
-	bool VBOInitialized = false;
 };
 
 #endif
