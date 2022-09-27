@@ -10,9 +10,12 @@ Camera::Camera() :
 	Camera::up = glm::cross(direction, right);
 	Camera::forward = glm::cross(right, up); // forward calculate normalized forward facing vector
 	lookForwards();
+	updateFrame();
+
 }
 
 Camera::Camera(glm::vec3 p_pos) :
+
 	pos(p_pos),
 	target(0.f, 0.f, 0.f), // temporarily set the origin as the target to calculate the correct right and up
 	tileScale(20.f)
@@ -21,8 +24,8 @@ Camera::Camera(glm::vec3 p_pos) :
 	Camera::right = glm::normalize(glm::cross(upGuide, direction));
 	Camera::up = glm::cross(direction, right);
 	Camera::forward = glm::cross(right, up); // forward calculate normalized forward facing vector
-
 	lookForwards();
+	updateFrame();
 };
 
 void Camera::lookAt(glm::vec3 p_target)

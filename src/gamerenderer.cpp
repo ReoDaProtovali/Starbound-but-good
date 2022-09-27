@@ -12,7 +12,6 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	std::cout << "GameRenderer instantiated..." << std::endl;
 #endif
 
-	cam = std::make_shared<Camera>();
 	cam->pos = glm::vec3(-16.0f, 315.0f, 32.0f);
 	cam->tileScale = 128.0f;
 	cam->setDimensions(windowWidth, windowHeight);
@@ -24,14 +23,12 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	overviewCam->tileScale = 1024.0f;
 	overviewCam->setDimensions(windowWidth, windowHeight);
 
-	auto& gs = GenericShaders::Get();
 	loadTextures();
-	testReoSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
-	testReoSprite.attachShader(gs.imageShader);
+	
+	//testReoSprite.attachShader(gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
-	testReoSprite.attachTexture(testReoTexture);
+	//testReoSprite.attachTexture(testReoTexture);
 
-	cameraFrameSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
 	cameraFrameSprite.attachShader(gs.imageShader);
 	cameraFrameTexture = res.getTexture(TextureID::CAMERA_FRAME_TEXTURE);
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
@@ -132,6 +129,8 @@ void GameRenderer::testDraw()
 	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
 	DrawStates state;
 
+	state.addTexture(testReoTexture);
+	state.attachShader(gs.imageShader);
 	state.setTransform(currentCamera.lock()->getTransform());
 
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);

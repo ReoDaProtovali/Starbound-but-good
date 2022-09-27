@@ -26,7 +26,7 @@ public:
 			return;
 		}
 
-		glCheck(glBindVertexArray(p_mesh.VAO));
+		glCheck(glBindVertexArray(p_mesh.VAO->ID));
 		shader->use();
 
 
@@ -53,7 +53,8 @@ public:
 
 		glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
 
-		glBindVertexArray(0);
+		// Causes a slight performace hitch?
+		//glBindVertexArray(0);
 		// Unbind all textures
 		// Causes an exception??? Bro??
 		//for (size_t i = 0; i < p_states.textures.size(); i++) {

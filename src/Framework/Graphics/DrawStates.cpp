@@ -82,6 +82,7 @@ void DrawStates::attachTexture(std::weak_ptr<Texture> p_texture)
 void DrawStates::addTexture(std::weak_ptr<Texture> p_texture)
 {
 	textures.push_back(p_texture);
+	textureAdded = true;
 }
 void DrawStates::setTexture(size_t p_index, std::weak_ptr<Texture> p_texture)
 {

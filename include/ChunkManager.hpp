@@ -24,7 +24,8 @@ public:
 	bool genChunk(ChunkPos p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
 	void enqueueGen(ChunkPos p_chunkPos);
-	void genFromQueue();
+	bool genFromQueue();
+	void genFixed(size_t x, size_t y);
 	bool autoGen(Camera& p_cam);
 
 	size_t findChunkIndex(ChunkPos p_chunkPos, bool& p_success);

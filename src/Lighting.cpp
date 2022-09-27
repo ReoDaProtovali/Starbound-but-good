@@ -80,7 +80,7 @@ void Lighting::draw(DrawSurface& p_target, GLuint p_screenColorTex)
 
 	//p_target.draw(overlayMesh, GL_TRIANGLES, lightingStates);
 
-	glCheck(glBindVertexArray(overlayMesh.VAO)); // Bind the vertices of the quad screen overlay
+	glCheck(glBindVertexArray(overlayMesh.VAO->ID)); // Bind the vertices of the quad screen overlay
 	glCheck(lightingShader->use()); // Use the lighting shader for the subsequent glDrawArrays call
 
 	glCheck(glActiveTexture(GL_TEXTURE0));

@@ -59,9 +59,10 @@ int main(int argc, char* argv[])
 #endif
 
 		ChunkManager world = ChunkManager();
+		//world.genFixed(40, 24);
 
 		Timestepper ts = Timestepper(GAME_UPDATE_SPEED); // sets the game update loop fps
-		gw.setVSync(true);
+		gw.setVSync(false);
 
 #ifdef LOADLOGGING_ENABLED
 		std::cout << "Main loop running." << std::endl;
@@ -110,8 +111,8 @@ int main(int argc, char* argv[])
 				// Code to execute every update frame
 				gameUpdate(world, *renderer.cam, updateFrame);
 
-
-				camVelocity *= 0.95;
+				renderer.cam->pos += glm::vec3(camVelocity, 0.f);
+				camVelocity *= 0.90;
 
 				if ((printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
 					printConsoleCounter = 0;
@@ -129,7 +130,6 @@ int main(int argc, char* argv[])
 
 			processTestInputs(gw.inpHandler, world, *renderer.cam, camVelocity, renderer);
 
-			renderer.cam->pos += glm::vec3(camVelocity * renderer.cam->tileScale * 0.05f, 0.f);
 
 
 			renderFPSGauge.update(100); // 100 frame long value buffer
@@ -169,15 +169,12 @@ void gameRender(GameRenderer& renderer, GameWindow& gw, ChunkManager& world) {
 }
 
 void gameUpdate(ChunkManager& world, Camera& cam, int updateFrame) {
-
 	world.autoGen(cam);
-	if (updateFrame % 2 == 0 || 1) { // Generate a chunk every fourth update frame
-		world.genFromQueue();
-	}
+	while (world.genFromQueue());
 }
 
 void processTestInputs(InputHandler& inp, ChunkManager& world, Camera& cam, glm::vec2& camVelocity, GameRenderer& renderer) {
-	float camSpeed = 0.01f;
+	float camSpeed = 0.05f;
 	if (inp.testKey(SDLK_w)) {
 		camVelocity.y += camSpeed;
 		cam.updateFrame();

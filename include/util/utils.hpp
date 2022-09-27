@@ -103,4 +103,15 @@ struct fpsGauge {
 
 };
 
+// just a really basic timer, nothing fancy
+struct Timer {
+	std::chrono::time_point<std::chrono::high_resolution_clock> start;
+	Timer() {
+		start = std::chrono::high_resolution_clock::now();
+	}
+	~Timer() {
+		std::chrono::duration<double, std::milli> duration = std::chrono::high_resolution_clock::now() - start;
+		std::cout << "The simple timer took " << duration.count() << "ms!" << std::endl;
+	}
+};
 #endif UTILS_H

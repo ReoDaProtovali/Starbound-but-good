@@ -7,20 +7,18 @@ bool ChunkManager::genChunk(ChunkPos p_chunkPos)
 
 	// add it to the back of the translation map
 	indices.push_back(ChunkPos(p_chunkPos));
-	WorldChunk chunk = WorldChunk(p_chunkPos, 0); // world ID is hardcoded for now. Will most def be a different system later.
-	chunk.worldGenerate();
-	chunkList.push_back(std::make_shared<WorldChunk>(chunk));
+	chunkList.push_back(std::make_shared<WorldChunk>(p_chunkPos, 0));// world ID is hardcoded for now. Will most def be a different system later.
+	chunkList.back()->worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
 	return true;
 }
 bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 {
 	if (chunkExistsAt(ChunkPos(p_chunkX, p_chunkY))) return false;
 
+	// add it to the back of the translation map
 	indices.push_back(ChunkPos(p_chunkX, p_chunkY));
-	WorldChunk chunk = WorldChunk(ChunkPos(p_chunkX, p_chunkY), 0); // world ID is hardcoded for now. Will most def be a different system later.
-	chunk.worldGenerate();
-	chunkList.push_back(std::make_shared<WorldChunk>(chunk));
-
+	chunkList.push_back(std::make_shared<WorldChunk>(ChunkPos(p_chunkX, p_chunkY), 0));// world ID is hardcoded for now. Will most def be a different system later.
+	chunkList.back()->worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
 	return true;
 }
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
@@ -32,19 +30,21 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 	};
 }
 
-void ChunkManager::genFromQueue()
+bool ChunkManager::genFromQueue()
 {
+
 	ChunkPos chunkPos;
-	if (!loadQueue.empty()) {
-		chunkPos = loadQueue.back();
-		loadQueue.pop();
-	}
-	else { return; }
+	if (loadQueue.empty()) return false;
+
+	//std::cout << loadQueue.size() << std::endl;
+	chunkPos = loadQueue.front();
+	loadQueue.pop();
 	genChunk(chunkPos);
+	return true;
 }
 
 bool ChunkManager::autoGen(Camera& p_cam) {
-
+	// scuffed
 	for (int i = (int)(p_cam.getFrame().y / (float)CHUNKSIZE) - 2;
 		i < (int)((p_cam.getFrame().w) / (float)CHUNKSIZE) + 2;
 		i++) {
@@ -59,8 +59,15 @@ bool ChunkManager::autoGen(Camera& p_cam) {
 	}
 	return false;
 }
+void ChunkManager::genFixed(size_t x, size_t y) {
+	for (size_t i = 0; i < y; i++) {
+		for (size_t j = 0; j < x; j++) {
+			ChunkManager::enqueueGen(ChunkPos(j, i));
+		}
+	}
+}
 void ChunkManager::logSize() {
-	printf("Chunk count: %zu", chunkList.size());
+	printf("Chunk count: %zu\n", chunkList.size());
 }
 int ChunkManager::getEmptyChunkCount()
 {
@@ -160,6 +167,9 @@ bool ChunkManager::removeChunk(ChunkPos p_chunkPos)
 
 void ChunkManager::removeChunks()
 {
+	//for (auto& w : chunkList) {
+	//	w->remove();
+	//}
 	chunkList.clear();
 	indices.clear();
 }

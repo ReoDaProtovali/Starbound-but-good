@@ -6,6 +6,7 @@ Sprite::Sprite()
 
 Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 {
+	std::cout << "Created Sprite" << std::endl;
 	setPosition(p_position);
 
 	bounds = p_bounds;
@@ -35,6 +36,7 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 
 void Sprite::attachShader(std::shared_ptr<Shader> p_shader)
 {
+
 	attachedShader = p_shader;
 }
 

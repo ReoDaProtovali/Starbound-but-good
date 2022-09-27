@@ -47,23 +47,26 @@ public:
 	void clearScreen();
 	/// Handles what to do when the window changes size, relies on the values of windowWidth and windowHeight being up to date.
 	void rescale();
-	
+
 	int drawWorld(ChunkManager& p_world, DrawSurface& p_target);
 
 	/// Simply tells the lighting subclass to draw based on it's current values.
 	void drawLighting();
 
 	// TEST ----------------------------------------------------------------------------
-	Sprite testReoSprite;
+	/// The camera is bound directly to the renderer for now.
+	// The cameras are pointers, such that they can be easily switched between
+	std::shared_ptr<Camera> cam = std::make_shared<Camera>();
+	std::shared_ptr<Camera> overviewCam;
+
+	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
 	std::shared_ptr<Texture> testReoTexture;
-	Sprite cameraFrameSprite;
+	Sprite cameraFrameSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
 	std::shared_ptr<Texture> cameraFrameTexture;
 	float testFrame = 0;
 	void testDraw();
 	void swapCameras();
-	/// The camera is bound directly to the renderer for now.
-	std::shared_ptr<Camera> cam;
-	std::shared_ptr<Camera> overviewCam;
+
 
 	// ---------------------------------------------------------------------------------
 
@@ -72,6 +75,7 @@ public:
 	/// Used for rendering the screen to a separate texture, so the lighting texture can be overlaid.
 private:
 
+	GenericShaders& gs = GenericShaders::Get();
 	std::weak_ptr<Camera> currentCamera;
 	bool cameraToggle = false;
 
@@ -84,6 +88,6 @@ private:
 	FrameBuffer screenFBO;
 
 	DrawStates worldDrawStates;
-	
+
 };
 
