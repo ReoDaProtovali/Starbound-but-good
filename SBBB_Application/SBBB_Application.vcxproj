@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{82603735-1a19-4920-8736-0eb27b445bb0}</ProjectGuid>
+    <RootNamespace>SBBGProject</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SBBB_Application</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>C:\dev\libnoisedll\bin;C:\dev\SDL2\lib\x86;$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good\libnoise;$(SolutionDir)\glm;C:\dev\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good;C:\dev\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
+    <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>.\build\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\dev\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\dev\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>SBBB_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(SolutionDir)SBBB_Framework\include;$(SolutionDir)SBBB_Framework\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <DisableSpecificWarnings>26812;4312;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\dev\glew-2.2.0\lib\Release\x64;C:\dev\SDL2\lib\x64;$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
+      <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
+      <ObjectFileName>$(IntDir)obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\dev\glew-2.2.0\lib\Release\x64;C:\dev\SDL2\lib\x64;C:\dev\libnoisedll\bin;C:\Users\daysh\source\repos\Starbound-but-good\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>ECHO ON
+echo Cleaning Project Directory
+del $(OutDir)SBBG_Project.iobj
+del $(OutDir)SBBG_Project.ipdb
+del $(OutDir)SBBG_Project.exe.recipe
+del $(OutDir)SBBG_Project.vcxproj.FileListAbsolute.txt
+rmdir /s /q $(OutDir)obj
+rmdir /s /q $(OutDir)SBBG_Project.tlog
+rmdir /s /q $(OutDir)res
+rmdir /s /q $(OutDir)shaders
+echo Moving game folders with build exe
+Xcopy /E /I shaders $(OutDir)shaders
+Xcopy /E /I res $(OutDir)res</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\atlasbuilder.cpp" />
+    <ClCompile Include="src\camera.cpp" />
+    <ClCompile Include="src\chunk.cpp" />
+    <ClCompile Include="src\Framework\Graphics\drawstates.cpp" />
+    <ClCompile Include="src\Framework\Graphics\framebuffer.cpp" />
+    <ClCompile Include="src\Framework\Graphics\genericshaders.cpp" />
+    <ClCompile Include="src\Framework\Graphics\shader.cpp" />
+    <ClCompile Include="src\Framework\Graphics\sprite.cpp" />
+    <ClCompile Include="src\Framework\Graphics\texture.cpp" />
+    <ClCompile Include="src\Framework\Graphics\transformobject.cpp" />
+    <ClCompile Include="src\Framework\Window\gamewindow.cpp" />
+    <ClCompile Include="src\gamerenderer.cpp" />
+    <ClCompile Include="src\inputhandler.cpp" />
+    <ClCompile Include="src\lighting.cpp" />
+    <ClCompile Include="src\lightingsolver.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\pixmap.cpp" />
+    <ClCompile Include="src\resourceloader.cpp" />
+    <ClCompile Include="src\spritesheet.cpp" />
+    <ClCompile Include="src\tile.cpp" />
+    <ClCompile Include="src\timestepper.cpp" />
+    <ClCompile Include="src\chunkmanager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AtlasBuilder.hpp" />
+    <ClInclude Include="include\Camera.hpp" />
+    <ClInclude Include="include\Chunk.hpp" />
+    <ClInclude Include="include\Framework\Graphics\BlendMode.hpp" />
+    <ClInclude Include="include\Framework\Graphics\DrawStates.hpp" />
+    <ClInclude Include="include\Framework\Graphics\DrawSurface.hpp" />
+    <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp" />
+    <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp" />
+    <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp" />
+    <ClInclude Include="include\Framework\Graphics\GlCheck.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Mesh.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Pixmap.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Shader.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Sprite.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Texture.hpp" />
+    <ClInclude Include="include\Framework\Graphics\TransformObject.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Uniform.hpp" />
+    <ClInclude Include="include\Framework\Input\InputHandler.hpp" />
+    <ClInclude Include="include\Framework\Window\GameWindow.hpp" />
+    <ClInclude Include="include\GameConstants.hpp" />
+    <ClInclude Include="include\GameRenderer.hpp" />
+    <ClInclude Include="include\Lighting.hpp" />
+    <ClInclude Include="include\LightingSolver.hpp" />
+    <ClInclude Include="include\ResourceLoader.hpp" />
+    <ClInclude Include="include\SpriteSheet.hpp" />
+    <ClInclude Include="include\Tile.hpp" />
+    <ClInclude Include="include\Timestepper.hpp" />
+    <ClInclude Include="include\ChunkManager.hpp" />
+    <ClInclude Include="include\util\Array2D.hpp" />
+    <ClInclude Include="include\util\Rect.hpp" />
+    <ClInclude Include="include\util\utils.hpp" />
+    <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
+    <ClInclude Include="include\Framework\FrameworkDraw.hpp" />
+    <ClInclude Include="include\Framework\Log.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="docs\randomthings.txt" />
+    <Text Include="docs\TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="glew32.dll" />
+    <None Include="libnoise.dll" />
+    <None Include="README.md" />
+    <None Include="SDL2.dll" />
+    <None Include="src\Shaders\ImageFS.glsl" />
+    <None Include="src\Shaders\ImageVS.glsl" />
+    <None Include="src\Shaders\LightingFS.glsl" />
+    <None Include="src\Shaders\LightingVS.glsl" />
+    <None Include="src\Shaders\TileFS.glsl" />
+    <None Include="src\Shaders\TileVS.glsl" />
+    <None Include="zlib1.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libnoise.lib" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

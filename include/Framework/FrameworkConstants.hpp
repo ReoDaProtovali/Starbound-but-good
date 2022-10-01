@@ -1,6 +1,0 @@
-#ifndef FRAMEWORK_CONSTANTS_H
-#define FRAMEWORK_CONSTANTS_H
-
-//#define DEBUG
-
-#endif

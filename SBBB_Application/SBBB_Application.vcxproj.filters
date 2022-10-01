@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Tile/Entity Related">
+      <UniqueIdentifier>{ac77ea1a-f6ce-4f84-be40-898a1f363f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{8938e4c6-ced9-4b6a-83db-e7fb88df3564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tile/Entity Related">
+      <UniqueIdentifier>{772e5420-601e-4195-a37a-dcd9a4790ec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{c69e26bf-55c9-4ea3-8bf7-e05d30333106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Fragment Shaders">
+      <UniqueIdentifier>{4d60c6af-b6ad-4878-9f41-addd9743c293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex Shaders">
+      <UniqueIdentifier>{abac878b-50c2-4074-a061-79724252e9e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Updates">
+      <UniqueIdentifier>{a19b9057-c081-4958-aa9d-a9d10e46ce5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{d88241da-33fe-4d03-ab07-ffbc3e86bb73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Updates">
+      <UniqueIdentifier>{3c792938-b9c1-4821-82f9-0229c0ded4be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering">
+      <UniqueIdentifier>{7f032046-e35f-49fb-bf11-eba8674f4912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Framework">
+      <UniqueIdentifier>{7118c22f-6336-4099-ab70-26ca7fdf7870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework">
+      <UniqueIdentifier>{d9ba77d6-a58d-478d-9815-4d0472eb919f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\chunk.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tile.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="src\chunkmanager.cpp">
+      <Filter>Source Files\Tile/Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gamerenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lighting.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lightingsolver.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spritesheet.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timestepper.cpp">
+      <Filter>Source Files\Game Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inputhandler.cpp">
+      <Filter>Source Files\Game Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\atlasbuilder.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resourceloader.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\drawstates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\genericshaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\transformobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Window\gamewindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pixmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\LightingSolver.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteSheet.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameRenderer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lighting.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tile.hpp">
+      <Filter>Header Files\Tile/Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ChunkManager.hpp">
+      <Filter>Header Files\Tile/Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Chunk.hpp">
+      <Filter>Header Files\Tile/Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameConstants.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Timestepper.hpp">
+      <Filter>Header Files\Game Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AtlasBuilder.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceLoader.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\BlendMode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\DrawStates.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\DrawSurface.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GlCheck.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Pixmap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Sprite.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Texture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\TransformObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Uniform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Input\InputHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Array2D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Rect.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Window\GameWindow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\FrameworkConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\FrameworkDraw.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Log.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="docs\TODO.txt" />
+    <Text Include="docs\randomthings.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Shaders\ImageFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\LightingFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TileFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TileVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\ImageVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\LightingVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="glew32.dll" />
+    <None Include="libnoise.dll" />
+    <None Include="README.md" />
+    <None Include="SDL2.dll" />
+    <None Include="zlib1.dll" />
+    <None Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libnoise.lib" />
+  </ItemGroup>
+</Project>
