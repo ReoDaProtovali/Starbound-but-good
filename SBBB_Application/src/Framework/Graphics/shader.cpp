@@ -6,37 +6,37 @@
 
 Shader::Shader(const char* vs_filePath, const char* fs_filePath)
 {
-	programID = Shader::compileShaders(vs_filePath, fs_filePath);
+	program->ID = Shader::compileShaders(vs_filePath, fs_filePath);
 }
 
 Shader::Shader(const char* vs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms)
 {
-	programID = Shader::compileShaders(vs_filePath, fs_filePath);
+	program->ID = Shader::compileShaders(vs_filePath, fs_filePath);
 	Shader::setUniforms(p_uniforms);
 }
 
 Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath)
 {
-	programID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
+	program->ID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
 
-}
-Shader::~Shader()
-{
-	remove();
 }
 Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms)
 {
-	programID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
+	program->ID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
 	Shader::setUniforms(p_uniforms);
+}
+Shader::Shader(Shader&& other) noexcept {
+	LOG("Moved Shader! Program ID: " << other.program->ID);
+	other.program = std::move(program);
 }
 GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) {
 	GLuint vs, fs, program;
 
 	vs = glCreateShader(GL_VERTEX_SHADER);
 	fs = glCreateShader(GL_FRAGMENT_SHADER);
-#ifdef LOADLOGGING_ENABLED
-	std::cout << "Compiling shaders: Vertex - " << vs_filePath << " Fragment - " << fs_filePath << std::endl;
-#endif
+
+	LOAD_LOG("Compiling shaders: Vertex - " << vs_filePath << " Fragment - " << fs_filePath);
+
 	std::string vertexShader = utils::readFile(vs_filePath);
 	int vsLength = (int)vertexShader.size();
 	const char* vertexShader_cstr = vertexShader.c_str();
@@ -54,7 +54,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 		// The maxLength includes the NULL character
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(vs, maxLength, &maxLength, &errorLog[0]);
-		std::cout << "Vertex shader compilation error" << std::endl;
+		LOG("Vertex shader compilation error");
 		for (int i = 0; i < errorLog.size(); i++) {
 			std::cout << errorLog[i];
 		}
@@ -81,7 +81,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(fs, maxLength, &maxLength, &errorLog[0]);
 
-		std::cout << "Fragment shader compilation error" << std::endl;
+		LOG("Fragment shader compilation error" << std::endl);
 		for (int i = 0; i < errorLog.size(); i++) {
 			std::cout << errorLog[i];
 		}
@@ -91,9 +91,9 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 		throw new std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
-#ifdef LOADLOGGING_ENABLED
-	std::cout << "Shader compilation successful. Attaching to program..." << std::endl;
-#endif
+
+	LOAD_LOG("Shader compilation successful. Attaching to program...");
+
 	program = glCreateProgram();
 	glCheck(glAttachShader(program, vs));
 	glCheck(glAttachShader(program, fs));
@@ -112,12 +112,13 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 {
 	GLuint vs, gs, fs, program;
 
+	// Throwaway
 	vs = glCreateShader(GL_VERTEX_SHADER);
 	gs = glCreateShader(GL_GEOMETRY_SHADER);
 	fs = glCreateShader(GL_FRAGMENT_SHADER);
-#ifdef LOADLOGGING_ENABLED
-	std::cout << "Compiling shaders: Vertex - " << vs_filePath << " Geometry - " << gs_filePath << " Fragment - " << fs_filePath << std::endl;
-#endif
+
+	LOAD_LOG("Compiling shaders: Vertex - " << vs_filePath << " Geometry - " << gs_filePath << " Fragment - " << fs_filePath);
+
 	std::string vertexShader = utils::readFile(vs_filePath);
 	int vsLength = (int)vertexShader.size();
 	const char* vertexShader_cstr = vertexShader.c_str();
@@ -135,7 +136,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 		// The maxLength includes the NULL character
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(vs, maxLength, &maxLength, &errorLog[0]);
-		std::cout << "Vertex shader compilation error" << std::endl;
+		LOG("Vertex shader compilation error");
 		for (int i = 0; i < errorLog.size(); i++) {
 			std::cout << errorLog[i];
 		}
@@ -162,7 +163,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 		// The maxLength includes the NULL character
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(gs, maxLength, &maxLength, &errorLog[0]);
-		std::cout << "Geometry shader compilation error" << std::endl;
+		LOG("Geometry shader compilation error");
 		for (int i = 0; i < errorLog.size(); i++) {
 			std::cout << errorLog[i];
 		}
@@ -189,7 +190,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(fs, maxLength, &maxLength, &errorLog[0]);
 
-		std::cout << "Fragment shader compilation error" << std::endl;
+		LOG("Fragment shader compilation error");
 		for (int i = 0; i < errorLog.size(); i++) {
 			std::cout << errorLog[i];
 		}
@@ -199,9 +200,9 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 		throw new std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
-#ifdef LOADLOGGING_ENABLED
-	std::cout << "Shader compilation successful. Attaching to program..." << std::endl;
-#endif
+
+	LOAD_LOG("Shader compilation successful. Attaching to program...");
+
 	program = glCreateProgram();
 	glAttachShader(program, vs);
 	glAttachShader(program, gs);
@@ -219,7 +220,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 }
 
 void Shader::use() {
-	glUseProgram(programID);
+	glUseProgram(program->ID);
 }
 
 void Shader::setUniforms(std::vector<Uniform> p_uniforms) {
@@ -245,48 +246,41 @@ void Shader::setUniforms(std::vector<Uniform> p_uniforms) {
 		}
 	}
 }
-void Shader::remove()
-{
-#ifdef DELETELOGGING_ENABLED
-	std::cout << "Deleted shader: " << programID << std::endl;
-#endif
-	glDeleteProgram(programID);
-}
 void Shader::setBoolUniform(const std::string& p_name, bool p_value) const
 {
-	GLint loc = glGetUniformLocation(programID, p_name.c_str());
+	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
-		std::cout << "setBoolUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << "." << std::endl;
+		LOAD_LOG("setBoolUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		std::cout << "setBoolUniform: Uniform location not found for " << p_name << "." << std::endl;
+		LOAD_LOG("setBoolUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	glUniform1i(loc, (int)p_value);
 }
 void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 {
-	GLint loc = glGetUniformLocation(programID, p_name.c_str());
+	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
-		std::cout << "setIntUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << "." << std::endl;
+		LOAD_LOG("setIntUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		std::cout << "setIntUniform: Uniform location not found for " << p_name << "." << std::endl;
+		LOAD_LOG("setIntUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	glUniform1i(loc, p_value);
 }
 void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
 {
-	GLint loc = glGetUniformLocation(programID, p_name.c_str());
+	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
-		std::cout << "setTexUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << "." << std::endl;
+		LOAD_LOG("setTexUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		std::cout << "setTexUniform: Uniform location not found for " << p_name << "." << std::endl;
+		LOAD_LOG("setTexUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	glUniform1i(loc, p_value);
@@ -294,20 +288,20 @@ void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
 
 void Shader::setFloatUniform(const std::string& p_name, GLfloat p_value) const
 {
-	GLint loc = glGetUniformLocation(programID, p_name.c_str());
+	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
-		std::cout << "setFloatUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << "." << std::endl;
+		LOAD_LOG("setFloatUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		std::cout << "setFloatUniform: Uniform location not found for " << p_name << "." << std::endl;
+		LOAD_LOG("setFloatUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	glUniform1f(loc, p_value);
 }
 void Shader::setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const
 {
-	GLint loc = glGetUniformLocation(programID, p_name.c_str());
+	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLEDD // disabled because it runs every frame
 	if (loc != -1) {
 		std::cout << "setMat4Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << "." << std::endl;

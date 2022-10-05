@@ -17,7 +17,7 @@ public:
 	Sprite(glm::vec3 p_position, Rect p_bounds);
 
 	~Sprite() {
-		std::cout << "Sprite Destroyed" << std::endl;
+		DELETE_LOG("Sprite Destroyed");
 	}
 	// Shader must have the appropriate vertex attribute format
 	void attachShader(std::shared_ptr<Shader> p_shader);

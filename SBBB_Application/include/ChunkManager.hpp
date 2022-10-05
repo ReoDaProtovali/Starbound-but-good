@@ -2,18 +2,22 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <vector>
-#include "Tile.hpp"
-#include "Chunk.hpp"
+
 #include <stdlib.h>
 #include <iostream>
-//#include "util/utils.hpp"
-#include <util/ext/glm/glm.hpp>
-#include "Camera.hpp"
-#include "Framework/Window/GameWindow.hpp"
-#include <GL/glew.h>
 #include <memory>
 #include <queue>
+#include <vector>
+
+#include "Tile.hpp"
+#include "Chunk.hpp"
+
+#include <GL/glew.h>
+#include <util/ext/glm/glm.hpp>
+
+#include "Camera.hpp"
+#include "Framework/Window/GameWindow.hpp"
+
 
 class ChunkManager
 {

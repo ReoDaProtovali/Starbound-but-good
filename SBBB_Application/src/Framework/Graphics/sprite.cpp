@@ -1,4 +1,5 @@
 #include "Framework/Graphics/Sprite.hpp"
+
 Sprite::Sprite()
 {
 
@@ -6,7 +7,7 @@ Sprite::Sprite()
 
 Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 {
-	std::cout << "Created Sprite" << std::endl;
+	LOAD_LOG("Created Sprite at x: " << p_position.x << " y: " << p_position.y);
 	setPosition(p_position);
 
 	bounds = p_bounds;
@@ -50,12 +51,13 @@ void Sprite::attachTexture(std::shared_ptr<Texture> p_texture)
 void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
 	DrawStates newStates = DrawStates(p_drawStates);
-	if (attachedShader) {
+	if (attachedShader != nullptr) {
 		newStates.attachShader(attachedShader);
 	}
-	if (attachedTexture) {
+	if (attachedTexture != nullptr) {
 		newStates.attachTexture(attachedTexture);
 	}
+
 	// Multiply it with the existing state transform, just in case it's relative to another coordinate system. Model space to world space.
 	newStates.setTransform(p_drawStates.transform * getObjectTransform());
 

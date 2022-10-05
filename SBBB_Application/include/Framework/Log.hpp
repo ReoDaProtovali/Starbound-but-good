@@ -27,10 +27,12 @@
 
 // general log macro without a toggle
 #define LOG(expr) std::cout << expr << std::endl
+#define CONDITIONAL_LOG(cond, expr) if (cond) std::cout << expr << std::endl
 
 #else
 
 #define LOG(expr)
+#define CONDITIONAL_LOG(cond, expr)
 #define LOAD_LOG(expr)
 #define DELETE_LOG(expr)
 #define GLGEN_LOG(expr)

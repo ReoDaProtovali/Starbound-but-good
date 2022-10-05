@@ -22,9 +22,9 @@ class SpriteSheet
 		/// All values are uninitialized
 		SpriteSheet()
 			: sheetMode(SheetMode::BASIC),
-			texture(Texture()),
+			m_texture(Texture()),
 			spriteDimensions(glm::ivec2()),
-			currentSprite(NULL),
+			m_currentSprite(NULL),
 			spriteCount(NULL),
 			currentAnimation(NULL),
 			animationCount(NULL),
@@ -38,16 +38,16 @@ class SpriteSheet
 		*/
 		SpriteSheet(Texture p_texture, glm::ivec2 p_spriteDimensions, unsigned short p_spriteCount)
 			: sheetMode(SheetMode::BASIC),
-			texture(p_texture),
+			m_texture(p_texture),
 			spriteDimensions(p_spriteDimensions),
-			currentSprite(NULL), 
+			m_currentSprite(NULL), 
 			spriteCount(p_spriteCount), 
 			currentAnimation(NULL), 
 			animationCount(NULL), 
 			frameCount(1) {};
 
 		/// Copies the given texture into the spritesheet.
-		void setTexture(Texture p_texture) { texture = p_texture; };
+		void setTexture(Texture p_texture) { m_texture = p_texture; };
 		/// Sets the spritesheet's max sprite count.
 		void setSpriteCount(unsigned short p_spriteCount) { spriteCount = p_spriteCount; };
 		/// Sets the current sprite by index, changes functionality based on the sheet's mode
@@ -72,9 +72,9 @@ class SpriteSheet
 		void setFrameCount(unsigned short p_frameCount) { frameCount = p_frameCount; }
 
 		/// The texture used by the spritesheet.
-		Texture texture;
+		Texture m_texture;
 
-		unsigned short currentSprite;
+		unsigned short m_currentSprite;
 
 	private:
 		SheetMode sheetMode;

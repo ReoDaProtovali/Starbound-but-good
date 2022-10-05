@@ -1,8 +1,11 @@
 #include "Framework/Graphics/Texture.hpp"
 #include "util/utils.hpp"
 
+#include "Framework/Log.hpp"
+
 Texture::Texture()
 {
+
 }
 Texture::Texture(TextureID p_assignedID) :
 	texID(p_assignedID)
@@ -139,14 +142,11 @@ void Texture::changeDimensions(unsigned int p_width, unsigned int p_height)
 }
 
 void Texture::subVec4Data(glm::vec4* p_data) {
-	if (initialized) {
-		glBindTexture(type, glID);
-		glTexSubImage2D(type, 0, 0, 0, width, height, GL_RGBA, GL_FLOAT, p_data);
-		glBindTexture(type, 0);
-	}
-	else {
-		throw std::exception("Texture not initialized, so data cannot be substituted.");
-	}
+	CONDITIONAL_LOG(!initialized, "Texture not initialized, so data cannot be substituted.");
+	if (!initialized) return;
+	glBindTexture(type, glID);
+	glTexSubImage2D(type, 0, 0, 0, width, height, GL_RGBA, GL_FLOAT, p_data);
+	glBindTexture(type, 0);
 }
 
 void Texture::remove() {

@@ -144,8 +144,6 @@ void WorldChunk::remove() {
 
 void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
-	if (!p_drawStates.checkIfInitialized()) throw new std::runtime_error("Tried to draw with invalid draw states.");
-
 	DrawStates newStates = DrawStates(p_drawStates);
 	
 	newStates.setTransform(p_drawStates.transform * transform);

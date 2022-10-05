@@ -128,10 +128,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SBBB_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(SolutionDir)SBBB_Framework\include;$(SolutionDir)SBBB_Framework\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <DisableSpecificWarnings>26812;4312;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +150,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
       <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
@@ -215,6 +217,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp" />
     <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp" />
     <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp" />
+    <ClInclude Include="include\Framework\Graphics\GlIDs.hpp" />
     <ClInclude Include="include\Framework\Graphics\GlCheck.hpp" />
     <ClInclude Include="include\Framework\Graphics\Mesh.hpp" />
     <ClInclude Include="include\Framework\Graphics\Pixmap.hpp" />

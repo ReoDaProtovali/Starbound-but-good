@@ -1,9 +1,7 @@
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
 
 #include <SDL.h>
-#include <iostream>
 #include "Framework/Window/GameWindow.hpp"
 #include "GameRenderer.hpp"
 #include "GameConstants.hpp"
@@ -13,8 +11,6 @@
 #include "Timestepper.hpp"
 #include "Framework/Input/InputHandler.hpp"
 
-#include <util/ext/glm/glm.hpp>
-#include <util/ext/glm/gtc/matrix_transform.hpp>
 
 /// Used for console stats
 int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
@@ -39,8 +35,9 @@ int main(int argc, char* argv[])
 		bool gameActive = true;
 		SDL_Event event;
 
-#ifdef DEBUG
-		std::cout << "Debug mode active! \n";
+		LOG("Debug mode active!");
+
+#ifdef SBBB_DEBUG
 		int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG); // memory leak detection
 		flag |= _CRTDBG_LEAK_CHECK_DF;
 		_CrtSetDbgFlag(flag);
@@ -54,9 +51,7 @@ int main(int argc, char* argv[])
 
 		glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f); // Temporary stand-in
 
-#ifdef LOADLOGGING_ENABLED
-		std::cout << "Creating world container..." << std::endl;
-#endif
+		LOAD_LOG("Creating world container...");
 
 		ChunkManager world = ChunkManager();
 		//world.genFixed(40, 24);
@@ -64,9 +59,8 @@ int main(int argc, char* argv[])
 		Timestepper ts = Timestepper(GAME_UPDATE_SPEED); // sets the game update loop fps
 		gw.setVSync(false);
 
-#ifdef LOADLOGGING_ENABLED
-		std::cout << "Main loop running." << std::endl;
-#endif
+		LOAD_LOG("Main loop running.");
+
 		unsigned int renderFrame = 0;
 		unsigned int updateFrame = 0;
 
@@ -144,8 +138,8 @@ int main(int argc, char* argv[])
 		SDL_Quit();
 		world.removeChunks();
 	}
-	catch (char* excp) {
-		std::cout << "Caught " << excp;
+	catch (std::exception excp) {
+		std::cout << "Caught Error: " << excp.what();
 	}
 	return 0;
 }

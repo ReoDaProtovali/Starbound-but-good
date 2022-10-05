@@ -221,6 +221,9 @@
     <ClInclude Include="include\Framework\Log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GlIDs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\TODO.txt" />

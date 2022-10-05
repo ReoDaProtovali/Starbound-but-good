@@ -1,31 +1,30 @@
 #include "Framework/Graphics/FrameBuffer.hpp"
 
 
-FrameBuffer::FrameBuffer() : dimensions(glm::uvec2(0, 0)), glDepthBuffer(GL_NONE) {
+FrameBuffer::FrameBuffer() : m_dimensions(glm::uvec2(0, 0)), m_depthBuffer(GL_NONE) {
 	colorTextures.push_back(Texture());
-	std::cout << colorTextures.size();
 }
 
 void FrameBuffer::setDimensions(unsigned int p_width, unsigned int p_height)
 {
-	dimensions.x = p_width;
-	dimensions.y = p_height;
-	viewport = glm::ivec4(0, 0, p_width, p_height);
-	if (!initialized) {
+	m_dimensions.x = p_width;
+	m_dimensions.y = p_height;
+	m_viewport = glm::ivec4(0, 0, p_width, p_height);
+	if (!m_initialized) {
 		init();
 	}
 	for (int i = 0; i < colorTextures.size(); i++) {
-		colorTextures[i].changeDimensions(dimensions.x, dimensions.y);
-		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, glBuffer));
+		colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
+		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
 		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorTextures[i].glID, 0));
 	}
 
 
-	if (useDepth) {
-		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, glDepthBuffer));
-		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, dimensions.x, dimensions.y)); // rescale depth buffer
-		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glDepthBuffer));
+	if (m_useDepth) {
+		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
+		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_dimensions.x, m_dimensions.y)); // rescale depth buffer
+		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
 	}
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
@@ -36,23 +35,23 @@ void FrameBuffer::setDimensions(unsigned int p_width, unsigned int p_height)
 
 void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 {
-	dimensions = p_dimensions;
-	viewport = glm::ivec4(0, 0, p_dimensions.x, p_dimensions.y);
-	if (!initialized) {
+	m_dimensions = p_dimensions;
+	m_viewport = glm::ivec4(0, 0, p_dimensions.x, p_dimensions.y);
+	if (!m_initialized) {
 		init();
 	}
 	for (int i = 0; i < colorTextures.size(); i++) {
-		colorTextures[i].changeDimensions(dimensions.x, dimensions.y);
-		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, glBuffer));
+		colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
+		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
 		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorTextures[i].glID, 0));
 	}
 
 
-	if (useDepth) {
-		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, glDepthBuffer));
-		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, dimensions.x, dimensions.y)); // rescale depth buffer
-		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glDepthBuffer));
+	if (m_useDepth) {
+		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
+		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_dimensions.x, m_dimensions.y)); // rescale depth buffer
+		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
 	}
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
@@ -61,38 +60,38 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 }
 
 void FrameBuffer::init() {
-	glCheck(glGenFramebuffers(1, &glBuffer));
+	glCheck(glGenFramebuffers(1, &m_frameBuffer->ID));
 
-	if (useDepth) {
-		glCheck(glGenRenderbuffers(1, &glDepthBuffer));
+	if (m_useDepth) {
+		glCheck(glGenRenderbuffers(1, &m_depthBuffer));
 	}
 
-	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, glBuffer));
+	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 
 	for (int i = 0; i < colorTextures.size(); i++) {
 		// Allocates texture
-		colorTextures[i].changeDimensions(dimensions.x, dimensions.y);
+		colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		// constant for now
 		colorTextures[i].setFiltering(GL_LINEAR);
 		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorTextures[i].glID, 0));
 
 	}
 
-	if (useDepth) {
-		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, glDepthBuffer));
-		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, dimensions.x, dimensions.y));
-		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glDepthBuffer));
+	if (m_useDepth) {
+		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
+		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_dimensions.x, m_dimensions.y));
+		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
 	}
-	glCheck(glDrawBuffers((GLsizei)DrawBuffers.size(), DrawBuffers.data()));
+	glCheck(glDrawBuffers((GLsizei)m_DrawBuffers.size(), m_DrawBuffers.data()));
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	initialized = true;
+	m_initialized = true;
 }
 
 void FrameBuffer::setColorAttachments(std::initializer_list<GLenum> p_attachments)
 {
-	DrawBuffers = p_attachments;
+	m_DrawBuffers = p_attachments;
 }
 
 

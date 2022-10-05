@@ -2,9 +2,10 @@
 #define FRAMEWORK_CONSTANTS_H
 
 #define LOADLOGGING_ENABLED
-#define DELETELOGGING_ENABLED
-#define GLGENLOGGING_ENABLED
+// #define DELETELOGGING_ENABLED
+// #define GLGENLOGGING_ENABLED
 
+#include "Log.hpp"
 
 // Texture needs access to this at the moment which is unfortunate
 enum class TextureID {

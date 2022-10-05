@@ -23,9 +23,9 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	loadTextures();
 	
-	//testReoSprite.attachShader(gs.imageShader);
+	testReoSprite.attachShader(gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
-	//testReoSprite.attachTexture(testReoTexture);
+	testReoSprite.attachTexture(testReoTexture);
 
 	cameraFrameSprite.attachShader(gs.imageShader);
 	cameraFrameTexture = res.getTexture(TextureID::CAMERA_FRAME_TEXTURE);
@@ -123,19 +123,16 @@ void GameRenderer::testDraw()
 	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
 	DrawStates state;
 
-	state.addTexture(testReoTexture);
-	state.attachShader(gs.imageShader);
 	state.setTransform(currentCamera.lock()->getTransform());
 
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(screenFBO, state);
 
-	//cameraFrameSprite = Sprite(glm::vec3(cam.pos.x, cam.pos.y, 2.0f), Rect(cam.getFrame().x, cam.getFrame().y, cam.getFrame().z, cam.getFrame().w));
-	//cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	//cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
-	//cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	//cameraFrameSprite.draw(screenFBO, state);
+	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
+	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
+	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
+	cameraFrameSprite.draw(screenFBO, state);
 
 	glEnable(GL_DEPTH_TEST);
 }

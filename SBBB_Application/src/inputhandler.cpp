@@ -1,5 +1,6 @@
 
 #include "Framework/Input/InputHandler.hpp"
+
 void InputHandler::processKeyDown(int p_sym) {
 	if (!std::count(keys.begin(), keys.end(), p_sym)) {
 		keys.push_back(p_sym);

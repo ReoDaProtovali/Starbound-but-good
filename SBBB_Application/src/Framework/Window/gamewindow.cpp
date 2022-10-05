@@ -1,4 +1,4 @@
-#include "Framework/Window\GameWindow.hpp"
+#include "Framework/Window/GameWindow.hpp"
 
 GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 	:window(NULL)
@@ -18,7 +18,7 @@ GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
 
 	// init inherited class's variables
 	glBuffer = 0; // Main buffer
-	DrawBuffers[0] = GL_BACK; // Back of double buffer
+	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
 	setViewport(0, 0, width, height);
 
 }
@@ -50,7 +50,7 @@ GameWindow::GameWindow(const char* p_title)
 
 	// init inherited class's variables
 	glBuffer = 0; // Main buffer
-	DrawBuffers[0] = GL_BACK; // Back of double buffer
+	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
 	setViewport(0, 0, width, height);
 }
 

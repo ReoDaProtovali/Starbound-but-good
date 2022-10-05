@@ -5,14 +5,16 @@
 #include <util/ext/glm/glm.hpp>
 #include <vector>
 #include <string>
+#include "Framework/Log.hpp"
 #include "Framework/Graphics/Uniform.hpp"
+#include "GlIDs.hpp"
 
 /// A wrapper for an OpenGL shader program, allows simple compilation and uniform setting.
 class Shader
 {
 public:
 	/// Default void constructor. If no parameters are supplied, the program ID is set to 0, which might have adverse effects.
-	Shader() : programID(GL_NONE) {};
+	Shader() {};
 	/** Constructor that initializes by compiling the shader.
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
@@ -35,8 +37,8 @@ public:
 	* @param p_uniforms - A vector containing uniform objects, defined just above within Shader.hpp. Used to allow single-line init.
 	*/
 	Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath);
-	// Destructor, which deletes the shader program.
-	~Shader();
+	// Move constructor, to handle our pointer
+	Shader(Shader&& other) noexcept;
 	/** Compiles and sets the Shader's program ID.
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
@@ -65,10 +67,8 @@ public:
 	void setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const;
 	// Used to set a list of uniforms using uniform objects.
 	void setUniforms(std::vector<Uniform> p_uniforms);
-	// Don't leak your shader programs!
-	void remove();
 
-	GLuint programID = 0; /// The OpenGL shader program ID
+	std::unique_ptr<glProgram> program = std::make_unique<glProgram>();
 };
 
 #endif

@@ -45,7 +45,19 @@ public:
 	void setTexture(size_t p_index, std::weak_ptr<Texture> p_texture);
 
 
-	bool checkIfInitialized() { return textureAdded && shaderPointerSet; };
+	bool checkIfInit() { 
+		for (auto texture : textures) {
+			if (texture.expired()) {
+				LOG("Texture failed initialization check.");
+				return false;
+			}
+		}
+		if (!shader.lock()) {
+			LOG("Shader failed initialization check.");
+			return false;
+		}
+		return true;
+	};
 
 	// Pointers, because we want them to reflect the values of their outside variables so we don't need to update the draw states every time one changes.
 
@@ -54,10 +66,8 @@ public:
 
 	// Supports multiple textures for one shader. Should never be added to or removed from after initialization.
 	std::vector<std::weak_ptr<Texture>> textures;
-	bool textureAdded = false; // nullptr checking
 
 	std::weak_ptr<Shader> shader;
-	bool shaderPointerSet = false; // nullptr checking
 
 	// Constructed with default settings.
 	// Not a pointer, because it should only be a local copy.
