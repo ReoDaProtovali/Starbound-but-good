@@ -11,13 +11,13 @@ Texture::Texture(TextureID p_assignedID) :
 	texID(p_assignedID)
 {
 }
-Texture::Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data) :
+Texture::Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data) :
 	width(p_width),
 	height(p_height)
 {
 	fromVec4Data(width, height, p_data);
 }
-Texture::Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data, GLenum p_type) :
+Texture::Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data, GLenum p_type) :
 	width(p_width),
 	height(p_height),
 	type(p_type)
@@ -30,20 +30,20 @@ Texture::Texture(unsigned int p_width, unsigned int p_height, glm::vec4* p_data,
 //}
 
 void Texture::setFiltering(GLint p_mode) {
-	filteringMode = p_mode;
-	if (initialized) {
+	m_filteringMode = p_mode;
+	if (m_initialized) {
 		glBindTexture(type, glID);
-		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, filteringMode);
-		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, filteringMode);
+		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMode);
+		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMode);
 		glBindTexture(type, 0);
 	}
 }
 void Texture::setWrapping(GLint p_mode) {
-	wrappingMode = p_mode;
-	if (initialized) {
+	m_wrappingMode = p_mode;
+	if (m_initialized) {
 		glBindTexture(type, glID);
-		glTexParameteri(type, GL_TEXTURE_WRAP_S, wrappingMode);
-		glTexParameteri(type, GL_TEXTURE_WRAP_T, wrappingMode);
+		glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
+		glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode);
 		glBindTexture(type, 0);
 	}
 }
@@ -53,19 +53,19 @@ void Texture::setType(GLenum p_type)
 	type = p_type;
 }
 
-void Texture::fromByteData(unsigned int p_width, unsigned int p_height, unsigned char* p_data)
+void Texture::fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p_data)
 {
 	width = p_width;
 	height = p_height;
-	if (!initialized) glGenTextures(1, &glID);
+	if (!m_initialized) glGenTextures(1, &glID);
 	glBindTexture(type, glID); // into the main texture buffer
 
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexParameteri(type, GL_TEXTURE_WRAP_S, wrappingMode);
-	glTexParameteri(type, GL_TEXTURE_WRAP_T, wrappingMode);
-	glTexParameteri(type, GL_TEXTURE_MIN_FILTER, filteringMode);
-	glTexParameteri(type, GL_TEXTURE_MAG_FILTER, filteringMode);
+	glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
+	glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode);
+	glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMode);
+	glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMode);
 
 	glTexImage2D( // actually put the image data into the texture buffer
 		type,
@@ -79,20 +79,20 @@ void Texture::fromByteData(unsigned int p_width, unsigned int p_height, unsigned
 		p_data);
 	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
-	initialized = true;
+	m_initialized = true;
 }
 
-void Texture::fromVec4Data(unsigned int p_width, unsigned int p_height, glm::vec4* p_data)
+void Texture::fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_data)
 {
-	if (!initialized) glGenTextures(1, &glID);
+	if (!m_initialized) glGenTextures(1, &glID);
 	glBindTexture(type, glID); // into the main texture buffer
 
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexParameteri(type, GL_TEXTURE_WRAP_S, wrappingMode);
-	glTexParameteri(type, GL_TEXTURE_WRAP_T, wrappingMode);
-	glTexParameteri(type, GL_TEXTURE_MIN_FILTER, filteringMode);
-	glTexParameteri(type, GL_TEXTURE_MAG_FILTER, filteringMode);
+	glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
+	glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode);
+	glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMode);
+	glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMode);
 
 	glTexImage2D( // actually put the image data into the texture buffer
 		type,
@@ -106,22 +106,22 @@ void Texture::fromVec4Data(unsigned int p_width, unsigned int p_height, glm::vec
 		p_data);
 	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
-	initialized = true;
+	m_initialized = true;
 }
 
-void Texture::changeDimensions(unsigned int p_width, unsigned int p_height)
+void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 {
 	width = p_width;
 	height = p_height;
 
-	if (!initialized) {
+	if (!m_initialized) {
 		glGenTextures(1, &glID);
 		// set the texture wrapping/filtering options (on the currently bound texture object)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexParameteri(type, GL_TEXTURE_WRAP_S, wrappingMode);
-		glTexParameteri(type, GL_TEXTURE_WRAP_T, wrappingMode);
-		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, filteringMode);
-		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, filteringMode);
+		glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
+		glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode);
+		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMode);
+		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMode);
 	}
 	glBindTexture(type, glID); // into the main texture buffer
 
@@ -138,12 +138,12 @@ void Texture::changeDimensions(unsigned int p_width, unsigned int p_height)
 
 	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
-	initialized = true; // data is allocated, so we'll just say it's initialized even if the data is undefined. Solves a bug.
+	m_initialized = true; // data is allocated, so we'll just say it's initialized even if the data is undefined. Solves a bug.
 }
 
 void Texture::subVec4Data(glm::vec4* p_data) {
-	CONDITIONAL_LOG(!initialized, "Texture not initialized, so data cannot be substituted.");
-	if (!initialized) return;
+	CONDITIONAL_LOG(!m_initialized, "Texture not initialized, so data cannot be substituted.");
+	if (!m_initialized) return;
 	glBindTexture(type, glID);
 	glTexSubImage2D(type, 0, 0, 0, width, height, GL_RGBA, GL_FLOAT, p_data);
 	glBindTexture(type, 0);
@@ -154,5 +154,5 @@ void Texture::remove() {
 	std::cout << "Texture removed " << glID << std::endl;
 #endif
 	glDeleteTextures(1, &glID);
-	initialized = false;
+	m_initialized = false;
 }

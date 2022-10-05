@@ -12,13 +12,13 @@
 class DrawStates {
 public:
 	DrawStates() :
-		transform(glm::mat4(1.0f))
+		m_transform(glm::mat4(1.0f))
 	{};
 
 	~DrawStates() {
-		for (int i = 0; i < textures.size(); i++) {
-			if (textures[i].expired()) continue;
-			textures[i].reset();
+		for (int i = 0; i < m_texturePtrs.size(); i++) {
+			if (m_texturePtrs[i].expired()) continue;
+			m_texturePtrs[i].reset();
 		}
 	}
 
@@ -46,13 +46,13 @@ public:
 
 
 	bool checkIfInit() { 
-		for (auto texture : textures) {
-			if (texture.expired()) {
+		for (auto texturePtr : m_texturePtrs) {
+			if (texturePtr.expired()) {
 				LOG("Texture failed initialization check.");
 				return false;
 			}
 		}
-		if (!shader.lock()) {
+		if (!m_shaderPtr.lock()) {
 			LOG("Shader failed initialization check.");
 			return false;
 		}
@@ -62,15 +62,15 @@ public:
 	// Pointers, because we want them to reflect the values of their outside variables so we don't need to update the draw states every time one changes.
 
 	// The modelview matrix used the shader.
-	glm::mat4 transform;
+	glm::mat4 m_transform;
 
 	// Supports multiple textures for one shader. Should never be added to or removed from after initialization.
-	std::vector<std::weak_ptr<Texture>> textures;
+	std::vector<std::weak_ptr<Texture>> m_texturePtrs;
 
-	std::weak_ptr<Shader> shader;
+	std::weak_ptr<Shader> m_shaderPtr;
 
 	// Constructed with default settings.
 	// Not a pointer, because it should only be a local copy.
-	BlendMode blendMode;
+	BlendMode m_blendMode;
 };
 #endif

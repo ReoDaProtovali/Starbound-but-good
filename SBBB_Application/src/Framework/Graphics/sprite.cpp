@@ -13,8 +13,8 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 	bounds = p_bounds;
 	// Default origin:
 	setOrigin(bounds.getCenter());
-	spriteMesh.addFloatAttrib(3); // Position
-	spriteMesh.addFloatAttrib(2); // Texcoord
+	m_spriteMesh.addFloatAttrib(3); // Position
+	m_spriteMesh.addFloatAttrib(2); // Texcoord
 	
 	// The four corner coordinates of the bounding rectangle. Note that the rectangle is in model space and not world space.
 	glm::vec2 tl = bounds.getTL();
@@ -23,7 +23,7 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 	glm::vec2 br = bounds.getBR();
 
 
-	spriteMesh.pushVertices({
+	m_spriteMesh.pushVertices({
 		tl.x, tl.y, 0.0f, 0.0f, 0.0f, // vertex 1
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 2
 		bl.x, bl.y, 0.0f, 0.0f, 1.0f, // vertex 3
@@ -31,19 +31,19 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 5
 		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
 		});
-	spriteMesh.genVBO();
+	m_spriteMesh.genVBO();
 }
 
 
 void Sprite::attachShader(std::shared_ptr<Shader> p_shader)
 {
 
-	attachedShader = p_shader;
+	m_attachedShader = p_shader;
 }
 
 void Sprite::attachTexture(std::shared_ptr<Texture> p_texture)
 {
-	attachedTexture = p_texture;
+	m_attachedTexture = p_texture;
 }
 
 
@@ -51,17 +51,17 @@ void Sprite::attachTexture(std::shared_ptr<Texture> p_texture)
 void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
 	DrawStates newStates = DrawStates(p_drawStates);
-	if (attachedShader != nullptr) {
-		newStates.attachShader(attachedShader);
+	if (m_attachedShader != nullptr) {
+		newStates.attachShader(m_attachedShader);
 	}
-	if (attachedTexture != nullptr) {
-		newStates.attachTexture(attachedTexture);
+	if (m_attachedTexture != nullptr) {
+		newStates.attachTexture(m_attachedTexture);
 	}
 
 	// Multiply it with the existing state transform, just in case it's relative to another coordinate system. Model space to world space.
-	newStates.setTransform(p_drawStates.transform * getObjectTransform());
+	newStates.setTransform(p_drawStates.m_transform * getObjectTransform());
 
-	p_target.draw(spriteMesh, GL_TRIANGLES, newStates);
+	p_target.draw(m_spriteMesh, GL_TRIANGLES, newStates);
 }
 
 void Sprite::setOriginRelative(OriginLoc p_origin)
@@ -86,5 +86,5 @@ void Sprite::setBounds(Rect p_bounds)
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 5
 		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
 	};
-	spriteMesh.subVBOData(0, 30, newVBOData.data());
+	m_spriteMesh.subVBOData(0, 30, newVBOData.data());
 }

@@ -84,14 +84,16 @@ struct WorldChunk : public TransformObject
 
 	void fillRandom();
 	void worldGenerate();
-	void setChunkTile(glm::ivec2 p_chunkCoordinates, unsigned int p_tileID); // unimplemented
+	void setChunkTile(glm::ivec2 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
 
 	Tile* getTiles();
 	void generateVBO();
-	unsigned int getVBOSize();
+	uint32_t getVBOSize();
 
 	void remove();
 
+	// exposed for convenience
+	// just pinky promise that you wont try to change these
 	const int chunkSize = CHUNKSIZE;
 	ChunkPos worldPos;
 	int worldID;
@@ -104,8 +106,8 @@ struct WorldChunk : public TransformObject
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
 private:
-	Array2D<Tile> tiles;
-	static noise::module::Perlin noiseGenerator;
+	Array2D<Tile> m_tiles;
+	static noise::module::Perlin s_noiseGenerator;
 
 };
 

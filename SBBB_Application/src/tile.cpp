@@ -2,5 +2,5 @@
 
 
 glm::ivec2 Tile::getChunkPos() {
-	return chunkPos;
+	return m_chunkPos;
 }

@@ -47,7 +47,7 @@ public:
 	*
 	* @param p_windowWidth, p_windowHeight
 	*/
-	void setDimensions(unsigned int p_windowWidth, unsigned int p_windowHeight);
+	void setDimensions(uint32_t p_windowWidth, uint32_t p_windowHeight);
 
 	/**
 	* Generates a mat4 based on the camera and window's state.
@@ -108,13 +108,13 @@ public:
 	void setGlobalPos(float p_globalX, float p_globalY);
 
 	/// Enables manually changing the view matrix without it defaulting to lookForwards();
-	void enableManualView() { manualView = true; }
+	void enableManualView() { m_manualView = true; }
 	/// Ignores changes to the view matrix, and defaults to lookForwards();
-	void disableManualView() { manualView = false; }
+	void disableManualView() { m_manualView = false; }
 	/// Switches projection matrix from ortho to perspective, with an FOV of 90 by default. Should also use manual view when setting this, or else it's mostly useless.
-	void enablePerspective() { perspective = true; }
+	void enablePerspective() { m_perspective = true; }
 	/// Disables perspective projection, and defaults to orthographic.
-	void disablePerspective() { perspective = false; }
+	void disablePerspective() { m_perspective = false; }
 
 	/// Tile scale is a value representing the amount of tiles on the longest axis.
 	float tileScale;
@@ -125,20 +125,20 @@ public:
 
 private:
 	/// used for lookAt and lookForwards, represents a position the camera is targeting.
-	glm::vec3 target;
-	glm::vec3 right; /* Used within constructor. The vector facing right relative to the camera's view. */
-	glm::vec3 up; /* Used within constructor. The vector facing upwards relative to the camera's view */
-	glm::vec3 forward; /* Used within constructor, represents the vector pointing straight out from the middle of the camera view. */
-	glm::mat4 proj;
+	glm::vec3 m_target;
+	glm::vec3 m_right; /* Used within constructor. The vector facing right relative to the camera's view. */
+	glm::vec3 m_up; /* Used within constructor. The vector facing upwards relative to the camera's view */
+	glm::vec3 m_forward; /* Used within constructor, represents the vector pointing straight out from the middle of the camera view. */
+	glm::mat4 m_proj;
 	/// Camera dimensions. Best normalized to the aspect ratio of the window. X is width, Y is height.
-	glm::vec2 dimensions;
-	glm::vec2 pixelDimensions;
+	glm::vec2 m_dimensions;
+	glm::vec2 m_pixelDimensions;
 	/// A vec4 representing the camera's frame. the x and y represent the top left corner coords, z and w represent the bottom right corner coords.
-	glm::vec4 frame;
+	glm::vec4 m_frame;
 	/// A consntant value telling the camera what the vertical axis is. In this case, it's the y axis.
-	const glm::vec3 upGuide = glm::vec3(0.0f, 1.0f, 0.0f); // y axis is up
-	bool manualView = false;
-	bool perspective = false;
+	const glm::vec3 m_upGuide = glm::vec3(0.0f, 1.0f, 0.0f); // y axis is up
+	bool m_manualView = false;
+	bool m_perspective = false;
 
 };
 

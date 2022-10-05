@@ -42,11 +42,11 @@ public:
 
 	// Mesh copying is a pretty heavy operation, so try not to
 	Mesh(const Mesh& p_other) :
-		verts(p_other.verts),
-		indices(p_other.indices),
-		attribList(p_other.attribList),
-		totalVertSize(p_other.totalVertSize),
-		streamType(p_other.streamType)
+		m_verts(p_other.m_verts),
+		m_indices(p_other.m_indices),
+		m_attribList(p_other.m_attribList),
+		m_totalVertSize(p_other.m_totalVertSize),
+		m_streamType(p_other.m_streamType)
 	{
 		// We can't copy these, so we have to create new opengl buffers. Copying is discouraged.
 		LOG("Copied mesh! VAO: " << p_other.VAO->ID);
@@ -62,11 +62,11 @@ public:
 
 	// Move constructor for rvalues
 	Mesh(Mesh&& p_other) noexcept :
-		verts(p_other.verts),
-		indices(p_other.indices),
-		attribList(p_other.attribList),
-		totalVertSize(p_other.totalVertSize),
-		streamType(p_other.streamType),
+		m_verts(p_other.m_verts),
+		m_indices(p_other.m_indices),
+		m_attribList(p_other.m_attribList),
+		m_totalVertSize(p_other.m_totalVertSize),
+		m_streamType(p_other.m_streamType),
 		VBOInitialized(p_other.VBOInitialized),
 		IBOInitialized(p_other.IBOInitialized)
 	{
@@ -78,7 +78,7 @@ public:
 
 	}
 	/// Allows you to skip a few memory allocations if you reserve it right off the bat.
-	void reserve(size_t p_reserveAmount) { verts.reserve(p_reserveAmount); }
+	void reserve(size_t p_reserveAmount) { m_verts.reserve(p_reserveAmount); }
 
 	void setStreamType(GLenum p_type) {
 #ifdef SBBB_DEBUG
@@ -87,37 +87,37 @@ public:
 			return;
 		}
 #endif
-		streamType = p_type;
+		m_streamType = p_type;
 	}
 
 	/// Size specifies number of floats required for the attribute.
 	void addFloatAttrib(GLuint p_size) {
-		totalVertSize += sizeof(GLfloat) * p_size;
-		attribList.emplace_back(p_size, GL_FLOAT);
+		m_totalVertSize += sizeof(GLfloat) * p_size;
+		m_attribList.emplace_back(p_size, GL_FLOAT);
 	}; 
 
 	/// Size specifies number of uints required for the attribute.
 	void addUintAttrib(GLuint p_size) { 
-		totalVertSize += sizeof(GLuint) * p_size;
-		attribList.emplace_back(p_size, GL_UNSIGNED_INT);
+		m_totalVertSize += sizeof(GLuint) * p_size;
+		m_attribList.emplace_back(p_size, GL_UNSIGNED_INT);
 	}; 
 
 	/// Size specifies number of bytes required for the attribute.
 	void addUbyteAttrib(GLubyte p_size) {
-		totalVertSize += sizeof(GLubyte) * p_size;
-		attribList.emplace_back(p_size, GL_UNSIGNED_BYTE);
+		m_totalVertSize += sizeof(GLubyte) * p_size;
+		m_attribList.emplace_back(p_size, GL_UNSIGNED_BYTE);
 	};
 
 	/// Simply adds a vertex of type T to the end of the mesh list.
 	void pushVertices(const std::initializer_list<T>& p_attribs) {
-		verts.insert(verts.end(), p_attribs);
+		m_verts.insert(m_verts.end(), p_attribs);
 	};
 
 	void pushIndices(const std::initializer_list<GLuint>& p_attribs) {
-		indices.insert(verts.end(), p_attribs);
+		m_indices.insert(m_verts.end(), p_attribs);
 	}
 
-	size_t getTotalVBOSize() { return verts.size(); }
+	size_t getTotalVBOSize() { return m_verts.size(); }
 
 	void genVBO() {
 		glBindVertexArray(VAO->ID);
@@ -129,24 +129,24 @@ public:
 			GLGEN_LOG("Re-generated Vertex Buffer " << VBO->ID);
 		}
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
-		glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(T) * verts.size(), verts.data(), GL_STATIC_DRAW));
+		glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(T) * m_verts.size(), m_verts.data(), GL_STATIC_DRAW));
 
 		GLint currentOffset = 0; // Offset that needs to be updated as arbitrary amounts of attributes are added. 
 
-		for (unsigned int i = 0; i < attribList.size(); i++) {
+		for (uint32_t i = 0; i < m_attribList.size(); i++) {
 
-			switch (attribList[i].type) { // Will add more attribute types as I need them.
+			switch (m_attribList[i].type) { // Will add more attribute types as I need them.
 			case GL_FLOAT: 
-				glCheck(glVertexAttribPointer(i, attribList[i].size, GL_FLOAT, GL_FALSE, totalVertSize, (const void*)currentOffset));
-				currentOffset += (GLint)(attribList[i].size * sizeof(GLfloat));
+				glCheck(glVertexAttribPointer(i, m_attribList[i].size, GL_FLOAT, GL_FALSE, m_totalVertSize, (const void*)currentOffset));
+				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLfloat));
 				break;
 			case GL_UNSIGNED_INT:
-				glCheck(glVertexAttribIPointer(i, attribList[i].size, GL_UNSIGNED_INT, totalVertSize, (const void*)currentOffset));
-				currentOffset += (GLint)(attribList[i].size * sizeof(GLuint));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_INT, m_totalVertSize, (const void*)currentOffset));
+				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			case GL_UNSIGNED_BYTE:
-				glCheck(glVertexAttribIPointer(i, attribList[i].size, GL_UNSIGNED_BYTE, totalVertSize, (const void*)currentOffset));
-				currentOffset += (GLint)(attribList[i].size * sizeof(GLubyte));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_BYTE, m_totalVertSize, (const void*)currentOffset));
+				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLubyte));
 				break;
 			default:
 				break;
@@ -158,15 +158,15 @@ public:
 	};
 
 	void genIBO() {
-		if (indices.size() == 0) return;
+		if (m_indices.size() == 0) return;
 		glCheck(glBindVertexArray(VAO->ID));
 		if (!IBOInitialized) {
 			glGenBuffers(1, &IBO->ID);
 			GLGEN_LOG("Generated Index Buffer " << IBO->ID);
 		}
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO->ID));
-		glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T) * indices.size(), indices.data(), streamType));
-		glEnableVertexAttribArray(0);
+		glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_indices.size(), m_indices.data(), m_streamType));
+		glEnableVertexAttribArray(GL_NONE);
 	}
 
 	void subVBOData(GLuint p_startIndex, GLuint p_endIndex, T* p_data) {
@@ -182,20 +182,20 @@ public:
 	void remove() {
 		VBOInitialized = false;
 		IBOInitialized = false;
-		verts.clear();
-		verts.shrink_to_fit();
-		indices.clear();
-		indices.shrink_to_fit();
+		m_verts.clear();
+		m_verts.shrink_to_fit();
+		m_indices.clear();
+		m_indices.shrink_to_fit();
 	};
 
 	private:
-		std::vector<T> verts; // Vert data in any container you deem fit.
-		std::vector<GLuint> indices;
+		std::vector<T> m_verts; // Vert data in any container you deem fit.
+		std::vector<GLuint> m_indices;
 
-		std::vector<Attrib> attribList; // List of attributes the shader uses.
-		unsigned int totalVertSize = 0;
+		std::vector<Attrib> m_attribList; // List of attributes the shader uses.
+		uint32_t m_totalVertSize = 0;
 
-		GLenum streamType = GL_STATIC_DRAW;
+		GLenum m_streamType = GL_STATIC_DRAW;
 };
 
 #endif

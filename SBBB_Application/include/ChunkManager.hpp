@@ -23,7 +23,7 @@ class ChunkManager
 {
 public:
 	// init the null chunk for functions that return a chunk that doesn't exist
-	ChunkManager() : nullChunk(std::make_shared<WorldChunk>(WorldChunk())) {};
+	ChunkManager() : k_nullChunk(std::make_shared<WorldChunk>(WorldChunk())) {};
 
 	bool genChunk(ChunkPos p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
@@ -48,23 +48,23 @@ public:
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 	void logSize();
-	int getChunkCount() { return (int)chunkList.size(); }
+	int getChunkCount() { return (int)m_chunkList.size(); }
 	int getEmptyChunkCount();
 	void logChunks();
 
 private:
 
 	// For fetching chunks from a supplied frame
-	bool setFetchCounterFlag = true;
-	unsigned int fetchCounter = 0;
-	bool doneFetching = false;
+	bool m_setFetchCounterFlag = true;
+	uint32_t m_fetchCounter = 0;
+	bool m_doneFetching = false;
 
-	std::vector<std::shared_ptr<WorldChunk>> chunkList;
-	std::queue<ChunkPos> loadQueue;
-	std::vector<ChunkPos> indices;
+	std::vector<std::shared_ptr<WorldChunk>> m_chunkList;
+	std::queue<ChunkPos> m_loadQueue;
+	std::vector<ChunkPos> m_indices;
 
 	// for returning when failed
-	std::shared_ptr<WorldChunk> nullChunk;
+	std::shared_ptr<WorldChunk> k_nullChunk;
 
 };
 

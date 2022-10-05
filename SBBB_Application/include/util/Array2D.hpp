@@ -26,7 +26,7 @@ public:
 		return data[((y * width) + x)];
 	}
 	void fill(T p_fillValue) {
-		for (unsigned int i = 0; i < width * height; i++) {
+		for (size_t i = 0; i < width * height; i++) {
 			data[i] = p_fillValue;
 		}
 	}

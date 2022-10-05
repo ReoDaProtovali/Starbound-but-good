@@ -51,13 +51,13 @@ public:
 
 
 protected:
-	glm::vec2 origin;
-	glm::vec3 position; // Decided to give it a z axis, as this is handy for certain effects and layering.
-	float rotation; // Rotation does not affect the z axis. I can make a 3d transform object if needed later. Strictly radians.
-	glm::vec3 rotationAxis;
-	glm::vec2 scale; // xy
-	glm::mat4 transform;
-	bool transformOutOfDate = true;
+	glm::vec2 m_origin;
+	glm::vec3 m_position; // Decided to give it a z axis, as this is handy for certain effects and layering.
+	float m_rotation; // Rotation does not affect the z axis. I can make a 3d transform object if needed later. Strictly radians.
+	glm::vec3 m_rotationAxis;
+	glm::vec2 m_scale; // xy
+	glm::mat4 m_transform;
+	bool m_transformOutOfDate = true;
 };
 
 #endif

@@ -17,7 +17,7 @@ public:
 	FrameBuffer();
 	// Affects the size of all color attachments
 	void init();
-	void setDimensions(unsigned int p_width, unsigned int p_height);
+	void setDimensions(uint32_t p_width, uint32_t p_height);
 	void setDimensions(glm::uvec2 p_dimensions);
 	void setColorAttachments(std::initializer_list<GLenum> p_attachments);
 	GLenum getColorTexID(size_t p_index);
@@ -26,7 +26,7 @@ private:
 	// x width, y height.
 	glm::uvec2 m_dimensions;
 	/// Vector that contains the color textures.
-	std::vector<Texture> colorTextures;
+	std::vector<Texture> m_colorTextures;
 	/// The GL buffer ID for the FBO's depth buffer.
 	GLuint m_depthBuffer;
 	bool m_useDepth = true;

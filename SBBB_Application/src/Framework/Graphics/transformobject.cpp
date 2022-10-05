@@ -15,101 +15,101 @@ const float fwrapSigned(float x, float r) {
 }
 
 TransformObject::TransformObject() :
-	origin(glm::vec2(0.f, 0.f)),
-	position(glm::vec3(0.f, 0.f, 0.f)),
-	rotation(0.f),
-	rotationAxis(glm::vec3(0.f, 0.f, 1.f)),
-	scale(glm::vec2(1.f, 1.f)),
-	transform(glm::mat4(1.f))
+	m_origin(glm::vec2(0.f, 0.f)),
+	m_position(glm::vec3(0.f, 0.f, 0.f)),
+	m_rotation(0.f),
+	m_rotationAxis(glm::vec3(0.f, 0.f, 1.f)),
+	m_scale(glm::vec2(1.f, 1.f)),
+	m_transform(glm::mat4(1.f))
 {}
 void TransformObject::setOrigin(glm::vec2 p_origin)
 {
-	origin = p_origin;
-	transformOutOfDate = true;
+	m_origin = p_origin;
+	m_transformOutOfDate = true;
 }
 void TransformObject::setOrigin(Rect p_bounds, OriginLoc p_origin)
 {
 	switch (p_origin) {
 	case OriginLoc::TOP_LEFT:
-		origin = p_bounds.getTL();
+		m_origin = p_bounds.getTL();
 		break;
 	case OriginLoc::TOP_RIGHT:
-		origin = p_bounds.getTR();
+		m_origin = p_bounds.getTR();
 		break;
 	case OriginLoc::BOTTOM_LEFT:
-		origin = p_bounds.getBL();
+		m_origin = p_bounds.getBL();
 		break;
 	case OriginLoc::BOTTOM_RIGHT:
-		origin = p_bounds.getBR();
+		m_origin = p_bounds.getBR();
 		break;
 	case OriginLoc::CENTER:
-		origin = p_bounds.getCenter();
+		m_origin = p_bounds.getCenter();
 		break;
 	default:
-		origin = p_bounds.getTL();
+		m_origin = p_bounds.getTL();
 	}
-	transformOutOfDate = true;
+	m_transformOutOfDate = true;
 }
 void TransformObject::setPosition(glm::vec3 p_position)
 {
-	position = p_position;
-	transformOutOfDate = true;
+	m_position = p_position;
+	m_transformOutOfDate = true;
 }
 void TransformObject::translate(glm::vec3 p_position)
 {
-	position += p_position;
-	transformOutOfDate = true;
+	m_position += p_position;
+	m_transformOutOfDate = true;
 }
 void TransformObject::setRotation(float radians)
 {
-	rotation = fwrapUnsigned(radians, 3.141592653589f * 2.f);
-	transformOutOfDate = true;
+	m_rotation = fwrapUnsigned(radians, 3.141592653589f * 2.f);
+	m_transformOutOfDate = true;
 }
 void TransformObject::setRotationAxis(glm::vec3 p_axis)
 {
-	rotationAxis = glm::vec3(p_axis);
+	m_rotationAxis = glm::vec3(p_axis);
 }
 void TransformObject::setScale(glm::vec2 p_scaleFactors)
 {
-	scale = p_scaleFactors;
-	transformOutOfDate = true;
+	m_scale = p_scaleFactors;
+	m_transformOutOfDate = true;
 }
 const glm::vec2 TransformObject::getOrigin()
 {
-	return origin;
+	return m_origin;
 }
 const glm::vec3 TransformObject::getPosition()
 {
-	return position;
+	return m_position;
 }
 const float TransformObject::getRotation()
 {
-	return rotation;
+	return m_rotation;
 }
 const glm::vec2 TransformObject::getScale()
 {
-	return scale;
+	return m_scale;
 }
 void TransformObject::calculateTransform()
 {
-	if (transformOutOfDate) {
+	if (m_transformOutOfDate) {
 		// Matrix multiplication is non-commutative, so it needs to be done in TRS order in this case. It's always the reverse order than you expect it to be.
 
 		// Translate to world space.
-		transform = glm::translate(glm::mat4(1.0f), position);
+		m_transform = glm::translate(glm::mat4(1.0f), m_position);
 		// Rotate along axis
-		transform = glm::rotate(transform, rotation, rotationAxis);
+		m_transform = glm::rotate(m_transform, m_rotation, m_rotationAxis);
 		// Do the scaling.
-		transform = glm::scale(transform, glm::vec3(scale, 1.f));
+		m_transform = glm::scale(m_transform, glm::vec3(m_scale, 1.f));
 		// Transform to the origin, *technically* done first
-		transform = glm::translate(transform, glm::vec3(-origin, 0.f));
+		m_transform = glm::translate(m_transform, glm::vec3(-m_origin, 0.f));
 
-		transformOutOfDate = false;
+		m_transformOutOfDate = false;
 	}
 }
 
 glm::mat4 TransformObject::getObjectTransform()
 {
 	calculateTransform();
-	return transform;
+	return m_transform;
 }

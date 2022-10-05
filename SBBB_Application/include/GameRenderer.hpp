@@ -32,10 +32,10 @@ public:
 	GameRenderer(const GameWindow& p_window);
 	~GameRenderer();
 
-	unsigned int windowWidth;
-	unsigned int windowHeight;
-	unsigned int screenWidth;
-	unsigned int screenHeight;
+	uint32_t windowWidth;
+	uint32_t windowHeight;
+	uint32_t screenWidth;
+	uint32_t screenHeight;
 
 	// Temporary until a better texture loader is devised.
 	void loadTextures();

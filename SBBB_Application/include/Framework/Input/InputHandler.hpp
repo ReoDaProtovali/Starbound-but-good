@@ -14,7 +14,7 @@ public:
 	bool testKey(int p_sym);
 	bool testKeyDown(int p_sym);
 private:
-	std::vector<int> keys;
-	std::vector<int> keyDowns;
+	std::vector<int> m_keys;
+	std::vector<int> m_keyDowns;
 };
 

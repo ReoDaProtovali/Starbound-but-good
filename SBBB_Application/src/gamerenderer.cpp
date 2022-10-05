@@ -1,8 +1,8 @@
 #include "GameRenderer.hpp"
 
 GameRenderer::GameRenderer(const GameWindow& p_window) :
-	windowWidth(p_window.width),
-	windowHeight(p_window.height),
+	windowWidth(p_window.windowWidth),
+	windowHeight(p_window.windowHeight),
 	screenWidth(p_window.screenWidth),
 	screenHeight(p_window.screenHeight)
 {

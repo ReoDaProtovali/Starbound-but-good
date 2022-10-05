@@ -21,14 +21,14 @@ class SpriteSheet
 		///  Default constructor. 
 		/// All values are uninitialized
 		SpriteSheet()
-			: sheetMode(SheetMode::BASIC),
+			: m_sheetMode(SheetMode::BASIC),
 			m_texture(Texture()),
-			spriteDimensions(glm::ivec2()),
+			m_spriteDimensions(glm::ivec2()),
 			m_currentSprite(NULL),
-			spriteCount(NULL),
-			currentAnimation(NULL),
-			animationCount(NULL),
-			frameCount(NULL) {};
+			m_spriteCount(NULL),
+			m_currentAnimation(NULL),
+			m_animationCount(NULL),
+			m_frameCount(NULL) {};
 
 		/** Initialized constructor. The current sprite, the current animation, animation count, and frame count should be set afterwards.
 		* 
@@ -36,22 +36,22 @@ class SpriteSheet
 		* @param p_spriteDimensions - The integer width and height of a single sprite on the sheet, in pixels. Might add support for variable sprite dimensions later.
 		* @param p_spriteCount - The maximum amount of sprites the spritesheet can hold. usually dependent on the sprite dimensions over the sprite area
 		*/
-		SpriteSheet(Texture p_texture, glm::ivec2 p_spriteDimensions, unsigned short p_spriteCount)
-			: sheetMode(SheetMode::BASIC),
+		SpriteSheet(Texture p_texture, glm::ivec2 p_spriteDimensions, uint16_t p_spriteCount)
+			: m_sheetMode(SheetMode::BASIC),
 			m_texture(p_texture),
-			spriteDimensions(p_spriteDimensions),
+			m_spriteDimensions(p_spriteDimensions),
 			m_currentSprite(NULL), 
-			spriteCount(p_spriteCount), 
-			currentAnimation(NULL), 
-			animationCount(NULL), 
-			frameCount(1) {};
+			m_spriteCount(p_spriteCount), 
+			m_currentAnimation(NULL), 
+			m_animationCount(NULL), 
+			m_frameCount(1) {};
 
 		/// Copies the given texture into the spritesheet.
 		void setTexture(Texture p_texture) { m_texture = p_texture; };
 		/// Sets the spritesheet's max sprite count.
-		void setSpriteCount(unsigned short p_spriteCount) { spriteCount = p_spriteCount; };
+		void setSpriteCount(uint16_t p_spriteCount) { m_spriteCount = p_spriteCount; };
 		/// Sets the current sprite by index, changes functionality based on the sheet's mode
-		void setCurrentSprite(unsigned short p_spriteIndex);
+		void setCurrentSprite(uint16_t p_spriteIndex);
 		/// Sets the dimensions of a single sprite within the sheet
 		void setSpriteDimensions(glm::ivec2 p_dim);
 		/// Changes the mode of the spritesheet, which determines how to handle indexing and texture coordinate grabbing
@@ -60,32 +60,32 @@ class SpriteSheet
 		void nextFrame();
 
 		/// Takes in a sprite index, and returns an x/y pixel position. The meaning of "index" changes depending on the sheet mode.
-		glm::ivec2 indexToPos(unsigned short p_spriteIndex);
+		glm::ivec2 indexToPos(uint16_t p_spriteIndex);
 		/** Gets texture coordinates of a sprite within the sheet.
 		* @param corner - The enum determining which corner of the sprite you want the texture coords for
 		* @returns A vec2 containing the texture coordinates.
 		*/
 		glm::vec2 getTexCoords(Corner corner);
 		/// Sets the current animation, in the case of animation rows, the row.
-		void setAnimation(unsigned short p_animationID);
+		void setAnimation(uint16_t p_animationID);
 		/// Sets the amount of frames within the animation.
-		void setFrameCount(unsigned short p_frameCount) { frameCount = p_frameCount; }
+		void setFrameCount(uint16_t p_frameCount) { m_frameCount = p_frameCount; }
 
 		/// The texture used by the spritesheet.
 		Texture m_texture;
 
-		unsigned short m_currentSprite;
+		uint16_t m_currentSprite;
 
 	private:
-		SheetMode sheetMode;
-		unsigned short spriteCount;
+		SheetMode m_sheetMode;
+		uint16_t m_spriteCount;
 
-		unsigned short currentAnimation;
-		unsigned short frameCount;
+		uint16_t m_currentAnimation;
+		uint16_t m_frameCount;
 
-		unsigned short animationCount;
+		uint16_t m_animationCount;
 
-
-		glm::ivec2 spriteDimensions;
+	
+		glm::ivec2 m_spriteDimensions;
 };
 

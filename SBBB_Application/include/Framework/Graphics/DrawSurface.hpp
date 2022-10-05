@@ -23,28 +23,28 @@ public:
 #ifdef SBBB_DEBUG
 		if (!p_states.checkIfInit()) return;
 #endif
-		auto shader = p_states.shader.lock();
+		auto shader = p_states.m_shaderPtr.lock();
 
 		glCheck(glBindVertexArray(p_mesh.VAO->ID));
 		shader->use();
 
 		// Bind all textures to the correct texture units
-		for (size_t i = 0; i < p_states.textures.size(); i++) {
+		for (size_t i = 0; i < p_states.m_texturePtrs.size(); i++) {
 			glCheck(glActiveTexture(GL_TEXTURE0 + i));
-			glCheck(glBindTexture(p_states.textures[i].lock()->type, p_states.textures[i].lock()->glID));
+			glCheck(glBindTexture(p_states.m_texturePtrs[i].lock()->type, p_states.m_texturePtrs[i].lock()->glID));
 		}
 
-		if (p_states.blendMode.disabled) {
+		if (p_states.m_blendMode.disabled) {
 			glDisable(GL_BLEND);
 		}
 		else {
 			glEnable(GL_BLEND);
-			glCheck(glBlendFuncSeparate(p_states.blendMode.srcRGB, p_states.blendMode.dstRGB, p_states.blendMode.srcAlpha, p_states.blendMode.dstAlpha));
-			glCheck(glBlendEquationSeparate(p_states.blendMode.RGBequation, p_states.blendMode.AlphaEquation));
+			glCheck(glBlendFuncSeparate(p_states.m_blendMode.srcRGB, p_states.m_blendMode.dstRGB, p_states.m_blendMode.srcAlpha, p_states.m_blendMode.dstAlpha));
+			glCheck(glBlendEquationSeparate(p_states.m_blendMode.RGBequation, p_states.m_blendMode.AlphaEquation));
 		}
 
 		// We'll assume that every shader uses a transform matrix, because that's pretty much a given.
-		shader->setMat4Uniform("transform", p_states.transform);
+		shader->setMat4Uniform("transform", p_states.m_transform);
 
 		glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
 
@@ -84,7 +84,7 @@ protected:
 	std::vector<GLenum> m_DrawBuffers = { GL_COLOR_ATTACHMENT0 };
 	// X, Y, Width, Height
 	glm::ivec4 m_viewport;
-	std::unique_ptr<glFrameBuffer> m_frameBuffer;
+	std::unique_ptr<glFrameBuffer> m_frameBuffer = std::make_unique<glFrameBuffer>();
 };
 
 #endif

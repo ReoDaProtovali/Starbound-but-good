@@ -9,12 +9,13 @@
 class Tile
 {
 public:
-	Tile() : chunkPos(glm::ivec2(0, 0)), tileID(0) {};
-	Tile(glm::ivec2 p_chunkPos, unsigned int p_tileID) : chunkPos(p_chunkPos), tileID(p_tileID) {};
+	uint32_t m_tileID;
+
+	Tile() : m_chunkPos(glm::ivec2(0, 0)), m_tileID(0) {};
+	Tile(glm::ivec2 p_chunkPos, uint32_t p_tileID) : m_chunkPos(p_chunkPos), m_tileID(p_tileID) {};
 	glm::ivec2 getChunkPos();
-	unsigned int tileID;
 private:
-	glm::ivec2 chunkPos;
+	glm::ivec2 m_chunkPos;
 };
 
 #endif TILE_H

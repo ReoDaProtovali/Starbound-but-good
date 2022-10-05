@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
 
 		LOAD_LOG("Main loop running.");
 
-		unsigned int renderFrame = 0;
-		unsigned int updateFrame = 0;
+		uint32_t renderFrame = 0;
+		uint32_t updateFrame = 0;
 
 		///////////////////////////////////////////////////////
 		while (gameActive) {
@@ -82,8 +82,8 @@ int main(int argc, char* argv[])
 
 						int w = event.window.data1;
 						int h = event.window.data2;
-						gw.width = w;
-						gw.height = h;
+						gw.windowWidth = w;
+						gw.windowHeight = h;
 						gw.setViewport(0, 0, w, h);
 						renderer.windowWidth = w;
 						renderer.windowHeight = h;

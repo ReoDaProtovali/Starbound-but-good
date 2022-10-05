@@ -30,10 +30,10 @@ public:
 	void setBounds(Rect p_bounds);
 	Rect bounds;
 private:
-	Mesh<GLfloat> spriteMesh;
+	Mesh<GLfloat> m_spriteMesh;
 	// Optional attachments directly to the sprite, so you don't have to worry about setting your drawStates properly before draw().
-	std::shared_ptr<Shader> attachedShader;
-	std::shared_ptr<Texture> attachedTexture;
+	std::shared_ptr<Shader> m_attachedShader;
+	std::shared_ptr<Texture> m_attachedTexture;
 
 };
 

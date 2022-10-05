@@ -6,9 +6,9 @@ bool ChunkManager::genChunk(ChunkPos p_chunkPos)
 	if (chunkExistsAt(p_chunkPos)) return false;
 
 	// add it to the back of the translation map
-	indices.push_back(ChunkPos(p_chunkPos));
-	chunkList.push_back(std::make_shared<WorldChunk>(p_chunkPos, 0));// world ID is hardcoded for now. Will most def be a different system later.
-	chunkList.back()->worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
+	m_indices.push_back(ChunkPos(p_chunkPos));
+	m_chunkList.push_back(std::make_shared<WorldChunk>(p_chunkPos, 0));// world ID is hardcoded for now. Will most def be a different system later.
+	m_chunkList.back()->worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
 	return true;
 }
 bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
@@ -16,9 +16,9 @@ bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 	if (chunkExistsAt(ChunkPos(p_chunkX, p_chunkY))) return false;
 
 	// add it to the back of the translation map
-	indices.push_back(ChunkPos(p_chunkX, p_chunkY));
-	chunkList.push_back(std::make_shared<WorldChunk>(ChunkPos(p_chunkX, p_chunkY), 0));// world ID is hardcoded for now. Will most def be a different system later.
-	chunkList.back()->worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
+	m_indices.push_back(ChunkPos(p_chunkX, p_chunkY));
+	m_chunkList.push_back(std::make_shared<WorldChunk>(ChunkPos(p_chunkX, p_chunkY), 0));// world ID is hardcoded for now. Will most def be a different system later.
+	m_chunkList.back()->worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
 	return true;
 }
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
@@ -26,7 +26,7 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 	//std::cout << chunkExistsAt(ChunkPos(0, 0)) << std::endl;
 	//std::cout << loadQueue.size() << std::endl;
 	if (!ChunkManager::chunkExistsAt(p_chunkPos)) {
-		loadQueue.push(p_chunkPos);
+		m_loadQueue.push(p_chunkPos);
 	};
 }
 
@@ -34,11 +34,11 @@ bool ChunkManager::genFromQueue()
 {
 
 	ChunkPos chunkPos;
-	if (loadQueue.empty()) return false;
+	if (m_loadQueue.empty()) return false;
 
 	//std::cout << loadQueue.size() << std::endl;
-	chunkPos = loadQueue.front();
-	loadQueue.pop();
+	chunkPos = m_loadQueue.front();
+	m_loadQueue.pop();
 	genChunk(chunkPos);
 	return true;
 }
@@ -67,20 +67,20 @@ void ChunkManager::genFixed(size_t x, size_t y) {
 	}
 }
 void ChunkManager::logSize() {
-	printf("Chunk count: %zu\n", chunkList.size());
+	printf("Chunk count: %zu\n", m_chunkList.size());
 }
 int ChunkManager::getEmptyChunkCount()
 {
 	int count = 0;
-	for (size_t i = 0; i < chunkList.size(); i++) {
-		if (chunkList[i]->isEmpty) count++;
+	for (size_t i = 0; i < m_chunkList.size(); i++) {
+		if (m_chunkList[i]->isEmpty) count++;
 	}
 	return count;
 }
 void ChunkManager::logChunks() {
 
-	for (size_t i = 0; i < chunkList.size(); i++) {
-		printf("There is a chunk at position %i %i with index %zu\n", chunkList[i]->worldPos.x, chunkList[i]->worldPos.y, i);
+	for (size_t i = 0; i < m_chunkList.size(); i++) {
+		printf("There is a chunk at position %i %i with index %zu\n", m_chunkList[i]->worldPos.x, m_chunkList[i]->worldPos.y, i);
 	}
 }
 //WorldChunk& ChunkManager::getChunk(ChunkPos p_chunkPos, bool& p_success) { // actually gets the chunk
@@ -97,12 +97,12 @@ std::weak_ptr<WorldChunk> ChunkManager::getChunkPtr(ChunkPos p_chunkPos, bool& p
 	size_t index = findChunkIndex(p_chunkPos, found);
 	p_success = found;
 	// still kinda scuffed but it gotta return something
-	if (!found) return nullChunk;
-	return chunkList[index];
+	if (!found) return k_nullChunk;
+	return m_chunkList[index];
 }
 size_t ChunkManager::findChunkIndex(ChunkPos p_chunkPos, bool& p_success) {
-	for (size_t i = 0; i < indices.size(); i++) {
-		if (indices[i] == p_chunkPos) {
+	for (size_t i = 0; i < m_indices.size(); i++) {
+		if (m_indices[i] == p_chunkPos) {
 			p_success = true;
 			return i;
 		}
@@ -121,18 +121,18 @@ std::weak_ptr<WorldChunk> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, bo
 	const int chunkHeight = (int)(tileHeight / (float)CHUNKSIZE);
 	if (chunkWidth == 0 || chunkHeight == 0) {
 		p_finished = true;
-		return nullChunk;
+		return k_nullChunk;
 	};
 
-	if (setFetchCounterFlag) {
-		setFetchCounterFlag = false;
-		fetchCounter = 0;
+	if (m_setFetchCounterFlag) {
+		m_setFetchCounterFlag = false;
+		m_fetchCounter = 0;
 	}
 	if (!p_finished) {
-		int curX = fetchCounter % chunkWidth;
-		int curY = fetchCounter / chunkWidth;
+		int curX = m_fetchCounter % chunkWidth;
+		int curY = m_fetchCounter / chunkWidth;
 		if (curY <= chunkHeight) {
-			fetchCounter++;
+			m_fetchCounter++;
 			bool tmp;
 			const int worldX = curX + (int)std::floorf(x / (float)CHUNKSIZE);
 			const int worldY = curY + (int)std::floorf(y / (float)CHUNKSIZE);
@@ -141,12 +141,12 @@ std::weak_ptr<WorldChunk> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, bo
 	}
 
 	p_finished = true;
-	setFetchCounterFlag = true;
-	return nullChunk;
+	m_setFetchCounterFlag = true;
+	return k_nullChunk;
 }
 bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) { // tells you if a chunk exists
-	for (size_t i = 0; i < indices.size(); i++) {
-		if (indices[i] == p_chunkPos) {
+	for (size_t i = 0; i < m_indices.size(); i++) {
+		if (m_indices[i] == p_chunkPos) {
 			return true;
 		}
 	}
@@ -158,10 +158,10 @@ bool ChunkManager::removeChunk(ChunkPos p_chunkPos)
 	bool success;
 	size_t removeIndex = findChunkIndex(p_chunkPos, success);
 	if (!success) return false;
-	auto eraseChunkIter = chunkList.begin() + removeIndex;
-	auto eraseIndexIter = indices.begin() + removeIndex;
-	chunkList.erase(eraseChunkIter);
-	indices.erase(eraseIndexIter);
+	auto eraseChunkIter = m_chunkList.begin() + removeIndex;
+	auto eraseIndexIter = m_indices.begin() + removeIndex;
+	m_chunkList.erase(eraseChunkIter);
+	m_indices.erase(eraseIndexIter);
 	return true;
 }
 
@@ -170,16 +170,16 @@ void ChunkManager::removeChunks()
 	//for (auto& w : chunkList) {
 	//	w->remove();
 	//}
-	chunkList.clear();
-	indices.clear();
+	m_chunkList.clear();
+	m_indices.clear();
 }
 // draws every chunk in the manager, innefficent
 void ChunkManager::draw(DrawSurface& p_target, DrawStates& p_drawStates) {
-	if (chunkList.size() == 0) return;
-	for (size_t i = 0; i < chunkList.size(); i++) {
-		if (chunkList[i]->isEmpty) continue;
-		if (!chunkList[i]->meshIsCurrent) chunkList[i]->generateVBO();
-		chunkList[i]->draw(p_target, p_drawStates);
+	if (m_chunkList.size() == 0) return;
+	for (size_t i = 0; i < m_chunkList.size(); i++) {
+		if (m_chunkList[i]->isEmpty) continue;
+		if (!m_chunkList[i]->meshIsCurrent) m_chunkList[i]->generateVBO();
+		m_chunkList[i]->draw(p_target, p_drawStates);
 	}
 }
 

@@ -14,10 +14,10 @@ ResourceLoader::~ResourceLoader()
 }
 bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 #ifdef LOADLOGGING_ENABLED
-	std::cout << "Loading image resource at " << p_filepath << " with ID " << (unsigned int)p_ID << std::endl;
+	std::cout << "Loading image resource at " << p_filepath << " with ID " << (uint32_t)p_ID << std::endl;
 #endif
 	if (textures.find(p_ID) != textures.end()) {
-		std::cout << "Texture with ID " << (unsigned int)p_ID << " already exists." << std::endl;
+		std::cout << "Texture with ID " << (uint32_t)p_ID << " already exists." << std::endl;
 		return true;
 	};
 	unsigned char* imageData = nullptr;

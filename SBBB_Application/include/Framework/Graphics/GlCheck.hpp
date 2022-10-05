@@ -23,7 +23,7 @@
 #endif
 
 
-inline void glCheckError(const std::filesystem::path& file, unsigned int line, const char* expression) {
+inline void glCheckError(const std::filesystem::path& file, uint32_t line, const char* expression) {
 	// Get the last error
 	GLenum errorCode = glGetError();
 

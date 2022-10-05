@@ -2,13 +2,13 @@
 #include <util/ext/glm/glm.hpp>
 #include <stdexcept>
 
-noise::module::Perlin WorldChunk::noiseGenerator;
+noise::module::Perlin WorldChunk::s_noiseGenerator;
 
 WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) : 
 	worldPos(p_chunkPos),
 	worldID(p_worldID),
 	invalid(false),
-	tiles(chunkSize, chunkSize, Tile())
+	m_tiles(chunkSize, chunkSize, Tile())
 {
 
 	setPosition(glm::vec3((float)p_chunkPos.x * chunkSize, (float)p_chunkPos.y * chunkSize, 0.f));
@@ -17,8 +17,8 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 
 	//fillRandom();
 	//generateVBO();
-	noiseGenerator.SetOctaveCount(10);
-	noiseGenerator.SetPersistence(0.54);
+	s_noiseGenerator.SetOctaveCount(10);
+	s_noiseGenerator.SetPersistence(0.54);
 }
 void WorldChunk::fillRandom() {
 	isEmpty = false;
@@ -26,10 +26,10 @@ void WorldChunk::fillRandom() {
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
 			if (rand() % 10 > 5) {
-				tiles(x, y) = Tile(glm::ivec2(x, y), 1);
+				m_tiles(x, y) = Tile(glm::ivec2(x, y), 1);
 			}
 			else {
-				tiles(x, y) = Tile(glm::ivec2(x, y), 2);
+				m_tiles(x, y) = Tile(glm::ivec2(x, y), 2);
 			}
 		}
 	}
@@ -51,36 +51,36 @@ void WorldChunk::worldGenerate() {
 			globalX = (float)(worldPos.x * chunkSize + x);
 			globalY = (float)(worldPos.y * chunkSize - y) - surfaceLevel;
 			// detail level for the surface noise
-			noiseGenerator.SetOctaveCount(7);
+			s_noiseGenerator.SetOctaveCount(7);
 			// surface level
-			height = (float)noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 40.0f;
+			height = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 40.0f;
 			// The dirt level
 			// first noise is a scaled down version of the surface line            second noise is to make a dither effect between the layers
-			height2 = (float)noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 20.0f - (float)(5.0f * noiseGenerator.GetValue(globalX / 1.2f, globalY / 1.2f, 2.0f));
+			height2 = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 20.0f - (float)(5.0f * s_noiseGenerator.GetValue(globalX / 1.2f, globalY / 1.2f, 2.0f));
 			float scale1 = 1 / 10.0f;
 			float scale2 = 1 / 1.0f;
-			noiseGenerator.SetOctaveCount(2);
-			caveLayer1 = (float)(noiseGenerator.GetValue((double)globalX * scale1, (double)globalY * scale1, 2.0) / 2.0);
-			noiseGenerator.SetOctaveCount(1);
-			caveLayer2 = (float)noiseGenerator.GetValue(((double)globalX * scale1 * 0.7) + caveLayer1 * scale2, ((double)globalY * scale1 * 1.0) + caveLayer1 * scale2, 40.0f);
+			s_noiseGenerator.SetOctaveCount(2);
+			caveLayer1 = (float)(s_noiseGenerator.GetValue((double)globalX * scale1, (double)globalY * scale1, 2.0) / 2.0);
+			s_noiseGenerator.SetOctaveCount(1);
+			caveLayer2 = (float)s_noiseGenerator.GetValue(((double)globalX * scale1 * 0.7) + caveLayer1 * scale2, ((double)globalY * scale1 * 1.0) + caveLayer1 * scale2, 40.0f);
 			//std::cout << utils::clamp(globalY + surfaceLevel, 0.0f, 10.0f) / 10.0f << std::endl;
 			if (caveLayer2 < 0.05f + (utils::clamp(globalY - height + 64.0f, 0.0f, 10.0f) / 10.0f) + utils::clamp(globalY + 300.0f, 0.0f, 300.0f) / 350.0f) {
 				if (globalY > height) {
-					tiles(x, y) = Tile(glm::ivec2(x, y), 0);
+					m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
 				}
 				else {
 					if (globalY < -40.0f + height2) {
-						tiles(x, y) = Tile(glm::ivec2(x, y), 1);
+						m_tiles(x, y) = Tile(glm::ivec2(x, y), 1);
 						isEmpty = false;
 					}
 					else {
-						tiles(x, y) = Tile(glm::ivec2(x, y), 2);
+						m_tiles(x, y) = Tile(glm::ivec2(x, y), 2);
 						isEmpty = false;
 					}
 				}
 			}
 			else {
-				tiles(x, y) = Tile(glm::ivec2(x, y), 0);
+				m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
 			}
 		}
 	}
@@ -93,8 +93,8 @@ void WorldChunk::generateVBO() {
 	tileMesh.reserve((size_t)chunkSize * chunkSize * sizeof(TileVert)); // reserve half a chunks worth of data idk
 	for (int y = 0; y < chunkSize; y++) {
 		for (int x = 0; x < chunkSize; x++) {
-			if (tiles(x, y).tileID != 0) {
-				unsigned int tID = tiles(x, y).tileID;
+			if (m_tiles(x, y).m_tileID != 0) {
+				uint32_t tID = m_tiles(x, y).m_tileID;
 
 
 				glm::uvec3 pos_tl = glm::uvec3(x, y, 0);
@@ -125,16 +125,16 @@ void WorldChunk::generateVBO() {
 	meshIsCurrent = true;
 }
 
-unsigned int WorldChunk::getVBOSize() {
+uint32_t WorldChunk::getVBOSize() {
 	return (uint16_t) tileMesh.getTotalVBOSize();
 }
 
 Tile* WorldChunk::getTiles() {
-	return tiles.getData().data();
+	return m_tiles.getData().data();
 }
 
-void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates, unsigned int p_tileID) {
-	tiles(p_chunkCoordinates.x, p_chunkCoordinates.y) = Tile(p_chunkCoordinates, p_tileID);
+void WorldChunk::setChunkTile(glm::ivec2 p_chunkCoordinates, uint32_t p_tileID) {
+	m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y) = Tile(p_chunkCoordinates, p_tileID);
 	return;
 }
 
@@ -146,7 +146,7 @@ void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
 	DrawStates newStates = DrawStates(p_drawStates);
 	
-	newStates.setTransform(p_drawStates.transform * transform);
+	newStates.setTransform(p_drawStates.m_transform * m_transform);
 
 	p_target.draw(tileMesh, GL_TRIANGLES, newStates);
 }

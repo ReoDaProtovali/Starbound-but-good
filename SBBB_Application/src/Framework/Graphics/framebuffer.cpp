@@ -2,10 +2,10 @@
 
 
 FrameBuffer::FrameBuffer() : m_dimensions(glm::uvec2(0, 0)), m_depthBuffer(GL_NONE) {
-	colorTextures.push_back(Texture());
+	m_colorTextures.push_back(Texture());
 }
 
-void FrameBuffer::setDimensions(unsigned int p_width, unsigned int p_height)
+void FrameBuffer::setDimensions(uint32_t p_width, uint32_t p_height)
 {
 	m_dimensions.x = p_width;
 	m_dimensions.y = p_height;
@@ -13,11 +13,11 @@ void FrameBuffer::setDimensions(unsigned int p_width, unsigned int p_height)
 	if (!m_initialized) {
 		init();
 	}
-	for (int i = 0; i < colorTextures.size(); i++) {
-		colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
+	for (int i = 0; i < m_colorTextures.size(); i++) {
+		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorTextures[i].glID, 0));
+		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID, 0));
 	}
 
 
@@ -40,11 +40,11 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 	if (!m_initialized) {
 		init();
 	}
-	for (int i = 0; i < colorTextures.size(); i++) {
-		colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
+	for (int i = 0; i < m_colorTextures.size(); i++) {
+		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorTextures[i].glID, 0));
+		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID, 0));
 	}
 
 
@@ -68,12 +68,12 @@ void FrameBuffer::init() {
 
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 
-	for (int i = 0; i < colorTextures.size(); i++) {
+	for (int i = 0; i < m_colorTextures.size(); i++) {
 		// Allocates texture
-		colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
+		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		// constant for now
-		colorTextures[i].setFiltering(GL_LINEAR);
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorTextures[i].glID, 0));
+		m_colorTextures[i].setFiltering(GL_LINEAR);
+		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID, 0));
 
 	}
 
@@ -97,6 +97,6 @@ void FrameBuffer::setColorAttachments(std::initializer_list<GLenum> p_attachment
 
 GLenum FrameBuffer::getColorTexID(size_t p_index)
 {
-	if (p_index > colorTextures.size() - 1) throw std::exception("Tried to get frame buffer color attachment outside of range.");
-	return colorTextures[p_index].glID;
+	if (p_index > m_colorTextures.size() - 1) throw std::exception("Tried to get frame buffer color attachment outside of range.");
+	return m_colorTextures[p_index].glID;
 }

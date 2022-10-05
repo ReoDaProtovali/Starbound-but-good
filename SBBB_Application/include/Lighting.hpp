@@ -24,15 +24,15 @@ private:
 	Lighting(uint16_t p_width, uint16_t p_height);
 
 
-	glm::vec2 framePos;
-	glm::vec2 frameDim;
+	glm::vec2 m_framePos;
+	glm::vec2 m_frameDim;
 
-	Mesh<GLfloat> overlayMesh;
-	DrawStates lightingStates;
-	std::shared_ptr<Shader> lightingShader;
-	Pixmap lightmap;
-	Texture lightmapTex;
+	Mesh<GLfloat> m_overlayMesh;
+	DrawStates m_lightingStates;
+	std::shared_ptr<Shader> m_lightingShader;
+	Pixmap m_lightmap;
+	Texture m_lightmapTex;
 	// Just so we don't have to reset it every frame
-	bool screenColorPointerSet = false;
+	bool m_screenColorPointerSet = false;
 };
 

@@ -41,10 +41,10 @@ public:
 	void displayNewFrame();
 
 
-	int width;
-	int height;
-	unsigned int screenWidth;
-	unsigned int screenHeight;
+	int windowWidth;
+	int windowHeight;
+	uint32_t screenWidth;
+	uint32_t screenHeight;
 
 	static bool OpenGLInitialized;
 
@@ -52,9 +52,9 @@ public:
 	InputHandler inpHandler;
 private:
 	/// SDL managed OpenGL context. Not used for much outside of the constructor.
-	SDL_GLContext glContext;
+	SDL_GLContext m_glContext;
 
 	/// A pointer to the SDL window, used internally in most cases.
-	SDL_Window* window;
+	SDL_Window* m_window;
 };
 #endif
