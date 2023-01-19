@@ -9,11 +9,8 @@ template<class T>
 class Array2D {
 public:
 	Array2D() { width = 0; height = 0; data = std::vector<T>(); }
-	Array2D(size_t p_width, size_t p_height, T p_defaultValue) {
-		data.reserve(p_width * p_height);
-		for (int i = 0; i < p_width * p_height; i++) {
-			data.push_back(p_defaultValue);
-		}
+	Array2D(uint32_t p_width, uint32_t p_height) {
+		data.resize(p_width * p_height, T());
 
 		width = p_width;
 		height = p_height;
@@ -32,6 +29,18 @@ public:
 	}
 	std::vector<T>& getData() {
 		return data;
+	}
+
+	void resize(uint32_t p_width, uint32_t p_height) {
+		data.resize(p_width * p_height, T());
+
+		width = p_width;
+		height = p_height;
+	}
+	void clear() {
+		data.clear();
+		data.shrink_to_fit();
+		hasData = false;
 	}
 	size_t width;
 	size_t height;

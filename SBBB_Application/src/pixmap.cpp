@@ -7,8 +7,15 @@ Pixmap::Pixmap()
 Pixmap::Pixmap(uint32_t p_width, uint32_t p_height) :
 	width(p_width),
 	height(p_height),
-	m_pixels(p_width, p_height, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
+	m_pixels(p_width, p_height)
 {
+}
+
+void Pixmap::resize(uint32_t p_width, uint32_t p_height)
+{
+	m_pixels.resize(p_width, p_height);
+	width = p_width;
+	height = p_height;
 }
 
 glm::vec4 Pixmap::getPixel(uint32_t p_x, uint32_t p_y)

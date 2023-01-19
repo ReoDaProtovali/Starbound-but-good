@@ -29,6 +29,7 @@ class GameWindow;
 class GameRenderer
 {
 public:
+	GameRenderer();
 	GameRenderer(const GameWindow& p_window);
 	~GameRenderer();
 
@@ -53,7 +54,7 @@ public:
 	int drawWorld(ChunkManager& p_world, DrawSurface& p_target);
 
 	/// Simply tells the lighting subclass to draw based on it's current values.
-	void drawLighting();
+	void drawLighting(DrawSurface& p_target);
 
 	// TEST ----------------------------------------------------------------------------
 	/// The camera is bound directly to the renderer for now.

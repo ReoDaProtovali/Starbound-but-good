@@ -18,7 +18,6 @@ Shader::Shader(const char* vs_filePath, const char* fs_filePath, std::vector<Uni
 Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath)
 {
 	program->ID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
-
 }
 Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms)
 {

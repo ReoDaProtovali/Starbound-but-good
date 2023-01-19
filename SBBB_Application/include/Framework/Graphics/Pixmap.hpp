@@ -21,6 +21,7 @@ public:
 	uint32_t width = 0;
 	uint32_t height = 0;
 
+	void resize(uint32_t p_width, uint32_t p_height);
 	/// Returns an RGBA vec4 based on a given x and y position.
 	/// Attempting to get a pixel outside of the image's dimensions returns an uninitialized vec4.
 	glm::vec4 getPixel(uint32_t p_x, uint32_t p_y);

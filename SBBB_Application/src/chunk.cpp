@@ -8,7 +8,7 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	worldPos(p_chunkPos),
 	worldID(p_worldID),
 	invalid(false),
-	m_tiles(chunkSize, chunkSize, Tile())
+	m_tiles(chunkSize, chunkSize)
 {
 
 	setPosition(glm::vec3((float)p_chunkPos.x * chunkSize, (float)p_chunkPos.y * chunkSize, 0.f));
@@ -97,9 +97,9 @@ void WorldChunk::generateVBO() {
 				uint32_t tID = m_tiles(x, y).m_tileID;
 
 
-				glm::uvec3 pos_tl = glm::uvec3(x, y, 0);
-				glm::uvec3 pos_tr = glm::uvec3(x + 1, y, 0);
-				glm::uvec3 pos_bl = glm::uvec3(x, y + 1, 0);
+				glm::uvec3 pos_tl = glm::uvec3(x    , y    , 0);
+				glm::uvec3 pos_tr = glm::uvec3(x + 1, y    , 0);
+				glm::uvec3 pos_bl = glm::uvec3(x    , y + 1, 0);
 				glm::uvec3 pos_br = glm::uvec3(x + 1, y + 1, 0);
 
 

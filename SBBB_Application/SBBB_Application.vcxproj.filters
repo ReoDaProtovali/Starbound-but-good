@@ -117,6 +117,12 @@
     <ClCompile Include="src\pixmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\TestFramework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -222,6 +228,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Framework\Graphics\GlIDs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TestFramework.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Application.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InitGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

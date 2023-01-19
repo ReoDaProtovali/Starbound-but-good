@@ -1,5 +1,13 @@
 #include "GameRenderer.hpp"
 
+GameRenderer::GameRenderer() :
+	windowWidth(0),
+	windowHeight(0),
+	screenWidth(0),
+	screenHeight(0)
+{
+}
+
 GameRenderer::GameRenderer(const GameWindow& p_window) :
 	windowWidth(p_window.windowWidth),
 	windowHeight(p_window.windowHeight),
@@ -22,7 +30,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	overviewCam->setDimensions(windowWidth, windowHeight);
 
 	loadTextures();
-	
+
 	testReoSprite.attachShader(gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
 	testReoSprite.attachTexture(testReoTexture);
@@ -44,7 +52,6 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	lighting.setDims(5, 5);
 
 	screenFBO.setDimensions(windowWidth, windowHeight); // Initializes
-
 }
 
 GameRenderer::~GameRenderer()
@@ -109,8 +116,10 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 }
 
 
-void GameRenderer::drawLighting() {
-	lighting.draw(screenFBO, screenFBO.getColorTexID(0));
+void GameRenderer::drawLighting(DrawSurface& p_target) {
+	// this is a bit weird
+	// basically drawing to the screen FBO using data in the screen FBO
+	lighting.draw(screenFBO, screenFBO);
 }
 
 void GameRenderer::testDraw()

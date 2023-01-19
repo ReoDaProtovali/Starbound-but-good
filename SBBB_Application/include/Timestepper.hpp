@@ -9,9 +9,10 @@
 struct Timestepper {
 	Timestepper(int p_gameUpdateFPS);
 	void processFrameStart();
+	void drain();
 	bool accumulatorFull();
 	void calculateAlpha();
-	void processFrameEnd();
+	
 
 	float accumulator;
 	int gameUpdateFPS;

@@ -8,13 +8,14 @@ void Timestepper::processFrameStart() {
 	fg.startStopwatch();
 	accumulator += fg.getSecondsElapsed();
 }
+void Timestepper::drain()
+{
+	accumulator -= 1.0f / gameUpdateFPS;
+}
 bool Timestepper::accumulatorFull() {
 	return accumulator >= 1.0f / gameUpdateFPS;
 }
 
 void Timestepper::calculateAlpha() {
 	alpha = accumulator * gameUpdateFPS; // did some quick maf, same thing as accumulator / (1 / gameUpdateFPS)
-}
-void Timestepper::processFrameEnd() {
-
 }

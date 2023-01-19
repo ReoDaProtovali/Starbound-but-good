@@ -57,7 +57,7 @@ namespace utils {
 		for (int i = 0; i < p_vec.size(); i++) {
 			std::cout << p_vec[i] << ", ";
 		}
-		std::cout << std::endl;
+		std::cout << "\n";
 	}
 	template <typename T>
 	T clamp(T v, T p_min, T p_max) {  // make sure whatever you're passing in has a > operator
@@ -72,6 +72,7 @@ namespace utils {
 		return false;
 	}
 }
+// A utility class that can provide fps readouts, and also just measure times.
 struct fpsGauge {
 	fpsGauge() { elapsed = 0; }
 	int start = SDL_GetTicks();

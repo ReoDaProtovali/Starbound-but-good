@@ -30,26 +30,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -184,6 +184,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\atlasbuilder.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />
@@ -203,11 +204,13 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\pixmap.cpp" />
     <ClCompile Include="src\resourceloader.cpp" />
     <ClCompile Include="src\spritesheet.cpp" />
+    <ClCompile Include="src\TestFramework.cpp" />
     <ClCompile Include="src\tile.cpp" />
     <ClCompile Include="src\timestepper.cpp" />
     <ClCompile Include="src\chunkmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Application.hpp" />
     <ClInclude Include="include\AtlasBuilder.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Chunk.hpp" />
@@ -230,10 +233,12 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Framework\Window\GameWindow.hpp" />
     <ClInclude Include="include\GameConstants.hpp" />
     <ClInclude Include="include\GameRenderer.hpp" />
+    <ClInclude Include="include\InitGL.h" />
     <ClInclude Include="include\Lighting.hpp" />
     <ClInclude Include="include\LightingSolver.hpp" />
     <ClInclude Include="include\ResourceLoader.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
+    <ClInclude Include="include\TestFramework.hpp" />
     <ClInclude Include="include\Tile.hpp" />
     <ClInclude Include="include\Timestepper.hpp" />
     <ClInclude Include="include\ChunkManager.hpp" />

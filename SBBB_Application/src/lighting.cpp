@@ -14,11 +14,22 @@ Lighting::Lighting() :
 	m_lightingShader(std::make_shared<Shader>("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl"))
 {
 
-	m_lightingShader->setTexUniform("screenTexture", 0);
-	m_lightingShader->setTexUniform("lightingTexture", 1);
+	m_lightingShader->setTexUniform("lightingTexture", 0);
+	m_lightingShader->setTexUniform("screenTexture", 1);
 
-	m_lightmapTex = Texture(1, 1, m_lightmap.getData());
-	m_lightmapTex.setFiltering(GL_LINEAR);
+	m_lightmap.resize(64, 36);
+	m_lightmap.fill(glm::vec4(1.f, 1.f, 1.f, 1.f));
+	m_lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	m_lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	m_lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+	
+	m_lightmapTex = std::make_shared<Texture>(Texture(m_lightmap.width, m_lightmap.height, m_lightmap.getData()));
+	m_lightmapTex->setFiltering(GL_LINEAR);
+
+	// There needs to be two textures set for lighting to draw properly, but we only have one for now
+	m_lightingStates.addTexture(m_lightmapTex);
+	m_lightingStates.attachShader(m_lightingShader);
 
 	m_overlayMesh.addFloatAttrib(3); // Position attrib
 	m_overlayMesh.addFloatAttrib(2); // Tex Coord attrib
@@ -58,7 +69,7 @@ Lighting::Lighting() :
 Lighting::~Lighting()
 {
 	// Remove the gl managed objects when we're done using them
-	m_lightmapTex.remove();
+	m_lightmapTex->remove();
 }
 
 void Lighting::setDims(uint16_t p_width, uint16_t p_height)
@@ -68,27 +79,16 @@ void Lighting::setDims(uint16_t p_width, uint16_t p_height)
 }
 
 void Lighting::updateLightmapTex() {
-	m_lightmapTex.subVec4Data(m_lightmap.getData());
+	m_lightmapTex->subVec4Data(m_lightmap.getData());
 }
 
-void Lighting::draw(DrawSurface& p_target, GLuint p_screenColorTex)
+void Lighting::draw(DrawSurface& p_target, FrameBuffer& p_screenFBO)
 {
-	//if (!screenColorPointerSet) {
-	//	lightingStates.setTexture(0, p_screenColorTex);
-	//	screenColorPointerSet = true;
-	//}
+	if (!m_screenTexSet) {
+		// Now that we know which FBO we are drawing to, we can set the texture.
+		m_lightingStates.addTexture(p_screenFBO.getColorTex(0));
+		m_screenTexSet = true;
+	}
 
-	//p_target.draw(overlayMesh, GL_TRIANGLES, lightingStates);
-
-	glCheck(glBindVertexArray(m_overlayMesh.VAO->ID)); // Bind the vertices of the quad screen overlay
-	glCheck(m_lightingShader->use()); // Use the lighting shader for the subsequent glDrawArrays call
-
-	glCheck(glActiveTexture(GL_TEXTURE0));
-	glCheck(glBindTexture(GL_TEXTURE_2D, p_screenColorTex)); // Screen color texture is bound to unit 0
-
-	glCheck(glActiveTexture(GL_TEXTURE1));
-	glCheck(glBindTexture(GL_TEXTURE_2D, m_lightmapTex.glID)); // Lightmap texture is bound to unit 1
-
-	glCheck(glDrawArrays(GL_TRIANGLES, 0, 6)); // 6 vertices in the quad overlay
-	
+	p_target.draw(m_overlayMesh, GL_TRIANGLES, m_lightingStates);
 }
