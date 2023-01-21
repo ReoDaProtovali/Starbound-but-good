@@ -143,6 +143,9 @@ void GameRenderer::testDraw()
 	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
 	cameraFrameSprite.draw(screenFBO, state);
 
+	state.attachTexture(cameraFrameTexture);
+	state.attachShader(gs.imageShader);
+
 	glEnable(GL_DEPTH_TEST);
 }
 

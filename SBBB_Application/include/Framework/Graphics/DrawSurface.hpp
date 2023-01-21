@@ -46,7 +46,13 @@ public:
 		// We'll assume that every shader uses a transform matrix, because that's pretty much a given.
 		shader->setMat4Uniform("transform", p_states.m_transform);
 
-		glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
+		if (p_mesh.IBOInitialized) {
+			glDrawElements(p_primitiveType, p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
+		}
+		else {
+			glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
+
+		}
 
 		// Causes a slight performace hitch?
 		//glBindVertexArray(0);

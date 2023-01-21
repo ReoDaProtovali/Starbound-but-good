@@ -66,6 +66,7 @@ public:
 	std::shared_ptr<Texture> testReoTexture;
 	Sprite cameraFrameSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
 	std::shared_ptr<Texture> cameraFrameTexture;
+
 	float testFrame = 0;
 	void testDraw();
 	void swapCameras();
@@ -73,7 +74,7 @@ public:
 	// ---------------------------------------------------------------------------------
 
 
-	Lighting& lighting = Lighting::Get();
+	Lighting lighting;
 	/// Used for rendering the screen to a separate texture, so the lighting texture can be overlaid.
 private:
 

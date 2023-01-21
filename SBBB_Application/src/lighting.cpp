@@ -2,12 +2,6 @@
 #include "GameConstants.hpp"
 #include "Framework/Graphics/GlCheck.hpp"
 
-Lighting& Lighting::Get()
-{
-	static Lighting instance;
-	return instance;
-}
-
 Lighting::Lighting() :
 	m_framePos(0.f, 0.f),
 	m_frameDim(0.f, 0.f),
@@ -47,24 +41,6 @@ Lighting::Lighting() :
 
 }
 
-//Lighting::Lighting(uint32_t p_width, uint32_t p_height) :
-//	lightmap(p_width, p_height), 
-//	framePos(0.f, 0.f),
-//	frameDim(0.f, 0.f)
-//{
-//
-//	// just for testing
-//	//lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-//	//lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-//	//lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-//
-//	// bind the uniforms to texture units 0 and 1
-//
-//
-//
-//
-//
-//}
 
 Lighting::~Lighting()
 {

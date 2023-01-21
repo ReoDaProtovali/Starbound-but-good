@@ -12,17 +12,15 @@
 class Lighting
 {
 public:
-	static Lighting& Get();
-	Lighting(const Lighting&) = delete;
+	Lighting();
+	~Lighting();
+
 
 	void setDims(uint16_t p_width, uint16_t p_height);
 	void updateLightmapTex();
 	void draw(DrawSurface& p_target, FrameBuffer& p_screenFBO);
 
 private:
-	Lighting();
-	~Lighting();
-	Lighting(uint16_t p_width, uint16_t p_height);
 
 	glm::vec2 m_framePos;
 	glm::vec2 m_frameDim;

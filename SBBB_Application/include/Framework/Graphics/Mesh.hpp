@@ -114,10 +114,14 @@ public:
 	};
 
 	void pushIndices(const std::initializer_list<GLuint>& p_attribs) {
-		m_indices.insert(m_verts.end(), p_attribs);
+		m_indices.insert(m_indices.end(), p_attribs);
 	}
 
 	size_t getTotalVBOSize() { return m_verts.size(); }
+	size_t getTotalIBOSize() { return m_indices.size(); }
+
+	GLuint* getIBOPointer() { return m_indices.data(); }
+
 
 	void genVBO() {
 		glBindVertexArray(VAO->ID);
@@ -167,6 +171,7 @@ public:
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO->ID));
 		glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_indices.size(), m_indices.data(), m_streamType));
 		glEnableVertexAttribArray(GL_NONE);
+		IBOInitialized = true;
 	}
 
 	void subVBOData(GLuint p_startIndex, GLuint p_endIndex, T* p_data) {
