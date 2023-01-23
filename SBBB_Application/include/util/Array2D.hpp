@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef ARRAY2D_H
-#define ARRAY2D_H
-
 #include <vector>
 
 template<class T>
@@ -14,6 +11,22 @@ public:
 
 		width = p_width;
 		height = p_height;
+	}
+	Array2D(const Array2D<T>& other) {
+		data = other.data;
+		width = other.width;
+		height = other.height;
+	}
+	Array2D(Array2D<T>&& other) noexcept {
+		data = std::move(other.data);
+		width = other.width;
+		height = other.height;
+	}
+	Array2D<T> operator=(const Array2D<T>& other) {
+		data = other.data;
+		width = other.width;
+		height = other.height;
+		return *this;
 	}
 	
 	T& operator()(int x, int y) {
@@ -40,13 +53,9 @@ public:
 	void clear() {
 		data.clear();
 		data.shrink_to_fit();
-		hasData = false;
 	}
 	size_t width;
 	size_t height;
 private:
 	std::vector<T> data;
-	bool hasData = false;
 };
-
-#endif

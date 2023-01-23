@@ -50,7 +50,7 @@ Lighting::~Lighting()
 
 void Lighting::setDims(uint16_t p_width, uint16_t p_height)
 {
-	m_lightmap = Pixmap(p_width, p_height);
+	m_lightmap.resize(p_width, p_height);
 	m_lightmap.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
@@ -58,7 +58,7 @@ void Lighting::updateLightmapTex() {
 	m_lightmapTex->subVec4Data(m_lightmap.getData());
 }
 
-void Lighting::draw(DrawSurface& p_target, FrameBuffer& p_screenFBO)
+void Lighting::draw(FrameBuffer& p_screenFBO)
 {
 	if (!m_screenTexSet) {
 		// Now that we know which FBO we are drawing to, we can set the texture.
@@ -66,5 +66,5 @@ void Lighting::draw(DrawSurface& p_target, FrameBuffer& p_screenFBO)
 		m_screenTexSet = true;
 	}
 
-	p_target.draw(m_overlayMesh, GL_TRIANGLES, m_lightingStates);
+	p_screenFBO.draw(m_overlayMesh, GL_TRIANGLES, m_lightingStates);
 }

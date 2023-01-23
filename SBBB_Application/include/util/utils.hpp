@@ -1,6 +1,5 @@
 #pragma once
-#ifndef UTILS_H
-#define UTILS_H
+
 
 #include <SDL.h>
 #include <string>
@@ -115,4 +114,3 @@ struct Timer {
 		std::cout << "The simple timer took " << duration.count() << "ms!" << std::endl;
 	}
 };
-#endif UTILS_H

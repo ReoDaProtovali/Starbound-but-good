@@ -23,18 +23,20 @@ public:
 	/** Constructor that initializes by compiling the shader, alongside a list of uniforms to set.
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
+	* @param p_uniforms - A vector containing uniform objects, defined just above within Shader.hpp. Used to allow single-line init.
 	*/
 	Shader(const char* vs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms);
 	/** Constructor that initializes by compiling the shader, geometry shader included.
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
+	* @param gs_filePath - The filepath to the GLSL geometry shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
 	* @param p_uniforms - A vector containing uniform objects, defined just above within Shader.hpp. Used to allow single-line init.
 	*/
 	Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms);
-	/** Constructor that initializes by compiling the shader, geometry shader and uniforms included.
+	/** Constructor that initializes by compiling the shader, geometry shader included.
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
+	* @param gs_filePath - The filepath to the GLSL geometry shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
-	* @param p_uniforms - A vector containing uniform objects, defined just above within Shader.hpp. Used to allow single-line init.
 	*/
 	Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath);
 	// Move constructor, to handle our pointer
@@ -47,7 +49,7 @@ public:
 	GLuint compileShaders(const char* vs_filePath, const char* fs_filePath);
 	/** Compiles and sets the Shader's program ID. Overload for incorporating geometry shader.
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
-	* @param vs_filePath - The filepath to the GLSL geometry shader. In standard directory notation, folders separated by "/"
+	* @param gs_filePath - The filepath to the GLSL geometry shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
 	* @returns The GLuint program ID given after compilation
 	*/

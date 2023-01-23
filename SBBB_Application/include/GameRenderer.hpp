@@ -41,7 +41,7 @@ public:
 	// Temporary until a better texture loader is devised.
 	void loadTextures();
 
-	/// Sets the class-defined screenFBO as the render target for subsequent gl draw calls.
+	/// Sets the class-defined m_screenFBO as the render target for subsequent gl draw calls.
 	void bindScreenFBOAsRenderTarget();
 
 	// temporary
@@ -54,7 +54,7 @@ public:
 	int drawWorld(ChunkManager& p_world, DrawSurface& p_target);
 
 	/// Simply tells the lighting subclass to draw based on it's current values.
-	void drawLighting(DrawSurface& p_target);
+	void drawLighting();
 
 	// TEST ----------------------------------------------------------------------------
 	/// The camera is bound directly to the renderer for now.
@@ -74,8 +74,8 @@ public:
 	// ---------------------------------------------------------------------------------
 
 
-	Lighting lighting;
-	/// Used for rendering the screen to a separate texture, so the lighting texture can be overlaid.
+	Lighting m_lighting;
+
 private:
 
 	GenericShaders& gs = GenericShaders::Get();
@@ -87,10 +87,10 @@ private:
 	std::shared_ptr<Texture> tileSheetTexture;
 
 	/// Uses packed chunk coordinates and block IDs
-	std::shared_ptr<Shader> tileShader;
-	FrameBuffer screenFBO;
+	std::shared_ptr<Shader> m_tileShader;
+	FrameBuffer m_screenFBO;
 
-	DrawStates worldDrawStates;
+	DrawStates m_worldDrawStates;
 
 };
 

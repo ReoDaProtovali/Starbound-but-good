@@ -15,11 +15,52 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	calculateTransform();
 	tileMesh.addUintAttrib(1); // xyzID, one uint
 
-	//fillRandom();
-	//generateVBO();
 	s_noiseGenerator.SetOctaveCount(10);
 	s_noiseGenerator.SetPersistence(0.54);
 }
+
+WorldChunk::WorldChunk(const WorldChunk& other) noexcept :
+	tileMesh(other.tileMesh),
+	m_tiles(other.m_tiles),
+	worldID(other.worldID),
+	worldPos(other.worldPos),
+	invalid(other.invalid),
+	meshIsCurrent(other.meshIsCurrent),
+	isEmpty(other.isEmpty)
+{
+	// Don't forget the base class
+	setPosition(glm::vec3((float)worldPos.x * chunkSize, (float)worldPos.y * chunkSize, 0.f));
+	calculateTransform();
+}
+
+WorldChunk& WorldChunk::operator=(const WorldChunk& other) 
+{
+	
+	tileMesh = other.tileMesh;
+	m_tiles = other.m_tiles;
+	worldID = other.worldID;
+	worldPos = other.worldPos;
+	setPosition(glm::vec3((float)worldPos.x * chunkSize, (float)worldPos.y * chunkSize, 0.f));
+	calculateTransform();
+	invalid = other.invalid;
+	meshIsCurrent = other.meshIsCurrent;
+	isEmpty = other.isEmpty;
+	return *this;
+};
+
+WorldChunk::WorldChunk(WorldChunk&& other) noexcept :
+	tileMesh(std::move(other.tileMesh)),
+	m_tiles(std::move(other.m_tiles))
+{
+	worldID = other.worldID;
+	worldPos = other.worldPos;
+	setPosition(glm::vec3((float)worldPos.x * chunkSize, (float)worldPos.y * chunkSize, 0.f));
+	calculateTransform();
+	invalid = other.invalid;
+	meshIsCurrent = other.meshIsCurrent;
+	isEmpty = other.isEmpty;
+}
+
 void WorldChunk::fillRandom() {
 	isEmpty = false;
 

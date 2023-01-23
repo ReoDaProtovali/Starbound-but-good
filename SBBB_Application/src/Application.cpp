@@ -76,7 +76,7 @@ void Application::render()
 	gw.bind();
 	gw.clear();
 	glDisable(GL_DEPTH_TEST);
-	renderer.drawLighting(gw);
+	renderer.drawLighting();
 }
 
 void Application::processConsoleStats()

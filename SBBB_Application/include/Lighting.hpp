@@ -18,7 +18,7 @@ public:
 
 	void setDims(uint16_t p_width, uint16_t p_height);
 	void updateLightmapTex();
-	void draw(DrawSurface& p_target, FrameBuffer& p_screenFBO);
+	void draw(FrameBuffer& p_screenFBO);
 
 private:
 

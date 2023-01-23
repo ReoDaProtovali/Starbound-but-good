@@ -60,6 +60,25 @@ public:
 		genIBO();
 	}
 
+	Mesh<T>& operator=(const Mesh<T>& p_other) {
+		m_verts = p_other.m_verts;
+		m_indices = p_other.m_indices;
+		m_attribList = p_other.m_attribList;
+		m_totalVertSize = p_other.m_totalVertSize;
+		m_streamType = p_other.m_streamType;
+		// We can't copy these, so we have to create new opengl buffers. Copying is discouraged.
+		LOG("Copied mesh! VAO: " << p_other.VAO->ID);
+		VBO = std::make_unique<glBuffer>();
+		VAO = std::make_unique<glVertexArray>();
+		IBO = std::make_unique<glBuffer>();
+		glGenVertexArrays(1, &VAO->ID);
+		GLGEN_LOG("Generated Vertex Array " << VAO->ID);
+
+		genVBO();
+		genIBO();
+		return *this;
+	}
+
 	// Move constructor for rvalues
 	Mesh(Mesh&& p_other) noexcept :
 		m_verts(p_other.m_verts),

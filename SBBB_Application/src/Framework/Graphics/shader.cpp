@@ -37,7 +37,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 	LOAD_LOG("Compiling shaders: Vertex - " << vs_filePath << " Fragment - " << fs_filePath);
 
 	std::string vertexShader = utils::readFile(vs_filePath);
-	int vsLength = (int)vertexShader.size();
+	GLint vsLength = (GLint)vertexShader.size();
 	const char* vertexShader_cstr = vertexShader.c_str();
 	glCheck(glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength));
 	glCheck(glCompileShader(vs));
@@ -65,7 +65,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 	}
 
 	std::string fragmentShader = utils::readFile(fs_filePath);
-	int fsLength = (int)fragmentShader.length();
+	GLint fsLength = (GLint)fragmentShader.length();
 	const char* fragmentShader_cstr = fragmentShader.c_str();
 	glCheck(glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength));
 	glCheck(glCompileShader(fs));
@@ -119,7 +119,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 	LOAD_LOG("Compiling shaders: Vertex - " << vs_filePath << " Geometry - " << gs_filePath << " Fragment - " << fs_filePath);
 
 	std::string vertexShader = utils::readFile(vs_filePath);
-	int vsLength = (int)vertexShader.size();
+	GLint vsLength = (GLint)vertexShader.size();
 	const char* vertexShader_cstr = vertexShader.c_str();
 	glShaderSource(vs, 1, (const GLchar**)&vertexShader_cstr, &vsLength);
 	glCompileShader(vs);
@@ -147,7 +147,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 	}
 
 	std::string geometryShader = utils::readFile(gs_filePath);
-	int gsLength = (int)geometryShader.size();
+	GLint gsLength = (GLint)geometryShader.size();
 	const char* geometryShader_cstr = geometryShader.c_str();
 	glShaderSource(gs, 1, (const GLchar**)&geometryShader_cstr, &gsLength);
 	glCompileShader(gs);
@@ -174,7 +174,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 	}
 
 	std::string fragmentShader = utils::readFile(fs_filePath);
-	int fsLength = (int)fragmentShader.length();
+	GLint fsLength = (GLint)fragmentShader.length();
 	const char* fragmentShader_cstr = fragmentShader.c_str();
 	glShaderSource(fs, 1, (const GLchar**)&fragmentShader_cstr, &fsLength);
 	glCompileShader(fs);

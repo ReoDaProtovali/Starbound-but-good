@@ -40,18 +40,18 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
 
 	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
-	tileShader = std::make_shared<Shader>("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl");
-	tileShader->setTexUniform("tileSheet", 0);
-	worldDrawStates.attachShader(tileShader);
+	m_tileShader = std::make_shared<Shader>("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl");
+	m_tileShader->setTexUniform("tileSheet", 0);
+	m_worldDrawStates.attachShader(m_tileShader);
 
-	//screenFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
+	//m_screenFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
 
 
 	LOAD_LOG("Creating lighting subsystem...");
 
-	lighting.setDims(5, 5);
+	m_lighting.setDims(5, 5);
 
-	screenFBO.setDimensions(windowWidth, windowHeight); // Initializes
+	m_screenFBO.setDimensions(windowWidth, windowHeight); // Initializes
 }
 
 GameRenderer::~GameRenderer()
@@ -68,29 +68,29 @@ void GameRenderer::loadTextures() {
 	res.load("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
 
 	tileSheetTexture = res.getTexture(TextureID::TILESHEET_TEXTURE);
-	worldDrawStates.attachTexture(tileSheetTexture);
+	m_worldDrawStates.attachTexture(tileSheetTexture);
 
 }
 // --------------------------------------------------------------------------
 
 void GameRenderer::bindScreenFBOAsRenderTarget()
 {
-	screenFBO.bind();
+	m_screenFBO.bind();
 }
 
 void GameRenderer::setClearColor(glm::vec4 p_col)
 {
-	screenFBO.setClearColor(p_col);
+	m_screenFBO.setClearColor(p_col);
 }
 
 void GameRenderer::clearScreen()
 {
-	screenFBO.clear();
+	m_screenFBO.clear();
 }
 
 void GameRenderer::rescale()
 {
-	screenFBO.setDimensions(windowWidth, windowHeight);
+	m_screenFBO.setDimensions(windowWidth, windowHeight);
 	cam->setDimensions(windowWidth, windowHeight);
 	cam->updateFrame();
 	overviewCam->setDimensions(windowWidth, windowHeight);
@@ -101,14 +101,26 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 {
 	int drawnChunkCount = 0;
 	bool finished = false;
+	static float rot = 0.0;
+	rot += 0.01;
 	while (!finished) {
-		std::weak_ptr<WorldChunk> weakChunk = p_world.fetchFromFrame(cam->getFrame(), finished);
-		if (auto drawChunk = weakChunk.lock()) {
-			if (!(drawChunk->invalid || drawChunk->isEmpty)) {
+		auto opt = p_world.fetchFromFrame(cam->getFrame(), finished);
+
+		if (opt.has_value()) {
+
+			WorldChunk* chunk = opt.value();
+
+			if (!(chunk->invalid || chunk->isEmpty)) {
+				if (!chunk->meshIsCurrent) chunk->generateVBO();
+
+				chunk->setRotation(rot + (float)chunk->worldPos.x + (float)chunk->worldPos.y * 2.f);
+				chunk->setOrigin(Rect(0.0f, 0.0f, 32.0f, -32.0), OriginLoc::CENTER);
+
+				chunk->calculateTransform();
+				m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
+
+				chunk->draw(m_screenFBO, m_worldDrawStates);
 				drawnChunkCount++;
-				if (!drawChunk->meshIsCurrent) drawChunk->generateVBO();
-				worldDrawStates.setTransform(currentCamera.lock()->getTransform());
-				drawChunk->draw(screenFBO, worldDrawStates);
 			}
 		}
 	}
@@ -116,10 +128,8 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 }
 
 
-void GameRenderer::drawLighting(DrawSurface& p_target) {
-	// this is a bit weird
-	// basically drawing to the screen FBO using data in the screen FBO
-	lighting.draw(screenFBO, screenFBO);
+void GameRenderer::drawLighting() {
+	m_lighting.draw(m_screenFBO);
 }
 
 void GameRenderer::testDraw()
@@ -136,12 +146,12 @@ void GameRenderer::testDraw()
 
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);
 	testReoSprite.setRotation(testFrame / 50.f);
-	testReoSprite.draw(screenFBO, state);
+	testReoSprite.draw(m_screenFBO, state);
 
 	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
 	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
 	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	cameraFrameSprite.draw(screenFBO, state);
+	cameraFrameSprite.draw(m_screenFBO, state);
 
 	state.attachTexture(cameraFrameTexture);
 	state.attachShader(gs.imageShader);

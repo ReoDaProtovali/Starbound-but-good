@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef CHUNK_H
-#define CHUNK_H
-
 #include "util/utils.hpp"
 #include "GameConstants.hpp"
 #include "Framework/Graphics/Mesh.hpp"
@@ -82,6 +79,12 @@ struct WorldChunk : public TransformObject
 
 	WorldChunk(ChunkPos p_chunkPos, int p_worldID);
 
+	WorldChunk(const WorldChunk& other) noexcept;
+
+	WorldChunk& operator=(const WorldChunk& other);
+
+	WorldChunk(WorldChunk&& other) noexcept;
+
 	void fillRandom();
 	void worldGenerate();
 	void setChunkTile(glm::ivec2 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
@@ -110,5 +113,3 @@ private:
 	static noise::module::Perlin s_noiseGenerator;
 
 };
-
-#endif
