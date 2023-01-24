@@ -100,43 +100,39 @@ void Application::processConsoleStats()
 void Application::pollEvents()
 {
 	static SDL_Event event;
-	
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_QUIT) { // disables the game loop if you hit the window's x button
-			gameActive = false;
-		}
-		else if (event.type == SDL_KEYDOWN) {
-			gw.inpHandler.processKeyDown(event.key.keysym.sym);
-		}
-		else if (event.type == SDL_WINDOWEVENT) {
-			if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-				SDL_Log("Window %d resized to %dx%d",
-					event.window.windowID, event.window.data1,
-					event.window.data2);
 
-				int w = event.window.data1;
-				int h = event.window.data2;
-				gw.windowWidth = w;
-				gw.windowHeight = h;
-				gw.setViewport(0, 0, w, h);
-				renderer.windowWidth = w;
-				renderer.windowHeight = h;
-				renderer.rescale();
-			}
-		}
-		else if (event.type == SDL_KEYUP) {
-			gw.inpHandler.processKeyUp(event.key.keysym.sym);
-			if (event.key.keysym.sym == SDLK_ESCAPE)
-				gameActive = false;
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+		case SDL_WINDOWEVENT:
+			if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;
+			printf("Window %d resized to %dx%d\n", event.window.windowID, event.window.data1,event.window.data2);
+			resizeWindow(event.window.data1, event.window.data2);
+			break;
+		case SDL_QUIT:
+			gameActive = false;
+			break;
+		case SDL_KEYDOWN:
+			inp.processKeyDown(event.key.keysym.sym);
+			break;
+		case SDL_KEYUP:
+			inp.processKeyUp(event.key.keysym.sym);
+			if (event.key.keysym.sym == SDLK_ESCAPE) gameActive = false;
 			break;
 		}
 	}
 }
 
+void Application::resizeWindow(uint16_t p_w, uint16_t p_h)
+{
+	gw.windowWidth = p_w;
+	gw.windowHeight = p_h;
+	gw.setViewport(0, 0, p_w, p_h);
+	renderer.setViewport(p_w, p_h);
+}
+
 void Application::handleInput()
 {
 	Camera& cam = *renderer.cam;
-	InputHandler& inp = gw.inpHandler;
 
 	float camSpeed = 0.05f;
 	if (inp.testKey(SDLK_w)) {

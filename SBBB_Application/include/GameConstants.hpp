@@ -4,7 +4,7 @@
 #include "Framework/FrameworkConstants.hpp"
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 120
-#define DISABLE_RUNTIME_CONSOLE false
+#define DISABLE_RUNTIME_CONSOLE true
 
 // do NOT increase this. it does NOT like to be changed easily
 constexpr auto CHUNKSIZE = 32;

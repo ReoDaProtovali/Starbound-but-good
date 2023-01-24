@@ -21,6 +21,8 @@ class Application {
 
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
 
+	InputHandler inp;
+
 	ChunkManager world;
 
 	Timestepper ts = Timestepper(GAME_UPDATE_SPEED);
@@ -37,6 +39,7 @@ class Application {
 	void update();
 	void pollEvents();
 	void handleInput();
+	void resizeWindow(uint16_t p_w, uint16_t p_h);
 	void processConsoleStats();
 
 public:

@@ -88,8 +88,10 @@ void GameRenderer::clearScreen()
 	m_screenFBO.clear();
 }
 
-void GameRenderer::rescale()
+void GameRenderer::setViewport(uint16_t p_w, uint16_t p_h)
 {
+	windowWidth = p_w;
+	windowHeight = p_h;
 	m_screenFBO.setDimensions(windowWidth, windowHeight);
 	cam->setDimensions(windowWidth, windowHeight);
 	cam->updateFrame();
@@ -101,8 +103,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 {
 	int drawnChunkCount = 0;
 	bool finished = false;
-	static float rot = 0.0;
-	rot += 0.01;
+
 	while (!finished) {
 		auto opt = p_world.fetchFromFrame(cam->getFrame(), finished);
 
@@ -113,10 +114,6 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 			if (!(chunk->invalid || chunk->isEmpty)) {
 				if (!chunk->meshIsCurrent) chunk->generateVBO();
 
-				chunk->setRotation(rot + (float)chunk->worldPos.x + (float)chunk->worldPos.y * 2.f);
-				chunk->setOrigin(Rect(0.0f, 0.0f, 32.0f, -32.0), OriginLoc::CENTER);
-
-				chunk->calculateTransform();
 				m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
 
 				chunk->draw(m_screenFBO, m_worldDrawStates);

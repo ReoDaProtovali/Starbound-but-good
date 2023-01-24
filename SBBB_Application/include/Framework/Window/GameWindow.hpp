@@ -48,8 +48,6 @@ public:
 
 	static bool OpenGLInitialized;
 
-	/// The input handler for the game window. 
-	InputHandler inpHandler;
 private:
 	/// SDL managed OpenGL context. Not used for much outside of the constructor.
 	SDL_GLContext m_glContext;

@@ -49,7 +49,7 @@ public:
 
 	void clearScreen();
 	/// Handles what to do when the window changes size, relies on the values of windowWidth and windowHeight being up to date.
-	void rescale();
+	void setViewport(uint16_t p_w, uint16_t p_h);
 
 	int drawWorld(ChunkManager& p_world, DrawSurface& p_target);
 
