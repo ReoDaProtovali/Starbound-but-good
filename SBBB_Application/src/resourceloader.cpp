@@ -7,12 +7,12 @@
 
 ResourceLoader::~ResourceLoader()
 {
-	std::map<TextureID, std::shared_ptr<Texture>>::iterator it;
+	std::map<TextureID, Texture>::iterator it;
 	for (it = textures.begin(); it != textures.end(); it++) {
-		it->second->remove();
+		it->second.remove();
 	}
 }
-bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
+bool ResourceLoader::loadTexID(const char* p_filepath, TextureID p_ID) {
 #ifdef LOADLOGGING_ENABLED
 	std::cout << "Loading image resource at " << p_filepath << " with ID " << (uint32_t)p_ID << std::endl;
 #endif
@@ -33,26 +33,26 @@ bool ResourceLoader::load(const char* p_filepath, TextureID p_ID) {
 	else {
 		Texture loadedTexture = Texture(p_ID);
 		loadedTexture.fromByteData(width, height, imageData);
-		textures.insert(std::make_pair(p_ID, std::make_shared<Texture>(loadedTexture)));
+		textures.insert(std::make_pair(p_ID, loadedTexture));
 
 		delete imageData;
 	}
 	return true;
 }
 
-std::shared_ptr<Texture> ResourceLoader::getTexture(TextureID p_ID, bool& p_success) {
+Texture* ResourceLoader::getTexture(TextureID p_ID, bool& p_success) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {
 		p_success = true;
-		return it->second;
+		return &it->second;
 	}
 	p_success = false;
-	return std::make_shared<Texture>(Texture());
+	return nullptr;
 }
-std::shared_ptr<Texture> ResourceLoader::getTexture(TextureID p_ID) {
+Texture* ResourceLoader::getTexture(TextureID p_ID) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {
-		return it->second;
+		return &it->second;
 	}
 	throw std::invalid_argument("Failed to get image: ID Not found.");
 }

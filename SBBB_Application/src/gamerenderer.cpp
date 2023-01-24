@@ -63,9 +63,9 @@ GameRenderer::~GameRenderer()
 void GameRenderer::loadTextures() {
 	LOAD_LOG("Creating Resource loader...");
 	res = ResourceLoader();
-	res.load("./res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE);
-	res.load("./res/roetest.png", TextureID::REO_TEST);
-	res.load("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
+	res.loadTexID("./res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE);
+	res.loadTexID("./res/roetest.png", TextureID::REO_TEST);
+	res.loadTexID("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
 
 	tileSheetTexture = res.getTexture(TextureID::TILESHEET_TEXTURE);
 	m_worldDrawStates.attachTexture(tileSheetTexture);

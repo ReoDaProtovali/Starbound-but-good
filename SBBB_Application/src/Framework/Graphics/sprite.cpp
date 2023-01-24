@@ -41,7 +41,7 @@ void Sprite::attachShader(std::shared_ptr<Shader> p_shader)
 	m_attachedShader = p_shader;
 }
 
-void Sprite::attachTexture(std::shared_ptr<Texture> p_texture)
+void Sprite::attachTexture(Texture* p_texture)
 {
 	m_attachedTexture = p_texture;
 }

@@ -16,19 +16,15 @@ public:
 	{};
 
 	~DrawStates() {
-		for (int i = 0; i < m_texturePtrs.size(); i++) {
-			if (m_texturePtrs[i].expired()) continue;
-			m_texturePtrs[i].reset();
-		}
 	}
 
 	DrawStates(glm::mat4& p_transform);
-	DrawStates(std::weak_ptr<Texture> p_texture);
-	DrawStates(std::vector<std::weak_ptr<Texture>>& p_textures);
+	DrawStates(Texture* p_texture);
+	DrawStates(std::vector<Texture*>& p_textures);
 	DrawStates(std::weak_ptr<Shader> p_shader);
 	DrawStates(BlendMode blendMode);
-	DrawStates(glm::mat4& p_transform, std::weak_ptr<Texture> p_texture, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode = BlendMode());
-	DrawStates(glm::mat4& p_transform, std::initializer_list<std::weak_ptr<Texture>> p_textures, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode = BlendMode());
+	DrawStates(glm::mat4& p_transform, Texture* p_texture, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode = BlendMode());
+	DrawStates(glm::mat4& p_transform, std::initializer_list<Texture*> p_textures, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode = BlendMode());
 
 	void setTransform(glm::mat4 p_transform);
 	// Sets the internal shader to use.
@@ -38,16 +34,16 @@ public:
 
 	// Just a function for convenience, so you don't have to worry about indexing the texure vector if you're only utilizing one texture as in most cases.
 	// Reference overload
-	void attachTexture(std::weak_ptr<Texture> p_texture);
+	void attachTexture(Texture* p_texture);
 
-	void addTexture(std::weak_ptr<Texture> p_texture);
+	void addTexture(Texture* p_texture);
 
-	void setTexture(size_t p_index, std::weak_ptr<Texture> p_texture);
+	void setTexture(size_t p_index, Texture* p_texture);
 
 
 	bool checkIfInit() { 
 		for (auto texturePtr : m_texturePtrs) {
-			if (texturePtr.expired()) {
+			if (texturePtr == nullptr) {
 				LOG("Texture failed initialization check.");
 				return false;
 			}
@@ -65,7 +61,7 @@ public:
 	glm::mat4 m_transform;
 
 	// Supports multiple textures for one shader. Should never be added to or removed from after initialization.
-	std::vector<std::weak_ptr<Texture>> m_texturePtrs;
+	std::vector<Texture*> m_texturePtrs;
 
 	std::weak_ptr<Shader> m_shaderPtr;
 

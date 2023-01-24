@@ -31,7 +31,7 @@ private:
 	std::shared_ptr<Shader> m_lightingShader;
 	Pixmap m_lightmap;
 
-	std::shared_ptr<Texture> m_lightmapTex;
+	std::unique_ptr<Texture> m_lightmapTex;
 	// Just so we don't have to reset it every frame
 	bool m_screenTexSet = false;
 };

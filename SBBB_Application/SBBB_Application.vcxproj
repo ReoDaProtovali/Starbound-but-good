@@ -184,7 +184,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\atlasbuilder.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />
@@ -204,7 +204,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\pixmap.cpp" />
     <ClCompile Include="src\resourceloader.cpp" />
     <ClCompile Include="src\spritesheet.cpp" />
-    <ClCompile Include="src\TestFramework.cpp" />
+    <ClCompile Include="src\testframework.cpp" />
     <ClCompile Include="src\tile.cpp" />
     <ClCompile Include="src\timestepper.cpp" />
     <ClCompile Include="src\chunkmanager.cpp" />

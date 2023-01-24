@@ -117,10 +117,10 @@
     <ClCompile Include="src\pixmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TestFramework.cpp">
+    <ClCompile Include="src\testframework.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Application.cpp">
+    <ClCompile Include="src\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -18,11 +18,11 @@ Lighting::Lighting() :
 	m_lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	
-	m_lightmapTex = std::make_shared<Texture>(Texture(m_lightmap.width, m_lightmap.height, m_lightmap.getData()));
+	m_lightmapTex = std::make_unique<Texture>(m_lightmap.width, m_lightmap.height, m_lightmap.getData());
 	m_lightmapTex->setFiltering(GL_LINEAR);
 
 	// There needs to be two textures set for lighting to draw properly, but we only have one for now
-	m_lightingStates.addTexture(m_lightmapTex);
+	m_lightingStates.addTexture(m_lightmapTex.get());
 	m_lightingStates.attachShader(m_lightingShader);
 
 	m_overlayMesh.addFloatAttrib(3); // Position attrib

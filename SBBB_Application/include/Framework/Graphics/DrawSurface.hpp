@@ -31,7 +31,7 @@ public:
 		// Bind all textures to the correct texture units
 		for (size_t i = 0; i < p_states.m_texturePtrs.size(); i++) {
 			glCheck(glActiveTexture(GL_TEXTURE0 + i));
-			glCheck(glBindTexture(p_states.m_texturePtrs[i].lock()->type, p_states.m_texturePtrs[i].lock()->glID));
+			glCheck(glBindTexture(p_states.m_texturePtrs[i]->type, p_states.m_texturePtrs[i]->glID));
 		}
 
 		if (p_states.m_blendMode.disabled) {
@@ -68,7 +68,6 @@ public:
 		m_viewport = glm::ivec4(p_x1, p_y1, p_x2, p_y2);
 	};
 	void useViewport() {
-		//std::cout << viewport.z << " " << viewport.w << std::endl;
 		glViewport(m_viewport.x, m_viewport.y, m_viewport.z, m_viewport.w);
 	};
 	void setClearColor(glm::vec4 p_col) {
