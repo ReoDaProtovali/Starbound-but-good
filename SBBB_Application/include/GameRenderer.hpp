@@ -63,9 +63,11 @@ public:
 	std::shared_ptr<Camera> overviewCam;
 
 	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
-	Texture* testReoTexture;
+	Texture* testReoTexture = nullptr;
 	Sprite cameraFrameSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	Texture* cameraFrameTexture;
+	Texture* cameraFrameTexture = nullptr;
+
+	Sprite testTileSheet{ glm::vec3(-16.0f, 325.0f, 2.0f), Rect(0.f, 0.f, 0.f, 0.f) };
 
 	float testFrame = 0;
 	void testDraw();
@@ -84,7 +86,7 @@ private:
 
 	ResourceLoader res;
 
-	Texture* tileSheetTexture;
+	Texture* tileSheetTexture = nullptr;
 
 	/// Uses packed chunk coordinates and block IDs
 	std::shared_ptr<Shader> m_tileShader;

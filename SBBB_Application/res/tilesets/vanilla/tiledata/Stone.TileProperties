@@ -1,14 +1,14 @@
 {
 	"id": "stone",
 	"name": "Stone",
-	"genericDescription": "A portion of decayed biomass, rich in nutrients for various forms of plant life.",
-	"maxHP": 30,
-	"categories": ["hard", "natural"],
+	"genericDescription": "Common, solid minerals.",
+	"categories": [ "hard", "stonelike", "natural" ],
 	"rarity": "ubiquitous",
-	"imageFile": "Stone.png",
+	"imageFile": "stone.png",
+	"maxHP": 80,
 	"isAnimated": false,
 	"variationCount": 4,
 	"lightAbsorption": 0.8,
 	"emissive": false,
-	"lightingColor": [0, 0, 0]
+	"lightingColor": [ 0, 0, 0 ]
 }

@@ -269,8 +269,19 @@
     <None Include="SDL2.dll" />
     <None Include="zlib1.dll" />
     <None Include=".gitignore" />
+    <None Include="res\tilesets\vanilla\tiledata\Dirt.TileProperties" />
+    <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties" />
+    <None Include="res\tilesets\vanilla\tileset.json" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\libnoise.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\tilesets\vanilla\images\dirt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\tilesets\vanilla\images\stone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

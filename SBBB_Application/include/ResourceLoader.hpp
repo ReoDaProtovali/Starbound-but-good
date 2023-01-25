@@ -2,16 +2,38 @@
 #include <vector>
 #include <iostream>
 #include <stdexcept>
-#include "Framework/Graphics/Texture.hpp"
+#include <filesystem>
 #include <map>
+#include <unordered_map>
 #include <memory>
+#include <string>
+#include <cctype>
+#include <util/ext/json.hpp>
+#include "Framework/Graphics/Pixmap.hpp"
 
-/// Handles loading PNG images from files and stores them internally as textures. Allows for retrieval of them later via TextureID.
+#include "Framework/Graphics/Texture.hpp"
+
+struct TileInfo {
+	std::string id;
+	std::string name;
+	std::string genericDescription;
+	std::vector<std::string> categories;
+	std::string rarity;
+	std::string imageFile;
+	size_t imageIndex;
+	bool isAnimated;
+	bool emissive;
+	std::vector<float> lightingColor;
+	uint16_t maxHP;
+	uint16_t variationCount;
+	float lightAbsorption;
+};
+
 class ResourceLoader
 {
 public:
 	/// Default constructor. Does nothing.
-	ResourceLoader() {};
+	ResourceLoader();
 	// Deletes all managed textures
 	~ResourceLoader();
 	/** Loads a texture into the texture pool.
@@ -27,11 +49,24 @@ public:
 	/** Get a texture from the resource loader's texture pool.
 	* @param p_ID - The TextureID associated with the Texture you want to access.
 	* @param success - a reference to a boolean, sets it to false if the given ID has no associated texture, otherwise sets it to true.
+	* @returns A pointer to the texture, with relevant information. Not owned by the caller.
 	*/
 	Texture* getTexture(TextureID p_ID, bool& p_success); // friendlier, success bool is passed by reference
+
+	Texture* getTileSheetTexture();
+
+	void loadAllTileSets();
+
+	void loadTileSet(std::filesystem::path p_tileSetPath);
+
+	void loadDirTiles(std::string p_namespace, std::filesystem::path p_tileInfoPath, std::filesystem::path p_imagePath, std::filesystem::path p_parentPath);
 
 private:
 	/// A standard library map that stores pairs of textures and their respective IDs.
 	std::map<TextureID, Texture> textures;
+	std::unordered_map<std::string, size_t> tileInfoIndexDict;
+	std::vector<TileInfo> tileInfoCache;
+	Pixmap tileSheetPixmap;
+	Texture tileSheetTexture;
 };
 

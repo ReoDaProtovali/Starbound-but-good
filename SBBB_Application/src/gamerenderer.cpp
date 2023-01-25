@@ -40,9 +40,17 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
 
 	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
-	m_tileShader = std::make_shared<Shader>("./src/Shaders/TileVS.glsl", "./src/Shaders/TileFS.glsl");
+	m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl");
 	m_tileShader->setTexUniform("tileSheet", 0);
 	m_worldDrawStates.attachShader(m_tileShader);
+
+	//res.loadTileSet(std::filesystem::path(".\\res\\tilesets\\vanilla"));
+	res.loadAllTileSets();
+
+	Texture& t = *res.getTileSheetTexture();
+	testTileSheet.attachShader(gs.imageShader);
+	testTileSheet.setBounds(Rect(0.f, 0.f, (float)t.width, (float)t.height));
+	testTileSheet.attachTexture(res.getTileSheetTexture());
 
 	//m_screenFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
 
@@ -69,7 +77,6 @@ void GameRenderer::loadTextures() {
 
 	tileSheetTexture = res.getTexture(TextureID::TILESHEET_TEXTURE);
 	m_worldDrawStates.attachTexture(tileSheetTexture);
-
 }
 // --------------------------------------------------------------------------
 
@@ -150,8 +157,8 @@ void GameRenderer::testDraw()
 	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
 	cameraFrameSprite.draw(m_screenFBO, state);
 
-	state.attachTexture(cameraFrameTexture);
-	state.attachShader(gs.imageShader);
+	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
+	testTileSheet.draw(m_screenFBO, state);
 
 	glEnable(GL_DEPTH_TEST);
 }

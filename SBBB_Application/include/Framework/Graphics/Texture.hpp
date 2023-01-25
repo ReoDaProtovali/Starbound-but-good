@@ -42,8 +42,9 @@ public:
 	TextureID texID = TextureID::NO_TEXTURE;
 	GLenum type = GL_TEXTURE_2D;
 
+	bool initialized = false;
+
 private:
-	bool m_initialized = false;
 
 	GLint m_filteringMode = GL_NEAREST;
 	GLint m_wrappingMode = GL_REPEAT;

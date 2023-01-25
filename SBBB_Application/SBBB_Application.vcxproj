@@ -258,6 +258,9 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="glew32.dll" />
     <None Include="libnoise.dll" />
     <None Include="README.md" />
+    <None Include="res\tilesets\vanilla\tiledata\Dirt.TileProperties" />
+    <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties" />
+    <None Include="res\tilesets\vanilla\tileset.json" />
     <None Include="SDL2.dll" />
     <None Include="src\Shaders\ImageFS.glsl" />
     <None Include="src\Shaders\ImageVS.glsl" />
@@ -270,7 +273,16 @@ Xcopy /E /I res $(OutDir)res</Command>
   <ItemGroup>
     <Library Include="lib\libnoise.lib" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\tilesets\vanilla\images\dirt.png" />
+    <Image Include="res\tilesets\vanilla\images\stone.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties res_4tilesets_4vanilla_4tiledata_4Dirt_1TileProperties__JsonSchema="json" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

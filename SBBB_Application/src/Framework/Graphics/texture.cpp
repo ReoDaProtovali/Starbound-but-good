@@ -31,7 +31,7 @@ Texture::Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data, GLenum 
 
 void Texture::setFiltering(GLint p_mode) {
 	m_filteringMode = p_mode;
-	if (m_initialized) {
+	if (initialized) {
 		glBindTexture(type, glID);
 		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMode);
 		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMode);
@@ -40,7 +40,7 @@ void Texture::setFiltering(GLint p_mode) {
 }
 void Texture::setWrapping(GLint p_mode) {
 	m_wrappingMode = p_mode;
-	if (m_initialized) {
+	if (initialized) {
 		glBindTexture(type, glID);
 		glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
 		glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode);
@@ -57,7 +57,7 @@ void Texture::fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p
 {
 	width = p_width;
 	height = p_height;
-	if (!m_initialized) glGenTextures(1, &glID);
+	if (!initialized) glGenTextures(1, &glID);
 	glBindTexture(type, glID); // into the main texture buffer
 
 	// set the texture wrapping/filtering options (on the currently bound texture object)
@@ -79,12 +79,14 @@ void Texture::fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p
 		p_data);
 	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
-	m_initialized = true;
+	initialized = true;
 }
 
 void Texture::fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_data)
 {
-	if (!m_initialized) glGenTextures(1, &glID);
+	width = p_width;
+	height = p_height;
+	if (!initialized) glGenTextures(1, &glID);
 	glBindTexture(type, glID); // into the main texture buffer
 
 	// set the texture wrapping/filtering options (on the currently bound texture object)
@@ -106,7 +108,7 @@ void Texture::fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_dat
 		p_data);
 	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
-	m_initialized = true;
+	initialized = true;
 }
 
 void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
@@ -114,7 +116,7 @@ void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 	width = p_width;
 	height = p_height;
 
-	if (!m_initialized) {
+	if (!initialized) {
 		glGenTextures(1, &glID);
 		// set the texture wrapping/filtering options (on the currently bound texture object)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -138,12 +140,12 @@ void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 
 	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
-	m_initialized = true; // data is allocated, so we'll just say it's initialized even if the data is undefined. Solves a bug.
+	initialized = true; // data is allocated, so we'll just say it's initialized even if the data is undefined. Solves a bug.
 }
 
 void Texture::subVec4Data(glm::vec4* p_data) {
-	CONDITIONAL_LOG(!m_initialized, "Texture not initialized, so data cannot be substituted.");
-	if (!m_initialized) return;
+	CONDITIONAL_LOG(!initialized, "Texture not initialized, so data cannot be substituted.");
+	if (!initialized) return;
 	glBindTexture(type, glID);
 	glTexSubImage2D(type, 0, 0, 0, width, height, GL_RGBA, GL_FLOAT, p_data);
 	glBindTexture(type, 0);
@@ -154,5 +156,5 @@ void Texture::remove() {
 	std::cout << "Texture removed " << glID << std::endl;
 #endif
 	glDeleteTextures(1, &glID);
-	m_initialized = false;
+	initialized = false;
 }

@@ -25,6 +25,9 @@ public:
 	/// Returns an RGBA vec4 based on a given x and y position.
 	/// Attempting to get a pixel outside of the image's dimensions returns an uninitialized vec4.
 	glm::vec4 getPixel(uint32_t p_x, uint32_t p_y);
+	// Appends given data to the bottom of the pixmap
+	// Warning: ensure that the data you pass in has the same width as the pixmap.
+	void appendImage(unsigned char* p_data, size_t p_size);
 	/// Sets a pixel at a given x and y based on the provided RGBA vec4.
 	/// Attempting to set a pixel outside of the image's dimensions does nothing.
 	void setPixel(uint32_t p_x, uint32_t p_y, glm::vec4 p_color);

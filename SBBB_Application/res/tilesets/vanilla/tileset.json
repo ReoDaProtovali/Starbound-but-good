@@ -1,5 +1,5 @@
 {
 	"namespace": "vanilla", 
-	"imageDirectory": "./images/",
-	"tileDirectory": "./tiledata/"
+	"imageDirectory": "images\\",
+	"tileDirectory": "tiledata\\"
 }

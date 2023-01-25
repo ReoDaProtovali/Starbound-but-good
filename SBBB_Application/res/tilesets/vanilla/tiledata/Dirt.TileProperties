@@ -2,13 +2,13 @@
 	"id": "dirt",
 	"name": "Dirt",
 	"genericDescription": "A portion of decayed biomass, rich in nutrients for various forms of plant life.",
-	"maxHP": 30,
-	"categories": ["soft", "natural"],
+	"categories": [ "soft", "natural" ],
 	"rarity": "ubiquitous",
-	"imageFile": "Dirt .png",
+	"imageFile": "dirt.png",
 	"isAnimated": false,
-	"variationCount": 4,
-	"lightAbsorption": 0.8,
 	"emissive": false,
-	"lightingColor": [0, 0, 0]
+	"lightingColor": [ 0.0, 0.0, 0.0 ],
+	"maxHP": 30,
+	"variationCount": 4,
+	"lightAbsorption": 0.8
 }
