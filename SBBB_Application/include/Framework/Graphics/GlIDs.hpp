@@ -41,3 +41,12 @@ struct glFrameBuffer {
 		glDeleteFramebuffers(1, &ID);
 	}
 };
+
+struct glTexture {
+	GLuint ID = 0;
+	~glTexture() {
+		if (ID == 0) return;
+		DELETE_LOG("Deleted texture: " << ID);
+		glDeleteTextures(1, &ID);
+	}
+};

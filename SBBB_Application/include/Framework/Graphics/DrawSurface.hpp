@@ -31,7 +31,7 @@ public:
 		// Bind all textures to the correct texture units
 		for (size_t i = 0; i < p_states.m_texturePtrs.size(); i++) {
 			glCheck(glActiveTexture(GL_TEXTURE0 + i));
-			glCheck(glBindTexture(p_states.m_texturePtrs[i]->type, p_states.m_texturePtrs[i]->glID));
+			glCheck(glBindTexture(p_states.m_texturePtrs[i]->type, p_states.m_texturePtrs[i]->glID->ID));
 		}
 
 		if (p_states.m_blendMode.disabled) {

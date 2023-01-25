@@ -7,6 +7,7 @@ Texture::Texture()
 {
 
 }
+
 Texture::Texture(TextureID p_assignedID) :
 	texID(p_assignedID)
 {
@@ -24,15 +25,11 @@ Texture::Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data, GLenum 
 {
 	fromVec4Data(width, height, p_data);
 }
-//Texture::~Texture()
-//{
-//	remove();
-//}
 
 void Texture::setFiltering(GLint p_mode) {
 	m_filteringMode = p_mode;
 	if (initialized) {
-		glBindTexture(type, glID);
+		glBindTexture(type, glID->ID);
 		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMode);
 		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMode);
 		glBindTexture(type, 0);
@@ -41,7 +38,7 @@ void Texture::setFiltering(GLint p_mode) {
 void Texture::setWrapping(GLint p_mode) {
 	m_wrappingMode = p_mode;
 	if (initialized) {
-		glBindTexture(type, glID);
+		glBindTexture(type, glID->ID);
 		glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
 		glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode);
 		glBindTexture(type, 0);
@@ -57,8 +54,8 @@ void Texture::fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p
 {
 	width = p_width;
 	height = p_height;
-	if (!initialized) glGenTextures(1, &glID);
-	glBindTexture(type, glID); // into the main texture buffer
+	if (!initialized) glGenTextures(1, &glID->ID);
+	glBindTexture(type, glID->ID); // into the main texture buffer
 
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -86,8 +83,8 @@ void Texture::fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_dat
 {
 	width = p_width;
 	height = p_height;
-	if (!initialized) glGenTextures(1, &glID);
-	glBindTexture(type, glID); // into the main texture buffer
+	if (!initialized) glGenTextures(1, &glID->ID);
+	glBindTexture(type, glID->ID); // into the main texture buffer
 
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -117,7 +114,7 @@ void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 	height = p_height;
 
 	if (!initialized) {
-		glGenTextures(1, &glID);
+		glGenTextures(1, &glID->ID);
 		// set the texture wrapping/filtering options (on the currently bound texture object)
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
@@ -125,7 +122,7 @@ void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMode);
 		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMode);
 	}
-	glBindTexture(type, glID); // into the main texture buffer
+	glBindTexture(type, glID->ID); // into the main texture buffer
 
 	glTexImage2D( // actually put the image data into the texture buffer
 		type,
@@ -146,15 +143,11 @@ void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 void Texture::subVec4Data(glm::vec4* p_data) {
 	CONDITIONAL_LOG(!initialized, "Texture not initialized, so data cannot be substituted.");
 	if (!initialized) return;
-	glBindTexture(type, glID);
+	glBindTexture(type, glID->ID);
 	glTexSubImage2D(type, 0, 0, 0, width, height, GL_RGBA, GL_FLOAT, p_data);
 	glBindTexture(type, 0);
 }
 
 void Texture::remove() {
-#ifdef DELETELOGGING_ENABLED
-	std::cout << "Texture removed " << glID << std::endl;
-#endif
-	glDeleteTextures(1, &glID);
 	initialized = false;
 }

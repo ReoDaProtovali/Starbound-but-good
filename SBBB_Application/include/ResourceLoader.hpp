@@ -14,19 +14,19 @@
 #include "Framework/Graphics/Texture.hpp"
 
 struct TileInfo {
-	std::string id;
-	std::string name;
-	std::string genericDescription;
-	std::vector<std::string> categories;
-	std::string rarity;
-	std::string imageFile;
-	size_t imageIndex;
-	bool isAnimated;
-	bool emissive;
-	std::vector<float> lightingColor;
-	uint16_t maxHP;
-	uint16_t variationCount;
-	float lightAbsorption;
+	std::string id = "";
+	std::string name = "";
+	std::string genericDescription = "";
+	std::vector<std::string> categories{};
+	std::string rarity = "";
+	std::string imageFile = "";
+	size_t imageIndex = 0;
+	bool isAnimated = false;
+	bool emissive = false;
+	std::vector<float> lightingColor{};
+	uint16_t maxHP = 0;
+	uint16_t variationCount = 0;
+	float lightAbsorption = 0;
 };
 
 class ResourceLoader

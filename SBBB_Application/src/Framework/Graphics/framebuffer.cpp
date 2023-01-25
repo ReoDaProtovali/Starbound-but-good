@@ -19,7 +19,7 @@ void FrameBuffer::setDimensions(uint32_t p_width, uint32_t p_height)
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID, 0));
+		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 	}
 
 	if (m_useDepth) {
@@ -46,7 +46,7 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID, 0));
+		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 	}
 
 	if (m_useDepth) {
@@ -74,7 +74,7 @@ void FrameBuffer::init() {
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		// constant for now
 		m_colorTextures[i].setFiltering(GL_LINEAR);
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID, 0));
+		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 
 	}
 
