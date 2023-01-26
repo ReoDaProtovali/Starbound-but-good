@@ -19,7 +19,6 @@
 #include "Camera.hpp"
 #include "Framework/Window/GameWindow.hpp"
 
-
 class ChunkManager
 {
 public:
@@ -28,6 +27,7 @@ public:
 
 	bool genChunk(ChunkPos p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
+	void regenVBOs();
 	void enqueueGen(ChunkPos p_chunkPos);
 	bool genFromQueue();
 	void genFixed(size_t x, size_t y);
@@ -47,7 +47,7 @@ public:
 	bool removeChunk(ChunkPos p_chunkPos);
 	void removeChunks();
 
-	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
+	//void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 	void logSize();
 	int getChunkCount() { return (int)m_chunkList.size(); }
 	int getEmptyChunkCount();
@@ -55,6 +55,7 @@ public:
 
 private:
 
+	ResourceLoader& res = ResourceLoader::Get();
 	// For fetching chunks from a supplied frame
 	bool m_setFetchCounterFlag = true;
 	uint32_t m_fetchCounter = 0;

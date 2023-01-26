@@ -1,19 +1,25 @@
 #version 330 core
 #extension GL_ARB_separate_shader_objects : enable
-layout(location = 0) in uint xyzID;
+layout(location = 0) in int xyzID;
+layout(location = 1) in int adjacent;
 
-out vec2 FragCoord;
+out int ID;
 
-uniform mat4 transform;
+out DATA {
+	int ID;
+    int adjacent;
+}data_out;
+
+
 uniform sampler2D tileSheet;
 
 void main()
 {
     // Unpacking method taken from TileVert struct method. There are no binary literals so I just used their decimal equivalents.
-    vec3 chunkXYZ = vec3(((4227858432u & xyzID) >> 26), -float((66060288u & xyzID) >> 20), (1015808u & xyzID) >> 15);
+    vec3 chunkXYZ = vec3(((4227858432 & xyzID) >> 26), -float((66060288 & xyzID) >> 20), (1015808 & xyzID) >> 15);
 
-    uint aID = 32767u & xyzID;
-    gl_Position = transform * vec4(chunkXYZ, 1.0);
-    float fID = float(aID);
-    FragCoord = vec2(aID, (cos(fID / 2) + 1) / 2);
+    int aID = 32767 & xyzID;
+    gl_Position = vec4(chunkXYZ, 1.0);
+    data_out.ID = aID;
+    data_out.adjacent = adjacent;
 }

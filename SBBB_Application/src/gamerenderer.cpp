@@ -1,12 +1,5 @@
 #include "GameRenderer.hpp"
 
-GameRenderer::GameRenderer() :
-	windowWidth(0),
-	windowHeight(0),
-	screenWidth(0),
-	screenHeight(0)
-{
-}
 
 GameRenderer::GameRenderer(const GameWindow& p_window) :
 	windowWidth(p_window.windowWidth),
@@ -29,6 +22,13 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	overviewCam->tileScale = 1024.0f;
 	overviewCam->setDimensions(windowWidth, windowHeight);
 
+	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
+	//m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl");
+	m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl");
+	m_tileShader->setTexUniform("tileSheet", 0);
+
+	m_worldDrawStates.attachShader(m_tileShader);
+
 	loadTextures();
 
 	testReoSprite.attachShader(gs.imageShader);
@@ -39,18 +39,13 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	cameraFrameTexture = res.getTexture(TextureID::CAMERA_FRAME_TEXTURE);
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
 
-	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
-	m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl");
-	m_tileShader->setTexUniform("tileSheet", 0);
-	m_worldDrawStates.attachShader(m_tileShader);
-
 	//res.loadTileSet(std::filesystem::path(".\\res\\tilesets\\vanilla"));
 	res.loadAllTileSets();
 
 	Texture& t = *res.getTileSheetTexture();
 	testTileSheet.attachShader(gs.imageShader);
-	testTileSheet.setBounds(Rect(0.f, 0.f, (float)t.width, (float)t.height));
-	testTileSheet.attachTexture(res.getTileSheetTexture());
+	testTileSheet.setBounds(Rect(0.f, 0.f, (float)t.width / 40.f, (float)t.height / 40.f));
+	testTileSheet.attachTexture(&t);
 
 	//m_screenFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
 
@@ -69,8 +64,6 @@ GameRenderer::~GameRenderer()
 
 // Will be changed ----------------------------------------------------------
 void GameRenderer::loadTextures() {
-	LOAD_LOG("Creating Resource loader...");
-	res = ResourceLoader();
 	res.loadTexID("./res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE);
 	res.loadTexID("./res/roetest.png", TextureID::REO_TEST);
 	res.loadTexID("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
@@ -111,6 +104,8 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	int drawnChunkCount = 0;
 	bool finished = false;
 
+	m_worldDrawStates.attachTexture(res.getTileSheetTexture());
+
 	while (!finished) {
 		auto opt = p_world.fetchFromFrame(cam->getFrame(), finished);
 
@@ -119,7 +114,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 			WorldChunk* chunk = opt.value();
 
 			if (!(chunk->invalid || chunk->isEmpty)) {
-				if (!chunk->meshIsCurrent) chunk->generateVBO();
+				if (!chunk->meshIsCurrent) chunk->generateVBO(p_world);
 
 				m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
 

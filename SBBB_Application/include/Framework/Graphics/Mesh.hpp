@@ -123,7 +123,7 @@ public:
 
 	/// Size specifies number of bytes required for the attribute.
 	void addUbyteAttrib(GLubyte p_size) {
-		m_totalVertSize += sizeof(GLubyte) * p_size;
+		m_totalVertSize += sizeof(GLfloat) * p_size;
 		m_attribList.emplace_back(p_size, GL_UNSIGNED_BYTE);
 	};
 
@@ -169,7 +169,7 @@ public:
 				break;
 			case GL_UNSIGNED_BYTE:
 				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_BYTE, m_totalVertSize, (const void*)currentOffset));
-				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLubyte));
+				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			default:
 				break;

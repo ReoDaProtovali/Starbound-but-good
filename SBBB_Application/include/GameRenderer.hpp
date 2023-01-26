@@ -29,7 +29,7 @@ class GameWindow;
 class GameRenderer
 {
 public:
-	GameRenderer();
+	GameRenderer() = delete;
 	GameRenderer(const GameWindow& p_window);
 	~GameRenderer();
 
@@ -37,6 +37,8 @@ public:
 	uint32_t windowHeight;
 	uint32_t screenWidth;
 	uint32_t screenHeight;
+
+	ResourceLoader& res = ResourceLoader::Get();
 
 	// Temporary until a better texture loader is devised.
 	void loadTextures();
@@ -83,8 +85,6 @@ private:
 	GenericShaders& gs = GenericShaders::Get();
 	std::weak_ptr<Camera> currentCamera;
 	bool cameraToggle = false;
-
-	ResourceLoader res;
 
 	Texture* tileSheetTexture = nullptr;
 

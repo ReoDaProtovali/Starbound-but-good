@@ -45,6 +45,10 @@ public:
 		return data;
 	}
 
+	bool bounded(int x, int y) {
+		if (x >= 0 && x < width && y >= 0 && y < height) return true;
+		return false;
+	}
 	void resize(uint32_t p_width, uint32_t p_height) {
 		data.resize(p_width * p_height, T());
 
@@ -62,6 +66,10 @@ public:
 		std::copy(&p_data[0], &p_data[p_size], std::back_inserter(data));
 		LOG("2D Array appended from height " << height << " to height " << height + p_size / width);
 		height += p_size / width;
+	}
+
+	void reverse() {
+		std::reverse(data.begin(), data.end());
 	}
 
 	void clear() {

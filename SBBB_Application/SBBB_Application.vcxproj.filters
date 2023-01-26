@@ -239,6 +239,9 @@
     <ClInclude Include="include\InitGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\TileVert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\TODO.txt" />
@@ -272,6 +275,7 @@
     <None Include="res\tilesets\vanilla\tiledata\Dirt.TileProperties" />
     <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties" />
     <None Include="res\tilesets\vanilla\tileset.json" />
+    <None Include="src\Shaders\TileGS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\libnoise.lib" />

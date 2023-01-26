@@ -58,6 +58,7 @@ void DrawStates::setTransform(glm::mat4 p_transform)
 }
 void DrawStates::attachShader(std::weak_ptr<Shader> p_shader)
 {
+
 	m_shaderPtr = p_shader;
 }
 void DrawStates::attachTexture(Texture* p_texture)

@@ -21,6 +21,12 @@ bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 	m_chunkList.back().worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
 	return true;
 }
+void ChunkManager::regenVBOs()
+{
+	for (auto& chunk : m_chunkList) {
+		chunk.generateVBO(*this);
+	}
+}
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 {
 	//std::cout << chunkExistsAt(ChunkPos(0, 0)) << std::endl;
@@ -173,12 +179,12 @@ void ChunkManager::removeChunks()
 	m_indices.clear();
 }
 // draws every chunk in the manager, innefficent
-void ChunkManager::draw(DrawSurface& p_target, DrawStates& p_drawStates) {
-	if (m_chunkList.size() == 0) return;
-	for (size_t i = 0; i < m_chunkList.size(); i++) {
-		if (m_chunkList[i].isEmpty) continue;
-		if (!m_chunkList[i].meshIsCurrent) m_chunkList[i].generateVBO();
-		m_chunkList[i].draw(p_target, p_drawStates);
-	}
-}
+//void ChunkManager::draw(DrawSurface& p_target, DrawStates& p_drawStates) {
+//	if (m_chunkList.size() == 0) return;
+//	for (size_t i = 0; i < m_chunkList.size(); i++) {
+//		if (m_chunkList[i].isEmpty) continue;
+//		if (!m_chunkList[i].meshIsCurrent) m_chunkList[i].generateVBO();
+//		m_chunkList[i].draw(p_target, p_drawStates);
+//	}
+//}
 

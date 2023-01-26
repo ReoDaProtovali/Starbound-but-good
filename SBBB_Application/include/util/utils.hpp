@@ -70,6 +70,12 @@ namespace utils {
 		};
 		return false;
 	}
+	// wraps float values to the range [0, r] 
+	inline float fwrapUnsigned(float x, float r) {
+		float aR = fabs(r); // The wrapping point should always be positive or else weird things happen
+		// Piecewise fmod transformation function
+		return x < 0 ? (fmodf(x, aR) + r) : fmodf(x, aR);
+	}
 }
 // A utility class that can provide fps readouts, and also just measure times.
 struct fpsGauge {

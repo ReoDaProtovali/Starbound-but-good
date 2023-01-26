@@ -240,6 +240,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\TestFramework.hpp" />
     <ClInclude Include="include\Tile.hpp" />
+    <ClInclude Include="include\TileVert.h" />
     <ClInclude Include="include\Timestepper.hpp" />
     <ClInclude Include="include\ChunkManager.hpp" />
     <ClInclude Include="include\util\Array2D.hpp" />
@@ -267,6 +268,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\LightingFS.glsl" />
     <None Include="src\Shaders\LightingVS.glsl" />
     <None Include="src\Shaders\TileFS.glsl" />
+    <None Include="src\Shaders\TileGS.glsl" />
     <None Include="src\Shaders\TileVS.glsl" />
     <None Include="zlib1.dll" />
   </ItemGroup>

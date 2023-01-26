@@ -49,6 +49,9 @@ void Pixmap::appendImage(unsigned char* p_data, size_t p_size)
 	height = m_pixels.height;
 	free(tmp);
 }
+void Pixmap::reverse() {
+	m_pixels.reverse();
+}
 void Pixmap::setPixel(uint32_t p_x, uint32_t p_y, glm::vec4 p_color)
 {
 	if ((p_x < 0) || (p_x > width - 1) || (p_y < 0) || (p_y > height - 1)) {

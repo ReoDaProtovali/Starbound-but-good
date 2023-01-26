@@ -7,7 +7,8 @@
 
 ResourceLoader::ResourceLoader()
 {
-	tileSheetPixmap.resize(96, 0);
+	LOAD_LOG("Creating Resource loader...");
+	tileSheetPixmap.resize(96, 24);
 }
 
 ResourceLoader::~ResourceLoader()
@@ -143,7 +144,6 @@ void ResourceLoader::loadDirTiles(std::string p_namespace, std::filesystem::path
 			ERROR_LOG("Tile data JSON is missing one or more properties at " << filename << " in namespace " << p_namespace << ". Exception: " << e.what());
 			return;
 		}
-
 		tileInfoCache.push_back(tileInfo);
 		tileInfoIndexDict[tileInfo.id] = tileInfoCache.size() - 1;
 
@@ -156,7 +156,7 @@ void ResourceLoader::loadDirTiles(std::string p_namespace, std::filesystem::path
 
 		unsigned char* imageData = nullptr;
 		int width, height, nrChannels;
-		stbi_set_flip_vertically_on_load(false);
+		stbi_set_flip_vertically_on_load(true);
 		imageData = stbi_load(tileImagePath.string().c_str(), &width, &height, &nrChannels, 0);
 
 		if (imageData == nullptr) {
@@ -168,10 +168,21 @@ void ResourceLoader::loadDirTiles(std::string p_namespace, std::filesystem::path
 		delete imageData;
 
 		static size_t imgIndex = 0;
-		tileInfoCache.back().imageIndex = imgIndex++;
+		tileInfoCache.back().imageIndex = ++imgIndex;
+
+		LOG(tileInfo.name << ": Internal ID - " << tileInfoCache.back().imageIndex);
 
 		LOG("Loaded tile " << tileInfo.id << " and successfully stitched image!");
 	}
+	tileSheetPixmap.reverse();
+}
+std::optional<std::reference_wrapper<TileInfo>> ResourceLoader::getTileInfo(std::string p_key)
+{
+	auto it = tileInfoIndexDict.find(p_key);
+	if (it == tileInfoIndexDict.end()) {
+		return std::nullopt;
+	}
+	return tileInfoCache[it->second];
 }
 Texture* ResourceLoader::getTexture(TextureID p_ID) {
 	auto it = textures.find(p_ID);

@@ -176,6 +176,10 @@ void Application::handleInput()
 	if (inp.testKeyDown(SDLK_3)) {
 		renderer.swapCameras();
 	}
+
+	if (inp.testKeyDown(SDLK_4)) {
+		world.regenVBOs();
+	}
 }
 
 void Application::cleanUp()

@@ -32,10 +32,10 @@ struct TileInfo {
 class ResourceLoader
 {
 public:
-	/// Default constructor. Does nothing.
-	ResourceLoader();
-	// Deletes all managed textures
-	~ResourceLoader();
+	static ResourceLoader& Get() {
+		static ResourceLoader instance = ResourceLoader();
+		return instance;
+	}
 	/** Loads a texture into the texture pool.
 	* @param p_filepath - The filepath to the texture. In standard directory notation, folders separated by "/"
 	* @param p_assignedID - The enum TextureID you want the image file to be associated with, for retrieval later.
@@ -61,7 +61,13 @@ public:
 
 	void loadDirTiles(std::string p_namespace, std::filesystem::path p_tileInfoPath, std::filesystem::path p_imagePath, std::filesystem::path p_parentPath);
 
+	std::optional<std::reference_wrapper<TileInfo>> getTileInfo(std::string p_key);
+
 private:
+	/// Default constructor. Does nothing.
+	ResourceLoader();
+	// Deletes all managed textures
+	~ResourceLoader();
 	/// A standard library map that stores pairs of textures and their respective IDs.
 	std::map<TextureID, Texture> textures;
 	std::unordered_map<std::string, size_t> tileInfoIndexDict;

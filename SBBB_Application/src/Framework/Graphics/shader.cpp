@@ -29,7 +29,7 @@ Shader::Shader(Shader&& other) noexcept {
 	other.program = std::move(program);
 }
 GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) {
-	GLuint vs, fs, program;
+	GLuint vs, fs;
 
 	vs = glCreateShader(GL_VERTEX_SHADER);
 	fs = glCreateShader(GL_FRAGMENT_SHADER);
@@ -93,23 +93,23 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 
 	LOAD_LOG("Shader compilation successful. Attaching to program...");
 
-	program = glCreateProgram();
-	glCheck(glAttachShader(program, vs));
-	glCheck(glAttachShader(program, fs));
+	program->ID = glCreateProgram();
+	glCheck(glAttachShader(program->ID, vs));
+	glCheck(glAttachShader(program->ID, fs));
 
 	glCheck(glDeleteShader(vs));
 	glCheck(glDeleteShader(fs));
 
-	glCheck(glLinkProgram(program));
+	glCheck(glLinkProgram(program->ID));
+	
+	glCheck(glUseProgram(program->ID));
 
-	glCheck(glUseProgram(program));
-
-	return program;
+	return program->ID;
 }
 
 GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath)
 {
-	GLuint vs, gs, fs, program;
+	GLuint vs, gs, fs;
 
 	// Throwaway
 	vs = glCreateShader(GL_VERTEX_SHADER);
@@ -202,20 +202,20 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 
 	LOAD_LOG("Shader compilation successful. Attaching to program...");
 
-	program = glCreateProgram();
-	glAttachShader(program, vs);
-	glAttachShader(program, gs);
-	glAttachShader(program, fs);
+	program->ID = glCreateProgram();
+	glAttachShader(program->ID, vs);
+	glAttachShader(program->ID, gs);
+	glAttachShader(program->ID, fs);
 
 	glDeleteShader(vs);
 	glDeleteShader(gs);
 	glDeleteShader(fs);
 
-	glLinkProgram(program);
+	glLinkProgram(program->ID);
 
-	glUseProgram(program);
+	glUseProgram(program->ID);
 
-	return program;
+	return program->ID;
 }
 
 void Shader::use() {
