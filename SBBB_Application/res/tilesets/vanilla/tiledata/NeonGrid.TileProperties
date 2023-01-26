@@ -1,0 +1,14 @@
+{
+	"id": "neongrid",
+	"name": "Neon Grid",
+	"genericDescription": "Manufactured illuminated grating.",
+	"categories": [ "manufactured", "decorative", "glow" ],
+	"rarity": "uncommon",
+	"imageFile": "neongrid.png",
+	"maxHP": 40,
+	"isAnimated": false,
+	"variationCount": 1,
+	"lightAbsorption": 0.1,
+	"emissive": true,
+	"lightingColor": [ 0, 0, 0 ]
+}

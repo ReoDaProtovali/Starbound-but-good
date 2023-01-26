@@ -8,10 +8,11 @@ out vec2 TexCoord;
 
 in DATA {
 	int ID;
-	int adjacent;
+    int adjacent;
+    int variationCount;
 }data_in[];
 
-const int SPRITE_WIDTH = 12;
+const int SPRITE_WIDTH = 16;
 const int SPRITE_HEIGHT = 24;
 
 bool[8] intToBoolArr(in int val) {
@@ -22,13 +23,19 @@ bool[8] intToBoolArr(in int val) {
 	return result;
 };
 
+
+float rand(vec2 co){
+    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
 vec2 IDToTexOffset(int ID) {
 	return vec2(0, SPRITE_HEIGHT * (ID - 1));
 }
 // uhhhhh texbounds is (x1, y1, x2, y2) while regionbounds is (x1, y1, w, h)
 // warning i think the origin is at the bottom left and that's kinda stupid
 void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
-	vec2 offset =  IDToTexOffset(data_in[0].ID);
+	int randp = abs(int(float(18729727) * rand(gl_in[0].gl_Position.xy))) % data_in[0].variationCount;
+	vec2 offset =  IDToTexOffset(data_in[0].ID) + vec2(SPRITE_WIDTH * randp, 0);
 	// boo flickering
 	regionBounds += vec4(-0.001f, -0.001f, 0.0025f, 0.0025f);
 	gl_Position = transform * (gl_in[0].gl_Position + vec4(regionBounds.x, regionBounds.y, z, 0));

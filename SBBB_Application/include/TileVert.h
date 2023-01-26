@@ -17,7 +17,8 @@ struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID i
 		xyzID |= (0xFC000000 & (p_x << 26)) | (0x3F00000 & (p_y << 20)) | (0xF8000 & (p_z << 15)) | (0x7FFF & (p_id));
 	}
 	uint32_t xyzID = 0; // 32 bit unsigned integer storing multiple components
-	uint8_t adjacent = 0;
+	uint32_t adjacent = 0;
+	uint32_t variationCount = 0;
 	void set5BitX(uint32_t p_x) {
 		uint32_t shifted = p_x << 26; // Bit shift the input 26 places such that the first 6 bits are aligned
 		uint32_t bitmask = 0b11111100000000000000000000000000; // Only modify selected bits

@@ -16,7 +16,9 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	setPosition(glm::vec3((float)p_chunkPos.x * CHUNKSIZE, (float)p_chunkPos.y * CHUNKSIZE, 0.f));
 	calculateTransform();
 	tileMesh.addUintAttrib(1); // xyzID, one uint
-	tileMesh.addUbyteAttrib(1);
+	tileMesh.addUintAttrib(1); // adjacencies
+	tileMesh.addUintAttrib(1); // variation count i guess
+
 	s_noiseGenerator.SetOctaveCount(10);
 	s_noiseGenerator.SetPersistence(0.54);
 }
@@ -84,6 +86,7 @@ void WorldChunk::worldGenerate() {
 	ResourceLoader& res = ResourceLoader::Get();
 	TileInfo& DirtInfo = res.getTileInfo("vanilla:dirt").value();
 	TileInfo& StoneInfo = res.getTileInfo("vanilla:stone").value();
+	TileInfo& NeonInfo = res.getTileInfo("vanilla:neongrid").value();
 
 
 	float surfaceLevel = 10.0f * CHUNKSIZE;
@@ -127,6 +130,9 @@ void WorldChunk::worldGenerate() {
 					}
 				}
 			}
+			else if (caveLayer2 < 0.7f) {
+				m_tiles(x, y) = Tile(glm::ivec2(x, y), NeonInfo.imageIndex);
+			}
 			else {
 				m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
 			}
@@ -139,6 +145,8 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	if (isEmpty) return;
 	tileMesh.remove();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * sizeof(TileVert)); // reserve a chunks worth of data idk
+	ResourceLoader& res = ResourceLoader::Get();
+
 	for (int y = 0; y < CHUNKSIZE; y++) {
 		for (int x = 0; x < CHUNKSIZE; x++) {
 			if (m_tiles(x, y).m_tileID == 0) continue;
@@ -148,6 +156,10 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				x, y, 0, // Position attributes
 				tID // numerical ID
 			);
+
+			// it's teeechnically possible to convert the image id into the cache id by subtracting one
+			TileInfo& tInfo = res.getTileInfo(tID - 1);
+			v.variationCount = tInfo.variationCount;
 
 			for (int i = -1; i <= 1; i++) {
 				for (int j = -1; j <= 1; j++) {
@@ -173,7 +185,6 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 							if (t.m_tileID != 0) continue;
 						}
 						// if ya made it to this point, the tile is empty! :)
-
 						goto out;
 					}
 

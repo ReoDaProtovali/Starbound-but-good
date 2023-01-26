@@ -123,8 +123,13 @@ public:
 
 	/// Size specifies number of bytes required for the attribute.
 	void addUbyteAttrib(GLubyte p_size) {
-		m_totalVertSize += sizeof(GLfloat) * p_size;
+		m_totalVertSize += sizeof(GLuint) * p_size;
 		m_attribList.emplace_back(p_size, GL_UNSIGNED_BYTE);
+	};
+
+	void addIntAttrib(GLubyte p_size) {
+		m_totalVertSize += sizeof(GLint) * p_size;
+		m_attribList.emplace_back(p_size, GL_INT);
 	};
 
 	/// Simply adds a vertex of type T to the end of the mesh list.
@@ -165,6 +170,10 @@ public:
 				break;
 			case GL_UNSIGNED_INT:
 				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_INT, m_totalVertSize, (const void*)currentOffset));
+				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
+				break;
+			case GL_INT:
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_INT, m_totalVertSize, (const void*)currentOffset));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			case GL_UNSIGNED_BYTE:

@@ -62,6 +62,7 @@ public:
 	void loadDirTiles(std::string p_namespace, std::filesystem::path p_tileInfoPath, std::filesystem::path p_imagePath, std::filesystem::path p_parentPath);
 
 	std::optional<std::reference_wrapper<TileInfo>> getTileInfo(std::string p_key);
+	TileInfo& getTileInfo(size_t p_index);
 
 private:
 	/// Default constructor. Does nothing.

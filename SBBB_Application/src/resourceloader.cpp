@@ -184,6 +184,10 @@ std::optional<std::reference_wrapper<TileInfo>> ResourceLoader::getTileInfo(std:
 	}
 	return tileInfoCache[it->second];
 }
+TileInfo& ResourceLoader::getTileInfo(size_t p_index)
+{
+	return tileInfoCache[p_index];
+}
 Texture* ResourceLoader::getTexture(TextureID p_ID) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {

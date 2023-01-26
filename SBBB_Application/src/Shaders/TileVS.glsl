@@ -2,12 +2,15 @@
 #extension GL_ARB_separate_shader_objects : enable
 layout(location = 0) in int xyzID;
 layout(location = 1) in int adjacent;
+layout(location = 2) in int variationCount;
 
-out int ID;
+
+//out int ID;
 
 out DATA {
 	int ID;
     int adjacent;
+    int variationCount;
 }data_out;
 
 
@@ -22,4 +25,5 @@ void main()
     gl_Position = vec4(chunkXYZ, 1.0);
     data_out.ID = aID;
     data_out.adjacent = adjacent;
+    data_out.variationCount = variationCount;
 }
