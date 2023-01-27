@@ -154,7 +154,7 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	if (isEmpty) return;
-	tileMesh.remove();
+	tileMesh.clearVerts();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * sizeof(TileVert)); // reserve a chunks worth of data idk
 	ResourceManager& res = ResourceManager::Get();
 

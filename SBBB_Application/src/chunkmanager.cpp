@@ -24,6 +24,7 @@ bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 void ChunkManager::regenVBOs()
 {
 	for (auto& chunk : m_chunkList) {
+
 		chunk.generateVBO(*this);
 	}
 }
