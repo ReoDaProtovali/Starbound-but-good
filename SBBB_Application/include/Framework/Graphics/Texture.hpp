@@ -20,9 +20,10 @@ public:
 	Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data, GLenum p_type);
 	// Texture copying is not super recommended
 	//Texture(const Texture&) = delete;
-	void setFiltering(GLint p_mode);
+	void setFiltering(GLenum p_min, GLenum p_mag);
 	void setWrapping(GLint p_mode);
 	void setType(GLenum p_type);
+	void setChannels(GLenum p_channels);
 
 	void fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p_data);
 	void fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_data);
@@ -34,21 +35,26 @@ public:
 
 	void remove();
 
-	uint32_t getPixelCount() { return width * height; }
+	uint32_t getPixelCount();
+
 	uint32_t width = 0;
 	uint32_t height = 0;
 
 	std::shared_ptr<glTexture> glID = std::make_shared<glTexture>();
 	TextureID texID = TextureID::NO_TEXTURE;
-	GLenum type = GL_TEXTURE_2D;
+
 
 	bool initialized = false;
 
+	GLenum channels = GL_RGBA;
+	GLenum type = GL_TEXTURE_2D;
+
 private:
 
-	GLint m_filteringMode = GL_NEAREST;
-	GLint m_wrappingMode = GL_REPEAT;
+	GLint m_filteringMag = GL_NEAREST;
+	GLint m_filteringMin = GL_NEAREST;
 
+	GLint m_wrappingMode = GL_REPEAT;
 };
 
 #endif

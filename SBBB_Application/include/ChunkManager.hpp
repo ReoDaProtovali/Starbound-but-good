@@ -1,7 +1,4 @@
 #pragma once
-#ifndef WORLD_H
-#define WORLD_H
-
 
 #include <stdlib.h>
 #include <iostream>
@@ -18,6 +15,7 @@
 
 #include "Camera.hpp"
 #include "Framework/Window/GameWindow.hpp"
+#include "WorldGenNoisemap.hpp"
 
 class ChunkManager
 {
@@ -54,8 +52,8 @@ public:
 	void logChunks();
 
 private:
-
-	ResourceLoader& res = ResourceLoader::Get();
+	WorldGenNoisemap m_noiseMap;
+	ResourceManager& res = ResourceManager::Get();
 	// For fetching chunks from a supplied frame
 	bool m_setFetchCounterFlag = true;
 	uint32_t m_fetchCounter = 0;
@@ -65,5 +63,3 @@ private:
 	std::queue<ChunkPos> m_loadQueue;
 	std::vector<ChunkPos> m_indices;
 };
-
-#endif WORLD_H

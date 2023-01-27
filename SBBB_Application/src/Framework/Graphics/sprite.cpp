@@ -35,7 +35,7 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 }
 
 
-void Sprite::attachShader(std::shared_ptr<Shader> p_shader)
+void Sprite::attachShader(Shader* p_shader)
 {
 
 	m_attachedShader = p_shader;

@@ -19,7 +19,7 @@ public:
 	// vec2 texcoord
 	// Uniforms:
 	// imageTexture: 0
-	std::shared_ptr<Shader> imageShader;
+	Shader imageShader;
 
 private:
 	GenericShaders();

@@ -14,7 +14,7 @@
 #include "Chunk.hpp"
 #include "ChunkManager.hpp"
 // Image handling
-#include "ResourceLoader.hpp" 
+#include "ResourceManager.hpp" 
 #include "SpriteSheet.hpp"
 
 #include "Framework/Graphics/Sprite.hpp"
@@ -38,7 +38,7 @@ public:
 	uint32_t screenWidth;
 	uint32_t screenHeight;
 
-	ResourceLoader& res = ResourceLoader::Get();
+	ResourceManager& res = ResourceManager::Get();
 
 	// Temporary until a better texture loader is devised.
 	void loadTextures();
@@ -89,7 +89,7 @@ private:
 	Texture* tileSheetTexture = nullptr;
 
 	/// Uses packed chunk coordinates and block IDs
-	std::shared_ptr<Shader> m_tileShader;
+	Shader m_tileShader;
 	FrameBuffer m_screenFBO;
 
 	DrawStates m_worldDrawStates;

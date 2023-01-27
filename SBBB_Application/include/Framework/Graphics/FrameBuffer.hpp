@@ -7,6 +7,7 @@
 #include "Framework/Graphics/GlCheck.hpp"
 #include <initializer_list>
 #include <vector>
+#include "util/Array2D.hpp"
 
 // Wrapper class for a FBO, which enables rendering directly into textures instead of the screen. Very handy for post processing and offscreen rendering.
 // NOTE:: CURRENTLY FIXED TO TEXTURE COLOR ATTACHMENTS, AND RENDERBUFFER DEPTH.
@@ -15,12 +16,15 @@ class FrameBuffer : public DrawSurface {
 public:
 	// Defaults to a blank color texture.
 	FrameBuffer();
-	// Affects the size of all color attachments
 	void init();
+	// Affects the size of all color attachments
 	void setDimensions(uint32_t p_width, uint32_t p_height);
 	void setDimensions(glm::uvec2 p_dimensions);
 	void setColorAttachments(std::initializer_list<GLenum> p_attachments);
 	Texture* getColorTex(size_t p_index);
+	// Read the pixels directly from the frame buffer into system memory.
+	void getPixels(size_t p_colorBufferIndex, uint8_t p_channels, Array2D<uint8_t>& o_out);
+	void useDepth(bool p_bool);
 private:
 	
 	// x width, y height.

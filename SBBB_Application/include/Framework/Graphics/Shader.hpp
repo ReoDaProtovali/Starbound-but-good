@@ -39,6 +39,9 @@ public:
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
 	*/
 	Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath);
+
+	Shader& operator=(const Shader& p_other);
+
 	// Move constructor, to handle our pointer
 	Shader(Shader&& other) noexcept;
 	/** Compiles and sets the Shader's program ID.
@@ -56,21 +59,30 @@ public:
 	GLuint compileShaders(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath);
 
 	/// Bind the shader for use with subsequent OpenGL draw calls.
-	void use();
+	void use() const;
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a boolean.
 	void setBoolUniform(const std::string& p_name, bool p_value) const;
+	void setBoolUniform(GLint p_loc, bool p_value) const;
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, an integer.
 	void setIntUniform(const std::string& p_name, GLint p_value) const;
+	void setIntUniform(GLint p_loc, GLint p_value) const;
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a float.
 	void setFloatUniform(const std::string& p_name, GLfloat p_value) const;
+	void setFloatUniform(GLint p_loc, GLfloat p_value) const;
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, an OpenGL texture.
 	void setTexUniform(const std::string& p_name, GLuint p_value);
+	void setTexUniform(GLint p_loc, GLuint p_value);
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a 4x4 matrix.
 	void setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const;
+	void setMat4Uniform(GLint p_loc, glm::mat4 p_value) const;
+
+	void setVec2Uniform(const std::string& p_name, glm::vec2 p_value) const;
+	void setVec2Uniform(GLint p_loc, glm::vec2 p_value) const;
 	// Used to set a list of uniforms using uniform objects.
+	// Only works with strings, no locations.
 	void setUniforms(std::vector<Uniform> p_uniforms);
 
-	std::unique_ptr<glProgram> program = std::make_unique<glProgram>();
+	std::shared_ptr<glProgram> program = std::make_shared<glProgram>();
 };
 
 #endif

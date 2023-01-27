@@ -5,11 +5,11 @@
 Lighting::Lighting() :
 	m_framePos(0.f, 0.f),
 	m_frameDim(0.f, 0.f),
-	m_lightingShader(std::make_shared<Shader>("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl"))
+	m_lightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl")
 {
 
-	m_lightingShader->setTexUniform("lightingTexture", 0);
-	m_lightingShader->setTexUniform("screenTexture", 1);
+	m_lightingShader.setTexUniform("lightingTexture", 0);
+	m_lightingShader.setTexUniform("screenTexture", 1);
 
 	m_lightmap.resize(64, 36);
 	m_lightmap.fill(glm::vec4(1.f, 1.f, 1.f, 1.f));
@@ -19,11 +19,11 @@ Lighting::Lighting() :
 
 	
 	m_lightmapTex = Texture(m_lightmap.width, m_lightmap.height, m_lightmap.getData());
-	m_lightmapTex.setFiltering(GL_LINEAR);
+	m_lightmapTex.setFiltering(GL_LINEAR, GL_LINEAR);
 
 	// There needs to be two textures set for lighting to draw properly, but we only have one for now
 	m_lightingStates.addTexture(&m_lightmapTex);
-	m_lightingStates.attachShader(m_lightingShader);
+	m_lightingStates.attachShader(&m_lightingShader);
 
 	m_overlayMesh.addFloatAttrib(3); // Position attrib
 	m_overlayMesh.addFloatAttrib(2); // Tex Coord attrib

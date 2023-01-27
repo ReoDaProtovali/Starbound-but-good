@@ -10,7 +10,7 @@
 #include <cctype>
 #include <util/ext/json.hpp>
 #include "Framework/Graphics/Pixmap.hpp"
-
+#include "Framework/Graphics/Shader.hpp"
 #include "Framework/Graphics/Texture.hpp"
 
 struct TileInfo {
@@ -29,11 +29,11 @@ struct TileInfo {
 	float lightAbsorption = 0;
 };
 
-class ResourceLoader
+class ResourceManager
 {
 public:
-	static ResourceLoader& Get() {
-		static ResourceLoader instance = ResourceLoader();
+	static ResourceManager& Get() {
+		static ResourceManager instance = ResourceManager();
 		return instance;
 	}
 	/** Loads a texture into the texture pool.
@@ -55,24 +55,31 @@ public:
 
 	Texture* getTileSheetTexture();
 
+	Shader& getGeneratorShader(const std::string& p_name);
+
 	void loadAllTileSets();
 
-	void loadTileSet(std::filesystem::path p_tileSetPath);
+	void loadTileSet(const std::filesystem::path& p_tileSetPath);
 
-	void loadDirTiles(std::string p_namespace, std::filesystem::path p_tileInfoPath, std::filesystem::path p_imagePath, std::filesystem::path p_parentPath);
+	void loadDirTiles(const std::string& p_namespace, const std::filesystem::path& p_tileInfoPath, const std::filesystem::path& p_imagePath, const std::filesystem::path& p_parentPath);
 
-	std::optional<std::reference_wrapper<TileInfo>> getTileInfo(std::string p_key);
+	std::optional<std::reference_wrapper<TileInfo>> getTileInfo(const std::string& p_key);
 	TileInfo& getTileInfo(size_t p_index);
+
+	 void loadGeneratorShaders();
 
 private:
 	/// Default constructor. Does nothing.
-	ResourceLoader();
+	ResourceManager();
 	// Deletes all managed textures
-	~ResourceLoader();
+	~ResourceManager();
 	/// A standard library map that stores pairs of textures and their respective IDs.
 	std::map<TextureID, Texture> textures;
 	std::unordered_map<std::string, size_t> tileInfoIndexDict;
 	std::vector<TileInfo> tileInfoCache;
+
+	std::map<std::string, Shader> m_generatorShaders;
+
 	Pixmap tileSheetPixmap;
 	Texture tileSheetTexture;
 };

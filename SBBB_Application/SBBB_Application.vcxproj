@@ -202,12 +202,13 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\lightingsolver.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pixmap.cpp" />
-    <ClCompile Include="src\resourceloader.cpp" />
+    <ClCompile Include="src\resourcemanager.cpp" />
     <ClCompile Include="src\spritesheet.cpp" />
     <ClCompile Include="src\testframework.cpp" />
     <ClCompile Include="src\tile.cpp" />
     <ClCompile Include="src\timestepper.cpp" />
     <ClCompile Include="src\chunkmanager.cpp" />
+    <ClCompile Include="src\worldgennoisemap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Application.hpp" />
@@ -236,7 +237,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\InitGL.h" />
     <ClInclude Include="include\Lighting.hpp" />
     <ClInclude Include="include\LightingSolver.hpp" />
-    <ClInclude Include="include\ResourceLoader.hpp" />
+    <ClInclude Include="include\ResourceManager.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\TestFramework.hpp" />
     <ClInclude Include="include\Tile.hpp" />
@@ -249,6 +250,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
     <ClInclude Include="include\Framework\FrameworkDraw.hpp" />
     <ClInclude Include="include\Framework\Log.hpp" />
+    <ClInclude Include="include\WorldGenNoisemap.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\randomthings.txt" />
@@ -267,6 +269,10 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\ImageVS.glsl" />
     <None Include="src\Shaders\LightingFS.glsl" />
     <None Include="src\Shaders\LightingVS.glsl" />
+    <None Include="src\Shaders\noisegenerators\CavernFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\generators.json" />
+    <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl" />
+    <None Include="src\Shaders\noisegenerators\PerlinFS.glsl" />
     <None Include="src\Shaders\TileFS.glsl" />
     <None Include="src\Shaders\TileGS.glsl" />
     <None Include="src\Shaders\TileVS.glsl" />

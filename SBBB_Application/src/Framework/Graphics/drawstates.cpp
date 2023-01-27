@@ -21,7 +21,7 @@ DrawStates::DrawStates(std::vector<Texture*>& p_textures)
 	m_texturePtrs = p_textures;
 }
 
-DrawStates::DrawStates(std::weak_ptr<Shader> p_shader)
+DrawStates::DrawStates(Shader* p_shader)
 {
 	m_transform = glm::mat4(1.0f);
 	m_shaderPtr = p_shader;
@@ -33,7 +33,7 @@ DrawStates::DrawStates(BlendMode p_blendMode)
 	m_blendMode = p_blendMode;
 }
 
-DrawStates::DrawStates(glm::mat4& p_transform, Texture* p_texture, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode)
+DrawStates::DrawStates(glm::mat4& p_transform, Texture* p_texture, Shader* p_shader, BlendMode p_blendMode)
 {
 	m_shaderPtr = p_shader;
 	m_transform = p_transform;
@@ -45,18 +45,19 @@ DrawStates::DrawStates(glm::mat4& p_transform, Texture* p_texture, std::weak_ptr
 	}
 	m_texturePtrs.push_back(p_texture);
 }
-DrawStates::DrawStates(glm::mat4& p_transform, std::initializer_list<Texture*> p_textures, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode)
+DrawStates::DrawStates(glm::mat4& p_transform, std::initializer_list<Texture*> p_textures, Shader* p_shader, BlendMode p_blendMode)
 {
 	m_transform = p_transform;
 	m_blendMode = p_blendMode;
 	m_texturePtrs = p_textures;
+	m_shaderPtr = p_shader;
 }
 
 void DrawStates::setTransform(glm::mat4 p_transform)
 {
 	m_transform = p_transform;
 }
-void DrawStates::attachShader(std::weak_ptr<Shader> p_shader)
+void DrawStates::attachShader(Shader* p_shader)
 {
 
 	m_shaderPtr = p_shader;

@@ -73,7 +73,7 @@ void FrameBuffer::init() {
 		// Allocates texture
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		// constant for now
-		m_colorTextures[i].setFiltering(GL_LINEAR);
+		m_colorTextures[i].setFiltering(GL_LINEAR, GL_LINEAR);
 		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 
 	}
@@ -102,4 +102,23 @@ Texture* FrameBuffer::getColorTex(size_t p_index)
 {
 	if (p_index > m_colorTextures.size() - 1) throw std::exception("Tried to get frame buffer color attachment outside of range.");
 	return &m_colorTextures[p_index];
+}
+
+void FrameBuffer::getPixels(size_t p_colorBufferIndex, uint8_t p_channels, Array2D<uint8_t>& o_out)
+{
+	// Set the width
+	o_out.resize(m_colorTextures[p_colorBufferIndex].width * p_channels, 0);
+	o_out.reserve(m_dimensions.x * m_dimensions.y * p_channels);
+
+	uint8_t* tmp = (uint8_t*)malloc(m_dimensions.x * m_dimensions.y * p_channels);
+	bind();
+	glReadPixels(0, 0, m_dimensions.x, m_dimensions.y, m_colorTextures[p_colorBufferIndex].channels, GL_UNSIGNED_BYTE, tmp);
+	o_out.append(tmp, m_dimensions.x * m_dimensions.y * p_channels);
+	free(tmp);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::useDepth(bool p_bool)
+{
+	m_useDepth = p_bool;
 }

@@ -24,6 +24,12 @@ Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_
 	program->ID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
 	Shader::setUniforms(p_uniforms);
 }
+
+Shader& Shader::operator=(const Shader& p_other) {
+	program = p_other.program;
+	return *this;
+}
+
 Shader::Shader(Shader&& other) noexcept {
 	LOG("Moved Shader! Program ID: " << other.program->ID);
 	other.program = std::move(program);
@@ -218,7 +224,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 	return program->ID;
 }
 
-void Shader::use() {
+void Shader::use() const { 
 	glUseProgram(program->ID);
 }
 
@@ -247,6 +253,7 @@ void Shader::setUniforms(std::vector<Uniform> p_uniforms) {
 }
 void Shader::setBoolUniform(const std::string& p_name, bool p_value) const
 {
+	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
@@ -258,8 +265,14 @@ void Shader::setBoolUniform(const std::string& p_name, bool p_value) const
 #endif
 	glUniform1i(loc, (int)p_value);
 }
+void Shader::setBoolUniform(GLint p_loc, bool p_value) const
+{
+	use();
+	glUniform1i(p_loc, (int)p_value);
+}
 void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 {
+	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
@@ -271,8 +284,14 @@ void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 #endif
 	glUniform1i(loc, p_value);
 }
+void Shader::setIntUniform(GLint p_loc, GLint p_value) const
+{
+	use();
+	glUniform1i(p_loc, p_value);
+}
 void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
 {
+	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
@@ -285,8 +304,15 @@ void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
 	glUniform1i(loc, p_value);
 }
 
+void Shader::setTexUniform(GLint p_loc, GLuint p_value)
+{
+	use();
+	glUniform1i(p_loc, p_value);
+}
+
 void Shader::setFloatUniform(const std::string& p_name, GLfloat p_value) const
 {
+	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLED
 	if (loc != -1) {
@@ -298,8 +324,14 @@ void Shader::setFloatUniform(const std::string& p_name, GLfloat p_value) const
 #endif
 	glUniform1f(loc, p_value);
 }
+void Shader::setFloatUniform(GLint p_loc, GLfloat p_value) const
+{
+	use();
+	glUniform1f(p_loc, p_value);
+}
 void Shader::setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const
 {
+	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
 #ifdef LOADLOGGING_ENABLEDD // disabled because it runs every frame
 	if (loc != -1) {
@@ -311,3 +343,30 @@ void Shader::setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const
 #endif
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(p_value));
 	}
+
+void Shader::setMat4Uniform(GLint p_loc, glm::mat4 p_value) const
+{
+	use();
+	glUniformMatrix4fv(p_loc, 1, GL_FALSE, glm::value_ptr(p_value));
+}
+
+void Shader::setVec2Uniform(const std::string& p_name, glm::vec2 p_value) const 
+{
+	use();
+	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
+#ifdef LOADLOGGING_ENABLED
+	if (loc != -1) {
+		LOAD_LOG("setVec2Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
+	}
+	else {
+		LOAD_LOG("setVec2Uniform: Uniform location not found for " << p_name << ".");
+	}
+#endif
+	glUniform2f(loc, p_value.x, p_value.y);
+}
+
+void Shader::setVec2Uniform(GLint p_loc, glm::vec2 p_value) const
+{
+	use();
+	glUniform2f(p_loc, p_value.x, p_value.y);
+}

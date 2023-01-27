@@ -20,7 +20,7 @@ public:
 		DELETE_LOG("Sprite Destroyed");
 	}
 	// Shader must have the appropriate vertex attribute format
-	void attachShader(std::shared_ptr<Shader> p_shader);
+	void attachShader(Shader* p_shader);
 	void attachTexture(Texture* p_texture);
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
@@ -32,7 +32,7 @@ public:
 private:
 	Mesh<GLfloat> m_spriteMesh;
 	// Optional attachments directly to the sprite, so you don't have to worry about setting your drawStates properly before draw().
-	std::shared_ptr<Shader> m_attachedShader;
+	Shader* m_attachedShader;
 	Texture* m_attachedTexture;
 
 };

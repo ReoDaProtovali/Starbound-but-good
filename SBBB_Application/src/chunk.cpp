@@ -80,10 +80,10 @@ void WorldChunk::fillRandom() {
 	}
 	meshIsCurrent = false;
 }
-void WorldChunk::worldGenerate() {
+void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 	isEmpty = true;
 
-	ResourceLoader& res = ResourceLoader::Get();
+	ResourceManager& res = ResourceManager::Get();
 	TileInfo& DirtInfo = res.getTileInfo("vanilla:dirt").value();
 	TileInfo& StoneInfo = res.getTileInfo("vanilla:stone").value();
 	TileInfo& NeonInfo = res.getTileInfo("vanilla:neongrid").value();
@@ -92,50 +92,61 @@ void WorldChunk::worldGenerate() {
 	float surfaceLevel = 10.0f * CHUNKSIZE;
 	float globalX;
 	float globalY; // tile positions
-	float height;
-	float height2;
-	float caveLayer1;
-	float caveLayer2;
+	//float height;
+	//float height2;
+	//float caveLayer1;
+	//float caveLayer2;
 
 	for (int y = 0; y < CHUNKSIZE; y++) {
 		for (int x = 0; x < CHUNKSIZE; x++) {
 			globalX = (float)(worldPos.x * CHUNKSIZE + x);
 			globalY = (float)(worldPos.y * CHUNKSIZE - y) - surfaceLevel;
-			// detail level for the surface noise
-			s_noiseGenerator.SetOctaveCount(7);
-			// surface level
-			height = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 40.0f;
-			// The dirt level
-			// first noise is a scaled down version of the surface line            second noise is to make a dither effect between the layers
-			height2 = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 20.0f - (float)(5.0f * s_noiseGenerator.GetValue(globalX / 1.2f, globalY / 1.2f, 2.0f));
-			float scale1 = 1 / 10.0f;
-			float scale2 = 1 / 1.0f;
-			s_noiseGenerator.SetOctaveCount(2);
-			caveLayer1 = (float)(s_noiseGenerator.GetValue((double)globalX * scale1, (double)globalY * scale1, 2.0) / 2.0);
-			s_noiseGenerator.SetOctaveCount(1);
-			caveLayer2 = (float)s_noiseGenerator.GetValue(((double)globalX * scale1 * 0.7) + caveLayer1 * scale2, ((double)globalY * scale1 * 1.0) + caveLayer1 * scale2, 40.0f);
-			//std::cout << utils::clamp(globalY + surfaceLevel, 0.0f, 10.0f) / 10.0f << std::endl;
-			if (caveLayer2 < 0.1f + (utils::clamp(globalY - height + 64.0f, 0.0f, 10.0f) / 10.0f) + utils::clamp(globalY + 300.0f, 0.0f, 300.0f) / 350.0f) {
-				if (globalY > height) {
-					m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
-				}
-				else {
-					if (globalY < -40.0f + height2) {
-						m_tiles(x, y) = Tile(glm::ivec2(x, y), DirtInfo.imageIndex);
-						isEmpty = false;
-					}
-					else {
-						m_tiles(x, y) = Tile(glm::ivec2(x, y), StoneInfo.imageIndex);
-						isEmpty = false;
-					}
-				}
-			}
-			else if (caveLayer2 < 0.7f) {
-				m_tiles(x, y) = Tile(glm::ivec2(x, y), NeonInfo.imageIndex);
+			glm::vec4 perlin = noiseGen.getPixel(globalX, globalY, "perlin");
+
+			if (perlin.x > 0.2) {
+				m_tiles(x, y) = Tile(glm::ivec2(x, y), DirtInfo.imageIndex);
+				isEmpty = false;
 			}
 			else {
 				m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
+				isEmpty = false;
 			}
+			//// detail level for the surface noise
+			//s_noiseGenerator.SetOctaveCount(7);
+			//// surface level
+			//height = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 40.0f;
+			//// The dirt level
+			//// first noise is a scaled down version of the surface line            second noise is to make a dither effect between the layers
+			//height2 = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 20.0f - (float)(5.0f * s_noiseGenerator.GetValue(globalX / 1.2f, globalY / 1.2f, 2.0f));
+			//float scale1 = 1 / 10.0f;
+			//float scale2 = 1 / 1.0f;
+			//s_noiseGenerator.SetOctaveCount(2);
+			//caveLayer1 = (float)(s_noiseGenerator.GetValue((double)globalX * scale1, (double)globalY * scale1, 2.0) / 2.0);
+			//s_noiseGenerator.SetOctaveCount(1);
+			//caveLayer2 = (float)s_noiseGenerator.GetValue(((double)globalX * scale1 * 0.7) + caveLayer1 * scale2, ((double)globalY * scale1 * 1.0) + caveLayer1 * scale2, 40.0f);
+			////std::cout << utils::clamp(globalY + surfaceLevel, 0.0f, 10.0f) / 10.0f << std::endl;
+			//if (caveLayer2 < 0.1f + (utils::clamp(globalY - height + 64.0f, 0.0f, 10.0f) / 10.0f) + utils::clamp(globalY + 300.0f, 0.0f, 300.0f) / 350.0f) {
+			//	if (globalY > height) {
+			//		m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
+			//	}
+			//	else {
+			//		if (globalY < -40.0f + height2) {
+			//			m_tiles(x, y) = Tile(glm::ivec2(x, y), DirtInfo.imageIndex);
+			//			isEmpty = false;
+			//		}
+			//		else {
+			//			m_tiles(x, y) = Tile(glm::ivec2(x, y), StoneInfo.imageIndex);
+			//			isEmpty = false;
+			//		}
+			//	}
+			//}
+			//else if (caveLayer2 < 0.7f) {
+			//	m_tiles(x, y) = Tile(glm::ivec2(x, y), NeonInfo.imageIndex);
+			//}
+			//else {
+			//	m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
+			//}
+
 		}
 	}
 	meshIsCurrent = false;
@@ -145,7 +156,7 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	if (isEmpty) return;
 	tileMesh.remove();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * sizeof(TileVert)); // reserve a chunks worth of data idk
-	ResourceLoader& res = ResourceLoader::Get();
+	ResourceManager& res = ResourceManager::Get();
 
 	for (int y = 0; y < CHUNKSIZE; y++) {
 		for (int x = 0; x < CHUNKSIZE; x++) {
@@ -180,14 +191,15 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 							auto opt = p_chnks.getChunkPtr(ChunkPos(intrudedChunkX, intrudedChunkY), success);
 							WorldChunk* neighbor = opt.value();
 
-							Tile& t = neighbor->getChunkTile((int)utils::fwrapUnsigned(x + j, CHUNKSIZE), (int)utils::fwrapUnsigned(y + i, CHUNKSIZE));
+							Tile& t = neighbor->getChunkTile(
+								(int)utils::fwrapUnsigned(float(x + j), float(CHUNKSIZE)), // a bit weird to convert back and forth here but whatevs
+								(int)utils::fwrapUnsigned(float(y + i), float(CHUNKSIZE)));
 
 							if (t.m_tileID != 0) continue;
 						}
 						// if ya made it to this point, the tile is empty! :)
 						goto out;
 					}
-
 					if (j == 0 && i == 0) continue;
 					if (m_tiles(x + j, y + i).m_tileID != 0) continue;
 					out:
@@ -207,6 +219,7 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	}
 
 	tileMesh.genVBO();
+	tileMesh.clearVerts();
 	meshIsCurrent = true;
 }
 

@@ -1,0 +1,13 @@
+{
+    "generators": [
+      {
+        "name": "perlin",
+        "file": "PerlinFS.glsl"
+      },
+      {
+        "name": "cavern",
+        "file": "CavernFS.glsl"
+      }
+
+    ]
+}

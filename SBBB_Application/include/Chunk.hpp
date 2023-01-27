@@ -5,7 +5,7 @@
 #include "Framework/Graphics/Mesh.hpp"
 #include "Framework/Graphics/DrawSurface.hpp"
 #include "Framework/Graphics/TransformObject.hpp"
-#include "ResourceLoader.hpp"
+#include "ResourceManager.hpp"
 
 
 #include "Tile.hpp"
@@ -17,6 +17,7 @@
 
 #include <vector>
 #include "util/Array2D.hpp"
+#include "WorldGenNoisemap.hpp"
 
 struct ChunkPos {
 	ChunkPos() { x = -1; y = -1; }
@@ -53,7 +54,7 @@ struct WorldChunk : public TransformObject
 	WorldChunk(WorldChunk&& other) noexcept;
 
 	void fillRandom();
-	void worldGenerate();
+	void worldGenerate(WorldGenNoisemap& noiseGen);
 	void setChunkTile(glm::ivec2 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
 	Tile& getChunkTile(int p_x, int p_y);
 

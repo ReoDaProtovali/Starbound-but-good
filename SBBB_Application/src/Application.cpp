@@ -178,6 +178,7 @@ void Application::handleInput()
 	}
 
 	if (inp.testKeyDown(SDLK_4)) {
+		LOG("Regenerating VBOs!");
 		world.regenVBOs();
 	}
 }

@@ -24,18 +24,19 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
 	//m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl");
-	m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl");
-	m_tileShader->setTexUniform("tileSheet", 0);
+	m_tileShader = Shader(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl");
+	m_tileShader.setTexUniform("tileSheet", 0);
 
-	m_worldDrawStates.attachShader(m_tileShader);
+	m_worldDrawStates.attachShader(&m_tileShader);
+
 
 	loadTextures();
 
-	testReoSprite.attachShader(gs.imageShader);
+	testReoSprite.attachShader(&gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
 	testReoSprite.attachTexture(testReoTexture);
 
-	cameraFrameSprite.attachShader(gs.imageShader);
+	cameraFrameSprite.attachShader(&gs.imageShader);
 	cameraFrameTexture = res.getTexture(TextureID::CAMERA_FRAME_TEXTURE);
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
 
@@ -43,7 +44,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	res.loadAllTileSets();
 
 	Texture& t = *res.getTileSheetTexture();
-	testTileSheet.attachShader(gs.imageShader);
+	testTileSheet.attachShader(&gs.imageShader);
 	testTileSheet.setBounds(Rect(0.f, 0.f, (float)t.width / 40.f, (float)t.height / 40.f));
 	testTileSheet.attachTexture(&t);
 
@@ -123,6 +124,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 			}
 		}
 	}
+
 	return drawnChunkCount;
 }
 

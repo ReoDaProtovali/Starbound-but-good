@@ -46,10 +46,11 @@ public:
 		m_indices(p_other.m_indices),
 		m_attribList(p_other.m_attribList),
 		m_totalVertSize(p_other.m_totalVertSize),
+		m_maxVertsSizeReached(p_other.m_maxVertsSizeReached),
 		m_streamType(p_other.m_streamType)
 	{
 		// We can't copy these, so we have to create new opengl buffers. Copying is discouraged.
-		LOG("Copied mesh! VAO: " << p_other.VAO->ID);
+		GLGEN_LOG("Copied mesh! VAO: " << p_other.VAO->ID);
 		VBO = std::make_unique<glBuffer>();
 		VAO = std::make_unique<glVertexArray>();
 		IBO = std::make_unique<glBuffer>();
@@ -65,9 +66,10 @@ public:
 		m_indices = p_other.m_indices;
 		m_attribList = p_other.m_attribList;
 		m_totalVertSize = p_other.m_totalVertSize;
+		m_maxVertsSizeReached = p_other.m_maxVertsSizeReached;
 		m_streamType = p_other.m_streamType;
 		// We can't copy these, so we have to create new opengl buffers. Copying is discouraged.
-		LOG("Copied mesh! VAO: " << p_other.VAO->ID);
+		GLGEN_LOG("Copied mesh! VAO: " << p_other.VAO->ID);
 		VBO = std::make_unique<glBuffer>();
 		VAO = std::make_unique<glVertexArray>();
 		IBO = std::make_unique<glBuffer>();
@@ -85,11 +87,12 @@ public:
 		m_indices(p_other.m_indices),
 		m_attribList(p_other.m_attribList),
 		m_totalVertSize(p_other.m_totalVertSize),
+		m_maxVertsSizeReached(p_other.m_maxVertsSizeReached),
 		m_streamType(p_other.m_streamType),
 		VBOInitialized(p_other.VBOInitialized),
 		IBOInitialized(p_other.IBOInitialized)
 	{
-		LOG("Moved mesh! VAO: " << p_other.VAO->ID);
+		GLGEN_LOG("Moved mesh! VAO: " << p_other.VAO->ID);
 
 		VBO = std::move(p_other.VBO);
 		VAO = std::move(p_other.VAO);
@@ -135,13 +138,14 @@ public:
 	/// Simply adds a vertex of type T to the end of the mesh list.
 	void pushVertices(const std::initializer_list<T>& p_attribs) {
 		m_verts.insert(m_verts.end(), p_attribs);
+		m_maxVertsSizeReached += p_attribs.size();
 	};
 
 	void pushIndices(const std::initializer_list<GLuint>& p_attribs) {
 		m_indices.insert(m_indices.end(), p_attribs);
 	}
 
-	size_t getTotalVBOSize() { return m_verts.size(); }
+	size_t getTotalVBOSize() { return m_maxVertsSizeReached; }
 	size_t getTotalIBOSize() { return m_indices.size(); }
 
 	GLuint* getIBOPointer() { return m_indices.data(); }
@@ -211,10 +215,15 @@ public:
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
 		glCheck(glBufferSubData(GL_ARRAY_BUFFER, p_startIndex * sizeof(T), (p_endIndex - p_startIndex) * sizeof(T), p_data));
 	}
-
+	// dealloc the verts
+	void clearVerts() {
+		m_verts.clear();
+		m_verts.shrink_to_fit();
+	}
 	void remove() {
 		VBOInitialized = false;
 		IBOInitialized = false;
+		m_maxVertsSizeReached = 0;
 		m_verts.clear();
 		m_verts.shrink_to_fit();
 		m_indices.clear();
@@ -227,7 +236,9 @@ public:
 
 		std::vector<Attrib> m_attribList; // List of attributes the shader uses.
 		uint32_t m_totalVertSize = 0;
-
+		// used so I don't have to keep the verts around on system memory
+		uint32_t m_maxVertsSizeReached = 0;
+	
 		GLenum m_streamType = GL_STATIC_DRAW;
 };
 

@@ -12,6 +12,7 @@
 class DrawStates {
 public:
 	DrawStates() :
+		m_shaderPtr(nullptr),
 		m_transform(glm::mat4(1.0f))
 	{};
 
@@ -21,14 +22,14 @@ public:
 	DrawStates(glm::mat4& p_transform);
 	DrawStates(Texture* p_texture);
 	DrawStates(std::vector<Texture*>& p_textures);
-	DrawStates(std::weak_ptr<Shader> p_shader);
+	DrawStates(Shader* p_shader);
 	DrawStates(BlendMode blendMode);
-	DrawStates(glm::mat4& p_transform, Texture* p_texture, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode = BlendMode());
-	DrawStates(glm::mat4& p_transform, std::initializer_list<Texture*> p_textures, std::weak_ptr<Shader> p_shader, BlendMode p_blendMode = BlendMode());
+	DrawStates(glm::mat4& p_transform, Texture* p_texture, Shader* p_shader, BlendMode p_blendMode = BlendMode());
+	DrawStates(glm::mat4& p_transform, std::initializer_list<Texture*> p_textures, Shader* p_shader, BlendMode p_blendMode = BlendMode());
 
 	void setTransform(glm::mat4 p_transform);
 	// Sets the internal shader to use.
-	void attachShader(std::weak_ptr<Shader> p_shader);
+	void attachShader(Shader* p_shader);
 
 	void setBlendMode(BlendMode p_blendMode);
 
@@ -48,7 +49,7 @@ public:
 				return false;
 			}
 		}
-		if (!m_shaderPtr.lock()) {
+		if (!m_shaderPtr) {
 			LOG("Shader failed initialization check.");
 			return false;
 		}
@@ -63,7 +64,7 @@ public:
 	// Supports multiple textures for one shader. Should never be added to or removed from after initialization.
 	std::vector<Texture*> m_texturePtrs;
 
-	std::weak_ptr<Shader> m_shaderPtr;
+	Shader* m_shaderPtr;
 
 	// Constructed with default settings.
 	// Not a pointer, because it should only be a local copy.

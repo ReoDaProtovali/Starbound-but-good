@@ -64,12 +64,21 @@ public:
 		}
 		data.reserve(width * height);
 		std::copy(&p_data[0], &p_data[p_size], std::back_inserter(data));
-		LOG("2D Array appended from height " << height << " to height " << height + p_size / width);
+		//LOG("2D Array appended from height " << height << " to height " << height + p_size / width);
 		height += p_size / width;
 	}
 
 	void reverse() {
 		std::reverse(data.begin(), data.end());
+	}
+
+	void reserve(size_t p_amt) {
+		data.reserve(p_amt);
+	}
+	void reserve(size_t p_width, size_t p_height) {
+		data.reserve(p_width * p_height);
+		width = p_width;
+		height = p_height;
 	}
 
 	void clear() {

@@ -84,7 +84,7 @@
     <ClCompile Include="src\atlasbuilder.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\resourceloader.cpp">
+    <ClCompile Include="src\resourcemanager.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -123,6 +123,9 @@
     <ClCompile Include="src\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\worldgennoisemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -158,7 +161,7 @@
     <ClInclude Include="include\AtlasBuilder.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\ResourceLoader.hpp">
+    <ClInclude Include="include\ResourceManager.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="include\Framework\Graphics\BlendMode.hpp">
@@ -242,6 +245,9 @@
     <ClInclude Include="include\TileVert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\WorldGenNoisemap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\TODO.txt" />
@@ -276,6 +282,10 @@
     <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties" />
     <None Include="res\tilesets\vanilla\tileset.json" />
     <None Include="src\Shaders\TileGS.glsl" />
+    <None Include="src\Shaders\noisegenerators\PerlinFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl" />
+    <None Include="src\Shaders\noisegenerators\CavernFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\generators.json" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\libnoise.lib" />

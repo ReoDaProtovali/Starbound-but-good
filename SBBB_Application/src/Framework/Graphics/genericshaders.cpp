@@ -9,7 +9,7 @@ GenericShaders::GenericShaders()
 
 void GenericShaders::init() {
 
-	imageShader = std::make_shared<Shader>(
+	imageShader = Shader(
 		"./src/Shaders/ImageVS.glsl",
 		"./src/Shaders/ImageFS.glsl",
 		std::vector<Uniform>{

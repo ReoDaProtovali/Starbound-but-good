@@ -1,24 +1,25 @@
-#include "ResourceLoader.hpp"
+#include "ResourceManager.hpp"
 #define STB_IMAGE_IMPLEMENTATION   // use of stb functions once and for all
 #include <util/ext/stb_image.h>
 #include <util/ext/glm/glm.hpp>
 #include "GameConstants.hpp"
 
 
-ResourceLoader::ResourceLoader()
+ResourceManager::ResourceManager()
 {
-	LOAD_LOG("Creating Resource loader...");
+	LOAD_LOG("Creating Resource manager...");
 	tileSheetPixmap.resize(96, 24);
+	loadGeneratorShaders();
 }
 
-ResourceLoader::~ResourceLoader()
+ResourceManager::~ResourceManager()
 {
 	std::map<TextureID, Texture>::iterator it;
 	for (it = textures.begin(); it != textures.end(); it++) {
 		it->second.remove();
 	}
 }
-bool ResourceLoader::loadTexID(const char* p_filepath, TextureID p_ID) {
+bool ResourceManager::loadTexID(const char* p_filepath, TextureID p_ID) {
 	LOAD_LOG("Loading image resource at " << p_filepath << " with ID " << (uint32_t)p_ID);
 
 	if (textures.find(p_ID) != textures.end()) {
@@ -45,7 +46,7 @@ bool ResourceLoader::loadTexID(const char* p_filepath, TextureID p_ID) {
 	return true;
 }
 
-Texture* ResourceLoader::getTexture(TextureID p_ID, bool& p_success) {
+Texture* ResourceManager::getTexture(TextureID p_ID, bool& p_success) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {
 		p_success = true;
@@ -55,14 +56,15 @@ Texture* ResourceLoader::getTexture(TextureID p_ID, bool& p_success) {
 	return nullptr;
 }
 
-Texture* ResourceLoader::getTileSheetTexture() {
+Texture* ResourceManager::getTileSheetTexture() {
 	if (!tileSheetTexture.initialized) {
+		tileSheetTexture.setFiltering(GL_LINEAR, GL_NEAREST);
 		tileSheetTexture.fromVec4Data(tileSheetPixmap.width, tileSheetPixmap.height, tileSheetPixmap.getData());
 	}
 	return &tileSheetTexture;
 }
 
-void ResourceLoader::loadAllTileSets() {
+void ResourceManager::loadAllTileSets() {
 	namespace fs = std::filesystem;
 	for (const auto& entry : fs::directory_iterator(fs::current_path() / "res\\tilesets")) {
 		if (entry.is_directory()) {
@@ -71,7 +73,7 @@ void ResourceLoader::loadAllTileSets() {
 	}
 
 }
-void ResourceLoader::loadTileSet(std::filesystem::path p_tileSetPath)
+void ResourceManager::loadTileSet(const std::filesystem::path& p_tileSetPath)
 {
 	namespace fs = std::filesystem;
 	LOAD_LOG("Loading " << p_tileSetPath.string() << "...");
@@ -96,7 +98,7 @@ void ResourceLoader::loadTileSet(std::filesystem::path p_tileSetPath)
 	LOG("tileset.json not found!");
 }
 
-void ResourceLoader::loadDirTiles(std::string p_namespace, std::filesystem::path p_tileInfoPath, std::filesystem::path p_imagePath, std::filesystem::path p_parentPath) {
+void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::filesystem::path& p_tileInfoPath, const std::filesystem::path& p_imagePath, const std::filesystem::path& p_parentPath) {
 	namespace fs = std::filesystem;
 	for (const auto& entry : fs::directory_iterator(p_tileInfoPath)) {
 		const std::string filename = entry.path().filename().string();
@@ -176,7 +178,7 @@ void ResourceLoader::loadDirTiles(std::string p_namespace, std::filesystem::path
 	}
 	tileSheetPixmap.reverse();
 }
-std::optional<std::reference_wrapper<TileInfo>> ResourceLoader::getTileInfo(std::string p_key)
+std::optional<std::reference_wrapper<TileInfo>> ResourceManager::getTileInfo(const std::string& p_key)
 {
 	auto it = tileInfoIndexDict.find(p_key);
 	if (it == tileInfoIndexDict.end()) {
@@ -184,14 +186,57 @@ std::optional<std::reference_wrapper<TileInfo>> ResourceLoader::getTileInfo(std:
 	}
 	return tileInfoCache[it->second];
 }
-TileInfo& ResourceLoader::getTileInfo(size_t p_index)
+TileInfo& ResourceManager::getTileInfo(size_t p_index)
 {
 	return tileInfoCache[p_index];
 }
-Texture* ResourceLoader::getTexture(TextureID p_ID) {
+Texture* ResourceManager::getTexture(TextureID p_ID) {
 	auto it = textures.find(p_ID);
 	if (it != textures.end()) {
 		return &it->second;
 	}
 	throw std::invalid_argument("Failed to get image: ID Not found.");
+}
+
+void ResourceManager::loadGeneratorShaders() {
+	LOG("LOADING GENERATOR SHADERSS");
+	namespace fs = std::filesystem;
+	fs::path generatorsJSONPath = ".\\src\\Shaders\\noisegenerators\\generators.json";
+	if (!fs::exists(generatorsJSONPath)) {
+		ERROR_LOG("Unable to find generators.json! Shaders not loaded.");
+		return;
+	}
+	using namespace nlohmann;
+	// First, parse the json.
+	json generatorsJSON;
+	try {
+		generatorsJSON = json::parse(utils::readFile(generatorsJSONPath.string().c_str()));
+	}
+	catch (json::parse_error e) {
+		ERROR_LOG("Failed to parse noise generator JSON.");
+		return;
+	}
+
+
+	try {
+		std::vector<std::map<std::string, std::string>> generators = generatorsJSON["generators"];
+		for (auto e : generators) {
+			fs::path vertexShaderPath = generatorsJSONPath.parent_path() / "PassThroughVS.glsl";
+			fs::path fragmentShaderPath = generatorsJSONPath.parent_path() / e["file"];
+			m_generatorShaders[e["name"]] = Shader(vertexShaderPath.string().c_str(), fragmentShaderPath.string().c_str());
+		}
+	}
+	catch (json::type_error e) {
+		ERROR_LOG("Failed to read noise generator JSON property." << ". Exception: " << e.what());
+		return;
+	}
+
+}
+
+Shader& ResourceManager::getGeneratorShader(const std::string& p_name) {
+	if (m_generatorShaders.find(p_name) == m_generatorShaders.end()) {
+		ERROR_LOG("Failed to get requested shader.");
+		throw std::exception("Try again nerd");
+	}
+	return m_generatorShaders[p_name];
 }

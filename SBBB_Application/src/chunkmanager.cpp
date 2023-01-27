@@ -8,7 +8,7 @@ bool ChunkManager::genChunk(ChunkPos p_chunkPos)
 	// add it to the back of the translation map
 	m_indices.push_back(ChunkPos(p_chunkPos));
 	m_chunkList.emplace_back(p_chunkPos, 0);// world ID is hardcoded for now. Will most def be a different system later.
-	m_chunkList.back().worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
+	m_chunkList.back().worldGenerate(m_noiseMap); // prevent copying by getting it from the end. generation queue will be separate later.
 	return true;
 }
 bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
@@ -18,7 +18,7 @@ bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 	// add it to the back of the translation map
 	m_indices.push_back(ChunkPos(p_chunkX, p_chunkY));
 	m_chunkList.emplace_back(ChunkPos(p_chunkX, p_chunkY), 0);// world ID is hardcoded for now. Will most def be a different system later.
-	m_chunkList.back().worldGenerate(); // prevent copying by getting it from the end. generation queue will be separate later.
+	m_chunkList.back().worldGenerate(m_noiseMap); // prevent copying by getting it from the end. generation queue will be separate later.
 	return true;
 }
 void ChunkManager::regenVBOs()
