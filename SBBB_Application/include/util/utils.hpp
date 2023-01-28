@@ -84,6 +84,9 @@ namespace utils {
 			return d - 1 - abs(x % (int)d);
 		}
 	}
+	inline int gridFloor(int x, unsigned int d) {
+		return (x < 0) ? x / (int)d - 1 : x / (int)d;
+	}
 }
 // A utility class that can provide fps readouts, and also just measure times.
 struct fpsGauge {

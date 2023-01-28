@@ -11,14 +11,14 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	LOAD_LOG("GameRenderer instantiated...");
 
 
-	cam->pos = glm::vec3(-16.0f, 315.0f, 32.0f);
+	cam->pos = glm::vec3(-16.0f, 0.f, 32.0f);
 	cam->tileScale = 128.0f;
 	cam->setDimensions(windowWidth, windowHeight);
 
 	currentCamera = cam;
 
 	overviewCam = std::make_shared<Camera>();
-	overviewCam->pos = glm::vec3(-16.0f, 315.0f, 32.0f);
+	overviewCam->pos = glm::vec3(-16.0f, 0.0f, 32.0f);
 	overviewCam->tileScale = 1024.0f;
 	overviewCam->setDimensions(windowWidth, windowHeight);
 
@@ -101,28 +101,15 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 {
 	int drawnChunkCount = 0;
 	bool finished = false;
-
 	Texture* tilesheet = res.getTileSheetTexture();
 	m_worldDrawStates.attachTexture(tilesheet);
+
 	m_tileShader.setIntUniform("tileSheetHeight", tilesheet->height);
-	while (!finished) {
-		auto opt = p_world.fetchFromFrame(cam->getFrame(), finished);
 
-		if (opt.has_value()) {
-
-			WorldChunk* chunk = opt.value();
-
-			if (!(chunk->invalid || chunk->isEmpty)) {
-				if (!chunk->meshIsCurrent) chunk->generateVBO(p_world);
-
-				m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
-				m_tileShader.setVec2Uniform("worldPos", glm::vec2(chunk->worldPos.x, chunk->worldPos.y));
-
-				chunk->draw(m_screenFBO, m_worldDrawStates);
-				drawnChunkCount++;
-			}
-		}
-	}
+	m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
+	//cam->updateFrame();
+	p_world.updateDrawList(cam->getFrame());
+	drawnChunkCount = p_world.drawVisible(m_screenFBO, m_worldDrawStates, m_tileShader);
 
 	return drawnChunkCount;
 }
@@ -148,10 +135,10 @@ void GameRenderer::testDraw()
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(m_screenFBO, state);
 
-	//cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	//cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
-	//cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	//cameraFrameSprite.draw(m_screenFBO, state);
+	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
+	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
+	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
+	cameraFrameSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);

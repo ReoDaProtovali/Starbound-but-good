@@ -139,6 +139,42 @@ std::optional<WorldChunk*> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, b
 	m_setFetchCounterFlag = true;
 	return std::nullopt;
 }
+glm::ivec4 frameToChunkCoords(glm::vec4 p_frame) {
+	int x1 = utils::gridFloor(p_frame.x, CHUNKSIZE);
+	int y1 = utils::gridFloor(p_frame.y, CHUNKSIZE) + 1;
+	int x2 = utils::gridFloor(p_frame.z, CHUNKSIZE) + 1;
+	int y2 = utils::gridFloor(p_frame.w, CHUNKSIZE) + 2;
+	return glm::ivec4(x1, y1, x2, y2);
+}
+void ChunkManager::updateDrawList(glm::vec4 p_frame) {
+	// TODO:: Make this smarter such that it doesn't need to rebuild the list completely when the frame moves
+	static glm::ivec4 prev = glm::ivec4(0);
+	glm::ivec4 next = frameToChunkCoords(p_frame);
+	if (prev == next) return;
+	m_drawList.clear();
+	int count = 0;
+	auto it = m_drawList.before_begin();
+	for (int y = next.y; y < next.w; y++) {
+		for (int x = next.x; x < next.z; x++) {
+			if (!chunkExistsAt(ChunkPos(x, y))) continue;
+			it = m_drawList.insert_after(it, &m_chunkMap[ChunkPos(x, y)]);
+			count++;
+		}
+	}
+	//LOG(next.x << " " << next.y << " " << next.z << " " << next.w);
+	prev = next;
+}
+int ChunkManager::drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader) {
+	int count = 0;
+	for (auto chunk : m_drawList) {
+		if (chunk->isEmpty) continue;
+		if (!chunk->meshIsCurrent) chunk->generateVBO(*this);
+		p_tileShader.setVec2Uniform("worldPos", glm::vec2(chunk->worldPos.x, chunk->worldPos.y));
+		chunk->draw(p_target, p_states);
+		count++;
+	}
+	return count;
+}
 bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {
 	auto it = m_chunkMap.find(p_chunkPos);
 	if (it != m_chunkMap.end()) {

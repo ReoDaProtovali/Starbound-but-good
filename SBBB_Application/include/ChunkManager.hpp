@@ -42,6 +42,9 @@ public:
 	// overcomplicated
 	std::optional<WorldChunk*> fetchFromFrame(glm::vec4 p_viewFrame, bool& p_finished);
 
+	void updateDrawList(glm::vec4 p_frame);
+	int drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
+
 	bool chunkExistsAt(ChunkPos p_chunkPos);
 	bool removeChunk(ChunkPos p_chunkPos);
 	void removeChunks();
@@ -62,6 +65,6 @@ private:
 
 	std::unordered_map<ChunkPos, WorldChunk, ChunkPos> m_chunkMap;
 	std::queue<ChunkPos> m_loadQueue;
-	std::forward_list<WorldChunk> m_drawQueue;
+	std::forward_list<WorldChunk*> m_drawList;
 	//std::vector<ChunkPos> m_indices;
 };
