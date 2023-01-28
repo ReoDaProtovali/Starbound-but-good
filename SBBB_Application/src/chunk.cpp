@@ -3,9 +3,6 @@
 #include <util/ext/glm/glm.hpp>
 #include <stdexcept>
 
-
-noise::module::Perlin WorldChunk::s_noiseGenerator;
-
 WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	worldPos(p_chunkPos),
 	worldID(p_worldID),
@@ -13,14 +10,12 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	m_tiles(CHUNKSIZE, CHUNKSIZE)
 {
 
-	setPosition(glm::vec3((float)p_chunkPos.x * CHUNKSIZE, (float)p_chunkPos.y * CHUNKSIZE, 0.f));
+	setPosition(glm::vec3((float)p_chunkPos.x * CHUNKSIZE * 1.2, (float)p_chunkPos.y * CHUNKSIZE, 0.f));
 	calculateTransform();
 	tileMesh.addUintAttrib(1); // xyzID, one uint
 	tileMesh.addUintAttrib(1); // adjacencies
 	tileMesh.addUintAttrib(1); // variation count i guess
 
-	s_noiseGenerator.SetOctaveCount(10);
-	s_noiseGenerator.SetPersistence(0.54);
 }
 
 WorldChunk::WorldChunk(const WorldChunk& other) noexcept :
@@ -89,64 +84,36 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 	TileInfo& NeonInfo = res.getTileInfo("vanilla:neongrid").value();
 
 
-	float surfaceLevel = 10.0f * CHUNKSIZE;
+	float surfaceLevel = -3.0f * CHUNKSIZE;
 	float globalX;
-	float globalY; // tile positions
-	//float height;
-	//float height2;
-	//float caveLayer1;
-	//float caveLayer2;
+	float globalY;
 
 	for (int y = 0; y < CHUNKSIZE; y++) {
 		for (int x = 0; x < CHUNKSIZE; x++) {
 			globalX = (float)(worldPos.x * CHUNKSIZE + x);
-			globalY = (float)(worldPos.y * CHUNKSIZE - y) - surfaceLevel;
-			glm::vec4 perlin = noiseGen.getPixel(globalX, globalY, "perlin");
+			globalY = (float)(worldPos.y * CHUNKSIZE - y + surfaceLevel);
+			glm::vec4 cavern = noiseGen.getPixel((int)globalX, (int)globalY, "cavern");
+			glm::vec4 perlin = noiseGen.getPixel((int)globalX, (int)globalY, "perlin");
 
-			if (perlin.x > 0.2) {
-				m_tiles(x, y) = Tile(glm::ivec2(x, y), DirtInfo.imageIndex);
+			if (cavern.x < 0.5) {
+				if (perlin.y > 0.5) {
+					m_tiles(x, y) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+				}
+				else {
+					m_tiles(x, y) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+				}
 				isEmpty = false;
 			}
 			else {
 				m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
-				isEmpty = false;
 			}
-			//// detail level for the surface noise
-			//s_noiseGenerator.SetOctaveCount(7);
-			//// surface level
-			//height = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 40.0f;
-			//// The dirt level
-			//// first noise is a scaled down version of the surface line            second noise is to make a dither effect between the layers
-			//height2 = (float)s_noiseGenerator.GetValue(globalX / 200.0f, 214.2f, 2.0f) * 20.0f - (float)(5.0f * s_noiseGenerator.GetValue(globalX / 1.2f, globalY / 1.2f, 2.0f));
-			//float scale1 = 1 / 10.0f;
-			//float scale2 = 1 / 1.0f;
-			//s_noiseGenerator.SetOctaveCount(2);
-			//caveLayer1 = (float)(s_noiseGenerator.GetValue((double)globalX * scale1, (double)globalY * scale1, 2.0) / 2.0);
-			//s_noiseGenerator.SetOctaveCount(1);
-			//caveLayer2 = (float)s_noiseGenerator.GetValue(((double)globalX * scale1 * 0.7) + caveLayer1 * scale2, ((double)globalY * scale1 * 1.0) + caveLayer1 * scale2, 40.0f);
-			////std::cout << utils::clamp(globalY + surfaceLevel, 0.0f, 10.0f) / 10.0f << std::endl;
-			//if (caveLayer2 < 0.1f + (utils::clamp(globalY - height + 64.0f, 0.0f, 10.0f) / 10.0f) + utils::clamp(globalY + 300.0f, 0.0f, 300.0f) / 350.0f) {
-			//	if (globalY > height) {
-			//		m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
-			//	}
-			//	else {
-			//		if (globalY < -40.0f + height2) {
-			//			m_tiles(x, y) = Tile(glm::ivec2(x, y), DirtInfo.imageIndex);
-			//			isEmpty = false;
-			//		}
-			//		else {
-			//			m_tiles(x, y) = Tile(glm::ivec2(x, y), StoneInfo.imageIndex);
-			//			isEmpty = false;
-			//		}
-			//	}
-			//}
-			//else if (caveLayer2 < 0.7f) {
-			//	m_tiles(x, y) = Tile(glm::ivec2(x, y), NeonInfo.imageIndex);
+			//if (std::sin((float)globalX / 64.f) < globalY / 128.f) {
+			//	m_tiles(x, y) = Tile(x, y, 1);
 			//}
 			//else {
-			//	m_tiles(x, y) = Tile(glm::ivec2(x, y), 0);
+			//	m_tiles(x, y) = Tile(x, y, 0);
 			//}
-
+			//isEmpty = false;
 		}
 	}
 	meshIsCurrent = false;
@@ -180,10 +147,10 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 						int intrudedChunkX;
 						int intrudedChunkY;
 						intrudedChunkX = (x + j < 0) ? worldPos.x - 1 :
-							(x + j > 31) ? worldPos.x + 1 : 
+							(x + j > CHUNKSIZE - 1) ? worldPos.x + 1 :
 							worldPos.x;
 						intrudedChunkY = (y + i < 0) ? worldPos.y + 1 :
-							(y + i > 31) ? worldPos.y - 1 : 
+							(y + i > CHUNKSIZE - 1) ? worldPos.y - 1 :
 							worldPos.y;
 
 						if (p_chnks.chunkExistsAt(ChunkPos(intrudedChunkX, intrudedChunkY))) {
@@ -202,18 +169,36 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 					}
 					if (j == 0 && i == 0) continue;
 					if (m_tiles(x + j, y + i).m_tileID != 0) continue;
-					out:
-					if (i == -1 && j == -1) { v.setAdjacent(Adjacency::TL); } else
-					if (i == -1 && j ==  0) { v.setAdjacent(Adjacency::T); } else
-					if (i == -1 && j ==  1) { v.setAdjacent(Adjacency::TR); } else
-					if (i ==  0 && j == -1) { v.setAdjacent(Adjacency::L); } else
-					if (i ==  0 && j ==  1) { v.setAdjacent(Adjacency::R); } else
-					if (i ==  1 && j == -1) { v.setAdjacent(Adjacency::BL); } else
-					if (i ==  1 && j ==  0) { v.setAdjacent(Adjacency::B); } else
-					if (i ==  1 && j ==  1) { v.setAdjacent(Adjacency::BR); }
+
+				out:
+
+					if (i == -1 && j == -1) {
+						v.setAdjacent(Adjacency::TL);
+					}
+					else if (i == -1 && j == 0) {
+						v.setAdjacent(Adjacency::T);
+					}
+					else if (i == -1 && j == 1) {
+						v.setAdjacent(Adjacency::TR);
+					}
+					else if (i == 0 && j == -1) {
+						v.setAdjacent(Adjacency::L);
+					}
+					else if (i == 0 && j == 1) {
+						v.setAdjacent(Adjacency::R);
+					}
+					else if (i == 1 && j == -1) {
+						v.setAdjacent(Adjacency::BL);
+					}
+					else if (i == 1 && j == 0) {
+						v.setAdjacent(Adjacency::B);
+					}
+					else if (i == 1 && j == 1) {
+						v.setAdjacent(Adjacency::BR);
+					}
 				}
 			}
-			
+
 			tileMesh.pushVertices({ v });
 		}
 	}
@@ -252,4 +237,5 @@ void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 	newStates.setTransform(p_drawStates.m_transform * m_transform);
 
 	p_target.draw(tileMesh, GL_POINTS, newStates);
+
 }

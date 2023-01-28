@@ -170,9 +170,9 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 		delete imageData;
 
 		static size_t imgIndex = 0;
-		tileInfoCache.back().imageIndex = ++imgIndex;
+		tileInfoCache.back().spriteIndex = ++imgIndex;
 
-		LOG(tileInfo.name << ": Internal ID - " << tileInfoCache.back().imageIndex);
+		LOG(tileInfo.name << ": Internal ID - " << tileInfoCache.back().spriteIndex);
 
 		LOG("Loaded tile " << tileInfo.id << " and successfully stitched image!");
 	}

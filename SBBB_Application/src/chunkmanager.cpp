@@ -6,9 +6,10 @@ bool ChunkManager::genChunk(ChunkPos p_chunkPos)
 	if (chunkExistsAt(p_chunkPos)) return false;
 
 	// add it to the back of the translation map
-	m_indices.push_back(ChunkPos(p_chunkPos));
-	m_chunkList.emplace_back(p_chunkPos, 0);// world ID is hardcoded for now. Will most def be a different system later.
-	m_chunkList.back().worldGenerate(m_noiseMap); // prevent copying by getting it from the end. generation queue will be separate later.
+	WorldChunk c = WorldChunk(p_chunkPos, 0);
+	c.worldGenerate(m_noiseMap);
+	m_chunkMap[p_chunkPos] = c;// world ID is hardcoded for now. Will most def be a different system later.
+
 	return true;
 }
 bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
@@ -16,16 +17,16 @@ bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 	if (chunkExistsAt(ChunkPos(p_chunkX, p_chunkY))) return false;
 
 	// add it to the back of the translation map
-	m_indices.push_back(ChunkPos(p_chunkX, p_chunkY));
-	m_chunkList.emplace_back(ChunkPos(p_chunkX, p_chunkY), 0);// world ID is hardcoded for now. Will most def be a different system later.
-	m_chunkList.back().worldGenerate(m_noiseMap); // prevent copying by getting it from the end. generation queue will be separate later.
+	WorldChunk c = WorldChunk(ChunkPos(p_chunkX, p_chunkY), 0);
+	c.worldGenerate(m_noiseMap);
+	m_chunkMap[c.worldPos] = c;// world ID is hardcoded for now. Will most def be a different system later.
 	return true;
 }
 void ChunkManager::regenVBOs()
 {
-	for (auto& chunk : m_chunkList) {
+	for (auto& it : m_chunkMap) {
 
-		chunk.generateVBO(*this);
+		it.second.generateVBO(*this);
 	}
 }
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
@@ -59,7 +60,7 @@ bool ChunkManager::autoGen(Camera& p_cam) {
 			(int)(p_cam.getFrame().x / (float)CHUNKSIZE) - 2;
 			j < (int)((p_cam.getFrame().z) / (float)CHUNKSIZE) + 2;
 			j++) {
-			if ((i > 0) && (i < 24) && (j > -40) && (j < 40)) {
+			if ((i > -16) && (i < 16) && (j > -40) && (j < 40)) {
 				ChunkManager::enqueueGen(ChunkPos(j, i));
 			}
 		}
@@ -74,20 +75,20 @@ void ChunkManager::genFixed(size_t x, size_t y) {
 	}
 }
 void ChunkManager::logSize() {
-	printf("Chunk count: %zu\n", m_chunkList.size());
+	printf("Chunk count: %zu\n", m_chunkMap.size());
 }
 int ChunkManager::getEmptyChunkCount()
 {
 	int count = 0;
-	for (size_t i = 0; i < m_chunkList.size(); i++) {
-		if (m_chunkList[i].isEmpty) count++;
+	for (auto& it : m_chunkMap) {
+		count += (int)it.second.isEmpty;
 	}
 	return count;
 }
 void ChunkManager::logChunks() {
 
-	for (size_t i = 0; i < m_chunkList.size(); i++) {
-		printf("There is a chunk at position %i %i with index %zu\n", m_chunkList[i].worldPos.x, m_chunkList[i].worldPos.y, i);
+	for (auto& it : m_chunkMap) {
+		printf("There is a chunk at position %i %i\n", it.second.worldPos.x, it.second.worldPos.y);
 	}
 }
 //WorldChunk& ChunkManager::getChunk(ChunkPos p_chunkPos, bool& p_success) { // actually gets the chunk
@@ -100,20 +101,9 @@ void ChunkManager::logChunks() {
 //}
 std::optional<WorldChunk*> ChunkManager::getChunkPtr(ChunkPos p_chunkPos, bool& p_success)
 {
-	size_t index = findChunkIndex(p_chunkPos, p_success);
-
+	bool success = chunkExistsAt(p_chunkPos);
 	if (!p_success) return std::nullopt;
-	return std::optional<WorldChunk*>(&m_chunkList[index]);
-}
-size_t ChunkManager::findChunkIndex(ChunkPos p_chunkPos, bool& p_success) {
-	for (size_t i = 0; i < m_indices.size(); i++) {
-		if (m_indices[i] == p_chunkPos) {
-			p_success = true;
-			return i;
-		}
-	}
-	p_success = false;
-	return 999;
+	return std::optional<WorldChunk*>(&m_chunkMap[p_chunkPos]);
 }
 std::optional<WorldChunk*> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, bool& p_finished)
 {
@@ -149,35 +139,23 @@ std::optional<WorldChunk*> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, b
 	m_setFetchCounterFlag = true;
 	return std::nullopt;
 }
-bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) { // tells you if a chunk exists
-	// linear search, could be hashed but meh
-	for (size_t i = 0; i < m_indices.size(); i++) {
-		if (m_indices[i] == p_chunkPos) {
-			return true;
-		}
+bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {
+	auto it = m_chunkMap.find(p_chunkPos);
+	if (it != m_chunkMap.end()) {
+		if (it->second.invalid) return false;
+		return true;
 	}
 	return false;
 }
 
 bool ChunkManager::removeChunk(ChunkPos p_chunkPos)
 {
-	bool success;
-	size_t removeIndex = findChunkIndex(p_chunkPos, success);
-	if (!success) return false;
-	auto eraseChunkIter = m_chunkList.begin() + removeIndex;
-	auto eraseIndexIter = m_indices.begin() + removeIndex;
-	m_chunkList.erase(eraseChunkIter);
-	m_indices.erase(eraseIndexIter);
-	return true;
+	return (bool)m_chunkMap.erase(p_chunkPos);
 }
 
 void ChunkManager::removeChunks()
 {
-	//for (auto& w : chunkList) {
-	//	w->remove();
-	//}
-	m_chunkList.clear();
-	m_indices.clear();
+	m_chunkMap.clear();
 }
 // draws every chunk in the manager, innefficent
 //void ChunkManager::draw(DrawSurface& p_target, DrawStates& p_drawStates) {

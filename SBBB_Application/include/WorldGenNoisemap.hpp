@@ -17,13 +17,16 @@ struct ivec2Hash {
 
 struct NoiseTile {
 	std::string generator;
-	Array2D<uint8_t> data;
+	StaticArray2D<uint8_t> data;
 };
+
 class WorldGenNoisemap
 {
 public:
 	WorldGenNoisemap();
 
+	// Gets a single pixel from the noisemap at a given world position. Generates a noise texture at that position if it doesn't exist.
+	// Because this class stores multiple generators, specify the name with p_generatorName
 	glm::vec4 getPixel(int32_t p_worldPosX, int32_t p_worldPosY, const std::string& p_generatorName);
 
 	// Renders a noise texture for a given position
@@ -34,7 +37,7 @@ private:
 	glm::ivec2 globalPosToTilePos(int32_t p_worldPosX, int32_t p_worldPosY);
 	FrameBuffer m_FBO;
 	Mesh<GLfloat> m_square;
-	// woah that's a long type
+
 	std::unordered_map<glm::ivec2, std::vector<NoiseTile>, ivec2Hash> m_map;
 };
 

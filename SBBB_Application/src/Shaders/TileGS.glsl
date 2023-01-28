@@ -4,21 +4,25 @@ layout (points) in;
 layout (triangle_strip, max_vertices = 36) out;
 
 uniform mat4 transform;
+uniform int tileSheetHeight;
+uniform vec2 worldPos;
+
 out vec2 TexCoord;
+out vec3 col;
 
 in DATA {
-	int ID;
-    int adjacent;
-    int variationCount;
+	uint ID;
+    uint adjacent;
+    uint variationCount;
 }data_in[];
 
-const int SPRITE_WIDTH = 16;
-const int SPRITE_HEIGHT = 24;
+const uint SPRITE_WIDTH = 16u;
+const uint SPRITE_HEIGHT = 24u;
 
-bool[8] intToBoolArr(in int val) {
+bool[8] uintToBoolArr(in uint val) {
 	bool[8] result;
     for (int i = 0; i < 8; i++) {
-        result[i] = bool((val >> i) & 1);
+        result[i] = bool((val >> i) & 1u);
     }
 	return result;
 };
@@ -28,13 +32,14 @@ float rand(vec2 co){
     return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
-vec2 IDToTexOffset(int ID) {
-	return vec2(0, SPRITE_HEIGHT * (ID - 1));
+vec2 IDToTexOffset(uint ID) {
+	// it has to be backwards because tiles are appended in reverse order ugh
+	return vec2(0, uint(tileSheetHeight) - SPRITE_HEIGHT * (ID + 1u));
 }
 // uhhhhh texbounds is (x1, y1, x2, y2) while regionbounds is (x1, y1, w, h)
 // warning i think the origin is at the bottom left and that's kinda stupid
 void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
-	int randp = abs(int(float(18729727) * rand(gl_in[0].gl_Position.xy))) % data_in[0].variationCount;
+	uint randp = abs(uint(float(18729) * rand(gl_in[0].gl_Position.xy + worldPos * 2.f))) % data_in[0].variationCount;
 	vec2 offset =  IDToTexOffset(data_in[0].ID) + vec2(SPRITE_WIDTH * randp, 0);
 	// boo flickering
 	regionBounds += vec4(-0.001f, -0.001f, 0.0025f, 0.0025f);
@@ -63,7 +68,7 @@ void main() {
 	//4 # 3
 	//2 1 0
 	// true means the tile is NOT occupied
-	bool adj[8] = intToBoolArr(data_in[0].adjacent);
+	bool adj[8] = uintToBoolArr(data_in[0].adjacent);
 
 	pushRegion(vec4(4, 12, 12, 20), vec4(0, -1, 1, 1), 0);
 

@@ -33,9 +33,9 @@ public:
 	T& operator()(int x, int y) {
 		return data[((y * width) + x)];
 	}
-	T operator()(int x, int y) const {
-		return data[((y * width) + x)];
-	}
+	//T operator()(int x, int y) const {
+	//	return data[((y * width) + x)];
+	//}
 	void fill(T p_fillValue) {
 		for (size_t i = 0; i < width * height; i++) {
 			data[i] = p_fillValue;

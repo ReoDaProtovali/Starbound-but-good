@@ -10,7 +10,7 @@ vec2 grad( ivec2 z )  // replace this anything that returns a random vector
     n = (n<<13)^n;
     n = (n*(n*n*15731+789221)+1376312589)>>16;
 
-#if 0
+#if 1
 
     // simple random vectors
     return vec2(cos(float(n)),sin(float(n)));
@@ -43,12 +43,14 @@ float noise( in vec2 p )
 
 layout(location = 0) out vec4 fragColor;
 
-layout(location = 0) uniform vec2 WorldPos;
+layout(location = 2) uniform vec2 WorldPos;
+
+in vec2 TexCoord;
 
 void main() {
-    vec2 uv = (gl_FragCoord.xy / 512.f);
-    uv.x += int(WorldPos.x) % 2;
-    uv *= 1.f;
+    vec2 uv = TexCoord;
+    uv += WorldPos;
     // layer the color channels with octaves because why not
     fragColor = vec4(noise(uv), noise(uv*2.f + 10.f), noise(uv*5.f + 20.f), noise(uv*10.f + 30.f));
+    //fragColor = vec4(abs(WorldPos.x + 12.f) / 24.f, abs(WorldPos.y + 12.f) / 24.f, 0, 1);
 }

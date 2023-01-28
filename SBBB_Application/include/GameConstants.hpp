@@ -4,10 +4,11 @@
 #include "Framework/FrameworkConstants.hpp"
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 120
-#define DISABLE_RUNTIME_CONSOLE true
+#define DISABLE_RUNTIME_CONSOLE false
 
-// do NOT increase this. it does NOT like to be changed easily
-constexpr auto CHUNKSIZE = 32;
+// do NOT increase this beyond limits. it does NOT like to be changed easily
+// Currently works from 2-64
+constexpr auto CHUNKSIZE = 64;
 
 enum DefaultTileID {
 	EMPTY,

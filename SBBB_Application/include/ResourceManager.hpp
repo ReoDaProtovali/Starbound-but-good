@@ -20,7 +20,7 @@ struct TileInfo {
 	std::vector<std::string> categories{};
 	std::string rarity = "";
 	std::string imageFile = "";
-	size_t imageIndex = 0;
+	size_t spriteIndex = 0;
 	bool isAnimated = false;
 	bool emissive = false;
 	std::vector<float> lightingColor{};

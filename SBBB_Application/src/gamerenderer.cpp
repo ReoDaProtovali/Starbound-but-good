@@ -68,9 +68,6 @@ void GameRenderer::loadTextures() {
 	res.loadTexID("./res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE);
 	res.loadTexID("./res/roetest.png", TextureID::REO_TEST);
 	res.loadTexID("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
-
-	tileSheetTexture = res.getTexture(TextureID::TILESHEET_TEXTURE);
-	m_worldDrawStates.attachTexture(tileSheetTexture);
 }
 // --------------------------------------------------------------------------
 
@@ -105,8 +102,9 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	int drawnChunkCount = 0;
 	bool finished = false;
 
-	m_worldDrawStates.attachTexture(res.getTileSheetTexture());
-
+	Texture* tilesheet = res.getTileSheetTexture();
+	m_worldDrawStates.attachTexture(tilesheet);
+	m_tileShader.setIntUniform("tileSheetHeight", tilesheet->height);
 	while (!finished) {
 		auto opt = p_world.fetchFromFrame(cam->getFrame(), finished);
 
@@ -118,6 +116,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 				if (!chunk->meshIsCurrent) chunk->generateVBO(p_world);
 
 				m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
+				m_tileShader.setVec2Uniform("worldPos", glm::vec2(chunk->worldPos.x, chunk->worldPos.y));
 
 				chunk->draw(m_screenFBO, m_worldDrawStates);
 				drawnChunkCount++;
@@ -149,10 +148,10 @@ void GameRenderer::testDraw()
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(m_screenFBO, state);
 
-	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
-	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	cameraFrameSprite.draw(m_screenFBO, state);
+	//cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
+	//cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
+	//cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
+	//cameraFrameSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);

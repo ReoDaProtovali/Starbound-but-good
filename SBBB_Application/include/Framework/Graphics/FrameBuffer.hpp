@@ -8,6 +8,8 @@
 #include <initializer_list>
 #include <vector>
 #include "util/Array2D.hpp"
+#include "util/StaticArray2D.h"
+
 
 // Wrapper class for a FBO, which enables rendering directly into textures instead of the screen. Very handy for post processing and offscreen rendering.
 // NOTE:: CURRENTLY FIXED TO TEXTURE COLOR ATTACHMENTS, AND RENDERBUFFER DEPTH.
@@ -24,6 +26,7 @@ public:
 	Texture* getColorTex(size_t p_index);
 	// Read the pixels directly from the frame buffer into system memory.
 	void getPixels(size_t p_colorBufferIndex, uint8_t p_channels, Array2D<uint8_t>& o_out);
+	void getPixels(size_t p_colorBufferIndex, uint8_t p_channels, StaticArray2D<uint8_t>& o_out);
 	void useDepth(bool p_bool);
 private:
 	

@@ -76,6 +76,14 @@ namespace utils {
 		// Piecewise fmod transformation function
 		return x < 0 ? (fmodf(x, aR) + r) : fmodf(x, aR);
 	}
+	inline unsigned int modUnsigned(int x, unsigned int d) {
+		if (x >= 0) {
+			return x % d;
+		}
+		else {
+			return d - 1 - abs(x % (int)d);
+		}
+	}
 }
 // A utility class that can provide fps readouts, and also just measure times.
 struct fpsGauge {

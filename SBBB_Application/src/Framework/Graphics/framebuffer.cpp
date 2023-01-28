@@ -117,6 +117,17 @@ void FrameBuffer::getPixels(size_t p_colorBufferIndex, uint8_t p_channels, Array
 	free(tmp);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+void FrameBuffer::getPixels(size_t p_colorBufferIndex, uint8_t p_channels, StaticArray2D<uint8_t>& o_out)
+{
+	// Set the width
+	o_out.resize(m_colorTextures[p_colorBufferIndex].width * p_channels, m_colorTextures[p_colorBufferIndex].height);
+
+	uint8_t* tmp = (uint8_t*)malloc(m_dimensions.x * m_dimensions.y * (uint32_t)p_channels);
+	bind();
+	glReadPixels(0, 0, m_dimensions.x, m_dimensions.y, m_colorTextures[p_colorBufferIndex].channels, GL_UNSIGNED_BYTE, tmp);
+	o_out.setData(tmp);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 void FrameBuffer::useDepth(bool p_bool)
 {

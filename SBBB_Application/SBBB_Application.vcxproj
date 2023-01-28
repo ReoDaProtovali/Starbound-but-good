@@ -246,6 +246,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\ChunkManager.hpp" />
     <ClInclude Include="include\util\Array2D.hpp" />
     <ClInclude Include="include\util\Rect.hpp" />
+    <ClInclude Include="include\util\StaticArray2D.h" />
     <ClInclude Include="include\util\utils.hpp" />
     <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
     <ClInclude Include="include\Framework\FrameworkDraw.hpp" />

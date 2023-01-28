@@ -3,7 +3,7 @@
 
 //#define LOADLOGGING_ENABLED
 //#define DELETELOGGING_ENABLED
-// #define GLGENLOGGING_ENABLED
+//#define GLGENLOGGING_ENABLED
 
 #include "Log.hpp"
 

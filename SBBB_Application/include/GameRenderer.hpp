@@ -86,8 +86,6 @@ private:
 	std::weak_ptr<Camera> currentCamera;
 	bool cameraToggle = false;
 
-	Texture* tileSheetTexture = nullptr;
-
 	/// Uses packed chunk coordinates and block IDs
 	Shader m_tileShader;
 	FrameBuffer m_screenFBO;

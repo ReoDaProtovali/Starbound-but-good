@@ -13,7 +13,6 @@
 #include <util/ext/glm/vec2.hpp>
 #include <util/ext/glm/vec3.hpp>
 #include <util/ext/glm/vec4.hpp>
-#include <noise/noise.h>
 
 #include <vector>
 #include "util/Array2D.hpp"
@@ -31,6 +30,9 @@ struct ChunkPos {
 	friend bool operator==(const ChunkPos& pos1, const ChunkPos& pos2) {
 		if (pos1.x == pos2.x && pos1.y == pos2.y) return true;
 		return false;
+	}
+	size_t operator()(const ChunkPos& p_key) const {
+		return (p_key.y << 16) ^ p_key.x;
 	}
 	int x;
 	int y;
@@ -76,6 +78,5 @@ struct WorldChunk : public TransformObject
 
 private:
 	Array2D<Tile> m_tiles;
-	static noise::module::Perlin s_noiseGenerator;
 
 };

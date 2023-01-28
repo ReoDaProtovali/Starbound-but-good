@@ -6,6 +6,8 @@
 #include <queue>
 #include <vector>
 #include <optional>
+#include <forward_list>
+#include <unordered_map>
 
 #include "Tile.hpp"
 #include "Chunk.hpp"
@@ -21,7 +23,7 @@ class ChunkManager
 {
 public:
 	// Basic init, reserving a block of memory for future chunks.
-	ChunkManager() { m_chunkList.reserve(512); };
+	ChunkManager() { m_chunkMap.reserve(1024); };
 
 	bool genChunk(ChunkPos p_chunkPos);
 	bool genChunk(int p_chunkX, int p_chunkY);
@@ -31,7 +33,6 @@ public:
 	void genFixed(size_t x, size_t y);
 	bool autoGen(Camera& p_cam);
 
-	size_t findChunkIndex(ChunkPos p_chunkPos, bool& p_success);
 	//WorldChunk& getChunk(ChunkPos p_chunkPos, bool& p_success);
 	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos, bool& p_success);
 
@@ -47,7 +48,7 @@ public:
 
 	//void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 	void logSize();
-	int getChunkCount() { return (int)m_chunkList.size(); }
+	int getChunkCount() { return (int)m_chunkMap.size(); }
 	int getEmptyChunkCount();
 	void logChunks();
 
@@ -59,7 +60,8 @@ private:
 	uint32_t m_fetchCounter = 0;
 	bool m_doneFetching = false;
 
-	std::vector<WorldChunk> m_chunkList;
+	std::unordered_map<ChunkPos, WorldChunk, ChunkPos> m_chunkMap;
 	std::queue<ChunkPos> m_loadQueue;
-	std::vector<ChunkPos> m_indices;
+	std::forward_list<WorldChunk> m_drawQueue;
+	//std::vector<ChunkPos> m_indices;
 };
