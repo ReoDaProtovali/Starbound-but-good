@@ -8,7 +8,7 @@ uniform int tileSheetHeight;
 uniform vec2 worldPos;
 
 out vec2 TexCoord;
-out vec3 col;
+
 
 in DATA {
 	uint ID;

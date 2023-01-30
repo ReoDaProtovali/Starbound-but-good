@@ -42,7 +42,7 @@ public:
 	// overcomplicated
 	std::optional<WorldChunk*> fetchFromFrame(glm::vec4 p_viewFrame, bool& p_finished);
 
-	void updateDrawList(glm::vec4 p_frame);
+	void updateDrawList(glm::vec4 p_frame, bool force = false);
 	int drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
 
 	bool chunkExistsAt(ChunkPos p_chunkPos);
@@ -55,6 +55,7 @@ public:
 	int getEmptyChunkCount();
 	void logChunks();
 
+	Camera* generatorCam;
 private:
 	WorldGenNoisemap m_noiseMap;
 	ResourceManager& res = ResourceManager::Get();

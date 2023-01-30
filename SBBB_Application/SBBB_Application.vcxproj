@@ -78,7 +78,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext\FreeType;$(IncludePath)</IncludePath>
     <LibraryPath>C:\dev\libnoisedll\bin;C:\dev\SDL2\lib\x86;$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</IntDir>
@@ -86,7 +86,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good\libnoise;$(SolutionDir)\glm;C:\dev\SDL2\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good\libnoise;$(SolutionDir)\glm;C:\dev\SDL2\include;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext\FreeType;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good;C:\dev\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>.\build\$(Platform)\$(Configuration)\</IntDir>
@@ -126,9 +126,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SBBB_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SBBB_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <DisableSpecificWarnings>26812;4312;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -148,9 +148,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
       <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
@@ -158,6 +158,8 @@
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -192,6 +194,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\Framework\Graphics\framebuffer.cpp" />
     <ClCompile Include="src\Framework\Graphics\genericshaders.cpp" />
     <ClCompile Include="src\Framework\Graphics\shader.cpp" />
+    <ClCompile Include="src\Framework\Graphics\text.cpp" />
     <ClCompile Include="src\Framework\Graphics\sprite.cpp" />
     <ClCompile Include="src\Framework\Graphics\texture.cpp" />
     <ClCompile Include="src\Framework\Graphics\transformobject.cpp" />
@@ -223,6 +226,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp" />
     <ClInclude Include="include\Framework\Graphics\GlIDs.hpp" />
     <ClInclude Include="include\Framework\Graphics\GlCheck.hpp" />
+    <ClInclude Include="include\Framework\Graphics\Text.hpp" />
     <ClInclude Include="include\Framework\Graphics\Mesh.hpp" />
     <ClInclude Include="include\Framework\Graphics\Pixmap.hpp" />
     <ClInclude Include="include\Framework\Graphics\Shader.hpp" />
@@ -259,6 +263,7 @@ Xcopy /E /I res $(OutDir)res</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="freetype.dll" />
     <None Include="glew32.dll" />
     <None Include="libnoise.dll" />
     <None Include="README.md" />
@@ -274,12 +279,15 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\noisegenerators\generators.json" />
     <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl" />
     <None Include="src\Shaders\noisegenerators\PerlinFS.glsl" />
+    <None Include="src\Shaders\TextFS.glsl" />
+    <None Include="src\Shaders\TextVS.glsl" />
     <None Include="src\Shaders\TileFS.glsl" />
     <None Include="src\Shaders\TileGS.glsl" />
     <None Include="src\Shaders\TileVS.glsl" />
     <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="lib\freetype.lib" />
     <Library Include="lib\libnoise.lib" />
   </ItemGroup>
   <ItemGroup>

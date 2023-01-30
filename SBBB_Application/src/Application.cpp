@@ -6,6 +6,8 @@ Application::Application(GameWindow& p_window)
 	world(ChunkManager())
 {
 	gw.setVSync(true);
+	// a bit ugly
+	world.generatorCam = renderer.cam.get();
 }
 
 void Application::run()

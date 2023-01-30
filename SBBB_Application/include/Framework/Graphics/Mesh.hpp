@@ -104,7 +104,7 @@ public:
 
 	void setStreamType(GLenum p_type) {
 #ifdef SBBB_DEBUG
-		if (p_type != GL_STREAM_DRAW || p_type != GL_DYNAMIC_DRAW || p_type != GL_STATIC_DRAW) {
+		if (!(p_type == GL_STREAM_DRAW || p_type == GL_DYNAMIC_DRAW || p_type == GL_STATIC_DRAW)) {
 			throw std::runtime_error("Used an invalid enum to set a stream type.");
 			return;
 		}
@@ -161,7 +161,7 @@ public:
 			GLGEN_LOG("Re-generated Vertex Buffer " << VBO->ID);
 		}
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
-		glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(T) * m_verts.size(), m_verts.data(), GL_STATIC_DRAW));
+		glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(T) * m_verts.size(), m_verts.data(), m_streamType));
 
 		GLint currentOffset = 0; // Offset that needs to be updated as arbitrary amounts of attributes are added. 
 
@@ -239,6 +239,7 @@ public:
 		// used so I don't have to keep the verts around on system memory
 		uint32_t m_maxVertsSizeReached = 0;
 	
+		// By default, vbo data is expected not to change. Be sure to set it to dynamic if that is not the case.
 		GLenum m_streamType = GL_STATIC_DRAW;
 };
 

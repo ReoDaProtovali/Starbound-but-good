@@ -19,6 +19,8 @@
 
 #include "Framework/Graphics/Sprite.hpp"
 
+#include "Framework/Graphics/Text.hpp"
+
 
 class Lighting;
 class GameWindow;
@@ -83,6 +85,10 @@ public:
 private:
 
 	GenericShaders& gs = GenericShaders::Get();
+
+	TextContext ftctx; // freetype library context
+	Font videotype = { "res/fonts/videotype.ttf", ftctx };
+
 	std::weak_ptr<Camera> currentCamera;
 	bool cameraToggle = false;
 

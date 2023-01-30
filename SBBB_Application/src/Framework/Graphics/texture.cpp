@@ -81,7 +81,6 @@ void Texture::fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p
 		channels,
 		GL_UNSIGNED_BYTE,
 		p_data);
-	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
 	initialized = true;
 }
@@ -110,7 +109,6 @@ void Texture::fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_dat
 		channels,
 		GL_FLOAT,
 		p_data);
-	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);
 	initialized = true;
 }

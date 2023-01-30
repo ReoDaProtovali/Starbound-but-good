@@ -13,6 +13,9 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 	bounds = p_bounds;
 	// Default origin:
 	setOrigin(bounds.getCenter());
+
+	// Keep it as dynamic for now, 
+	m_spriteMesh.setStreamType(GL_DYNAMIC_DRAW);
 	m_spriteMesh.addFloatAttrib(3); // Position
 	m_spriteMesh.addFloatAttrib(2); // Texcoord
 	

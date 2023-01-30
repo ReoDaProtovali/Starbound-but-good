@@ -3,6 +3,7 @@
 DrawStates::DrawStates(glm::mat4& p_transform)
 {
 	m_transform = p_transform;
+	m_shaderPtr = nullptr;
 }
 
 DrawStates::DrawStates(Texture* p_texture)
@@ -13,6 +14,7 @@ DrawStates::DrawStates(Texture* p_texture)
 		return;
 	}
 	m_texturePtrs.push_back(p_texture);
+	m_shaderPtr = nullptr;
 }
 
 DrawStates::DrawStates(std::vector<Texture*>& p_textures)

@@ -4,7 +4,7 @@
 #include "Framework/Log.hpp"
 #include <algorithm>
 template<class T>
-// an Array2D that keeps its data in a raw pointer
+// an Array2D that keeps its data in a raw pointer, handles its own memory
 // WARNING: DOES NOT BOUNDS CHECK
 // IF YOU READ OUT OF BOUNDS IT'S YOUR OWN FAULT, LOL
 class StaticArray2D {
@@ -26,9 +26,8 @@ public:
 	}
 
 	~StaticArray2D() {
-		if (data) {
-			free(data);
-		}
+		if (data) free(data);
+
 	}
 	StaticArray2D<T> operator=(const StaticArray2D<T>& other) = delete;
 
@@ -73,6 +72,13 @@ public:
 
 	void clear() {
 		memset(data, 0, width * height * sizeof(T));
+	}
+
+	void reset() {
+		if (data) free(data);
+		width = 0;
+		height = 0;
+		initialized = false;
 	}
 	size_t width;
 	size_t height;

@@ -48,6 +48,7 @@ bool ChunkManager::genFromQueue()
 	chunkPos = m_loadQueue.front();
 	m_loadQueue.pop();
 	genChunk(chunkPos);
+	updateDrawList(generatorCam->getFrame(), true);
 	return true;
 }
 
@@ -140,17 +141,17 @@ std::optional<WorldChunk*> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, b
 	return std::nullopt;
 }
 glm::ivec4 frameToChunkCoords(glm::vec4 p_frame) {
-	int x1 = utils::gridFloor(p_frame.x, CHUNKSIZE);
-	int y1 = utils::gridFloor(p_frame.y, CHUNKSIZE) + 1;
-	int x2 = utils::gridFloor(p_frame.z, CHUNKSIZE) + 1;
-	int y2 = utils::gridFloor(p_frame.w, CHUNKSIZE) + 2;
+	int x1 = utils::gridFloor((int)p_frame.x, CHUNKSIZE);
+	int y1 = utils::gridFloor((int)p_frame.y, CHUNKSIZE) + 1;
+	int x2 = utils::gridFloor((int)p_frame.z, CHUNKSIZE) + 1;
+	int y2 = utils::gridFloor((int)p_frame.w, CHUNKSIZE) + 2;
 	return glm::ivec4(x1, y1, x2, y2);
 }
-void ChunkManager::updateDrawList(glm::vec4 p_frame) {
+void ChunkManager::updateDrawList(glm::vec4 p_frame, bool force) {
 	// TODO:: Make this smarter such that it doesn't need to rebuild the list completely when the frame moves
 	static glm::ivec4 prev = glm::ivec4(0);
 	glm::ivec4 next = frameToChunkCoords(p_frame);
-	if (prev == next) return;
+	if ((prev == next) && !force) return;
 	m_drawList.clear();
 	int count = 0;
 	auto it = m_drawList.before_begin();
@@ -167,6 +168,7 @@ void ChunkManager::updateDrawList(glm::vec4 p_frame) {
 int ChunkManager::drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader) {
 	int count = 0;
 	for (auto chunk : m_drawList) {
+		if (!chunk) continue;
 		if (chunk->isEmpty) continue;
 		if (!chunk->meshIsCurrent) chunk->generateVBO(*this);
 		p_tileShader.setVec2Uniform("worldPos", glm::vec2(chunk->worldPos.x, chunk->worldPos.y));

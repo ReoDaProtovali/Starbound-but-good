@@ -1,6 +1,5 @@
 #include "GameRenderer.hpp"
 
-
 GameRenderer::GameRenderer(const GameWindow& p_window) :
 	windowWidth(p_window.windowWidth),
 	windowHeight(p_window.windowHeight),
@@ -29,6 +28,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	m_worldDrawStates.attachShader(&m_tileShader);
 
+	videotype.setPixelHeight(50);
 
 	loadTextures();
 
@@ -49,7 +49,6 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	testTileSheet.attachTexture(&t);
 
 	//m_screenFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
-
 
 	LOAD_LOG("Creating lighting subsystem...");
 
@@ -102,6 +101,8 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	int drawnChunkCount = 0;
 	bool finished = false;
 	Texture* tilesheet = res.getTileSheetTexture();
+	tilesheet->setFiltering(GL_NEAREST, GL_NEAREST);
+
 	m_worldDrawStates.attachTexture(tilesheet);
 
 	m_tileShader.setIntUniform("tileSheetHeight", tilesheet->height);
@@ -135,13 +136,21 @@ void GameRenderer::testDraw()
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(m_screenFBO, state);
 
-	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
-	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	cameraFrameSprite.draw(m_screenFBO, state);
+	//cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
+	//cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
+	//cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
+	//cameraFrameSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);
+
+	static Text testText(videotype, "Welcome to the cum zone.\nPopulation: Dergs");
+
+	//state.setTransform(glm::mat4(1.0));
+
+	//testText.draw(glm::vec3(0), m_screenFBO, state);
+	testText.setText("Current frame: " + std::to_string((int)testFrame));
+	testText.draw(glm::vec2(-1.f, 0.8f), 50, glm::vec3(1.f, 0.0f, 0.2f), m_screenFBO);
 
 	glEnable(GL_DEPTH_TEST);
 }

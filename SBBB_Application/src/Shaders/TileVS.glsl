@@ -3,7 +3,6 @@
 layout(location = 0) in uint xyzID;
 layout(location = 1) in uint adjacent;
 layout(location = 2) in uint variationCount;
-layout(location = 3) in vec3 col;
 
 //out int ID;
 

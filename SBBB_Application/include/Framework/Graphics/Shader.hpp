@@ -78,6 +78,9 @@ public:
 
 	void setVec2Uniform(const std::string& p_name, glm::vec2 p_value) const;
 	void setVec2Uniform(GLint p_loc, glm::vec2 p_value) const;
+
+	void setVec3Uniform(const std::string& p_name, glm::vec3 p_value) const;
+	void setVec3Uniform(GLint p_loc, glm::vec3 p_value) const;
 	// Used to set a list of uniforms using uniform objects.
 	// Only works with strings, no locations.
 	void setUniforms(std::vector<Uniform> p_uniforms);

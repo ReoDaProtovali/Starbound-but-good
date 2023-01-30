@@ -84,7 +84,9 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID);
 		glDrawBuffers(m_DrawBuffers.size(), (const GLenum*)m_DrawBuffers.data());
 	};
-
+	glm::ivec4 getViewport() {
+		return m_viewport;
+	}
 protected:
 	// If drawing to a frame buffer, it can be useful to have more than one shader output.
 	std::vector<GLenum> m_DrawBuffers = { GL_COLOR_ATTACHMENT0 };

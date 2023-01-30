@@ -370,3 +370,24 @@ void Shader::setVec2Uniform(GLint p_loc, glm::vec2 p_value) const
 	use();
 	glUniform2f(p_loc, p_value.x, p_value.y);
 }
+
+void Shader::setVec3Uniform(const std::string& p_name, glm::vec3 p_value) const
+{
+	use();
+	GLint loc = glGetUniformLocation(program->ID, p_name.c_str());
+#ifdef LOADLOGGING_ENABLED
+	if (loc != -1) {
+		LOAD_LOG("setVec2Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
+	}
+	else {
+		LOAD_LOG("setVec2Uniform: Uniform location not found for " << p_name << ".");
+	}
+#endif
+	glUniform3f(loc, p_value.x, p_value.y, p_value.z);
+}
+
+void Shader::setVec3Uniform(GLint p_loc, glm::vec3 p_value) const
+{
+	use();
+	glUniform3f(p_loc, p_value.x, p_value.y, p_value.z);
+}
