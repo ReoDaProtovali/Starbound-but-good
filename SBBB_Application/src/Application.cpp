@@ -48,6 +48,10 @@ void Application::run()
 
 		handleInput();
 
+
+		renderer.cam->lastVelocity.x = camVelocity.x;
+		renderer.cam->lastVelocity.y = camVelocity.y;
+		renderer.cam->lastVelocity.z = 0;
 		// also for console stats
 		renderFPSGauge.update(20); // 20 frame long value buffer
 
@@ -171,10 +175,6 @@ void Application::handleInput()
 		//cam.updateFrame();
 
 	}
-
-	cam.lastVelocity.x = camVelocity.x;
-	cam.lastVelocity.y = camVelocity.y;
-	cam.lastVelocity.z = 0;
 
 	if (inp.testKey(SDLK_q)) {
 		cam.tileScale *= 0.992f;
