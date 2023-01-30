@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>C:\dev\libnoisedll\bin;C:\dev\SDL2\lib\x86;$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\dev\SDL2\lib\x86;$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SBBB_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <DisableSpecificWarnings>26812;4312;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -289,7 +289,6 @@ Xcopy /E /I res $(OutDir)res</Command>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\freetype.lib" />
-    <Library Include="lib\libnoise.lib" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png" />

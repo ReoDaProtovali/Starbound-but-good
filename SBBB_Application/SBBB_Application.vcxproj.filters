@@ -300,7 +300,6 @@
     <None Include="src\Shaders\TextFS.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\libnoise.lib" />
     <Library Include="lib\freetype.lib" />
   </ItemGroup>
   <ItemGroup>
