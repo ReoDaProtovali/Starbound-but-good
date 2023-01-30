@@ -12,9 +12,6 @@ out DATA {
     uint variationCount;
 }data_out;
 
-
-uniform sampler2D tileSheet;
-
 void main()
 {
     // Unpacking method taken from TileVert struct method. There are no binary literals so I just used their decimal equivalents.

@@ -60,9 +60,10 @@ float fractalDistortNoise( in vec2 uv, int level, float harmonic, float amount )
     }
     return (1.f + noise(result)) / 2.f;
 }
+#extension GL_ARB_explicit_uniform_location : enable
 
 layout(location = 0) out vec4 fragColor;
-uniform vec2 WorldPos;
+layout(location = 2) uniform vec2 WorldPos;
 
 void main()
 {

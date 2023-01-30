@@ -23,7 +23,7 @@ public:
 #ifdef SBBB_DEBUG
 		if (!p_states.checkIfInit()) return;
 #endif
-		auto& shader = p_states.m_shaderPtr;
+		auto shader = p_states.m_shaderPtr;
 		assert(shader);
 
 		glCheck(glBindVertexArray(p_mesh.VAO->ID));
@@ -56,7 +56,7 @@ public:
 		}
 
 		// Causes a slight performace hitch?
-		glBindVertexArray(0);
+		//glBindVertexArray(0);
 		// Unbind all textures
 		// Causes an exception??? Bro??
 		//for (size_t i = 0; i < p_states.textures.size(); i++) {

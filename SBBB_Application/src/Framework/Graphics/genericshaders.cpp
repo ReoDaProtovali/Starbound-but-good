@@ -11,9 +11,8 @@ void GenericShaders::init() {
 
 	imageShader = Shader(
 		"./src/Shaders/ImageVS.glsl",
-		"./src/Shaders/ImageFS.glsl",
-		std::vector<Uniform>{
-			Uniform("imageTexture", UniformTypes::TEX, 0)
-	});
+		"./src/Shaders/ImageFS.glsl"
+);
+	imageShader.setTexUniform(1, 0);
 
 }

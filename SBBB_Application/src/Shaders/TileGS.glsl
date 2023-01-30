@@ -1,11 +1,12 @@
 #version 330 core
+#extension GL_ARB_explicit_uniform_location : enable
 
 layout (points) in;
 layout (triangle_strip, max_vertices = 36) out;
 
-uniform mat4 transform;
-uniform int tileSheetHeight;
-uniform vec2 worldPos;
+layout(location = 0) uniform mat4 transform;
+layout(location = 1) uniform int tileSheetHeight;
+layout(location = 2) uniform vec2 worldPos;
 
 out vec2 TexCoord;
 

@@ -178,6 +178,7 @@ void Text::draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates&
 		generateVBO();
 	}
 	static Shader textShader = { "./src/Shaders/TextVS.glsl" , "./src/Shaders/TextFS.glsl" };
+	textShader.setTexUniform(1, 0);
 
 	p_drawStates.setTransform(p_drawStates.m_transform * getObjectTransform());
 	Texture* tex = m_font.getTexture();
@@ -187,7 +188,7 @@ void Text::draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates&
 	}
 
 	p_drawStates.attachShader(&textShader);
-	textShader.setVec3Uniform(1, p_textColor);
+	textShader.setVec3Uniform(2, p_textColor);
 	p_drawStates.attachTexture(m_font.getTexture());
 	p_target.draw(m_textMesh, GL_TRIANGLES, p_drawStates);
 	// don't corrupt the state

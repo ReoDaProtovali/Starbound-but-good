@@ -171,7 +171,7 @@ int ChunkManager::drawVisible(DrawSurface& p_target, DrawStates& p_states, Shade
 		if (!chunk) continue;
 		if (chunk->isEmpty) continue;
 		if (!chunk->meshIsCurrent) chunk->generateVBO(*this);
-		p_tileShader.setVec2Uniform("worldPos", glm::vec2(chunk->worldPos.x, chunk->worldPos.y));
+		p_tileShader.setVec2Uniform(2, glm::vec2(chunk->worldPos.x, chunk->worldPos.y));
 		chunk->draw(p_target, p_states);
 		count++;
 	}

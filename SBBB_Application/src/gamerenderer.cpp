@@ -105,7 +105,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 
 	m_worldDrawStates.attachTexture(tilesheet);
 
-	m_tileShader.setIntUniform("tileSheetHeight", tilesheet->height);
+	m_tileShader.setIntUniform(1, tilesheet->height);
 
 	m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
 	//cam->updateFrame();
@@ -136,15 +136,15 @@ void GameRenderer::testDraw()
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(m_screenFBO, state);
 
-	//cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	//cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
-	//cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	//cameraFrameSprite.draw(m_screenFBO, state);
+	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
+	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
+	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
+	cameraFrameSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);
 
-	static Text testText(videotype, "Welcome to the cum zone.\nPopulation: Dergs");
+	static Text testText(videotype, "");
 
 	//state.setTransform(glm::mat4(1.0));
 
