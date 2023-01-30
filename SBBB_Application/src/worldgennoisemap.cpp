@@ -1,5 +1,6 @@
 #include "WorldGenNoisemap.hpp"
 #include "ResourceManager.hpp"
+#include "GameConstants.hpp"
 WorldGenNoisemap::WorldGenNoisemap()
 {
 	m_square.addFloatAttrib(2);
@@ -63,10 +64,13 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 			}
 		}
 	};
+	static DebugStats& db = DebugStats::Get();
+	db.noisemapTileCount++;
+
 	auto& currentVec = m_map[glm::ivec2(p_mapX, p_mapY)];
 
 	currentVec.emplace_back(p_generatorName, StaticArray2D<uint8_t>());
-	LOG("Generated Noisemap Tile At " << p_mapX << " " << p_mapY);
+	
 	ResourceManager& res = ResourceManager::Get();
 	Shader& generatorShader = res.getGeneratorShader(p_generatorName);
 

@@ -156,6 +156,10 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 						if (p_chnks.chunkExistsAt(ChunkPos(intrudedChunkX, intrudedChunkY))) {
 							bool success;
 							auto opt = p_chnks.getChunkPtr(ChunkPos(intrudedChunkX, intrudedChunkY), success);
+							if (!opt.has_value()) {
+								ERROR_LOG("what the fuck");
+								return;
+							}
 							WorldChunk* neighbor = opt.value();
 
 							Tile& t = neighbor->getChunkTile(

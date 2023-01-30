@@ -100,7 +100,6 @@ struct fpsGauge {
 	}
 	void stopStopwatch() {
 		elapsed = SDL_GetTicks() - start;
-
 	}
 	float getSecondsElapsed() {
 		return (float)elapsed / 1000.0f;

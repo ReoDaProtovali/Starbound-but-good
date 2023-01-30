@@ -38,7 +38,7 @@ void Font::createAtlas() {
 	}
 	int dimEstimate = (1 + (m_face->size->metrics.height >> 6)) * (int)std::ceilf(std::sqrtf((float)m_maxGlyphCount));
 	texDims = 1;
-	while (texDims < dimEstimate) texDims <<= 1;
+	while (texDims < (uint32_t)dimEstimate) texDims <<= 1;
 
 	uint8_t* pixelDataRaw = (uint8_t*)calloc(texDims * texDims, 1);
 	m_atlas.resize(texDims, texDims);
@@ -101,6 +101,7 @@ Texture* Font::getTexture() {
 	}
 	m_atlasTexture.setChannels(GL_RED);
 	m_atlasTexture.fromByteData(m_atlas.width, m_atlas.height, m_atlas.getData());
+	m_atlasTexture.setFiltering(GL_LINEAR, GL_LINEAR);
 	return &m_atlasTexture;
 }
 
@@ -128,6 +129,7 @@ Text::Text(Font& p_font, std::string_view p_initialText) : m_font(p_font)
 }
 
 void Text::setText(std::string_view p_newText) {
+	if (m_text == p_newText) return;
 	m_text = p_newText;
 	m_textMesh.remove();
 }
@@ -174,7 +176,7 @@ void Text::generateVBO() {
 	m_textMesh.genVBO();
 }
 void Text::draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates& p_drawStates) {
-	if (!m_textMesh.VBOInitialized) {
+	if (!m_textMesh.hasData()) {
 		generateVBO();
 	}
 	static Shader textShader = { "./src/Shaders/TextVS.glsl" , "./src/Shaders/TextFS.glsl" };
@@ -195,8 +197,9 @@ void Text::draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates&
 	p_drawStates.setTransform(p_drawStates.m_transform * glm::inverse(getObjectTransform()));
 }
 // position is in screen coordinates, -1...0...1
-void Text::draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec3& p_textColor, DrawSurface& p_target) {
+void Text::draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec3& p_textColor, DrawSurface& p_target, bool extraLegible) {
 	DrawStates d;
+
 	glm::ivec4 viewport = p_target.getViewport();
 	float aspect = (float)viewport.w / (float)viewport.z;
 	glm::mat4 transform = glm::ortho((float)viewport.x, (float)viewport.z, (float)viewport.y, (float)viewport.w, 0.1f, 1000.0f);
@@ -204,8 +207,22 @@ void Text::draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec
 	float scale = p_pixelHeight / viewport.w;
 	setScale(glm::vec2(2.f * aspect * scale, 2.f * scale));
 	setPosition(glm::vec3(p_position.x, p_position.y, 0));
-
+	if (extraLegible) {
+		BlendMode b;
+		b.srcRGB = GL_ONE_MINUS_DST_COLOR;
+		b.srcAlpha = GL_SRC_ALPHA;
+		b.dstRGB = GL_ONE_MINUS_SRC_ALPHA;
+		b.dstAlpha = GL_ONE_MINUS_SRC_ALPHA;
+		b.RGBequation = GL_FUNC_ADD;
+		b.AlphaEquation = GL_FUNC_ADD;
+		d.setBlendMode(b);
+		draw(glm::vec3(1.f), p_target, d);
+		setPosition(glm::vec3(0));
+		setScale(glm::vec2(1.f));
+		return;
+	}
 	draw(p_textColor, p_target, d);
 	setPosition(glm::vec3(0));
 	setScale(glm::vec2(1));
+
 }

@@ -4,6 +4,7 @@
 #include "GL/glew.h"
 #include "util/ext/glm/vec4.hpp"
 #include <vector>
+#include "GameConstants.hpp"
 #include "Framework/Graphics/DrawStates.hpp"
 #include "Framework/Graphics/Mesh.hpp"
 #include "Framework/Graphics/GlCheck.hpp"
@@ -47,6 +48,8 @@ public:
 		// We'll assume that every shader uses a transform matrix, because that's pretty much a given.
 		shader->setMat4Uniform("transform", p_states.m_transform);
 
+		static DebugStats& db = DebugStats::Get();
+		db.drawCalls++;
 		if (p_mesh.IBOInitialized) {
 			glDrawElements(p_primitiveType, p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
 		}
@@ -82,7 +85,7 @@ public:
 	{
 		useViewport();
 		glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID);
-		glDrawBuffers(m_DrawBuffers.size(), (const GLenum*)m_DrawBuffers.data());
+		glDrawBuffers((GLsizei)m_DrawBuffers.size(), (const GLenum*)m_DrawBuffers.data());
 	};
 	glm::ivec4 getViewport() {
 		return m_viewport;

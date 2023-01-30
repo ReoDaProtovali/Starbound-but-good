@@ -25,7 +25,7 @@ template <class T>
 class Mesh
 {
 public:
-
+	// THESE MEAN THAT THE OPENGL OBJECT HAS BEEN CREATED. IT DOES NOT MEAN IT NEEDS TO HAVE DATA.
 	bool VBOInitialized = false;
 	bool IBOInitialized = false;
 
@@ -145,6 +145,7 @@ public:
 		m_indices.insert(m_indices.end(), p_attribs);
 	}
 
+	bool hasData() { return (bool)m_verts.size(); };
 	size_t getTotalVBOSize() { return m_maxVertsSizeReached; }
 	size_t getTotalIBOSize() { return m_indices.size(); }
 
@@ -185,6 +186,7 @@ public:
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			default:
+				assert("unreachable" && 0);
 				break;
 			}
 			glCheck(glEnableVertexAttribArray(i));
@@ -221,13 +223,9 @@ public:
 		m_verts.shrink_to_fit();
 	}
 	void remove() {
-		VBOInitialized = false;
-		IBOInitialized = false;
 		m_maxVertsSizeReached = 0;
-		m_verts.clear();
-		m_verts.shrink_to_fit();
-		m_indices.clear();
-		m_indices.shrink_to_fit();
+		m_verts = std::vector<T>();
+		m_indices = std::vector<GLuint>();
 	};
 
 	private:

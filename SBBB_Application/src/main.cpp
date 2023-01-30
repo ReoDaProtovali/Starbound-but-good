@@ -8,6 +8,7 @@
 
 #include "InitGL.h"
 
+
 int main(int argc, char* argv[]) {
 	LOG("Debug mode active!");
 
@@ -16,6 +17,7 @@ int main(int argc, char* argv[]) {
 	flag |= _CRTDBG_LEAK_CHECK_DF;
 	_CrtSetDbgFlag(flag);
 #endif
+
 
 	// must be init outside of application in order to get a valid gl context
 	GameWindow gw = GameWindow("Barstound"); 

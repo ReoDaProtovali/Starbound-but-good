@@ -12,6 +12,7 @@ void main()
 {
     vec4 col = texture(fontAtlas, TexCoord);
 
-    FragColor = vec4(textCol, col.r);
+    vec3 newCol = textCol * col.r;
+    FragColor = vec4(newCol, col.r);
     //FragColor = vec4(0, 0, 0, 1);
 }

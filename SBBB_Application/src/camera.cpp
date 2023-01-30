@@ -25,19 +25,24 @@ Camera::Camera(glm::vec3 p_pos) :
 	Camera::m_right = glm::normalize(glm::cross(m_upGuide, direction));
 	Camera::m_up = glm::cross(direction, m_right);
 	Camera::m_forward = glm::cross(m_right, m_up); // forward calculate normalized forward facing vector
+	apparentPos = p_pos;
 	lookForwards();
 	updateFrame();
 };
 
 void Camera::lookAt(glm::vec3 p_target)
 {
-	Camera::view = glm::lookAt(pos, p_target, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 cur = pos;
+	if (m_interpolation) cur = apparentPos;
+	Camera::view = glm::lookAt(cur, p_target, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void Camera::lookForwards()
 {
-	Camera::m_target = pos - m_forward; // look forwards
-	Camera::view = glm::lookAt(pos, m_target, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 cur = pos;
+	if (m_interpolation) cur = apparentPos;
+	Camera::m_target = cur - m_forward; // look forwards
+	Camera::view = glm::lookAt(cur, m_target, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void Camera::setDimensions(uint32_t p_windowWidth, uint32_t p_windowHeight)
@@ -132,7 +137,18 @@ void Camera::setGlobalPos(float p_globalX, float p_globalY)
 { // global pos is in the unit of tiles
 	pos = glm::vec3(p_globalX, -p_globalY, pos.z);
 }
+void Camera::setApparentPos(glm::vec2 p_globalPos) {
+	apparentPos = glm::vec3(p_globalPos.x, p_globalPos.y, pos.z);
+}
+void Camera::setApparentPos(float p_globalX, float p_globalY)
+{ // global pos is in the unit of tiles
+	apparentPos = glm::vec3(p_globalX, p_globalY, pos.z);
+}
 
+void Camera::interpolate(float p_alpha) {
+	glm::vec3 newPos = pos + lastVelocity * p_alpha;
+	setApparentPos(newPos.x, newPos.y);
+}
 const glm::vec4 Camera::getFrame() {
 	return m_frame;
 }

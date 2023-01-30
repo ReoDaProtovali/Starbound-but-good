@@ -1,5 +1,6 @@
 #include "GameRenderer.hpp"
-
+#include <sstream>
+#include <iomanip>
 GameRenderer::GameRenderer(const GameWindow& p_window) :
 	windowWidth(p_window.windowWidth),
 	windowHeight(p_window.windowHeight),
@@ -136,21 +137,41 @@ void GameRenderer::testDraw()
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(m_screenFBO, state);
 
-	cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
-	cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
-	cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	cameraFrameSprite.draw(m_screenFBO, state);
+	//cameraFrameSprite.setBounds(Rect(0, 0, cam->getFrameDimensions().x, cam->getFrameDimensions().y));
+	//cameraFrameSprite.setOriginRelative(OriginLoc::CENTER);
+	//cameraFrameSprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
+	//cameraFrameSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);
 
-	static Text testText(videotype, "");
+	static Text debugText(videotype, "");
+	static DebugStats& db = DebugStats::Get();
+	static fpsGauge updateTimer;
 
-	//state.setTransform(glm::mat4(1.0));
+	static std::stringstream infoString("");
+	if (db.statUpdate) {
+		updateTimer.stopStopwatch();
+		infoString.str("");
+		infoString << "Current draw FPS - " << db.drawFPS << '\n'
+			<< "Current update FPS - " << db.updateFPS << '\n'
+			<< "Camera Position - X: " << std::setprecision(5) << db.camX << " Y: " << db.camY << '\n'
+			<< "Camera Frame - Left: " << db.camFX1 << " Right: " << db.camFX2 << " Top: " << db.camFY2 << " Bottom: " << db.camFY1 << '\n'
+			<< "Screen Dimensions - " << db.screenW << "x" << db.screenH << '\n'
+			<< "Window Dimensions - " << db.windowW << "x" << db.windowH << '\n'
+			<< "Chunk Counts - Total: " << db.chunkCount << " Empty: " << db.emptyChunkCount << '\n'
+			<< "Drawn Chunk Count - " << db.drawnChunkCount << '\n'
+			<< "Noisemap tiles generated - " << db.noisemapTileCount << '\n'
+			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
+			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed();
+		db.statUpdate = false;
+		db.drawCalls = 0;
+		updateTimer.startStopwatch();
+	}
 
-	//testText.draw(glm::vec3(0), m_screenFBO, state);
-	testText.setText("Current frame: " + std::to_string((int)testFrame));
-	testText.draw(glm::vec2(-1.f, 0.8f), 50, glm::vec3(1.f, 0.0f, 0.2f), m_screenFBO);
+	debugText.setText(infoString.str());
+	debugText.draw(glm::vec2(-0.98f, 0.95f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
+
 
 	glEnable(GL_DEPTH_TEST);
 }

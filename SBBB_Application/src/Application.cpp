@@ -49,8 +49,13 @@ void Application::run()
 		handleInput();
 
 		// also for console stats
-		renderFPSGauge.update(100); // 100 frame long value buffer
+		renderFPSGauge.update(20); // 20 frame long value buffer
 
+		// Interpolation!
+		renderer.cam->enableInterpolation(); // doesn't have to be done every frame, but here for clarity
+		renderer.cam->interpolate(ts.alpha);
+
+		renderer.cam->updateFrame();
 		render();
 
 		// push the renderered frame to the window
@@ -86,16 +91,24 @@ void Application::processConsoleStats()
 	printConsoleCounter++;
 	if ((printConsoleCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
 		printConsoleCounter = 0;
-		system("CLS");
-		printf("Current Update FPS - %.2f \n", 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer));
-		printf("Current Draw FPS - %.2f \n", 1.0f / utils::averageVector(renderFPSGauge.frametimeBuffer));
-		printf("Cam Position - %.2f, %.2f \n", renderer.cam->pos.x, renderer.cam->pos.y);
-		printf("Cam Frame - X range: %.2f, %.2f   Y range: %.2f, %.2f\n", renderer.cam->getFrame().x, renderer.cam->getFrame().z, renderer.cam->getFrame().y, renderer.cam->getFrame().w);
-		printf("Screen Dimensions - Width: %i Height: %i\n", renderer.screenWidth, renderer.screenHeight);
-		printf("Window Dimensions - Width: %i Height: %i\n", renderer.windowWidth, renderer.windowHeight);
-		printf("Chunk Count: %i \n", world.getChunkCount());
-		printf("Empty Chunk Count: %i \n", world.getEmptyChunkCount());
-		printf("Number of chunks drawn: %i \n", lastChunkDrawnCount);
+		DebugStats& db = DebugStats::Get();
+		db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
+		db.drawFPS = 1.0f / utils::averageVector(renderFPSGauge.frametimeBuffer);
+		db.camX = renderer.cam->pos.x;
+		db.camY = renderer.cam->pos.y;
+		auto f = renderer.cam->getFrame();
+		db.camFX1 = f.x;
+		db.camFY1 = f.y;
+		db.camFX2 = f.z;
+		db.camFY2 = f.w;
+		db.screenW = renderer.screenWidth;
+		db.screenH = renderer.screenHeight;
+		db.windowW = renderer.windowWidth;
+		db.windowH = renderer.windowHeight;
+		db.chunkCount = world.getChunkCount();
+		db.emptyChunkCount = world.getEmptyChunkCount();
+		db.drawnChunkCount = lastChunkDrawnCount;
+		db.statUpdate = true;
 	}
 }
 
@@ -139,24 +152,28 @@ void Application::handleInput()
 	float camSpeed = 0.05f;
 	if (inp.testKey(SDLK_w)) {
 		camVelocity.y += camSpeed;
-		cam.updateFrame();
+		//cam.updateFrame();
 
 	}
 	if (inp.testKey(SDLK_a)) {
 		camVelocity.x -= camSpeed;
-		cam.updateFrame();
+		//cam.updateFrame();
 
 	}
 	if (inp.testKey(SDLK_s)) {
 		camVelocity.y -= camSpeed;
-		cam.updateFrame();
+		//cam.updateFrame();
 
 	}
 	if (inp.testKey(SDLK_d)) {
 		camVelocity.x += camSpeed;
-		cam.updateFrame();
+		//cam.updateFrame();
 
 	}
+
+	cam.lastVelocity.x = camVelocity.x;
+	cam.lastVelocity.y = camVelocity.y;
+	cam.lastVelocity.z = 0;
 
 	if (inp.testKey(SDLK_q)) {
 		cam.tileScale *= 0.992f;

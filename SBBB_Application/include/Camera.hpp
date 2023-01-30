@@ -107,6 +107,27 @@ public:
 	*/
 	void setGlobalPos(float p_globalX, float p_globalY);
 
+	/**
+	* Sets the visible XY position without changing the underlying position. Z position remains unchanged. Used for doing smooth interpolation of motion.
+	* 
+	* @param p_globalPos - A vector containing the x and y coordinates to set to (in tiles).
+	*/
+	void setApparentPos(glm::vec2 p_apparentPos);
+
+	/**
+	* Sets the visible XY position without changing the underlying position. Z position remains unchanged. Used for doing smooth interpolation of motion.
+	*
+	* @param p_globalX, p_globalY - float x and y positions to translate to (in tiles).
+	*/
+	void setApparentPos(float p_globalX, float p_globalY);
+
+	/**
+	* Interpolates the apparent position of the camera. Required: lastVelocity needs to be up to date, and interpolation needs to be enabled.
+	* 
+	* @param p_alpha - A number between 0-1 that represents the progress between the start and ending position. Given by the timestepper.
+	*/
+	void interpolate(float p_alpha);
+
 	/// Enables manually changing the view matrix without it defaulting to lookForwards();
 	void enableManualView() { m_manualView = true; }
 	/// Ignores changes to the view matrix, and defaults to lookForwards();
@@ -116,6 +137,12 @@ public:
 	/// Disables perspective projection, and defaults to orthographic.
 	void disablePerspective() { m_perspective = false; }
 
+	// the caller is responsible for actually doing the interpolation
+	void enableInterpolation() { m_interpolation = true; }
+
+	void disableInterpolation() { m_interpolation = false; }
+
+
 	/// Tile scale is a value representing the amount of tiles on the longest axis.
 	float tileScale;
 	/// Rotation of the camera on the z axis, currently unused.
@@ -123,6 +150,9 @@ public:
 	glm::vec3 pos;
 	glm::mat4 view;
 
+	// for interpolation
+	glm::vec3 lastVelocity;
+	glm::vec3 apparentPos = glm::vec3(0);
 private:
 	/// used for lookAt and lookForwards, represents a position the camera is targeting.
 	glm::vec3 m_target;
@@ -139,6 +169,7 @@ private:
 	const glm::vec3 m_upGuide = glm::vec3(0.0f, 1.0f, 0.0f); // y axis is up
 	bool m_manualView = false;
 	bool m_perspective = false;
+	bool m_interpolation = false;
 
 };
 

@@ -69,7 +69,7 @@ public:
 
 	void setText(std::string_view p_newText);
 	void draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates& p_drawStates);
-	void draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec3& p_textColor, DrawSurface& p_target);
+	void draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec3& p_textColor, DrawSurface& p_target, bool extraLegible = false);
 
 private:
 	void generateVBO();
