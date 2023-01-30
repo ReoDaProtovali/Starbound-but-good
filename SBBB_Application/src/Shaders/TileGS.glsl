@@ -71,7 +71,7 @@ void main() {
 	// true means the tile is NOT occupied
 	bool adj[8] = uintToBoolArr(data_in[0].adjacent);
 
-	pushRegion(vec4(4, 12, 12, 20), vec4(0, -1, 1, 1), -1);
+	pushRegion(vec4(4, 12, 12, 20), vec4(0, -1, 1, 1), 0);
 
 	// If there are no tiles above, right, and top right
 	if (adj[6] && adj[5] && adj[3]) {

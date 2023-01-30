@@ -74,10 +74,11 @@ void Application::render()
 {
 	renderer.bindScreenFBOAsRenderTarget();
 	renderer.setClearColor(glm::vec4(0.8f, 0.8f, 1.0f, 0.0f));
-	glEnable(GL_DEPTH_TEST);
 	renderer.clearScreen();
 
 	lastChunkDrawnCount = renderer.drawWorld(world, gw);
+
+	glEnable(GL_DEPTH_TEST);
 	renderer.testDraw();
 
 	gw.bind();
