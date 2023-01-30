@@ -10,6 +10,15 @@ bool ChunkManager::genChunk(ChunkPos p_chunkPos)
 	c.worldGenerate(m_noiseMap);
 	m_chunkMap[p_chunkPos] = c;// world ID is hardcoded for now. Will most def be a different system later.
 
+	// fix borders, a little expensive but hey
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			if (j == 0 && i == 0) continue;
+			if (chunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
+				m_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)].generateVBO(*this);
+			}
+		}
+	}
 	return true;
 }
 bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
@@ -20,6 +29,16 @@ bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 	WorldChunk c = WorldChunk(ChunkPos(p_chunkX, p_chunkY), 0);
 	c.worldGenerate(m_noiseMap);
 	m_chunkMap[c.worldPos] = c;// world ID is hardcoded for now. Will most def be a different system later.
+
+	// fix borders, a little expensive but hey
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			if (j == 0 && i == 0) continue;
+			if (chunkExistsAt(p_chunkX + j, p_chunkY + i)) {
+				m_chunkMap[ChunkPos(p_chunkX + j, p_chunkY + i)].generateVBO(*this);
+			}
+		}
+	}
 	return true;
 }
 void ChunkManager::regenVBOs()
@@ -179,6 +198,14 @@ int ChunkManager::drawVisible(DrawSurface& p_target, DrawStates& p_states, Shade
 }
 bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {
 	auto it = m_chunkMap.find(p_chunkPos);
+	if (it != m_chunkMap.end()) {
+		if (it->second.invalid) return false;
+		return true;
+	}
+	return false;
+}
+bool ChunkManager::chunkExistsAt(int p_chunkX, int p_chunkY) {
+	auto it = m_chunkMap.find(ChunkPos(p_chunkX, p_chunkY));
 	if (it != m_chunkMap.end()) {
 		if (it->second.invalid) return false;
 		return true;

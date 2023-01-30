@@ -46,6 +46,7 @@ public:
 	int drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
 
 	bool chunkExistsAt(ChunkPos p_chunkPos);
+	bool chunkExistsAt(int p_chunkX, int p_chunkY);
 	bool removeChunk(ChunkPos p_chunkPos);
 	void removeChunks();
 
