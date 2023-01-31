@@ -24,9 +24,6 @@ public:
 	void setWrapping(GLint p_mode);
 	void setType(GLenum p_type);
 	void setChannels(GLenum p_channels);
-	// todo: let you use vec4 arrays
-	void genMipMapsBytes(uint8_t p_level, uint32_t p_width, uint32_t p_height, uint8_t* p_data);
-	void genMipMapsFloat(uint8_t p_level, uint32_t p_width, uint32_t p_height, float* p_data);
 
 	void fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p_data);
 	void fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_data);

@@ -257,7 +257,7 @@
     <ClInclude Include="include\Framework\Graphics\Text.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\util\ext\stb_image_resize.h">
+    <ClInclude Include="include\util\Array3D.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
