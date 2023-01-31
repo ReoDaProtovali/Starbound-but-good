@@ -58,8 +58,10 @@ Texture* ResourceManager::getTexture(TextureID p_ID, bool& p_success) {
 
 Texture* ResourceManager::getTileSheetTexture() {
 	if (!tileSheetTexture.initialized) {
-		tileSheetTexture.setFiltering(GL_LINEAR, GL_NEAREST);
-		tileSheetTexture.fromVec4Data(tileSheetPixmap.width, tileSheetPixmap.height, tileSheetPixmap.getData());
+		tileSheetTexture.setFiltering(GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
+		//tileSheetTexture.fromVec4Data(tileSheetPixmap.width, tileSheetPixmap.height, tileSheetPixmap.getData());
+		tileSheetTexture.genMipMapsFloat(2, tileSheetPixmap.width, tileSheetPixmap.height, (float*)tileSheetPixmap.getData());
+
 	}
 	return &tileSheetTexture;
 }

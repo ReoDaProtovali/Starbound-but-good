@@ -102,7 +102,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	int drawnChunkCount = 0;
 	bool finished = false;
 	Texture* tilesheet = res.getTileSheetTexture();
-	tilesheet->setFiltering(GL_NEAREST, GL_NEAREST);
+	//tilesheet->setFiltering(GL_NEAREST, GL_NEAREST);
 
 	m_worldDrawStates.attachTexture(tilesheet);
 
