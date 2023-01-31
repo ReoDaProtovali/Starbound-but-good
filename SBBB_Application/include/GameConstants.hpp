@@ -9,7 +9,7 @@
 // do NOT increase this beyond limits. it does NOT like to be changed easily
 // Currently works from 2-64
 constexpr auto CHUNKSIZE = 64;
-
+constexpr auto CHUNKDEPTH = 2;
 enum DefaultTileID {
 	EMPTY,
 	STONE,
@@ -24,24 +24,25 @@ enum class Corner {
 };
 
 struct DebugStats {
-	float drawFPS;
-	float updateFPS;
-	float camX;
-	float camY;
-	float camFX1;
-	float camFY1;
-	float camFX2;
-	float camFY2;
-	int screenW;
-	int screenH;
-	int windowW;
-	int windowH;
-	int chunkCount;
-	int emptyChunkCount;
-	int drawnChunkCount;
-	int noisemapTileCount;
-	int drawCalls;
-	bool statUpdate;
+	float drawFPS = 0.f;
+	float updateFPS = 0.f;
+	float camX = 0.f;
+	float camY = 0.f;
+	float camFX1 = 0.f;
+	float camFY1 = 0.f;
+	float camFX2 = 0.f;
+	float camFY2 = 0.f;
+	int screenW = 0;
+	int screenH = 0;
+	int windowW = 0;
+	int windowH = 0;
+	int chunkCount = 0;
+	int emptyChunkCount = 0;
+	int drawnChunkCount = 0;
+	int noisemapTileCount = 0;
+	int drawCalls = 0;
+	int vertCount = 0;
+	bool statUpdate = true;
 
 	// globals don't play nice
 	static DebugStats& Get() {

@@ -138,7 +138,7 @@ public:
 	/// Simply adds a vertex of type T to the end of the mesh list.
 	void pushVertices(const std::initializer_list<T>& p_attribs) {
 		m_verts.insert(m_verts.end(), p_attribs);
-		m_maxVertsSizeReached += p_attribs.size();
+		m_maxVertsSizeReached += (uint32_t)p_attribs.size();
 	};
 
 	void pushIndices(const std::initializer_list<GLuint>& p_attribs) {
@@ -168,8 +168,8 @@ public:
 
 		for (uint32_t i = 0; i < m_attribList.size(); i++) {
 
-			switch (m_attribList[i].type) { // Will add more attribute types as I need them.
-			case GL_FLOAT: 
+			switch (m_attribList[i].type) { // Will add more attribute types as I need them. 
+			case GL_FLOAT:
 				glCheck(glVertexAttribPointer(i, m_attribList[i].size, GL_FLOAT, GL_FALSE, m_totalVertSize, (const void*)currentOffset));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLfloat));
 				break;

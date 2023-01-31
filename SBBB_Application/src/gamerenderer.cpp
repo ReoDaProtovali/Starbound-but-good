@@ -11,8 +11,8 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	LOAD_LOG("GameRenderer instantiated...");
 
 
-	cam->pos = glm::vec3(-16.0f, 0.f, 32.0f);
-	cam->tileScale = 128.0f;
+	cam->pos = glm::vec3(-16.0f, 250.f, 32.0f);
+	cam->tileScale = 40.f;
 	cam->setDimensions(windowWidth, windowHeight);
 
 	currentCamera = cam;
@@ -36,7 +36,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	testReoSprite.attachShader(&gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
 	testReoSprite.attachTexture(testReoTexture);
-
+	testReoSprite.setPosition(glm::vec3(-16.f, 250.f, 1.f));
 	cameraFrameSprite.attachShader(&gs.imageShader);
 	cameraFrameTexture = res.getTexture(TextureID::CAMERA_FRAME_TEXTURE);
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
@@ -65,7 +65,7 @@ GameRenderer::~GameRenderer()
 
 // Will be changed ----------------------------------------------------------
 void GameRenderer::loadTextures() {
-	res.loadTexID("./res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE);
+	//res.loadTexID("./res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE);
 	res.loadTexID("./res/roetest.png", TextureID::REO_TEST);
 	res.loadTexID("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
 }
@@ -107,6 +107,13 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	m_worldDrawStates.attachTexture(tilesheet);
 
 	m_tileShader.setIntUniform(1, tilesheet->height);
+
+	if (currentCamera.lock()->tileScale > 500.f) {
+		m_tileShader.setBoolUniform(4, false);
+	}
+	else {
+		m_tileShader.setBoolUniform(4, true);
+	}
 
 	m_worldDrawStates.setTransform(currentCamera.lock()->getTransform());
 	//cam->updateFrame();
@@ -163,7 +170,8 @@ void GameRenderer::testDraw()
 			<< "Drawn Chunk Count - " << db.drawnChunkCount << '\n'
 			<< "Noisemap tiles generated - " << db.noisemapTileCount << '\n'
 			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
-			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed();
+			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
+			<< "Tile Vertex Count Total: " << db.vertCount;
 		db.statUpdate = false;
 		db.drawCalls = 0;
 		updateTimer.startStopwatch();

@@ -119,10 +119,9 @@ void ChunkManager::logChunks() {
 //	if (!found) return nullChunk;
 //	return *chunkList[index];
 //}
-std::optional<WorldChunk*> ChunkManager::getChunkPtr(ChunkPos p_chunkPos, bool& p_success)
+std::optional<WorldChunk*> ChunkManager::getChunkPtr(ChunkPos p_chunkPos)
 {
-	bool success = chunkExistsAt(p_chunkPos);
-	if (!p_success) return std::nullopt;
+	if (!chunkExistsAt(p_chunkPos)) return std::nullopt;
 	return std::optional<WorldChunk*>(&m_chunkMap[p_chunkPos]);
 }
 std::optional<WorldChunk*> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, bool& p_finished)
@@ -151,7 +150,7 @@ std::optional<WorldChunk*> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, b
 			bool tmp;
 			const int worldX = curX + (int)std::floorf(x / (float)CHUNKSIZE);
 			const int worldY = curY + (int)std::floorf(y / (float)CHUNKSIZE);
-			return getChunkPtr(ChunkPos(worldX, worldY), tmp);
+			return getChunkPtr(ChunkPos(worldX, worldY));
 		}
 	}
 
@@ -186,10 +185,13 @@ void ChunkManager::updateDrawList(glm::vec4 p_frame, bool force) {
 }
 int ChunkManager::drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader) {
 	int count = 0;
+	//return 0;
 	for (auto chunk : m_drawList) {
 		if (!chunk) continue;
 		if (chunk->isEmpty) continue;
 		if (!chunk->meshIsCurrent) chunk->generateVBO(*this);
+		// excuse my use of this here
+		//glClear(GL_DEPTH_BUFFER_BIT);
 		p_tileShader.setVec2Uniform(2, glm::vec2(chunk->worldPos.x, chunk->worldPos.y));
 		chunk->draw(p_target, p_states);
 		count++;

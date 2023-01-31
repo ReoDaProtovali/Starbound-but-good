@@ -15,7 +15,7 @@
 #include <util/ext/glm/vec4.hpp>
 
 #include <vector>
-#include "util/Array2D.hpp"
+#include "util/Array3D.hpp"
 #include "WorldGenNoisemap.hpp"
 
 struct ChunkPos {
@@ -57,8 +57,10 @@ struct WorldChunk : public TransformObject
 
 	void fillRandom();
 	void worldGenerate(WorldGenNoisemap& noiseGen);
-	void setChunkTile(glm::ivec2 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
-	Tile& getChunkTile(int p_x, int p_y);
+	void setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
+	Tile& getChunkTile(int p_x, int p_y, int p_z);
+	// conditionally returns either an internal tile or a tile from a neigboring chunk based on the given position.
+	std::optional<Tile*> getNeigboringChunkTile(int p_chunkX, int p_chunkY, int p_chunkZ, ChunkManager& p_chnks);
 
 	Tile* getTiles();
 	void generateVBO(ChunkManager& p_chnks);
@@ -70,13 +72,13 @@ struct WorldChunk : public TransformObject
 	int worldID;
 
 	bool meshIsCurrent = false;
-	bool invalid = false;
+	bool invalid = true;
 	bool isEmpty = true;
 	Mesh<TileVert> tileMesh;
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
 private:
-	Array2D<Tile> m_tiles;
+	Array3D<Tile> m_tiles;
 
 };

@@ -89,5 +89,5 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 
 	currentVec[currentVec.size() - 1].data.clear();
 	m_FBO.getPixels(0, 4, currentVec[currentVec.size() - 1].data);
-
+	currentVec[currentVec.size() - 1].generated = true;
 }

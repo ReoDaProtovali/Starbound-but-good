@@ -22,8 +22,9 @@ public:
 	template<typename T>
 	void draw(Mesh<T>& p_mesh, GLenum p_primitiveType, DrawStates& p_states) {
 #ifdef SBBB_DEBUG
-		if (!p_states.checkIfInit()) return;
 #endif
+		if (!p_states.checkIfInit()) return;
+
 		auto shader = p_states.m_shaderPtr;
 		assert(shader);
 
@@ -32,7 +33,7 @@ public:
 
 		// Bind all textures to the correct texture units
 		for (size_t i = 0; i < p_states.m_texturePtrs.size(); i++) {
-			glCheck(glActiveTexture(GL_TEXTURE0 + i));
+			glCheck(glActiveTexture(GL_TEXTURE0 + (GLenum)i));
 			glCheck(glBindTexture(p_states.m_texturePtrs[i]->type, p_states.m_texturePtrs[i]->glID->ID));
 		}
 
@@ -51,7 +52,7 @@ public:
 		static DebugStats& db = DebugStats::Get();
 		db.drawCalls++;
 		if (p_mesh.IBOInitialized) {
-			glDrawElements(p_primitiveType, p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
+			glDrawElements(p_primitiveType, (GLsizei)p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
 		}
 		else {
 			glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
@@ -59,7 +60,7 @@ public:
 		}
 
 		// Causes a slight performace hitch?
-		//glBindVertexArray(0);
+		glBindVertexArray(0);
 		// Unbind all textures
 		// Causes an exception??? Bro??
 		//for (size_t i = 0; i < p_states.textures.size(); i++) {

@@ -33,9 +33,7 @@ public:
 	T& operator()(int x, int y) {
 		return data[((y * width) + x)];
 	}
-	//T operator()(int x, int y) const {
-	//	return data[((y * width) + x)];
-	//}
+
 	void fill(T p_fillValue) {
 		for (size_t i = 0; i < width * height; i++) {
 			data[i] = p_fillValue;
@@ -64,7 +62,6 @@ public:
 		}
 		data.reserve(width * height);
 		std::copy(&p_data[0], &p_data[p_size], std::back_inserter(data));
-		//LOG("2D Array appended from height " << height << " to height " << height + p_size / width);
 		height += p_size / width;
 	}
 

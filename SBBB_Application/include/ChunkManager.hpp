@@ -34,7 +34,7 @@ public:
 	bool autoGen(Camera& p_cam);
 
 	//WorldChunk& getChunk(ChunkPos p_chunkPos, bool& p_success);
-	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos, bool& p_success);
+	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
 
 	// Will return chunks within the frame one by one until there are none more to fetch.
 	// p_finished is used to terminate while loops.
@@ -56,7 +56,7 @@ public:
 	int getEmptyChunkCount();
 	void logChunks();
 
-	Camera* generatorCam;
+	Camera* generatorCam = nullptr;
 private:
 	WorldGenNoisemap m_noiseMap;
 	ResourceManager& res = ResourceManager::Get();

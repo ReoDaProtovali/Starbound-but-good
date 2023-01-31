@@ -18,6 +18,7 @@ struct ivec2Hash {
 struct NoiseTile {
 	std::string generator;
 	StaticArray2D<uint8_t> data;
+	bool generated = false;
 };
 
 class WorldGenNoisemap

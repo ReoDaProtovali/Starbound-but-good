@@ -73,10 +73,10 @@ public:
 	void setTexUniform(const std::string& p_name, GLuint p_value);
 	void setTexUniform(GLint p_loc, GLuint p_value);
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a 4x4 matrix.
-	void setMat4Uniform(const std::string& p_name, glm::mat4 p_value) const;
-	void setMat4Uniform(GLint p_loc, glm::mat4 p_value) const;
+	void setMat4Uniform(const std::string& p_name, glm::mat4& p_value);
+	void setMat4Uniform(GLint p_loc, glm::mat4& p_value);
 
-	void setVec2Uniform(const std::string& p_name, glm::vec2 p_value) const;
+	void setVec2Uniform(const std::string& p_name, glm::vec2 p_value);
 	void setVec2Uniform(GLint p_loc, glm::vec2 p_value) const;
 
 	void setVec3Uniform(const std::string& p_name, glm::vec3 p_value) const;

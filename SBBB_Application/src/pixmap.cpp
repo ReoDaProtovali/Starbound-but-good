@@ -46,7 +46,7 @@ void Pixmap::appendImage(unsigned char* p_data, size_t p_size)
 		tmp[i].a = (float)p_data[i * 4 + 3] / 255.f;
 	}
 	m_pixels.append(tmp, p_size / 4);
-	height = m_pixels.height;
+	height = (uint32_t)m_pixels.height;
 	free(tmp);
 }
 void Pixmap::reverse() {
