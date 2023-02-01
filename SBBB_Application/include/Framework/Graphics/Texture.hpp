@@ -28,6 +28,7 @@ public:
 	void fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p_data);
 	void fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_data);
 
+	void useMipmaps(int p_count);
 	/// Will delete existing texture data
 	void changeDimensions(uint32_t p_width, uint32_t p_height); 
 

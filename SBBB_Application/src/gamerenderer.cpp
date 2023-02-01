@@ -11,8 +11,8 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	LOAD_LOG("GameRenderer instantiated...");
 
 
-	cam->pos = glm::vec3(-16.0f, 250.f, 32.0f);
-	cam->tileScale = 40.f;
+	cam->pos = glm::vec3(-16.f, 200.f, 32.0f);
+	cam->tileScale = 800.f;
 	cam->setDimensions(windowWidth, windowHeight);
 
 	currentCamera = cam;
@@ -36,7 +36,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	testReoSprite.attachShader(&gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
 	testReoSprite.attachTexture(testReoTexture);
-	testReoSprite.setPosition(glm::vec3(-16.f, 250.f, 1.f));
+	testReoSprite.setPosition(glm::vec3(-16.f, 200.f, 1.f));
 	cameraFrameSprite.attachShader(&gs.imageShader);
 	cameraFrameTexture = res.getTexture(TextureID::CAMERA_FRAME_TEXTURE);
 	cameraFrameSprite.attachTexture(cameraFrameTexture);
@@ -102,7 +102,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	int drawnChunkCount = 0;
 	bool finished = false;
 	Texture* tilesheet = res.getTileSheetTexture();
-	tilesheet->setFiltering(GL_NEAREST, GL_NEAREST);
+	tilesheet->setFiltering(GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
 
 	m_worldDrawStates.attachTexture(tilesheet);
 
@@ -171,7 +171,7 @@ void GameRenderer::testDraw()
 			<< "Noisemap tiles generated - " << db.noisemapTileCount << '\n'
 			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
 			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
-			<< "Tile Vertex Count Total: " << db.vertCount;
+			<< "Tile Vertex Count Total: " << db.vertCount; 
 		db.statUpdate = false;
 		db.drawCalls = 0;
 		updateTimer.startStopwatch();

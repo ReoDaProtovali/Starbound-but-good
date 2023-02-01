@@ -42,6 +42,7 @@ struct DebugStats {
 	int noisemapTileCount = 0;
 	int drawCalls = 0;
 	int vertCount = 0;
+	int loadQueueSize = 0;
 	bool statUpdate = true;
 
 	// globals don't play nice

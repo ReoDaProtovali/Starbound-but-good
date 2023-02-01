@@ -37,7 +37,7 @@ Lighting::Lighting() :
 	1.0f,  1.0f, 1.0f,  1.0f, 1.0f // vertex 6
 		});
 
-	m_overlayMesh.genVBO();
+	m_overlayMesh.pushVBOToGPU();
 
 }
 

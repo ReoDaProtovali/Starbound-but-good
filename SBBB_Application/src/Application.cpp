@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include <thread>
 
 Application::Application(GameWindow& p_window)
 	: gw(p_window),
@@ -10,11 +11,13 @@ Application::Application(GameWindow& p_window)
 	world.generatorCam = renderer.cam.get();
 }
 
+
 void Application::run()
 {
 	gameActive = true;
 	LOAD_LOG("Main loop running.");
 
+	world.genFixed(20, 20);
 	while (gameActive) {
 		ts.processFrameStart();
 
@@ -70,9 +73,8 @@ void Application::run()
 void Application::update()
 {
 	world.autoGen(*renderer.cam);
-	while (world.genFromQueue());
+	//while (world.genFromQueue());
 }
-
 
 void Application::render()
 {
@@ -202,9 +204,15 @@ void Application::handleInput()
 		LOG("Regenerating VBOs!");
 		world.regenVBOs();
 	}
+
+	if (inp.testKeyDown(SDLK_5)) {
+		world.startThreads();
+	}
 }
 
 void Application::cleanUp()
 {
+
+	world.stopThreads();
 	gw.cleanUp();
 }

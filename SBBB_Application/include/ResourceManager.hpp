@@ -57,6 +57,8 @@ public:
 
 	Shader& getGeneratorShader(const std::string& p_name);
 
+	std::vector<std::string> getAllGeneratorShaders();
+
 	void loadAllTileSets();
 
 	void loadTileSet(const std::filesystem::path& p_tileSetPath);

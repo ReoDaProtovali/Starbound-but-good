@@ -8,6 +8,9 @@
 #include <optional>
 #include <forward_list>
 #include <unordered_map>
+#include <mutex>
+#include <thread>
+#include <semaphore>
 
 #include "Tile.hpp"
 #include "Chunk.hpp"
@@ -18,6 +21,8 @@
 #include "Camera.hpp"
 #include "Framework/Window/GameWindow.hpp"
 #include "WorldGenNoisemap.hpp"
+
+#define GENERATION_THREAD_COUNT 4
 
 class ChunkManager
 {
@@ -33,14 +38,12 @@ public:
 	void genFixed(size_t x, size_t y);
 	bool autoGen(Camera& p_cam);
 
-	//WorldChunk& getChunk(ChunkPos p_chunkPos, bool& p_success);
-	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
+	void startThreads();
+	void stopThreads();
+	static void genFromQueueThreaded(ChunkManager& instance);
+	static void genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance);
 
-	// Will return chunks within the frame one by one until there are none more to fetch.
-	// p_finished is used to terminate while loops.
-	// make sure the chunks you are trying to use are not invalid
-	// overcomplicated
-	std::optional<WorldChunk*> fetchFromFrame(glm::vec4 p_viewFrame, bool& p_finished);
+	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
 
 	void updateDrawList(glm::vec4 p_frame, bool force = false);
 	int drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
@@ -50,7 +53,6 @@ public:
 	bool removeChunk(ChunkPos p_chunkPos);
 	void removeChunks();
 
-	//void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 	void logSize();
 	int getChunkCount() { return (int)m_chunkMap.size(); }
 	int getEmptyChunkCount();
@@ -60,13 +62,15 @@ public:
 private:
 	WorldGenNoisemap m_noiseMap;
 	ResourceManager& res = ResourceManager::Get();
-	// For fetching chunks from a supplied frame
-	bool m_setFetchCounterFlag = true;
-	uint32_t m_fetchCounter = 0;
-	bool m_doneFetching = false;
+
+	std::vector<std::thread> m_genThreads;
+	std::mutex m_chunkReadWriteMutex;
+	std::mutex m_queueMutex;
+	std::atomic<bool> m_stopAllThreads = false;
+	std::counting_semaphore<> m_workCount{0};
 
 	std::unordered_map<ChunkPos, WorldChunk, ChunkPos> m_chunkMap;
 	std::queue<ChunkPos> m_loadQueue;
 	std::forward_list<WorldChunk*> m_drawList;
-	//std::vector<ChunkPos> m_indices;
+
 };

@@ -1,13 +1,17 @@
 {
-    "generators": [
-      {
-        "name": "perlin",
-        "file": "PerlinFS.glsl"
-      },
-      {
-        "name": "cavern",
-        "file": "CavernFS.glsl"
-      }
+  "generators": [
+    {
+      "name": "perlin",
+      "file": "Perlin2DFS.glsl"
+    },
+    {
+      "name": "perlin1d",
+      "file": "Perlin1DFS.glsl"
+    },
+    {
+      "name": "cavern",
+      "file": "CavernFS.glsl"
+    }
 
-    ]
+  ]
 }

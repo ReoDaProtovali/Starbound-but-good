@@ -48,11 +48,12 @@ public:
 
 	static bool OpenGLInitialized;
 
-private:
 	/// SDL managed OpenGL context. Not used for much outside of the constructor.
 	SDL_GLContext m_glContext;
 
 	/// A pointer to the SDL window, used internally in most cases.
 	SDL_Window* m_window;
+private:
+
 };
 #endif

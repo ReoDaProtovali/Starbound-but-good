@@ -2,6 +2,11 @@
 
 Sprite::Sprite()
 {
+	// Keep it as dynamic for now, 
+	m_spriteMesh.setStreamType(GL_DYNAMIC_DRAW);
+	m_spriteMesh.addFloatAttrib(3); // Position
+	m_spriteMesh.addFloatAttrib(2); // Texcoord
+	m_spriteMesh.pushVBOToGPU();
 
 }
 
@@ -34,7 +39,7 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 5
 		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
 		});
-	m_spriteMesh.genVBO();
+	m_spriteMesh.pushVBOToGPU();
 }
 
 

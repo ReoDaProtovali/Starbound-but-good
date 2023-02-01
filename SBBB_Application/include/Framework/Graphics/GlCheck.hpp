@@ -88,6 +88,7 @@ inline void glCheckError(const std::filesystem::path& file, uint32_t line, const
 			<< "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
 			<< std::endl;
 	}
+
 }
 
 #endif

@@ -8,6 +8,11 @@
 #include "GlIDs.hpp"
 
 
+enum {
+	NO_VAO_INIT = false,
+	VAO_INIT = true
+};
+
 // Holds the attribute schema to allow for arbitrary type and size.
 struct Attrib { 
 	Attrib(GLuint p_size, GLenum p_type) {
@@ -26,6 +31,7 @@ class Mesh
 {
 public:
 	// THESE MEAN THAT THE OPENGL OBJECT HAS BEEN CREATED. IT DOES NOT MEAN IT NEEDS TO HAVE DATA.
+	bool VAOInitialized = false;
 	bool VBOInitialized = false;
 	bool IBOInitialized = false;
 
@@ -38,6 +44,15 @@ public:
 	{
 		glGenVertexArrays(1, &VAO->ID);
 		GLGEN_LOG("Generated Vertex Array " << VAO->ID);
+		VAOInitialized = true;
+	}
+
+	Mesh(bool initVAO)
+	{
+		if (!initVAO) return;
+		glGenVertexArrays(1, &VAO->ID);
+		GLGEN_LOG("Generated Vertex Array " << VAO->ID);
+		VAOInitialized = true;
 	}
 
 	// Mesh copying is a pretty heavy operation, so try not to
@@ -45,8 +60,8 @@ public:
 		m_verts(p_other.m_verts),
 		m_indices(p_other.m_indices),
 		m_attribList(p_other.m_attribList),
-		m_totalVertSize(p_other.m_totalVertSize),
-		m_maxVertsSizeReached(p_other.m_maxVertsSizeReached),
+		m_singleVertexSize(p_other.m_singleVertexSize),
+		m_GPUVertsSize(p_other.m_GPUVertsSize),
 		m_streamType(p_other.m_streamType)
 	{
 		// We can't copy these, so we have to create new opengl buffers. Copying is discouraged.
@@ -57,16 +72,16 @@ public:
 		glGenVertexArrays(1, &VAO->ID);
 		GLGEN_LOG("Generated Vertex Array " << VAO->ID);
 
-		genVBO();
-		genIBO();
+		//pushVBOToGPU();
+		//pushIBOToGPU();
 	}
 
 	Mesh<T>& operator=(const Mesh<T>& p_other) {
 		m_verts = p_other.m_verts;
 		m_indices = p_other.m_indices;
 		m_attribList = p_other.m_attribList;
-		m_totalVertSize = p_other.m_totalVertSize;
-		m_maxVertsSizeReached = p_other.m_maxVertsSizeReached;
+		m_singleVertexSize = p_other.m_singleVertexSize;
+		m_GPUVertsSize = p_other.m_GPUVertsSize;
 		m_streamType = p_other.m_streamType;
 		// We can't copy these, so we have to create new opengl buffers. Copying is discouraged.
 		GLGEN_LOG("Copied mesh! VAO: " << p_other.VAO->ID);
@@ -76,8 +91,8 @@ public:
 		glGenVertexArrays(1, &VAO->ID);
 		GLGEN_LOG("Generated Vertex Array " << VAO->ID);
 
-		genVBO();
-		genIBO();
+		//pushVBOToGPU();
+		//pushIBOToGPU();
 		return *this;
 	}
 
@@ -86,8 +101,8 @@ public:
 		m_verts(p_other.m_verts),
 		m_indices(p_other.m_indices),
 		m_attribList(p_other.m_attribList),
-		m_totalVertSize(p_other.m_totalVertSize),
-		m_maxVertsSizeReached(p_other.m_maxVertsSizeReached),
+		m_singleVertexSize(p_other.m_singleVertexSize),
+		m_GPUVertsSize(p_other.m_GPUVertsSize),
 		m_streamType(p_other.m_streamType),
 		VBOInitialized(p_other.VBOInitialized),
 		IBOInitialized(p_other.IBOInitialized)
@@ -114,45 +129,51 @@ public:
 
 	/// Size specifies number of floats required for the attribute.
 	void addFloatAttrib(GLuint p_size) {
-		m_totalVertSize += sizeof(GLfloat) * p_size;
+		m_singleVertexSize += sizeof(GLfloat) * p_size;
 		m_attribList.emplace_back(p_size, GL_FLOAT);
 	}; 
 
 	/// Size specifies number of uints required for the attribute.
 	void addUintAttrib(GLuint p_size) { 
-		m_totalVertSize += sizeof(GLuint) * p_size;
+		m_singleVertexSize += sizeof(GLuint) * p_size;
 		m_attribList.emplace_back(p_size, GL_UNSIGNED_INT);
 	}; 
 
 	/// Size specifies number of bytes required for the attribute.
 	void addUbyteAttrib(GLubyte p_size) {
-		m_totalVertSize += sizeof(GLuint) * p_size;
+		// I don't think things can be smaller than 4 bytes, so the size of a ubyte is actually 4 on the gpu
+		m_singleVertexSize += sizeof(GLuint) * p_size;
 		m_attribList.emplace_back(p_size, GL_UNSIGNED_BYTE);
 	};
 
 	void addIntAttrib(GLubyte p_size) {
-		m_totalVertSize += sizeof(GLint) * p_size;
+		m_singleVertexSize += sizeof(GLint) * p_size;
 		m_attribList.emplace_back(p_size, GL_INT);
 	};
 
 	/// Simply adds a vertex of type T to the end of the mesh list.
 	void pushVertices(const std::initializer_list<T>& p_attribs) {
 		m_verts.insert(m_verts.end(), p_attribs);
-		m_maxVertsSizeReached += (uint32_t)p_attribs.size();
+		m_GPUVertsSize += (uint32_t)p_attribs.size();
 	};
 
 	void pushIndices(const std::initializer_list<GLuint>& p_attribs) {
 		m_indices.insert(m_indices.end(), p_attribs);
+		m_GPUIndicesSize += (uint32_t)p_attribs.size();
 	}
 
 	bool hasData() { return (bool)m_verts.size(); };
-	size_t getTotalVBOSize() { return m_maxVertsSizeReached; }
-	size_t getTotalIBOSize() { return m_indices.size(); }
+	size_t getTotalVBOSize() { return m_GPUVertsSize; }
+	size_t getTotalIBOSize() { return m_GPUIndicesSize; }
 
 	GLuint* getIBOPointer() { return m_indices.data(); }
 
 
-	void genVBO() {
+	void pushVBOToGPU() {
+		if (!VAOInitialized) {
+			glGenVertexArrays(1, &VAO->ID);
+			GLGEN_LOG("Generated Vertex Array " << VAO->ID);
+		}
 		glBindVertexArray(VAO->ID);
 		if (!VBOInitialized) {
 			glGenBuffers(1, &VBO->ID);
@@ -170,19 +191,19 @@ public:
 
 			switch (m_attribList[i].type) { // Will add more attribute types as I need them. 
 			case GL_FLOAT:
-				glCheck(glVertexAttribPointer(i, m_attribList[i].size, GL_FLOAT, GL_FALSE, m_totalVertSize, (const void*)currentOffset));
+				glCheck(glVertexAttribPointer(i, m_attribList[i].size, GL_FLOAT, GL_FALSE, m_singleVertexSize, (const void*)currentOffset));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLfloat));
 				break;
 			case GL_UNSIGNED_INT:
-				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_INT, m_totalVertSize, (const void*)currentOffset));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_INT, m_singleVertexSize, (const void*)currentOffset));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			case GL_INT:
-				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_INT, m_totalVertSize, (const void*)currentOffset));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_INT, m_singleVertexSize, (const void*)currentOffset));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			case GL_UNSIGNED_BYTE:
-				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_BYTE, m_totalVertSize, (const void*)currentOffset));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_BYTE, m_singleVertexSize, (const void*)currentOffset));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			default:
@@ -195,7 +216,11 @@ public:
 		VBOInitialized = true;
 	};
 
-	void genIBO() {
+	void pushIBOToGPU() {
+		if (!VAOInitialized) {
+			glGenVertexArrays(1, &VAO->ID);
+			GLGEN_LOG("Generated Vertex Array " << VAO->ID);
+		}
 		if (m_indices.size() == 0) return;
 		glCheck(glBindVertexArray(VAO->ID));
 		if (!IBOInitialized) {
@@ -218,12 +243,15 @@ public:
 		glCheck(glBufferSubData(GL_ARRAY_BUFFER, p_startIndex * sizeof(T), (p_endIndex - p_startIndex) * sizeof(T), p_data));
 	}
 	// dealloc the verts
-	void clearVerts() {
+	void clean() {
 		m_verts.clear();
 		m_verts.shrink_to_fit();
+		m_indices.clear();
+		m_indices.shrink_to_fit();
 	}
 	void remove() {
-		m_maxVertsSizeReached = 0;
+		m_GPUVertsSize = 0;
+		m_GPUIndicesSize = 0;
 		m_verts = std::vector<T>();
 		m_indices = std::vector<GLuint>();
 	};
@@ -233,9 +261,10 @@ public:
 		std::vector<GLuint> m_indices;
 
 		std::vector<Attrib> m_attribList; // List of attributes the shader uses.
-		uint32_t m_totalVertSize = 0;
+		uint32_t m_singleVertexSize = 0;
 		// used so I don't have to keep the verts around on system memory
-		uint32_t m_maxVertsSizeReached = 0;
+		uint32_t m_GPUVertsSize = 0;
+		uint32_t m_GPUIndicesSize = 0;
 	
 		// By default, vbo data is expected not to change. Be sure to set it to dynamic if that is not the case.
 		GLenum m_streamType = GL_STATIC_DRAW;

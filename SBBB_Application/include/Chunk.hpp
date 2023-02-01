@@ -64,6 +64,7 @@ struct WorldChunk : public TransformObject
 
 	Tile* getTiles();
 	void generateVBO(ChunkManager& p_chnks);
+	void pushVBO();
 	uint32_t getVBOSize();
 
 	void remove();
@@ -71,10 +72,11 @@ struct WorldChunk : public TransformObject
 	ChunkPos worldPos;
 	int worldID;
 
-	bool meshIsCurrent = false;
+	bool vertsAreCurrent = false;
+	bool vboIsPushed = false;
 	bool invalid = true;
 	bool isEmpty = true;
-	Mesh<TileVert> tileMesh;
+	Mesh<TileVert> tileMesh{NO_VAO_INIT};
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 

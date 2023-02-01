@@ -3,10 +3,16 @@
 
 bool ChunkManager::genChunk(ChunkPos p_chunkPos)
 {
+	static auto allGenerators = res.getAllGeneratorShaders();
+	for (auto& str : allGenerators) {
+		m_noiseMap.genTilesNeighboringChunk(p_chunkPos.x, p_chunkPos.y, str);
+	}
 	if (chunkExistsAt(p_chunkPos)) return false;
 
 	// add it to the back of the translation map
 	WorldChunk c = WorldChunk(p_chunkPos, 0);
+
+
 	c.worldGenerate(m_noiseMap);
 	m_chunkMap[p_chunkPos] = c;// world ID is hardcoded for now. Will most def be a different system later.
 
@@ -23,6 +29,10 @@ bool ChunkManager::genChunk(ChunkPos p_chunkPos)
 }
 bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 {
+	static auto allGenerators = res.getAllGeneratorShaders();
+	for (auto& str : allGenerators) {
+		m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, str);
+	}
 	if (chunkExistsAt(ChunkPos(p_chunkX, p_chunkY))) return false;
 
 	// add it to the back of the translation map
@@ -44,15 +54,18 @@ bool ChunkManager::genChunk(int p_chunkX, int p_chunkY)
 void ChunkManager::regenVBOs()
 {
 	for (auto& it : m_chunkMap) {
-
 		it.second.generateVBO(*this);
 	}
 }
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 {
-	//std::cout << chunkExistsAt(ChunkPos(0, 0)) << std::endl;
-	//std::cout << loadQueue.size() << std::endl;
-	if (!ChunkManager::chunkExistsAt(p_chunkPos)) {
+	std::unique_lock<std::mutex> lock(m_queueMutex);
+	if (!chunkExistsAt(p_chunkPos)) {
+		static auto allGenerators = res.getAllGeneratorShaders();
+		for (auto& str : allGenerators) {
+			m_noiseMap.genTilesNeighboringChunk(p_chunkPos.x, p_chunkPos.y, str);
+		}
+		m_workCount.release();
 		m_loadQueue.push(p_chunkPos);
 	};
 }
@@ -73,24 +86,77 @@ bool ChunkManager::genFromQueue()
 
 bool ChunkManager::autoGen(Camera& p_cam) {
 	// scuffed
-	for (int i = (int)(p_cam.getFrame().y / (float)CHUNKSIZE) - 2;
-		i < (int)((p_cam.getFrame().w) / (float)CHUNKSIZE) + 2;
-		i++) {
-		for (int j =
-			(int)(p_cam.getFrame().x / (float)CHUNKSIZE) - 2;
-			j < (int)((p_cam.getFrame().z) / (float)CHUNKSIZE) + 2;
-			j++) {
-			if ((i > -16) && (i < 16) && (j > -40) && (j < 40)) {
-				ChunkManager::enqueueGen(ChunkPos(j, i));
+	//for (int i = (int)(p_cam.getFrame().y / (float)CHUNKSIZE) - 2;
+	//	i < (int)((p_cam.getFrame().w) / (float)CHUNKSIZE) + 2;
+	//	i++) {
+	//	for (int j =
+	//		(int)(p_cam.getFrame().x / (float)CHUNKSIZE) - 2;
+	//		j < (int)((p_cam.getFrame().z) / (float)CHUNKSIZE) + 2;
+	//		j++) {
+	//		if ((i > -16) && (i < 16) && (j > -40) && (j < 40)) {
+	//			ChunkManager::enqueueGen(ChunkPos(j, i));
+	//		}
+	//	}
+	//}
+	return false;
+}
+void ChunkManager::startThreads()
+{
+	for (int i = 0; i < GENERATION_THREAD_COUNT; i++) {
+		m_genThreads.emplace_back(&ChunkManager::genFromQueueThreaded, std::ref(*this));
+	}
+}
+void ChunkManager::stopThreads()
+{
+	m_stopAllThreads = true;
+	m_workCount.release(GENERATION_THREAD_COUNT);
+	for (auto& t : m_genThreads) {
+		t.join();
+	}
+}
+void ChunkManager::genFromQueueThreaded(ChunkManager& instance)
+{
+	while (true) {
+		if (instance.m_stopAllThreads) break;
+		std::unique_lock<std::mutex> lock(instance.m_queueMutex);
+
+		instance.m_workCount.acquire();
+
+		if (instance.m_loadQueue.empty()) continue;
+
+		ChunkPos pos = instance.m_loadQueue.front();
+		instance.m_loadQueue.pop();
+		lock.unlock();
+		ChunkManager::genChunkThreaded(pos, instance);
+	}
+}
+void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance)
+{
+	std::unique_lock<std::mutex> lock(instance.m_chunkReadWriteMutex);
+	if (instance.chunkExistsAt(p_chunkPos)) return;
+	lock.unlock();
+	// add it to the back of the translation map
+	WorldChunk c = WorldChunk(p_chunkPos, 0);
+
+	c.worldGenerate(instance.m_noiseMap);
+
+	lock.lock();
+	instance.m_chunkMap[p_chunkPos] = c;// world ID is hardcoded for now. Will most def be a different system later.
+
+	// fix borders, a little expensive but hey
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			if (j == 0 && i == 0) continue;
+			if (instance.chunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
+				instance.m_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)].generateVBO(instance);
 			}
 		}
 	}
-	return false;
 }
 void ChunkManager::genFixed(size_t x, size_t y) {
 	for (size_t i = 0; i < y; i++) {
 		for (size_t j = 0; j < x; j++) {
-			ChunkManager::enqueueGen(ChunkPos(j, i));
+			enqueueGen(ChunkPos((int)j - x / 2, (int)i - y / 2));
 		}
 	}
 }
@@ -124,40 +190,7 @@ std::optional<WorldChunk*> ChunkManager::getChunkPtr(ChunkPos p_chunkPos)
 	if (!chunkExistsAt(p_chunkPos)) return std::nullopt;
 	return std::optional<WorldChunk*>(&m_chunkMap[p_chunkPos]);
 }
-std::optional<WorldChunk*> ChunkManager::fetchFromFrame(glm::vec4 p_viewFrame, bool& p_finished)
-{
-	// Frame should never change between calls to this function, always use within a while loop
-	const float x = p_viewFrame.x - (float)CHUNKSIZE, y = p_viewFrame.y + (float)CHUNKSIZE, z = p_viewFrame.z + (float)CHUNKSIZE, w = p_viewFrame.w + (float)CHUNKSIZE;
-	const float tileWidth = z - x + (float)CHUNKSIZE;
-	const float tileHeight = w - y + (float)CHUNKSIZE;
-	// Width and height, in chunks. Always positive.
-	const int chunkWidth = (int)(tileWidth / (float)CHUNKSIZE);
-	const int chunkHeight = (int)(tileHeight / (float)CHUNKSIZE);
-	if (chunkWidth == 0 || chunkHeight == 0) {
-		p_finished = true;
-		return std::nullopt;
-	};
 
-	if (m_setFetchCounterFlag) {
-		m_setFetchCounterFlag = false;
-		m_fetchCounter = 0;
-	}
-	if (!p_finished) {
-		int curX = m_fetchCounter % chunkWidth;
-		int curY = m_fetchCounter / chunkWidth;
-		if (curY <= chunkHeight) {
-			m_fetchCounter++;
-			bool tmp;
-			const int worldX = curX + (int)std::floorf(x / (float)CHUNKSIZE);
-			const int worldY = curY + (int)std::floorf(y / (float)CHUNKSIZE);
-			return getChunkPtr(ChunkPos(worldX, worldY));
-		}
-	}
-
-	p_finished = true;
-	m_setFetchCounterFlag = true;
-	return std::nullopt;
-}
 glm::ivec4 frameToChunkCoords(glm::vec4 p_frame) {
 	int x1 = utils::gridFloor((int)p_frame.x, CHUNKSIZE);
 	int y1 = utils::gridFloor((int)p_frame.y, CHUNKSIZE) + 1;
@@ -169,6 +202,7 @@ void ChunkManager::updateDrawList(glm::vec4 p_frame, bool force) {
 	// TODO:: Make this smarter such that it doesn't need to rebuild the list completely when the frame moves
 	static glm::ivec4 prev = glm::ivec4(0);
 	glm::ivec4 next = frameToChunkCoords(p_frame);
+	if (SDL_GetTicks() % 10 < 5) force = true;
 	if ((prev == next) && !force) return;
 	m_drawList.clear();
 	int count = 0;
@@ -180,16 +214,20 @@ void ChunkManager::updateDrawList(glm::vec4 p_frame, bool force) {
 			count++;
 		}
 	}
-	//LOG(next.x << " " << next.y << " " << next.z << " " << next.w);
 	prev = next;
 }
 int ChunkManager::drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader) {
 	int count = 0;
 	//return 0;
 	for (auto chunk : m_drawList) {
+		std::unique_lock<std::mutex> lock(m_chunkReadWriteMutex);
 		if (!chunk) continue;
 		if (chunk->isEmpty) continue;
-		if (!chunk->meshIsCurrent) chunk->generateVBO(*this);
+		if (!chunk->vboIsPushed) {
+			//chunk->generateVBO(*this);
+			chunk->pushVBO();
+		}
+
 		// excuse my use of this here
 		//glClear(GL_DEPTH_BUFFER_BIT);
 		p_tileShader.setVec2Uniform(2, glm::vec2(chunk->worldPos.x, chunk->worldPos.y));
@@ -224,13 +262,4 @@ void ChunkManager::removeChunks()
 {
 	m_chunkMap.clear();
 }
-// draws every chunk in the manager, innefficent
-//void ChunkManager::draw(DrawSurface& p_target, DrawStates& p_drawStates) {
-//	if (m_chunkList.size() == 0) return;
-//	for (size_t i = 0; i < m_chunkList.size(); i++) {
-//		if (m_chunkList[i].isEmpty) continue;
-//		if (!m_chunkList[i].meshIsCurrent) m_chunkList[i].generateVBO();
-//		m_chunkList[i].draw(p_target, p_drawStates);
-//	}
-//}
 

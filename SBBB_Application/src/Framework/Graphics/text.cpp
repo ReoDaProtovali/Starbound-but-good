@@ -173,7 +173,7 @@ void Text::generateVBO() {
 	}
 
 	//m_textMesh.genIBO();
-	m_textMesh.genVBO();
+	m_textMesh.pushVBOToGPU();
 }
 void Text::draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates& p_drawStates) {
 	if (!m_textMesh.hasData()) {

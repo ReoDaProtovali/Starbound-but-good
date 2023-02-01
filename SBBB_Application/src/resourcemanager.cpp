@@ -58,8 +58,9 @@ Texture* ResourceManager::getTexture(TextureID p_ID, bool& p_success) {
 
 Texture* ResourceManager::getTileSheetTexture() {
 	if (!tileSheetTexture.initialized) {
-		tileSheetTexture.setFiltering(GL_LINEAR, GL_NEAREST);
+		tileSheetTexture.setFiltering(GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
 		tileSheetTexture.fromVec4Data(tileSheetPixmap.width, tileSheetPixmap.height, tileSheetPixmap.getData());
+		tileSheetTexture.useMipmaps(2);
 	}
 	return &tileSheetTexture;
 }
@@ -239,4 +240,13 @@ Shader& ResourceManager::getGeneratorShader(const std::string& p_name) {
 		throw std::exception("Try again nerd");
 	}
 	return m_generatorShaders[p_name];
+}
+
+std::vector<std::string> ResourceManager::getAllGeneratorShaders()
+{
+	std::vector<std::string> outVec;
+	for (auto& it : m_generatorShaders) {
+		outVec.emplace_back(it.first);
+	}
+	return outVec;
 }

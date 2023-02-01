@@ -22,7 +22,8 @@ WorldChunk::WorldChunk(const WorldChunk& other) noexcept :
 	worldID(other.worldID),
 	worldPos(other.worldPos),
 	invalid(other.invalid),
-	meshIsCurrent(other.meshIsCurrent),
+	vertsAreCurrent(other.vertsAreCurrent),
+	vboIsPushed(other.vboIsPushed),
 	isEmpty(other.isEmpty)
 {
 	// Don't forget the base class
@@ -37,29 +38,32 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 	m_tiles = other.m_tiles;
 	worldID = other.worldID;
 	worldPos = other.worldPos;
+	vertsAreCurrent = other.vertsAreCurrent;
+	vboIsPushed = other.vboIsPushed;
+	invalid = other.invalid;
+	isEmpty = other.isEmpty;
+
 	setPosition(glm::vec3((float)worldPos.x * CHUNKSIZE, (float)worldPos.y * CHUNKSIZE, 0.f));
 	calculateTransform();
-	invalid = other.invalid;
-	meshIsCurrent = other.meshIsCurrent;
-	isEmpty = other.isEmpty;
+
 	return *this;
 };
 
 WorldChunk::WorldChunk(WorldChunk&& other) noexcept :
 	tileMesh(std::move(other.tileMesh)),
-	m_tiles(std::move(other.m_tiles))
+	m_tiles(std::move(other.m_tiles)),
+	worldID(other.worldID),
+	worldPos(other.worldPos),
+	vertsAreCurrent(other.vertsAreCurrent),
+	vboIsPushed(other.vboIsPushed),
+	invalid(other.invalid),
+	isEmpty(other.isEmpty)
 {
-	worldID = other.worldID;
-	worldPos = other.worldPos;
 	setPosition(glm::vec3((float)worldPos.x * CHUNKSIZE, (float)worldPos.y * CHUNKSIZE, 0.f));
 	calculateTransform();
-	invalid = other.invalid;
-	meshIsCurrent = other.meshIsCurrent;
-	isEmpty = other.isEmpty;
 }
 
 void WorldChunk::fillRandom() {
-	isEmpty = false;
 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
@@ -73,7 +77,8 @@ void WorldChunk::fillRandom() {
 			}
 		}
 	}
-	meshIsCurrent = false;
+	vertsAreCurrent = false;
+	isEmpty = false;
 }
 void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 	isEmpty = true;
@@ -92,10 +97,11 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
 				globalX = (float)(worldPos.x * CHUNKSIZE + x);
-				globalY = (float)(worldPos.y * CHUNKSIZE - y + surfaceLevel);
+				globalY = (float)(worldPos.y * CHUNKSIZE - y);
 				glm::vec4 perlin = noiseGen.getPixel((int)globalX, (int)globalY, "perlin");
 
-				glm::vec4 perlin1d = noiseGen.getPixel((int)globalX * 2, 0, "perlin");
+				glm::vec4 perlin1d = noiseGen.getPixel((int)globalX, (int)globalY, "perlin1d");
+
 				float height = (perlin1d.x + perlin1d.y * 0.3 + perlin1d.z * 0.4 + perlin1d.w * 0.1 - 0.7f) * 300.f + 100.f;
 				glm::vec4 cavern = noiseGen.getPixel((int)globalX, (int)globalY, "cavern");
 
@@ -125,36 +131,16 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 				else {
 					m_tiles(x, y, z) = Tile(glm::ivec2(x, y), 0);
 				}
-
-				//if (cavern.x < 0.2 + (float)z / 20.f) {
-				//	if (perlin.y > 0.6) {
-				//		m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
-				//	}
-				//	else {
-				//		m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
-				//	}
-				//	isEmpty = false;
-				//}
-				//else {
-				//	m_tiles(x, y, z) = Tile(glm::ivec2(x, y), 0);
-				//}
-				//if (std::sin((float)globalX / 64.f) < globalY / 128.f) {
-				//	m_tiles(x, y) = Tile(x, y, 1);
-				//}
-				//else {
-				//	m_tiles(x, y) = Tile(x, y, 0);
-				//}
-				//isEmpty = false;
 			}
 		}
 	}
-	meshIsCurrent = false;
+	vertsAreCurrent = false;
 	invalid = false;
 }
 
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	if (isEmpty) return;
-	tileMesh.clearVerts();
+	tileMesh.clean();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
 	ResourceManager& res = ResourceManager::Get();
 	auto& db = DebugStats::Get();
@@ -235,10 +221,15 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 			}
 		}
 	}
+	vertsAreCurrent = true;
+	vboIsPushed = false;
+}
 
-	tileMesh.genVBO();
-	tileMesh.clearVerts();
-	meshIsCurrent = true;
+void WorldChunk::pushVBO()
+{
+	tileMesh.pushVBOToGPU();
+	tileMesh.clean();
+	vboIsPushed = true;
 }
 
 uint32_t WorldChunk::getVBOSize() {

@@ -1,5 +1,6 @@
 #include "Framework/Graphics/Texture.hpp"
 #include "util/utils.hpp"
+#include "Framework/Graphics/GlCheck.hpp"
 
 #include "Framework/Log.hpp"
 
@@ -111,6 +112,18 @@ void Texture::fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_dat
 		p_data);
 	glBindTexture(type, 0);
 	initialized = true;
+}
+
+void Texture::useMipmaps(int p_count)
+{
+	if (!initialized) {
+		changeDimensions(0, 0);
+	}
+	glCheck(glBindTexture(type, glID->ID)); // into the main texture buffer
+	glCheck(glGenerateMipmap(type));
+	glCheck(glTexParameteri(type, GL_TEXTURE_MAX_LEVEL, p_count));
+	glCheck(glBindTexture(type, glID->ID)); // into the main texture buffer
+
 }
 
 void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)

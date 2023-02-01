@@ -48,9 +48,8 @@ layout(location = 2) uniform vec2 WorldPos;
 in vec2 TexCoord;
 
 void main() {
-    vec2 uv = TexCoord;
-    uv += WorldPos;
+    vec2 uv = vec2(TexCoord.x, 0.0f);
+    uv.x += WorldPos.x;
     // layer the color channels with octaves because why not
     fragColor = vec4(noise(uv), noise(uv*2.f + 10.f), noise(uv*5.f + 20.f), noise(uv*10.f + 30.f));
-    //fragColor = vec4(abs(WorldPos.x + 12.f) / 24.f, abs(WorldPos.y + 12.f) / 24.f, 0, 1);
 }

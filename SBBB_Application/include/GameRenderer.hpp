@@ -82,6 +82,7 @@ public:
 
 	Lighting m_lighting;
 
+	FrameBuffer m_screenFBO;
 private:
 
 	GenericShaders& gs = GenericShaders::Get();
@@ -94,7 +95,6 @@ private:
 
 	/// Uses packed chunk coordinates and block IDs
 	Shader m_tileShader;
-	FrameBuffer m_screenFBO;
 
 	DrawStates m_worldDrawStates;
 
