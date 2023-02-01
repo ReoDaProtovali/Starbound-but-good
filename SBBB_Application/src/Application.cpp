@@ -17,7 +17,7 @@ void Application::run()
 	gameActive = true;
 	LOAD_LOG("Main loop running.");
 
-	world.genFixed(20, 20);
+	world.genFixed(40, 10);
 	while (gameActive) {
 		ts.processFrameStart();
 

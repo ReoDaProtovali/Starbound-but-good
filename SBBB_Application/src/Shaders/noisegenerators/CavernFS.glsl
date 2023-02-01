@@ -73,10 +73,10 @@ void main()
     uv *= 10.f;
     uv = uv * vec2(1.0f, 1.5f);
 
-    float finalNoise = pow(fractalDistortNoise(uv, 7, 3.9, 1.3f), 1.f);
+    float finalNoise = pow(fractalDistortNoise(uv, 7, 3.9, 1.2f), 1.f) * 1.2;
     
     float cutoff = clamp(map(uv.y, 0.0f, 1.0f, 0.0f, 0.16f), 0.58, 1.0f);
-    finalNoise = smoothstep(cutoff - 0.001, cutoff, finalNoise);
+    finalNoise = smoothstep(cutoff - 0.1, 1.0, finalNoise);
     vec3 col = vec3(finalNoise);
 
     fragColor = vec4(col,1.0);

@@ -7,6 +7,7 @@
 	"imageFile": "stone.png",
 	"maxHP": 80,
 	"isAnimated": false,
+	"transparent": false,
 	"variationCount": 4,
 	"lightAbsorption": 0.8,
 	"emissive": false,

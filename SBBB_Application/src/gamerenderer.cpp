@@ -171,9 +171,11 @@ void GameRenderer::testDraw()
 			<< "Noisemap tiles generated - " << db.noisemapTileCount << '\n'
 			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
 			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
-			<< "Tile Vertex Count Total: " << db.vertCount; 
+			<< "Tile Vertex Count Total: " << db.vertCount << '\n'
+			<< "Chunk Gens Per Second - " << db.chunkGenCounter;
 		db.statUpdate = false;
 		db.drawCalls = 0;
+		db.chunkGenCounter = 0;
 		updateTimer.startStopwatch();
 	}
 

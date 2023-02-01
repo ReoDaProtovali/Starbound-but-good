@@ -7,6 +7,7 @@
 	"imageFile": "dirt.png",
 	"isAnimated": false,
 	"emissive": false,
+	"transparent": false,
 	"lightingColor": [ 0.0, 0.0, 0.0 ],
 	"maxHP": 30,
 	"variationCount": 4,

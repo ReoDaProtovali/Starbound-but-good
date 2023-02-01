@@ -102,6 +102,7 @@ bool ChunkManager::autoGen(Camera& p_cam) {
 }
 void ChunkManager::startThreads()
 {
+	if (m_genThreads.size() > 0) return;
 	for (int i = 0; i < GENERATION_THREAD_COUNT; i++) {
 		m_genThreads.emplace_back(&ChunkManager::genFromQueueThreaded, std::ref(*this));
 	}

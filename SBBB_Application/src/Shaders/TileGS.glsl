@@ -47,7 +47,7 @@ void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
 	uint randp = abs(uint(float(18729) * rand(gl_in[0].gl_Position.xy + worldPos * 2.f))) % data_in[0].variationCount;
 	vec2 offset =  IDToTexOffset(data_in[0].ID) + vec2(SPRITE_WIDTH * randp, 0);
 	// boo flickering
-	regionBounds += vec4(-0.001f, -0.001f, 0.0025f, 0.0025f);
+	regionBounds += vec4(-0.002f, -0.002f, 0.004f, 0.004f);
 	gl_Position = transform * (gl_in[0].gl_Position + vec4(regionBounds.x, regionBounds.y, z, 0));
 	TexCoord = vec2(texBounds.xw + offset);
 	zLevel = gl_in[0].gl_Position.z;

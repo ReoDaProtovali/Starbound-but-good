@@ -82,7 +82,8 @@ void WorldChunk::fillRandom() {
 }
 void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 	isEmpty = true;
-
+	DebugStats& db = DebugStats::Get();
+	db.chunkGenCounter++;
 	ResourceManager& res = ResourceManager::Get();
 	TileInfo& DirtInfo = res.getTileInfo("vanilla:dirt").value();
 	TileInfo& StoneInfo = res.getTileInfo("vanilla:stone").value();
@@ -102,14 +103,66 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 
 				glm::vec4 perlin1d = noiseGen.getPixel((int)globalX, (int)globalY, "perlin1d");
 
-				float height = (perlin1d.x + perlin1d.y * 0.3 + perlin1d.z * 0.4 + perlin1d.w * 0.1 - 0.7f) * 300.f + 100.f;
+				float height = (perlin1d.x + perlin1d.y * 0.3 + perlin1d.z * 0.4 + perlin1d.w * 0.2 * perlin1d.w - 0.9f) * 300.f + 100.f;
 				glm::vec4 cavern = noiseGen.getPixel((int)globalX, (int)globalY, "cavern");
 
-				if (z == 1) {
-					if (cavern.x < 0.7 && globalY < height) {
-						if (height - globalY > 30 + rand() % 10) {
-							m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
 
+				if (z == 3) {
+					if (cavern.x < 0.2 && globalY < height) {
+						if (height - globalY > 30 + rand() % 10) {
+							if (perlin.y > 0.7 && height - globalY < 180 + rand() % 5) {
+								m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+							}
+							else {
+								if (perlin.w > 0.8) {
+									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+								}
+								else {
+									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+								}
+							}
+						}
+						else {
+							m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+						}
+						isEmpty = false;
+					}
+				}
+				else if (z == 2) {
+					if (cavern.x < 0.4 && globalY < height) {
+						if (height - globalY > 30 + rand() % 10) {
+							if (perlin.z > 0.8) {
+								m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+							}
+							else {
+								if (perlin.w > 0.5) {
+									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+								}
+								else {
+									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+								}
+							}
+						}
+						else {
+							m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+						}
+						isEmpty = false;
+					}
+				} 
+				else if (z == 1) {
+					if (cavern.x < 0.6 && globalY < height) {
+						if (height - globalY > -30 + rand() % 10) {
+							if (perlin.z > 0.5 && height - globalY < 90 + rand() % 5) {
+								m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+							}
+							else {
+								if (perlin.w > 0.4) {
+									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+								}
+								else {
+									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+								}
+							}
 						}
 						else {
 							m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
@@ -120,13 +173,19 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 				else if (z == 0) {
 					if (height - globalY > 10) {
 						if (height - globalY > 30 + rand() % 10) {
-							m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+							if (perlin.w > 0.2) {
+								m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
+							}
+							else {
+								m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+							}
 
 						}
 						else {
 							m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
 						}
 					}
+					isEmpty = false;
 				}
 				else {
 					m_tiles(x, y, z) = Tile(glm::ivec2(x, y), 0);
@@ -167,6 +226,8 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 						for (int j = -1; j <= 1; j++) {
 							auto opt = getNeigboringChunkTile(x + j, y + i, layer, p_chnks);
 							if (opt.has_value()) {
+								if (opt.value()->m_tileID == 0) continue;
+								if (res.getTileInfo(opt.value()->m_tileID - 1).transparent) continue;
 								if (opt.value()->m_tileID != 0) tileCount++;
 							}
 						}

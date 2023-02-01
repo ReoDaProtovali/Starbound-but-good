@@ -23,6 +23,7 @@ struct TileInfo {
 	size_t spriteIndex = 0;
 	bool isAnimated = false;
 	bool emissive = false;
+	bool transparent = false;
 	std::vector<float> lightingColor{};
 	uint16_t maxHP = 0;
 	uint16_t variationCount = 0;

@@ -2,6 +2,7 @@
 #define GAMECONSTANTS_H
 
 #include "Framework/FrameworkConstants.hpp"
+#include <atomic>
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 60
 #define DISABLE_RUNTIME_CONSOLE false
@@ -9,7 +10,7 @@
 // do NOT increase this beyond limits. it does NOT like to be changed easily
 // Currently works from 2-64
 constexpr auto CHUNKSIZE = 64;
-constexpr auto CHUNKDEPTH = 2;
+constexpr auto CHUNKDEPTH = 4;
 enum DefaultTileID {
 	EMPTY,
 	STONE,
@@ -22,6 +23,10 @@ enum class Corner {
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT
 };
+
+#define TILESET_PATH "res\\tilesets"
+#define GENERATORS_JSON_PATH ".\\src\\Shaders\\noisegenerators\\generators.json"
+
 
 struct DebugStats {
 	float drawFPS = 0.f;
@@ -43,6 +48,7 @@ struct DebugStats {
 	int drawCalls = 0;
 	int vertCount = 0;
 	int loadQueueSize = 0;
+	std::atomic<int> chunkGenCounter = 0;
 	bool statUpdate = true;
 
 	// globals don't play nice

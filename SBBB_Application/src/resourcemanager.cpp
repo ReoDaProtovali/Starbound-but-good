@@ -67,7 +67,7 @@ Texture* ResourceManager::getTileSheetTexture() {
 
 void ResourceManager::loadAllTileSets() {
 	namespace fs = std::filesystem;
-	for (const auto& entry : fs::directory_iterator(fs::current_path() / "res\\tilesets")) {
+	for (const auto& entry : fs::directory_iterator(fs::current_path() / TILESET_PATH)) {
 		if (entry.is_directory()) {
 			loadTileSet(entry.path());
 		}
@@ -137,6 +137,7 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 			   999999,
 			   tileInfoJSON["isAnimated"],
 			   tileInfoJSON["emissive"],
+			   tileInfoJSON["transparent"],
 			   tileInfoJSON["lightingColor"],
 			   tileInfoJSON["maxHP"],
 			   tileInfoJSON["variationCount"],
@@ -202,7 +203,7 @@ Texture* ResourceManager::getTexture(TextureID p_ID) {
 void ResourceManager::loadGeneratorShaders() {
 	LOG("LOADING GENERATOR SHADERSS");
 	namespace fs = std::filesystem;
-	fs::path generatorsJSONPath = ".\\src\\Shaders\\noisegenerators\\generators.json";
+	fs::path generatorsJSONPath = GENERATORS_JSON_PATH;
 	if (!fs::exists(generatorsJSONPath)) {
 		ERROR_LOG("Unable to find generators.json! Shaders not loaded.");
 		return;

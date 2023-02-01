@@ -302,6 +302,7 @@
     <None Include="src\Shaders\TextVS.glsl" />
     <None Include="src\Shaders\TextFS.glsl" />
     <None Include="src\Shaders\noisegenerators\Perlin1DFS.glsl" />
+    <None Include="res\tilesets\vanilla\tiledata\NeonGrid.TileProperties" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\freetype.lib" />
