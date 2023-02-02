@@ -15,4 +15,9 @@ void GenericShaders::init() {
 );
 	imageShader.setTexUniform(1, 0);
 
+	solidColorShader = Shader(
+		"./src/Shaders/SolidColorVS.glsl",
+		"./src/Shaders/SolidColorFS.glsl"
+	);
+	solidColorShader.setVec3Uniform(1, glm::vec3(0.f));
 }

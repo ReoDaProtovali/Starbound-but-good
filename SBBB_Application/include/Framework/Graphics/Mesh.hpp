@@ -151,6 +151,10 @@ public:
 		m_attribList.emplace_back(p_size, GL_INT);
 	};
 
+	void pushVertex(T& vert) {
+		m_verts.push_back(vert);
+		m_GPUVertsSize += 1;
+	}
 	/// Simply adds a vertex of type T to the end of the mesh list.
 	void pushVertices(const std::initializer_list<T>& p_attribs) {
 		m_verts.insert(m_verts.end(), p_attribs);
@@ -232,7 +236,15 @@ public:
 		glEnableVertexAttribArray(GL_NONE);
 		IBOInitialized = true;
 	}
-
+	void subCurrentVBOData() {
+		glCheck(glBindVertexArray(VAO->ID));
+		if (!VBOInitialized) {
+			glGenBuffers(1, &VBO->ID);
+			GLGEN_LOG("Generated Vertex Buffer " << VBO->ID);
+		}
+		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
+		glCheck(glBufferSubData(GL_ARRAY_BUFFER, 0, m_verts.size() * sizeof(T), m_verts.data()));
+	}
 	void subVBOData(GLuint p_startIndex, GLuint p_endIndex, T* p_data) {
 		glCheck(glBindVertexArray(VAO->ID));
 		if (!VBOInitialized) {

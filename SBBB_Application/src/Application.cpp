@@ -17,7 +17,9 @@ void Application::run()
 	gameActive = true;
 	LOAD_LOG("Main loop running.");
 
-	world.genFixed(40, 10);
+	world.genFixed(50, 15);
+	world.startThreads();
+
 	while (gameActive) {
 		ts.processFrameStart();
 
@@ -78,7 +80,6 @@ void Application::update()
 
 void Application::render()
 {
-
 	renderer.bindScreenFBOAsRenderTarget();
 	renderer.setClearColor(glm::vec4(0.8f, 0.8f, 1.0f, 0.0f));
 	renderer.clearScreen();
@@ -206,7 +207,7 @@ void Application::handleInput()
 	}
 
 	if (inp.testKeyDown(SDLK_5)) {
-		world.startThreads();
+		world.stopThreads();
 	}
 }
 

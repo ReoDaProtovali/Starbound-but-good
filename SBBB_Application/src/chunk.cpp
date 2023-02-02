@@ -275,7 +275,7 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 						}
 					}
 				}
-				tileMesh.pushVertices({ v });
+				tileMesh.pushVertex(v);
 				db.vertCount++;
 			skip:
 				{}

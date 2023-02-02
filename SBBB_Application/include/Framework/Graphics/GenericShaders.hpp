@@ -20,6 +20,7 @@ public:
 	// Uniforms:
 	// imageTexture: 0
 	Shader imageShader;
+	Shader solidColorShader;
 
 private:
 	GenericShaders();

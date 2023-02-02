@@ -56,40 +56,63 @@ void Camera::setDimensions(uint32_t p_windowWidth, uint32_t p_windowHeight)
 
 glm::mat4 Camera::getTransform()
 {
-	float screenScaling = 1.0;
-	if (m_pixelDimensions.x < m_pixelDimensions.y)
-	{
-		screenScaling = m_pixelDimensions.x / m_pixelDimensions.y;
-	}
-	else
-	{
-		screenScaling = 1.0f;
-	}
-	if (!m_perspective)
-	{
-		m_proj = glm::ortho(
-			0.0f,
-			m_dimensions.x * tileScale * screenScaling,
-			0.0f,
-			m_dimensions.y * tileScale * screenScaling,
-			0.1f, 1000.0f);
-	}
-	else
-	{
-		m_proj = glm::perspective(glm::radians(45.0f), m_pixelDimensions.x / m_pixelDimensions.y, 0.1f, 1000.0f);
-	}
-	if (!m_manualView)
-	{
-		lookForwards(); // default behavior, can be overriden by other view setting functions
-	}
+	if (!m_disableAutoFrame) {
+		float screenScaling = 1.0;
+		if (m_pixelDimensions.x < m_pixelDimensions.y)
+		{
+			screenScaling = m_pixelDimensions.x / m_pixelDimensions.y;
+		}
+		else
+		{
+			screenScaling = 1.0f;
+		}
+		if (!m_perspective)
+		{
+			m_proj = glm::ortho(
+				0.0f,
+				m_dimensions.x * tileScale * screenScaling,
+				0.0f,
+				m_dimensions.y * tileScale * screenScaling,
+				0.1f, 1000.0f);
+		}
+		else
+		{
+			m_proj = glm::perspective(glm::radians(45.0f), m_pixelDimensions.x / m_pixelDimensions.y, 0.1f, 1000.0f);
+		}
+		if (!m_manualView)
+		{
+			lookForwards(); // default behavior, can be overriden by other view setting functions
+		}
 
-	glm::vec2 screenCenterPos = glm::vec2((m_dimensions.x * screenScaling) / 2.0f, (m_dimensions.y * screenScaling) / 2.0f) * tileScale;
-	setFrame(
-		pos.x - screenCenterPos.x,
-		pos.y - screenCenterPos.y,
-		screenCenterPos.x * 2.0f,
-		screenCenterPos.y * 2.0f);
-	view = glm::translate(view, glm::vec3(screenCenterPos, 0.0f));
+		glm::vec2 screenCenterPos = glm::vec2((m_dimensions.x * screenScaling) / 2.0f, (m_dimensions.y * screenScaling) / 2.0f) * tileScale;
+		setFrame(
+			pos.x - screenCenterPos.x,
+			pos.y - screenCenterPos.y,
+			screenCenterPos.x * 2.0f,
+			screenCenterPos.y * 2.0f);
+		view = glm::translate(view, glm::vec3(screenCenterPos, 0.0f));
+	}
+	else {
+		if (!m_perspective)
+		{
+			setGlobalPos(m_frame.x, -m_frame.y);
+			m_proj = glm::ortho(
+				0.0f,
+				getFrameDimensions().x,
+				0.0f,
+				-getFrameDimensions().y,
+				0.1f, 1000.0f);
+		}
+		else
+		{
+			// why would you use perspective in this mode
+			m_proj = glm::perspective(glm::radians(45.0f), m_pixelDimensions.x / m_pixelDimensions.y, 0.1f, 1000.0f);
+		}
+		if (!m_manualView)
+		{
+			lookForwards(); // default behavior, can be overriden by other view setting functions
+		}
+	}
 	return m_proj * view;
 }
 

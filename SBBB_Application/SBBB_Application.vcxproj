@@ -280,6 +280,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\LightingVS.glsl" />
     <None Include="src\Shaders\noisegenerators\CavernFS.glsl" />
     <None Include="src\Shaders\noisegenerators\generators.json" />
+    <None Include="src\Shaders\SolidColorFS.glsl" />
+    <None Include="src\Shaders\SolidColorVS.glsl" />
     <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl" />
     <None Include="src\Shaders\noisegenerators\Perlin2DFS.glsl" />
     <None Include="src\Shaders\noisegenerators\Perlin1DFS.glsl" />

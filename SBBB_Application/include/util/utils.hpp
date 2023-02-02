@@ -12,6 +12,7 @@
 #include <vector>
 #include <util/ext/glm/glm.hpp>
 #include <numeric>
+#include <GameConstants.hpp>
 
 constexpr auto SIXTY_TIMES_PER_SECOND = 0.01666666666f;
 constexpr auto ONE_TIME_PER_SECOND = 0.001f;
@@ -86,6 +87,36 @@ namespace utils {
 	}
 	inline int gridFloor(int x, unsigned int d) {
 		return (x < 0) ? x / (int)d - 1 : x / (int)d;
+	}
+	// scuffed as hell
+	inline glm::ivec4 frameToChunkCoords(glm::vec4 p_frame, int p_chunkSizeMultiplier = 1) {
+		int x1 = utils::gridFloor((int)p_frame.x / p_chunkSizeMultiplier, CHUNKSIZE);
+		int y1 = utils::gridFloor((int)p_frame.y / p_chunkSizeMultiplier, CHUNKSIZE) + 1;
+		int x2 = utils::gridFloor((int)p_frame.z / p_chunkSizeMultiplier, CHUNKSIZE) + 1;
+		int y2 = utils::gridFloor((int)p_frame.w / p_chunkSizeMultiplier, CHUNKSIZE) + 2;
+		return glm::ivec4(x1, y1, x2, y2);
+	}
+	inline uint8_t* toRGBAUnsignedCharArray(float* floats, size_t outBytes) {
+		uint8_t* out = (uint8_t*)malloc(outBytes);
+		for (int i = 0; i < outBytes; i += 4) {
+			out[i + 0] = (uint8_t)(floats[i + 0] * 255.f);
+			out[i + 1] = (uint8_t)(floats[i + 1] * 255.f);
+			out[i + 2] = (uint8_t)(floats[i + 2] * 255.f);
+			out[i + 3] = (uint8_t)(floats[i + 3] * 255.f);
+		}
+		return out;
+	}
+	inline uint8_t* divideRes(uint16_t n, uint16_t width, size_t totalBytes, const uint8_t* p_data) {
+		uint8_t* out = (uint8_t*)malloc(totalBytes / n);
+		for (int y = 0; y < (totalBytes / (width * 4)) / n; y++) {
+			for (int x = 0; x < width * 4; x += n * 4) {
+				out[y * ((width * 4) / n) + x / n + 0] = p_data[y * n * width * 4 + x + 0];
+				out[y * ((width * 4) / n) + x / n + 1] = p_data[y * n * width * 4 + x + 1];
+				out[y * ((width * 4) / n) + x / n + 2] = p_data[y * n * width * 4 + x + 2];
+				out[y * ((width * 4) / n) + x / n + 3] = p_data[y * n * width * 4 + x + 3];
+			}
+		}
+		return out;
 	}
 }
 // A utility class that can provide fps readouts, and also just measure times.

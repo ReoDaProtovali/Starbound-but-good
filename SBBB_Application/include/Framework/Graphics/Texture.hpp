@@ -29,6 +29,9 @@ public:
 	void fromVec4Data(uint32_t p_width, uint32_t p_height, glm::vec4* p_data);
 
 	void useMipmaps(int p_count);
+	void genMipMapsBytes(uint8_t p_level, uint32_t p_width, uint32_t p_height, uint8_t* p_data);
+	void genMipMapsFloat(uint8_t p_level, uint32_t p_width, uint32_t p_height, float* p_data);
+
 	/// Will delete existing texture data
 	void changeDimensions(uint32_t p_width, uint32_t p_height); 
 

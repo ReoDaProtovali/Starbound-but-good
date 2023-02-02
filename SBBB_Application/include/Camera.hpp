@@ -142,6 +142,11 @@ public:
 
 	void disableInterpolation() { m_interpolation = false; }
 
+	void enableAutoFrame() { m_disableAutoFrame = false; }
+
+	void disableAutoFrame() { m_disableAutoFrame = true; }
+
+
 
 	/// Tile scale is a value representing the amount of tiles on the longest axis.
 	float tileScale;
@@ -170,6 +175,7 @@ private:
 	bool m_manualView = false;
 	bool m_perspective = false;
 	bool m_interpolation = false;
+	bool m_disableAutoFrame = false;
 
 };
 

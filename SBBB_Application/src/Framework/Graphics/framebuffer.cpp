@@ -73,7 +73,7 @@ void FrameBuffer::init() {
 		// Allocates texture
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		// constant for now
-		m_colorTextures[i].setFiltering(GL_LINEAR, GL_LINEAR);
+		m_colorTextures[i].setFiltering(GL_LINEAR, GL_NEAREST);
 		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 
 	}
