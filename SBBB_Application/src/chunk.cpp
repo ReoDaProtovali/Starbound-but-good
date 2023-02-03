@@ -103,7 +103,7 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 
 				glm::vec4 perlin1d = noiseGen.getPixel((int)globalX, (int)globalY, "perlin1d");
 
-				float height = (perlin1d.x + perlin1d.y * 0.3 + perlin1d.z * 0.4 + perlin1d.w * 0.2 * perlin1d.w - 0.9f) * 300.f + 100.f;
+				float height = (perlin1d.x + perlin1d.y * 0.3f + perlin1d.z * 0.4f + perlin1d.w * 0.2f * perlin1d.w - 0.9f) * 300.f + 100.f;
 				glm::vec4 cavern = noiseGen.getPixel((int)globalX, (int)globalY, "cavern");
 
 

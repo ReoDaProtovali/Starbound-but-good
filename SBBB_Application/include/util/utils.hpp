@@ -16,6 +16,7 @@
 
 constexpr auto SIXTY_TIMES_PER_SECOND = 0.01666666666f;
 constexpr auto ONE_TIME_PER_SECOND = 0.001f;
+// A collection of single functions that are useful in a variety of situations
 namespace utils {
 	inline float hireTimeInSeconds() {
 		float t = (float)SDL_GetTicks();
@@ -89,16 +90,26 @@ namespace utils {
 		return (x < 0) ? x / (int)d - 1 : x / (int)d;
 	}
 	// scuffed as hell
-	inline glm::ivec4 frameToChunkCoords(glm::vec4 p_frame, int p_chunkSizeMultiplier = 1) {
-		int x1 = utils::gridFloor((int)p_frame.x / p_chunkSizeMultiplier, CHUNKSIZE);
-		int y1 = utils::gridFloor((int)p_frame.y / p_chunkSizeMultiplier, CHUNKSIZE) + 1;
-		int x2 = utils::gridFloor((int)p_frame.z / p_chunkSizeMultiplier, CHUNKSIZE) + 1;
-		int y2 = utils::gridFloor((int)p_frame.w / p_chunkSizeMultiplier, CHUNKSIZE) + 2;
+	inline glm::ivec4 frameToChunkCoords(glm::vec4 p_frame) {
+		int x1 = utils::gridFloor((int)p_frame.x, CHUNKSIZE);
+		int y1 = utils::gridFloor((int)p_frame.y, CHUNKSIZE) + 1;
+		int x2 = utils::gridFloor((int)p_frame.z, CHUNKSIZE) + 1;
+		int y2 = utils::gridFloor((int)p_frame.w, CHUNKSIZE) + 2;
 		return glm::ivec4(x1, y1, x2, y2);
 	}
-	inline uint8_t* toRGBAUnsignedCharArray(float* floats, size_t outBytes) {
-		uint8_t* out = (uint8_t*)malloc(outBytes);
-		for (int i = 0; i < outBytes; i += 4) {
+	inline uint8_t* toRGBAUnsignedCharArray(float* floats, size_t p_outByteCount) {
+		uint8_t* out = (uint8_t*)malloc(p_outByteCount);
+		if (!out) {
+			ERROR_LOG("Could not allocate enough memory to convert to unsigned char array!");
+			throw std::bad_alloc();
+			return nullptr;
+		}
+		if (p_outByteCount < 8 || p_outByteCount % 4 != 0) {
+			ERROR_LOG("Specified unsigned char output size is invalid.");
+			throw std::invalid_argument("Please specify a size in bytes greater or equal to 4 for conversion, and/or divisible by four.");
+			return nullptr;
+		}
+		for (int i = 0; i < p_outByteCount; i += 4) {
 			out[i + 0] = (uint8_t)(floats[i + 0] * 255.f);
 			out[i + 1] = (uint8_t)(floats[i + 1] * 255.f);
 			out[i + 2] = (uint8_t)(floats[i + 2] * 255.f);
@@ -106,14 +117,25 @@ namespace utils {
 		}
 		return out;
 	}
-	inline uint8_t* divideRes(uint16_t n, uint16_t width, size_t totalBytes, const uint8_t* p_data) {
-		uint8_t* out = (uint8_t*)malloc(totalBytes / n);
-		for (int y = 0; y < (totalBytes / (width * 4)) / n; y++) {
-			for (int x = 0; x < width * 4; x += n * 4) {
-				out[y * ((width * 4) / n) + x / n + 0] = p_data[y * n * width * 4 + x + 0];
-				out[y * ((width * 4) / n) + x / n + 1] = p_data[y * n * width * 4 + x + 1];
-				out[y * ((width * 4) / n) + x / n + 2] = p_data[y * n * width * 4 + x + 2];
-				out[y * ((width * 4) / n) + x / n + 3] = p_data[y * n * width * 4 + x + 3];
+	inline uint8_t* divideRes(uint32_t n, uint32_t p_width, uint32_t p_height, const uint8_t* p_data) {
+		if (n == 0 || p_width / n == 0 || p_height / n == 0 || p_height == 0 || p_width == 0 || (p_width * p_height * 4) / n < 4 || n > p_width) {
+			ERROR_LOG("Invalid parameters passed into divide resolution function.");
+			throw std::invalid_argument("Bad Params to divideRes");
+			return nullptr;
+		}
+		uint8_t* out = (uint8_t*)malloc(size_t((p_width * p_height * 4) / n));
+		if (!out) {
+			ERROR_LOG("Could not allocate enough memory to divide input resolution!");
+			throw std::bad_alloc();
+			return nullptr;
+		}
+
+		for (uint32_t y = 0; y < p_height / n; y++) {
+			for (uint32_t x = 0; x < p_width * 4; x += n * 4) {
+				out[y * ((p_width * 4) / n) + x / n + 0] = p_data[y * n * p_width * 4 + x + 0];
+				out[y * ((p_width * 4) / n) + x / n + 1] = p_data[y * n * p_width * 4 + x + 1];
+				out[y * ((p_width * 4) / n) + x / n + 2] = p_data[y * n * p_width * 4 + x + 2];
+				out[y * ((p_width * 4) / n) + x / n + 3] = p_data[y * n * p_width * 4 + x + 3];
 			}
 		}
 		return out;

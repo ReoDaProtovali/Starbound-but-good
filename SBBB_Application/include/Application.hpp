@@ -9,14 +9,14 @@
 #include "ChunkManager.hpp"
 #include "Timestepper.hpp"
 #include "Framework/Input/InputHandler.hpp"
-
+#include "GameClient.hpp"
+#include "GameServer.hpp"
 
 class Application {
-	
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
 
-	GameWindow& gw;
+	GameWindow gw{"Barstound"};
 	GameRenderer renderer;
 
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
@@ -35,6 +35,9 @@ class Application {
 
 	bool gameActive = false;
 
+	void startClient();
+	void startServer();
+
 	void render();
 	void update();
 	void pollEvents();
@@ -43,7 +46,7 @@ class Application {
 	void processConsoleStats();
 
 public:
-	Application(GameWindow& p_window);
+	Application();
 
 	void run();
 	void cleanUp();

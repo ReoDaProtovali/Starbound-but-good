@@ -55,7 +55,7 @@ public:
 			glDrawElements(p_primitiveType, (GLsizei)p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
 		}
 		else {
-			glDrawArrays(p_primitiveType, 0, p_mesh.getTotalVBOSize());
+			glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getTotalVBOSize());
 
 		}
 

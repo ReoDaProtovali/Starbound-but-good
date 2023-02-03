@@ -1,13 +1,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 
-#include "Framework/Window/GameWindow.hpp"
-#include "GameConstants.hpp"
-
 #include "Application.hpp"
-
-#include "InitGL.h"
-
 
 int main(int argc, char* argv[]) {
 	LOG("Debug mode active!");
@@ -18,12 +12,7 @@ int main(int argc, char* argv[]) {
 	_CrtSetDbgFlag(flag);
 #endif
 
-
-	// must be init outside of application in order to get a valid gl context
-	GameWindow gw = GameWindow("Barstound"); 
-	initGL();
-
-	Application sbbb = Application(gw);
+	Application sbbb = Application();
 
 	sbbb.run();
 	sbbb.cleanUp();

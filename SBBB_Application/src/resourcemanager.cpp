@@ -172,7 +172,7 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 		delete imageData;
 
 		static size_t imgIndex = 0;
-		tileInfoCache.back().spriteIndex = ++imgIndex;
+		tileInfoCache.back().spriteIndex = (uint32_t)++imgIndex;
 
 		LOG(tileInfo.name << ": Internal ID - " << tileInfoCache.back().spriteIndex);
 

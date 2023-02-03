@@ -48,7 +48,7 @@ void Camera::lookForwards()
 void Camera::setDimensions(uint32_t p_windowWidth, uint32_t p_windowHeight)
 {
 	Camera::m_dimensions.x = 1.0f;
-	Camera::m_dimensions.y = 1.0f / (float(p_windowWidth) / float(p_windowHeight));
+	Camera::m_dimensions.y = float(p_windowHeight) / float(p_windowWidth);
 	m_pixelDimensions.x = (float)p_windowWidth;
 	m_pixelDimensions.y = (float)p_windowHeight;
 	updateFrame();
@@ -169,6 +169,7 @@ void Camera::setApparentPos(float p_globalX, float p_globalY)
 }
 
 void Camera::interpolate(float p_alpha) {
+	// simple lerp
 	glm::vec3 newPos = pos + lastVelocity * p_alpha;
 	setApparentPos(newPos.x, newPos.y);
 }

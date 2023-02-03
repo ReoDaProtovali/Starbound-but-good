@@ -69,9 +69,6 @@
     <ClCompile Include="src\lighting.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\lightingsolver.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="src\spritesheet.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -80,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="src\inputhandler.cpp">
       <Filter>Source Files\Game Updates</Filter>
-    </ClCompile>
-    <ClCompile Include="src\atlasbuilder.cpp">
-      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\resourcemanager.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -117,9 +111,6 @@
     <ClCompile Include="src\pixmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\testframework.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -127,6 +118,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Framework\Graphics\text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameclient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -160,9 +157,6 @@
     </ClInclude>
     <ClInclude Include="include\Timestepper.hpp">
       <Filter>Header Files\Game Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AtlasBuilder.hpp">
-      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="include\ResourceManager.hpp">
       <Filter>Header Files\Rendering</Filter>
@@ -236,13 +230,7 @@
     <ClInclude Include="include\Framework\Graphics\GlIDs.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TestFramework.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Application.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\InitGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TileVert.h">
@@ -258,6 +246,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\util\Array3D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Bitwise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameClient.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameServer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

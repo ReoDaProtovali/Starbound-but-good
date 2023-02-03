@@ -35,7 +35,7 @@ public:
 	void regenVBOs();
 	void enqueueGen(ChunkPos p_chunkPos);
 	//bool genFromQueue();
-	void genFixed(size_t x, size_t y);
+	void genFixed(uint32_t x, uint32_t y);
 	bool autoGen(Camera& p_cam);
 
 	void startThreads();

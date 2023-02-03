@@ -2,6 +2,8 @@
 
 Sprite::Sprite()
 {
+	m_attachedShader = nullptr;
+	m_attachedTexture = nullptr;
 	// Keep it as dynamic for now, 
 	m_spriteMesh.setStreamType(GL_DYNAMIC_DRAW);
 	m_spriteMesh.addFloatAttrib(3); // Position

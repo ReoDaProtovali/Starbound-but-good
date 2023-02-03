@@ -10,8 +10,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	LOAD_LOG("GameRenderer instantiated...");
 
-
-	cam->pos = glm::vec3(-16.f, 200.f, 32.0f);
+	cam->pos = glm::vec3(123.f, 100.f, 32.0f);
 	cam->tileScale = 40.f;
 	cam->setDimensions(windowWidth, windowHeight);
 
@@ -26,8 +25,10 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	tileCam = std::make_shared<Camera>();
 	tileCam->pos = glm::vec3(-16.f, 200.f, 32.0f);
 	tileCam->tileScale = 40.0f;
-	//tileCam->setDimensions(windowWidth, windowHeight);
 	tileCam->disableAutoFrame();
+
+	FBOSprite.attachTexture(m_tileFBO.getColorTex(0));
+	FBOSprite.attachShader(&gs.imageShader);
 
 	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
 	//m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl");
@@ -136,15 +137,16 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 
 	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
 	tileCam->setFrame(
-		chunkFrameTiles.x, chunkFrameTiles.y, chunkFrameTiles.z - chunkFrameTiles.x, chunkFrameTiles.w - chunkFrameTiles.y
+		(float)chunkFrameTiles.x, (float)chunkFrameTiles.y, float(chunkFrameTiles.z - chunkFrameTiles.x), float(chunkFrameTiles.w - chunkFrameTiles.y)
 	);
 	//glEnable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-	// cool
+	//glDisable(GL_BLEND);
+	FBOSprite.setBounds(Rect(0, 0, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y));
+	FBOSprite.setPosition(glm::vec3(tileCam->getFrame().x, tileCam->getFrame().w, 0));
+
 	m_tileFBO.setDimensions(glm::vec2(pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x), pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y)));
 
 	m_tileDrawStates.setTransform(tileCam->getTransform());
-	m_tileFBO.bind();
 	m_tileFBO.clear();
 	if (currentCamera.lock()->tileScale > 500.f) {
 		m_tileShader.setBoolUniform(4, false);
@@ -153,7 +155,6 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 		m_tileShader.setBoolUniform(4, true);
 	}
 	drawnChunkCount = p_world.drawChunkFrame(chunkFrame.x - 1, chunkFrame.y - 1, chunkFrame.z + 1, chunkFrame.w + 1, m_tileFBO, m_tileDrawStates, m_tileShader);
-
 
 	chunkFramePrev = chunkFrame;
 	return drawnChunkCount;
@@ -218,7 +219,7 @@ void GameRenderer::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h, 
 		});
 
 	// bottom side
-	localBounds = Rect(-0.5f, p_h - 0.5, p_w + 1.f, 1.0);
+	localBounds = Rect(-0.5f, p_h - 0.5f, p_w + 1.f, 1.0f);
 	tl = localBounds.getTL();
 	tr = localBounds.getTR();
 	bl = localBounds.getBL();
@@ -267,17 +268,14 @@ void GameRenderer::testDraw()
 
 	state.setTransform(currentCamera.lock()->getTransform());
 
-	static Sprite testFBOsprite(glm::vec3(0, 0, 5), Rect(0, 0, 10, 10));
+	//static Sprite testFBOsprite(glm::vec3(0, 0, 5), Rect(0, 0, 10, 10));
 	//testFBOsprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-	testFBOsprite.setBounds(Rect(0, 0, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y));
-	testFBOsprite.setPosition(glm::vec3(tileCam->getFrame().x, tileCam->getFrame().w, 0));
-	testFBOsprite.attachTexture(m_tileFBO.getColorTex(0));
-	testFBOsprite.attachShader(&gs.imageShader);
-	testFBOsprite.draw(m_screenFBO, state);
 
-	testReoSprite.setOriginRelative(OriginLoc::CENTER);
-	testReoSprite.setRotation(testFrame / 50.f);
-	testReoSprite.draw(m_screenFBO, state);
+	FBOSprite.draw(m_screenFBO, state);
+
+	//testReoSprite.setOriginRelative(OriginLoc::CENTER);
+	//testReoSprite.setRotation(testFrame / 50.f);
+	//testReoSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);
@@ -312,8 +310,8 @@ void GameRenderer::testDraw()
 	debugText.setText(infoString.str());
 	debugText.draw(glm::vec2(-0.98f, 0.95f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
 
-	drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f));
-	drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
+	//drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f));
+	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
 
 	glEnable(GL_DEPTH_TEST);
 }

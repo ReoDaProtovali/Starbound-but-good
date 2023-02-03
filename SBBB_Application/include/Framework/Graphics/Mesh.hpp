@@ -189,25 +189,25 @@ public:
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
 		glCheck(glBufferData(GL_ARRAY_BUFFER, sizeof(T) * m_verts.size(), m_verts.data(), m_streamType));
 
-		GLint currentOffset = 0; // Offset that needs to be updated as arbitrary amounts of attributes are added. 
+		uint64_t currentOffset = 0; // Offset that needs to be updated as arbitrary amounts of attributes are added. 
 
 		for (uint32_t i = 0; i < m_attribList.size(); i++) {
 
 			switch (m_attribList[i].type) { // Will add more attribute types as I need them. 
 			case GL_FLOAT:
-				glCheck(glVertexAttribPointer(i, m_attribList[i].size, GL_FLOAT, GL_FALSE, m_singleVertexSize, (const void*)currentOffset));
+				glCheck(glVertexAttribPointer(i, m_attribList[i].size, GL_FLOAT, GL_FALSE, m_singleVertexSize, reinterpret_cast<const void*>(currentOffset)));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLfloat));
 				break;
 			case GL_UNSIGNED_INT:
-				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_INT, m_singleVertexSize, (const void*)currentOffset));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_INT, m_singleVertexSize, reinterpret_cast<const void*>(currentOffset)));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			case GL_INT:
-				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_INT, m_singleVertexSize, (const void*)currentOffset));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_INT, m_singleVertexSize, reinterpret_cast<const void*>(currentOffset)));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			case GL_UNSIGNED_BYTE:
-				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_BYTE, m_singleVertexSize, (const void*)currentOffset));
+				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_BYTE, m_singleVertexSize, reinterpret_cast<const void*>(currentOffset)));
 				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
 				break;
 			default:

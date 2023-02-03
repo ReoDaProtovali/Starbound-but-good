@@ -185,7 +185,7 @@ void Texture::genMipMapsFloat(uint8_t p_level, uint32_t p_width, uint32_t p_heig
 		uint8_t* fullImage = utils::toRGBAUnsignedCharArray(p_data, width * height * 4);
 		int n = (int)std::pow(2.0, (double)i);
 
-		uint8_t* newDat = utils::divideRes(n, width, width * height * 4, fullImage);
+		uint8_t* newDat = utils::divideRes(n, width, height, fullImage);
 		//stbir_resize_uint8(pngdat, width, height, width * 4, newDat, newW, newH, newW * 4, 4);
 
 		//char txt[] = "Filex.png";

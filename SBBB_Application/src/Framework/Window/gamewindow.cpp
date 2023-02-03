@@ -1,39 +1,11 @@
 #include "Framework/Window/GameWindow.hpp"
 
-GameWindow::GameWindow(const char* p_title, int p_w, int p_h)
-	:m_window(NULL)
-{
-#ifdef LOADLOGGING_ENABLED
-	std::cout << "Creating game window titled \"" << p_title << "\"" << std::endl;
-#endif
-	windowWidth = p_w;
-	windowHeight = p_h;
-
-	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-
-	if (m_window == NULL) {
-		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
-	}
-
-	int displayIndex = SDL_GetWindowDisplayIndex(m_window);
-	SDL_DisplayMode mode;
-	SDL_GetDisplayMode(displayIndex, 0, &mode);
-
-	screenWidth = mode.w;
-	screenHeight = mode.h;
-
-	GameWindow::initGL();
-
-	// init inherited class's variables
-	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
-	setViewport(0, 0, windowWidth, windowHeight);
-
-}
-GameWindow::GameWindow(const char* p_title)
+GameWindow::GameWindow(const char* p_title, uint32_t p_w, uint32_t p_h)
 	:m_window(NULL),
-	windowWidth(1280),
-	windowHeight(720)
+	windowWidth(p_w),
+	windowHeight(p_h)
 {
+
 	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (m_window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
@@ -54,15 +26,39 @@ GameWindow::GameWindow(const char* p_title)
 	screenHeight = mode.h;
 
 	GameWindow::initGL();
-
-	// init inherited class's variables
-	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
-	setViewport(0, 0, windowWidth, windowHeight);
 }
 
 void GameWindow::initGL() {
 	m_glContext = SDL_GL_CreateContext(m_window);
 	SDL_GL_MakeCurrent(m_window, m_glContext); // Attach OpenGL context to the window
+
+	LOAD_LOG("Initializing OpenGL 3.3...");
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8); // Bit depth of 8 bits
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // OpenGL 3.3
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+
+	glewExperimental = GL_TRUE;
+	auto init_res = glewInit();
+	if (init_res != GLEW_OK)
+	{
+		std::cout << glewGetErrorString(glewInit()) << std::endl;
+	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
+
+	// init inherited class's variables
+	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
+	setViewport(0, 0, windowWidth, windowHeight);
 }
 
 void GameWindow::cleanUp() {
@@ -77,6 +73,34 @@ void GameWindow::setVSync(bool p_enabled)
 void GameWindow::displayNewFrame()
 {
 	SDL_GL_SwapWindow(m_window); // Swap the back of the double buffer with the front.
+}
+void GameWindow::toggleFullscreen() {
+	static bool isFullscreen = false;
+	isFullscreen = !isFullscreen;
+
+	if (isFullscreen) {
+		SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowSize(m_window, screenWidth, screenHeight);
+		windowWidth = screenWidth;
+		windowHeight = screenHeight;
+	}
+	else {
+		SDL_SetWindowFullscreen(m_window, 0);
+		SDL_SetWindowSize(m_window, screenWidth / 2, screenHeight / 2);
+		windowWidth = screenWidth / 2;
+		windowHeight = screenHeight / 2;
+	}
+	fullscreenChanged = true;
+}
+
+bool GameWindow::hasChangedFullscreenState() {
+	// sdl is untrustworthy
+	//std::cout << fullscreenChanged << '\n';
+	if (fullscreenChanged) {
+		fullscreenChanged = false;
+		return true;
+	}
+	return false;
 }
 int GameWindow::getRefreshRate() {
 	int displayIndex = SDL_GetWindowDisplayIndex(m_window);

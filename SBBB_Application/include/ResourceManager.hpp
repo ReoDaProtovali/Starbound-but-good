@@ -20,7 +20,7 @@ struct TileInfo {
 	std::vector<std::string> categories{};
 	std::string rarity = "";
 	std::string imageFile = "";
-	size_t spriteIndex = 0;
+	uint32_t spriteIndex = 0;
 	bool isAnimated = false;
 	bool emissive = false;
 	bool transparent = false;

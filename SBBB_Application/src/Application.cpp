@@ -1,13 +1,11 @@
 #include "Application.hpp"
 #include <thread>
 
-Application::Application(GameWindow& p_window)
-	: gw(p_window),
-	renderer(GameRenderer(gw)),
+Application::Application()
+	: renderer(GameRenderer(gw)),
 	world(ChunkManager())
 {
 	gw.setVSync(true);
-	// a bit ugly
 	world.generatorCam = renderer.cam.get();
 }
 
@@ -17,7 +15,7 @@ void Application::run()
 	gameActive = true;
 	LOAD_LOG("Main loop running.");
 
-	world.genFixed(50, 15);
+	world.genFixed(10, 15);
 	world.startThreads();
 
 	while (gameActive) {
@@ -33,6 +31,9 @@ void Application::run()
 			updateFrame++;
 
 			update();
+			if (gw.hasChangedFullscreenState()) {
+				resizeWindow(gw.windowWidth, gw.windowHeight);
+			}
 			// get things like keyboard events, resize events, quit events, and whatnot
 			pollEvents();
 
@@ -129,7 +130,7 @@ void Application::pollEvents()
 		switch (event.type) {
 		case SDL_WINDOWEVENT:
 			if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;
-			printf("Window %d resized to %dx%d\n", event.window.windowID, event.window.data1,event.window.data2);
+			printf("Window %u resized to %dx%d\n", event.window.windowID, event.window.data1, event.window.data2);
 			resizeWindow(event.window.data1, event.window.data2);
 			break;
 		case SDL_QUIT:
@@ -152,6 +153,8 @@ void Application::resizeWindow(uint16_t p_w, uint16_t p_h)
 	gw.windowHeight = p_h;
 	gw.setViewport(0, 0, p_w, p_h);
 	renderer.setViewport(p_w, p_h);
+	world.notifyNewChunk = true;
+	render();
 }
 
 void Application::handleInput()
@@ -207,13 +210,12 @@ void Application::handleInput()
 	}
 
 	if (inp.testKeyDown(SDLK_5)) {
-		world.stopThreads();
+		gw.toggleFullscreen();
 	}
 }
 
 void Application::cleanUp()
 {
-
 	world.stopThreads();
 	gw.cleanUp();
 }

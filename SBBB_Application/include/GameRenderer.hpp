@@ -83,6 +83,8 @@ public:
 	Lighting m_lighting;
 	FrameBuffer m_screenFBO;
 	FrameBuffer m_tileFBO;
+	Sprite FBOSprite{ glm::vec3(0, 0, 5), Rect(0, 0, 1, 1) };
+
 private:
 
 	GenericShaders& gs = GenericShaders::Get();

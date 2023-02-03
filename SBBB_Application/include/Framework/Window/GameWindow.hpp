@@ -11,20 +11,15 @@
 #include <iostream>
 #include <math.h>
 
-class DrawSurface;
 class GameWindow : public DrawSurface
 {
 public:
-	/** Constructor
-	* @param p_title - The text displayed on the top window bar
-	* @param p_w, p_h - The width and height of the window in pixels.
-	*/
-	GameWindow(const char* p_title, int p_w, int p_h);
 	/** Constructor, 
 	* Defaulted to 1280x720.
 	* @param p_title - The text displayed on the top window bar
+	* @param p_w, p_h - Width and height of the window, defaults to 720p
 	*/
-	GameWindow(const char* p_title);
+	GameWindow(const char* p_title, uint32_t p_w = 1280, uint32_t p_h = 720);
 
 	/// Attaches GL to SDL window
 	void initGL();
@@ -35,18 +30,19 @@ public:
 	*/
 	int getRefreshRate();
 
-	// Used to disable the framerate limit.
+	// Used to enable and disable the framerate limit.
 	void setVSync(bool p_enabled);
 	// Swaps the doublebuffer, and shows the new frame.
 	void displayNewFrame();
 
+	void toggleFullscreen();
+
+	bool hasChangedFullscreenState();
 
 	int windowWidth;
 	int windowHeight;
 	uint32_t screenWidth;
 	uint32_t screenHeight;
-
-	static bool OpenGLInitialized;
 
 	/// SDL managed OpenGL context. Not used for much outside of the constructor.
 	SDL_GLContext m_glContext;
@@ -54,6 +50,7 @@ public:
 	/// A pointer to the SDL window, used internally in most cases.
 	SDL_Window* m_window;
 private:
+	bool fullscreenChanged = false;
 
 };
 #endif

@@ -100,7 +100,7 @@ Texture* Font::getTexture() {
 		createAtlas();
 	}
 	m_atlasTexture.setChannels(GL_RED);
-	m_atlasTexture.fromByteData(m_atlas.width, m_atlas.height, m_atlas.getData());
+	m_atlasTexture.fromByteData((uint32_t)m_atlas.width, (uint32_t)m_atlas.height, m_atlas.getData());
 	m_atlasTexture.setFiltering(GL_LINEAR, GL_LINEAR);
 	return &m_atlasTexture;
 }

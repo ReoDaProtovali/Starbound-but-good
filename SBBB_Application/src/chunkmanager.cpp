@@ -154,7 +154,7 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance)
 		}
 	}
 }
-void ChunkManager::genFixed(size_t x, size_t y) {
+void ChunkManager::genFixed(uint32_t x, uint32_t y) {
 	for (size_t i = 0; i < y; i++) {
 		for (size_t j = 0; j < x; j++) {
 			enqueueGen(ChunkPos((int)j - x / 2, (int)i - y / 2));
@@ -251,7 +251,6 @@ int ChunkManager::drawChunkFrame(int p_x1, int p_y1, int p_x2, int p_y2, DrawSur
 bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {
 	auto it = m_chunkMap.find(p_chunkPos);
 	if (it != m_chunkMap.end()) {
-		//if (it->second.invalid) return false;
 		return true;
 	}
 	return false;
@@ -259,7 +258,6 @@ bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {
 bool ChunkManager::chunkExistsAt(int p_chunkX, int p_chunkY) {
 	auto it = m_chunkMap.find(ChunkPos(p_chunkX, p_chunkY));
 	if (it != m_chunkMap.end()) {
-		//if (it->second.invalid) return false;
 		return true;
 	}
 	return false;
