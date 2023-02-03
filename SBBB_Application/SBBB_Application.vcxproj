@@ -131,7 +131,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <DisableSpecificWarnings>6386;26800;26451</DisableSpecificWarnings>
+      <DisableSpecificWarnings>6386;6268;26451</DisableSpecificWarnings>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -161,7 +161,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MaxSpeed</Optimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <DisableSpecificWarnings>C6386</DisableSpecificWarnings>
+      <DisableSpecificWarnings>6386</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

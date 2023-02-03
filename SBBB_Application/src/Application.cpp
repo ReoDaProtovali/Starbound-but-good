@@ -15,7 +15,7 @@ void Application::run()
 	gameActive = true;
 	LOAD_LOG("Main loop running.");
 
-	world.genFixed(10, 15);
+	world.genFixed(20, 10);
 	world.startThreads();
 
 	while (gameActive) {

@@ -7,8 +7,10 @@ class GameClient
 	void run();
 
 	std::atomic_bool m_stopping = false;
+	std::thread clientThread;
+
 public:
-	GameClient();
+	GameClient() {};
 	void start();
 	void stop();
 };

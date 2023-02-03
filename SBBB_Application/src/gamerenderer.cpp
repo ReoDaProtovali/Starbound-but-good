@@ -133,7 +133,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	};
 
 	float pixelsPerTile = (float)windowWidth / (float)cam->tileScale;
-	float pixelsPerTileMin = std::ceilf(std::fminf(pixelsPerTile, 8.f));
+	float pixelsPerTileMin = std::fminf(pixelsPerTile, 8.f);
 
 	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
 	tileCam->setFrame(
@@ -145,7 +145,7 @@ int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
 	FBOSprite.setPosition(glm::vec3(tileCam->getFrame().x, tileCam->getFrame().w, 0));
 
 	m_tileFBO.setDimensions(glm::vec2(pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x), pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y)));
-
+	//std::cout << pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x) << " " << pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y) << '\n';
 	m_tileDrawStates.setTransform(tileCam->getTransform());
 	m_tileFBO.clear();
 	if (currentCamera.lock()->tileScale > 500.f) {

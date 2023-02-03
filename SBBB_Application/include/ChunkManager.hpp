@@ -6,7 +6,6 @@
 #include <queue>
 #include <vector>
 #include <optional>
-#include <forward_list>
 #include <unordered_map>
 #include <mutex>
 #include <thread>
@@ -72,8 +71,8 @@ private:
 	ResourceManager& res = ResourceManager::Get();
 
 	std::vector<std::thread> m_genThreads;
-	std::mutex m_chunkReadWriteMutex;
 	std::mutex m_queueMutex;
+	std::mutex m_chunkReadWriteMutex;
 	std::atomic<bool> m_stopAllThreads = false;
 	std::counting_semaphore<> m_workCount{0};
 

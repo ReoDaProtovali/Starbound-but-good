@@ -64,6 +64,7 @@ struct WorldChunk : public TransformObject
 
 	Tile* getTiles();
 	void generateVBO(ChunkManager& p_chnks);
+
 	void pushVBO();
 	uint32_t getVBOSize();
 

@@ -226,13 +226,14 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 						for (int j = -1; j <= 1; j++) {
 							auto opt = getNeigboringChunkTile(x + j, y + i, layer, p_chnks);
 							if (opt.has_value()) {
+								if (!opt.value()) continue;
 								if (opt.value()->m_tileID == 0) continue;
 								if (res.getTileInfo(opt.value()->m_tileID - 1).transparent) continue;
 								if (opt.value()->m_tileID != 0) tileCount++;
 							}
 						}
 					}
-				
+
 					if (tileCount == 9) {
 						goto skip;
 					}
@@ -322,10 +323,8 @@ std::optional<Tile*> WorldChunk::getNeigboringChunkTile(int p_chunkX, int p_chun
 		intrudedChunkY = (p_chunkY < 0) ? worldPos.y + 1 :
 			(p_chunkY > CHUNKSIZE - 1) ? worldPos.y - 1 :
 			worldPos.y;
-
 		std::optional<WorldChunk*> opt = p_chnks.getChunkPtr(ChunkPos(intrudedChunkX, intrudedChunkY));
 		if (!opt.has_value()) return std::nullopt;
-
 		WorldChunk* neighbor = opt.value();
 
 		Tile& t = neighbor->getChunkTile(
