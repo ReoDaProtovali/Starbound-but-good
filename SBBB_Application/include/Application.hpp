@@ -13,6 +13,10 @@
 #include "GameServer.hpp"
 
 class Application {
+
+	GameClient client;
+	GameServer localServer;
+
 	fpsGauge updateFPSGauge;
 	fpsGauge renderFPSGauge;
 

@@ -3,8 +3,16 @@
 
 void ChunkManager::regenVBOs()
 {
+	std::unique_lock<std::mutex> lock(m_chunkReadWriteMutex);
 	for (auto& it : m_chunkMap) {
 		it.second.generateVBO(*this);
+	}
+}
+void ChunkManager::flip()
+{
+	std::unique_lock<std::mutex> lock(m_chunkReadWriteMutex);
+	for (auto& it : m_chunkMap) {
+		it.second.flip();
 	}
 }
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
@@ -57,9 +65,10 @@ void ChunkManager::genFromQueueThreaded(ChunkManager& instance)
 {
 	while (true) {
 		if (instance.m_stopAllThreads) break;
-		std::unique_lock<std::mutex> lock(instance.m_queueMutex);
+
 
 		instance.m_workCount.acquire();
+		std::unique_lock<std::mutex> lock(instance.m_queueMutex);
 		if (instance.m_loadQueue.empty()) continue;
 
 		// enable this if you don't want to have to move the camera to see new chunks

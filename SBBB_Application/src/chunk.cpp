@@ -298,6 +298,11 @@ uint32_t WorldChunk::getVBOSize() {
 	return (uint16_t)tileMesh.getTotalVBOSize();
 }
 
+void WorldChunk::flip()
+{
+	m_tiles.invertDepth = !m_tiles.invertDepth;
+}
+
 Tile* WorldChunk::getTiles() {
 	return m_tiles.getData().data();
 }

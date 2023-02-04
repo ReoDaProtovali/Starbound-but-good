@@ -79,6 +79,16 @@ void Application::update()
 	//while (world.genFromQueue());
 }
 
+void Application::startClient()
+{
+	client.start();
+}
+
+void Application::startServer()
+{
+	localServer.start();
+}
+
 void Application::render()
 {
 	renderer.bindScreenFBOAsRenderTarget();
@@ -211,6 +221,9 @@ void Application::handleInput()
 
 	if (inp.testKeyDown(SDLK_5)) {
 		gw.toggleFullscreen();
+	}
+	if (inp.testKeyDown(SDLK_6)) {
+		world.flip();
 	}
 }
 

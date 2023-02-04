@@ -68,6 +68,8 @@ struct WorldChunk : public TransformObject
 	void pushVBO();
 	uint32_t getVBOSize();
 
+	void flip();
+
 	void remove();
 
 	ChunkPos worldPos;

@@ -37,7 +37,13 @@ public:
 	}
 
 	T& operator()(int x, int y, int z) {
-		return data[(z * width * height) + ((y * width) + x)];
+
+		if (!invertDepth) {
+			return data[(z * width * height) + ((y * width) + x)];
+		} else {
+			return data[((depth - 1 - z) * width * height) + ((y * width) + x)];
+		}
+
 	}
 
 	void fill(T p_fillValue) {
@@ -81,6 +87,7 @@ public:
 	size_t width;
 	size_t height;
 	size_t depth;
+	bool invertDepth = false;
 private:
 	std::vector<T> data;
 };

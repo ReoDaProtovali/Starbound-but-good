@@ -32,6 +32,7 @@ public:
 	//bool genChunk(ChunkPos p_chunkPos);
 	//bool genChunk(int p_chunkX, int p_chunkY);
 	void regenVBOs();
+	void flip();
 	void enqueueGen(ChunkPos p_chunkPos);
 	//bool genFromQueue();
 	void genFixed(uint32_t x, uint32_t y);
