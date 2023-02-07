@@ -6,8 +6,8 @@ class GameServer
 {
 	void run();
 
+	std::jthread serverThread;
 	std::atomic_bool m_stopping = false;
-	std::thread serverThread;
 
 public:
 	GameServer() {};

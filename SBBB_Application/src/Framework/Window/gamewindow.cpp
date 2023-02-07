@@ -108,3 +108,16 @@ int GameWindow::getRefreshRate() {
 	SDL_GetDisplayMode(displayIndex, 0, &mode);
 	return mode.refresh_rate;
 }
+
+
+void GameWindow::bindToThisThread() {
+	if (SDL_GL_MakeCurrent(m_window, m_glContext) != 0) {
+		ERROR_LOG(SDL_GetError());
+	}
+}
+
+void GameWindow::unbindFromThisThread() {
+	if (SDL_GL_MakeCurrent(m_window, NULL) != 0) {
+		ERROR_LOG(SDL_GetError());
+	}
+}

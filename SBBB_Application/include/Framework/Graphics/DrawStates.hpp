@@ -34,7 +34,6 @@ public:
 	void setBlendMode(BlendMode p_blendMode);
 
 	// Just a function for convenience, so you don't have to worry about indexing the texure vector if you're only utilizing one texture as in most cases.
-	// Reference overload
 	void attachTexture(Texture* p_texture);
 
 	void addTexture(Texture* p_texture);

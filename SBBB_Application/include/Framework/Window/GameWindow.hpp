@@ -39,6 +39,9 @@ public:
 
 	bool hasChangedFullscreenState();
 
+	void bindToThisThread();
+	void unbindFromThisThread();
+
 	int windowWidth;
 	int windowHeight;
 	uint32_t screenWidth;

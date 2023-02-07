@@ -17,25 +17,25 @@ class Application {
 	GameClient client;
 	GameServer localServer;
 
-	fpsGauge updateFPSGauge;
-	fpsGauge renderFPSGauge;
+	//fpsGauge updateFPSGauge;
+	//fpsGauge renderFPSGauge;
 
-	GameWindow gw{"Barstound"};
-	GameRenderer renderer;
+	//GameWindow gw{"Barstound"};
+	//GameRenderer renderer;
 
-	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
+	//glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
 
-	InputHandler inp;
+	//InputHandler inp;
 
-	ChunkManager world;
+	//ChunkManager world;
 
-	Timestepper ts = Timestepper(GAME_UPDATE_SPEED);
+	//Timestepper ts = Timestepper(GAME_UPDATE_SPEED);
 
-	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
-	int lastChunkDrawnCount = 0;
+	//int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
+	//int lastChunkDrawnCount = 0;
 
-	uint32_t renderFrame = 0;
-	uint32_t updateFrame = 0;
+	//uint32_t renderFrame = 0;
+	//uint32_t updateFrame = 0;
 
 	bool gameActive = false;
 

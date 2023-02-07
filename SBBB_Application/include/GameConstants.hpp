@@ -11,7 +11,7 @@
 // Currently works from 2-64
 constexpr auto CHUNKSIZE = 64;
 // Amount of world layers. Increasing heavily decreases chunk generation and vbo generation speed.
-constexpr auto CHUNKDEPTH = 2;
+constexpr auto CHUNKDEPTH = 4;
 enum DefaultTileID {
 	EMPTY,
 	STONE,

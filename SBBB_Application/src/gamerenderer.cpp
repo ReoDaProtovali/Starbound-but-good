@@ -34,6 +34,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	//m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl");
 	m_tileShader = Shader(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl");
 	m_tileShader.setTexUniform("tileSheet", 0);
+
 	m_tileShader.setBoolUniform(4, true);
 
 	m_tileDrawStates.attachShader(&m_tileShader);
