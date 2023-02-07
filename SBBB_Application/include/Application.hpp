@@ -20,13 +20,6 @@ class Application {
 	//fpsGauge updateFPSGauge;
 	//fpsGauge renderFPSGauge;
 
-	//GameWindow gw{"Barstound"};
-	//GameRenderer renderer;
-
-	//glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
-
-	//InputHandler inp;
-
 	//ChunkManager world;
 
 	//Timestepper ts = Timestepper(GAME_UPDATE_SPEED);
@@ -37,7 +30,7 @@ class Application {
 	//uint32_t renderFrame = 0;
 	//uint32_t updateFrame = 0;
 
-	bool gameActive = false;
+	bool gameActive = true;
 
 	void startClient();
 	void startServer();
@@ -46,7 +39,6 @@ class Application {
 	void update();
 	void pollEvents();
 	void handleInput();
-	void resizeWindow(uint16_t p_w, uint16_t p_h);
 	void processConsoleStats();
 
 public:

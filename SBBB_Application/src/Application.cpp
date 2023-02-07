@@ -11,7 +11,12 @@ void Application::run()
 	startClient();
 	//startServer();
 
-	std::this_thread::sleep_for(std::chrono::seconds(5));
+	while (true) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(POLLING_RATE));
+		pollEvents();
+		if (!gameActive) break;
+	}
+	//std::this_thread::sleep_for(std::chrono::seconds(10));
 
     client.stop();
 	//localServer.stop();
@@ -137,37 +142,28 @@ void Application::processConsoleStats()
 
 void Application::pollEvents()
 {
-	//static SDL_Event event;
-
-	//while (SDL_PollEvent(&event)) {
-	//	switch (event.type) {
-	//	case SDL_WINDOWEVENT:
-	//		if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;
-	//		printf("Window %u resized to %dx%d\n", event.window.windowID, event.window.data1, event.window.data2);
-	//		resizeWindow(event.window.data1, event.window.data2);
-	//		break;
-	//	case SDL_QUIT:
-	//		gameActive = false;
-	//		break;
-	//	case SDL_KEYDOWN:
-	//		inp.processKeyDown(event.key.keysym.sym);
-	//		break;
-	//	case SDL_KEYUP:
-	//		inp.processKeyUp(event.key.keysym.sym);
-	//		if (event.key.keysym.sym == SDLK_ESCAPE) gameActive = false;
-	//		break;
-	//	}
-	//}
-}
-
-void Application::resizeWindow(uint16_t p_w, uint16_t p_h)
-{
-	//gw.windowWidth = p_w;
-	//gw.windowHeight = p_h;
-	//gw.setViewport(0, 0, p_w, p_h);
-	//renderer.setViewport(p_w, p_h);
-	//world.notifyNewChunk = true;
-	//render();
+	static SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+		case SDL_WINDOWEVENT:
+			if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;
+			printf("Window %u resized to %dx%d\n", event.window.windowID, event.window.data1, event.window.data2);
+			client.newWidth = event.window.data1;
+			client.newHeight = event.window.data2;
+			client.flagResize = true;
+			break;
+		case SDL_QUIT:
+			gameActive = false;
+			break;
+		case SDL_KEYDOWN:
+			client.inp.processKeyDown(event.key.keysym.sym);
+			break;
+		case SDL_KEYUP:
+			client.inp.processKeyUp(event.key.keysym.sym);
+			if (event.key.keysym.sym == SDLK_ESCAPE) gameActive = false;
+			break;
+		}
+	}
 }
 
 void Application::handleInput()

@@ -1,11 +1,39 @@
 #include "Framework/Window/GameWindow.hpp"
 
+GameWindow::GameWindow()
+{
+}
+
 GameWindow::GameWindow(const char* p_title, uint32_t p_w, uint32_t p_h)
 	:m_window(NULL),
 	windowWidth(p_w),
 	windowHeight(p_h)
 {
 
+	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	if (m_window == NULL) {
+		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
+	}
+	SDL_DisplayMode dm;
+
+	if (SDL_GetDesktopDisplayMode(0, &dm) != 0)
+	{
+		SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+	}
+
+
+	int displayIndex = SDL_GetWindowDisplayIndex(m_window);
+	SDL_DisplayMode mode;
+	SDL_GetDisplayMode(displayIndex, 0, &mode);
+
+	screenWidth = mode.w;
+	screenHeight = mode.h;
+
+	GameWindow::initGL();
+}
+
+void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h)
+{
 	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (m_window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;

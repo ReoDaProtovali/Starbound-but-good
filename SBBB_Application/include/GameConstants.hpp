@@ -3,6 +3,7 @@
 
 #include "Framework/FrameworkConstants.hpp"
 #include <atomic>
+#define POLLING_RATE 10
 #define GAME_UPDATE_SPEED 60
 #define FRAMES_BETWEEN_STAT_UPDATES 60
 #define DISABLE_RUNTIME_CONSOLE false

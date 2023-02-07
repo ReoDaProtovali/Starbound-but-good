@@ -14,6 +14,7 @@
 class GameWindow : public DrawSurface
 {
 public:
+	GameWindow();
 	/** Constructor, 
 	* Defaulted to 1280x720.
 	* @param p_title - The text displayed on the top window bar
@@ -21,6 +22,8 @@ public:
 	*/
 	GameWindow(const char* p_title, uint32_t p_w = 1280, uint32_t p_h = 720);
 
+	// to fix a threading bug
+	void create(const char* p_title, uint32_t p_w = 1280, uint32_t p_h = 720);
 	/// Attaches GL to SDL window
 	void initGL();
 	/// Deletes the window when we are done using it.

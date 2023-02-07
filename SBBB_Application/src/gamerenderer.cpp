@@ -10,7 +10,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	LOAD_LOG("GameRenderer instantiated...");
 
-	cam->pos = glm::vec3(123.f, 100.f, 32.0f);
+	cam->pos = glm::vec3(-16.f, 200.f, 32.0f);
 	cam->tileScale = 40.f;
 	cam->setDimensions(windowWidth, windowHeight);
 
@@ -274,9 +274,9 @@ void GameRenderer::testDraw()
 
 	FBOSprite.draw(m_screenFBO, state);
 
-	//testReoSprite.setOriginRelative(OriginLoc::CENTER);
-	//testReoSprite.setRotation(testFrame / 50.f);
-	//testReoSprite.draw(m_screenFBO, state);
+	testReoSprite.setOriginRelative(OriginLoc::CENTER);
+	testReoSprite.setRotation(testFrame / 50.f);
+	testReoSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);
@@ -311,7 +311,7 @@ void GameRenderer::testDraw()
 	debugText.setText(infoString.str());
 	debugText.draw(glm::vec2(-0.98f, 0.95f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
 
-	//drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f));
+	drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f));
 	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
 
 	glEnable(GL_DEPTH_TEST);
