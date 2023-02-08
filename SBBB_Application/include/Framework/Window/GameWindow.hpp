@@ -23,7 +23,7 @@ public:
 	GameWindow(const char* p_title, uint32_t p_w = 1280, uint32_t p_h = 720);
 
 	// to fix a threading bug
-	void create(const char* p_title, uint32_t p_w = 1280, uint32_t p_h = 720);
+	void create(const char* p_title, uint32_t p_w, uint32_t p_h, int p_flags);
 	/// Attaches GL to SDL window
 	void initGL();
 	/// Deletes the window when we are done using it.
@@ -44,6 +44,8 @@ public:
 
 	void bindToThisThread();
 	void unbindFromThisThread();
+
+	uint32_t getWindowID();
 
 	int windowWidth;
 	int windowHeight;

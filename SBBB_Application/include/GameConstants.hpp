@@ -3,9 +3,9 @@
 
 #include "Framework/FrameworkConstants.hpp"
 #include <atomic>
-#define POLLING_RATE 10
-#define GAME_UPDATE_SPEED 60
-#define FRAMES_BETWEEN_STAT_UPDATES 60
+#define POLLING_RATE_MS 10
+#define UPDATE_RATE_FPS 60
+#define FRAMES_BETWEEN_STAT_UPDATES 165
 #define DISABLE_RUNTIME_CONSOLE false
 
 // do NOT increase this beyond limits. it does NOT like to be changed easily

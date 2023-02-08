@@ -34,9 +34,6 @@ class Application {
 
 	void startClient();
 	void startServer();
-
-	void render();
-	void update();
 	void pollEvents();
 	void handleInput();
 	void processConsoleStats();

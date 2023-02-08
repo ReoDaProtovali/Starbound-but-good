@@ -276,7 +276,7 @@ void GameRenderer::testDraw()
 
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);
 	testReoSprite.setRotation(testFrame / 50.f);
-	testReoSprite.draw(m_screenFBO, state);
+	//testReoSprite.draw(m_screenFBO, state);
 
 	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
 	testTileSheet.draw(m_screenFBO, state);

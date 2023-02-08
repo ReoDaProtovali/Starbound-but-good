@@ -9,6 +9,7 @@ class GameClient
 	void run();
 	void render();
 	void testInput();
+	void processDebugStats();
 	void resizeWindow(uint32_t p_w, uint32_t p_h);
 	// core systems
 	GameWindow gw { "Barstound" };
@@ -19,7 +20,7 @@ class GameClient
 	fpsGauge renderFPSGauge;
 
 	// thread management
-	std::jthread clientThread;
+	std::thread clientThread;
 	std::atomic_bool m_stopping = false;
 
 public:
@@ -27,6 +28,7 @@ public:
 	~GameClient();
 	void start();
 	void stop();
+	uint32_t getWindowID() { return gw.getWindowID(); }
 
 	// for access by the main thread
 	uint32_t newWidth = 0;

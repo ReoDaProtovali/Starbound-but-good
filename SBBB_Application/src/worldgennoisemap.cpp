@@ -44,7 +44,7 @@ glm::vec4 WorldGenNoisemap::getPixel(int32_t p_worldPosX, int32_t p_worldPosY, c
 			);
 		}
 	}
-	//throw std::exception("Tried to get pixel from non-generated region.");
+	throw std::exception("Tried to get pixel from non-generated region.");
 	return glm::vec4(0);
 }
 

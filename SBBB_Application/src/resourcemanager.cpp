@@ -9,7 +9,6 @@ ResourceManager::ResourceManager()
 {
 	LOAD_LOG("Creating Resource manager...");
 	tileSheetPixmap.resize(96, 24);
-	loadGeneratorShaders();
 }
 
 ResourceManager::~ResourceManager()

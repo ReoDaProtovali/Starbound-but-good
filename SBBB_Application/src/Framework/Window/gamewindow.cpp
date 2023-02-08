@@ -32,9 +32,12 @@ GameWindow::GameWindow(const char* p_title, uint32_t p_w, uint32_t p_h)
 	GameWindow::initGL();
 }
 
-void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h)
+void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h, int p_flags)
 {
-	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	windowWidth = p_w;
+	windowHeight = p_h;
+
+	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, p_flags);
 	if (m_window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -53,7 +56,15 @@ void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h)
 	screenWidth = mode.w;
 	screenHeight = mode.h;
 
-	GameWindow::initGL();
+	m_glContext = SDL_GL_CreateContext(m_window);
+	SDL_GL_MakeCurrent(m_window, m_glContext); // Attach OpenGL context to the window
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
+	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
+	setViewport(0, 0, p_w, p_h);
+	//GameWindow::initGL();
 }
 
 void GameWindow::initGL() {
@@ -148,4 +159,9 @@ void GameWindow::unbindFromThisThread() {
 	if (SDL_GL_MakeCurrent(m_window, NULL) != 0) {
 		ERROR_LOG(SDL_GetError());
 	}
+}
+
+uint32_t GameWindow::getWindowID()
+{
+	return SDL_GetWindowID(m_window);
 }

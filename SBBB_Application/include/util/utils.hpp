@@ -45,9 +45,9 @@ namespace utils {
 		glm::vec2 offset = v1 - v2;
 		return v1 + offset * t;
 	}
-
-	inline float averageVector(std::vector<float>& p_vec) {
-		float total = 0.0f;
+	template <typename T>
+	inline T averageVector(std::vector<T>& p_vec) {
+		T total = (T)0;
 		for (int i = 0; i < p_vec.size(); i++) {
 			total += p_vec[i];
 		}
@@ -143,19 +143,19 @@ namespace utils {
 }
 // A utility class that can provide fps readouts, and also just measure times.
 struct fpsGauge {
-	fpsGauge() { elapsed = 0; }
-	int start = SDL_GetTicks();
-	int elapsed;
-	std::vector<float> frametimeBuffer;
+	fpsGauge() { }
+	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+	std::chrono::microseconds elapsed = std::chrono::microseconds(0);
+	std::vector<double> frametimeBuffer;
 
 	void startStopwatch() {
-		start = SDL_GetTicks();
+		start = std::chrono::system_clock::now();
 	}
 	void stopStopwatch() {
-		elapsed = SDL_GetTicks() - start;
+		elapsed = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - start);
 	}
-	float getSecondsElapsed() {
-		return (float)elapsed / 1000.0f;
+	double getSecondsElapsed() {
+		return (double)elapsed.count() / 1000000.0;
 	}
 	/** Adds a new frametime to the gauge's buffer, removes any old ones.
 	* 

@@ -18,6 +18,7 @@ void ChunkManager::flip()
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 {
 	std::unique_lock<std::mutex> lock(m_queueMutex);
+	std::unique_lock<std::mutex> lock2(m_chunkReadWriteMutex);
 	if (!chunkExistsAt(p_chunkPos)) {
 		static auto allGenerators = res.getAllGeneratorShaders();
 		for (auto& str : allGenerators) {
@@ -86,14 +87,14 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance)
 	std::unique_lock<std::mutex> lock(instance.m_chunkReadWriteMutex);
 	c.worldGenerate(instance.m_noiseMap);
 	instance.m_chunkMap[p_chunkPos] = std::move(c);
-	for (int i = -1; i <= 1; i++) {
-		for (int j = -1; j <= 1; j++) {
-			if (j == 0 && i == 0) continue;
-			if (instance.validChunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
-				instance.m_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)].generateVBO(instance);
-			}
-		}
-	}
+	//for (int i = -1; i <= 1; i++) {
+	//	for (int j = -1; j <= 1; j++) {
+	//		if (j == 0 && i == 0) continue;
+	//		if (instance.validChunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
+	//			instance.m_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)].generateVBO(instance);
+	//		}
+	//	}
+	//}
 
 }
 void ChunkManager::genFixed(uint32_t x, uint32_t y) {

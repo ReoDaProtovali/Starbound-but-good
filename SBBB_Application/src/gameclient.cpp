@@ -12,7 +12,7 @@ GameClient::~GameClient() {
 void GameClient::start() {
 	// important
 	gw.unbindFromThisThread();
-	clientThread = std::jthread(&GameClient::run, this);
+	clientThread = std::thread(&GameClient::run, this);
 }
 
 void GameClient::stop() {
@@ -22,7 +22,7 @@ void GameClient::stop() {
 void GameClient::run() {
 	// important, opengl NEEDS this
 	gw.bindToThisThread();
-
+	//gw.setVSync(false);
 	auto& res = ResourceManager::Get();
 	auto& gs = GenericShaders::Get();
 
@@ -36,7 +36,9 @@ void GameClient::run() {
 			resizeWindow(newWidth, newHeight);
 		}
 
+		renderFPSGauge.update(30);
 		testInput();
+		processDebugStats();
 		render();
 
 		if (m_stopping) break;
@@ -104,4 +106,32 @@ void GameClient::testInput()
 	}
 	camVelocity *= 0.95;
 	cam.pos += glm::vec3(camVelocity.x, camVelocity.y, 0.f);
+}
+
+void GameClient::processDebugStats()
+{
+
+	static uint32_t debugUpdateCounter = 0;
+	debugUpdateCounter++;
+if ((debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
+	debugUpdateCounter = 0;
+	DebugStats& db = DebugStats::Get();
+	//db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
+	db.drawFPS = 1.0 / utils::averageVector(renderFPSGauge.frametimeBuffer);
+	db.camX = renderer.cam->pos.x;
+	db.camY = renderer.cam->pos.y;
+	auto f = renderer.cam->getFrame();
+	db.camFX1 = f.x;
+	db.camFY1 = f.y;
+	db.camFX2 = f.z;
+	db.camFY2 = f.w;
+	db.screenW = renderer.screenWidth;
+	db.screenH = renderer.screenHeight;
+	db.windowW = renderer.windowWidth;
+	db.windowH = renderer.windowHeight;
+	//db.chunkCount = world.getChunkCount();
+	///db.emptyChunkCount = world.getEmptyChunkCount();
+	//db.drawnChunkCount = lastChunkDrawnCount;
+	db.statUpdate = true;
+}
 }

@@ -9,17 +9,18 @@ Application::Application()
 void Application::run()
 {
 	startClient();
-	//startServer();
+
+	startServer();
 
 	while (true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(POLLING_RATE));
+		std::this_thread::sleep_for(std::chrono::milliseconds(POLLING_RATE_MS));
 		pollEvents();
 		if (!gameActive) break;
 	}
 	//std::this_thread::sleep_for(std::chrono::seconds(10));
 
     client.stop();
-	//localServer.stop();
+	localServer.stop();
 	//gameActive = true;
 	//LOAD_LOG("Main loop running.");
 
@@ -81,12 +82,6 @@ void Application::run()
 	//}
 }
 
-void Application::update()
-{
-	//world.autoGen(*renderer.cam);
-	//while (world.genFromQueue());
-}
-
 void Application::startClient()
 {
 	client.start();
@@ -95,23 +90,6 @@ void Application::startClient()
 void Application::startServer()
 {
 	localServer.start();
-}
-
-void Application::render()
-{
-	//renderer.bindScreenFBOAsRenderTarget();
-	//renderer.setClearColor(glm::vec4(0.8f, 0.8f, 1.0f, 0.0f));
-	//renderer.clearScreen();
-
-	//lastChunkDrawnCount = renderer.drawWorld(world, gw);
-	//glEnable(GL_DEPTH_TEST);
-
-	//renderer.testDraw();
-
-	//gw.bind();
-	//gw.clear();
-	//glDisable(GL_DEPTH_TEST);
-	//renderer.drawLighting();
 }
 
 void Application::processConsoleStats()
@@ -148,6 +126,7 @@ void Application::pollEvents()
 		case SDL_WINDOWEVENT:
 			if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;
 			printf("Window %u resized to %dx%d\n", event.window.windowID, event.window.data1, event.window.data2);
+			if (event.window.windowID != client.getWindowID()) break;
 			client.newWidth = event.window.data1;
 			client.newHeight = event.window.data2;
 			client.flagResize = true;
