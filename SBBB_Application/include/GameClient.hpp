@@ -3,6 +3,7 @@
 #include <thread>
 #include "Framework/Window/GameWindow.hpp"
 #include "GameRenderer.hpp"
+#include "util/Messenger.hpp"
 
 class GameClient
 {
@@ -22,6 +23,8 @@ class GameClient
 	// thread management
 	std::thread clientThread;
 	std::atomic_bool m_stopping = false;
+	Messenger<ChunkPos, WorldChunk*>& m_chunkMessenger = Messenger<ChunkPos, WorldChunk*>::Get();
+
 
 public:
 	GameClient();

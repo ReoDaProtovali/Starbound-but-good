@@ -5,17 +5,19 @@
 #include "Timestepper.hpp"
 #include "ChunkManager.hpp"
 #include "Framework/Window/GameWindow.hpp"
-
+#include "util/Messenger.hpp"
 class GameServer
 {
 	void run();
 
 	Timestepper ts {UPDATE_RATE_FPS};
 	
-	std::exception_ptr except;
 	fpsGauge tickGauge;
+
+	// thread management
 	std::thread serverThread;
 	std::atomic_bool m_stopping = false;
+	Messenger<ChunkPos, WorldChunk*>& m_chunkMessenger = Messenger<ChunkPos, WorldChunk*>::Get();
 
 	// offscreen rendering on server thread
 	GameWindow serverWindow;

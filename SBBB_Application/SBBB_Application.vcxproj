@@ -213,6 +213,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\timestepper.cpp" />
     <ClCompile Include="src\chunkmanager.cpp" />
     <ClCompile Include="src\worldgennoisemap.cpp" />
+    <ClCompile Include="src\worldrenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.hpp" />
@@ -260,6 +261,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Framework\FrameworkDraw.hpp" />
     <ClInclude Include="include\Framework\Log.hpp" />
     <ClInclude Include="include\WorldGenNoisemap.hpp" />
+    <ClInclude Include="include\WorldRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\randomthings.txt" />

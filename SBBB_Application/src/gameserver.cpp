@@ -26,6 +26,12 @@ void GameServer::run() {
 		while (ts.accumulatorFull()) {
 			ts.drain();
 
+			auto msg = m_chunkMessenger.getMessageFront();
+			if (msg.has_value()) {
+				LOG("Server Got Message! x: " << msg.value().x << " y: " << msg.value().y);
+				LOG("Sending a silly pointer!");
+				m_chunkMessenger.sendMessageBack((WorldChunk*)0x69696969);
+			}
 			tickGauge.update(30);
 
 			//if (rand() % 20 == 0) {
