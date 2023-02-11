@@ -33,7 +33,7 @@ void WorldRenderer::requestFrame()
 
 	for (int y = chunkFrame.y - 1; y <= chunkFrame.w + 1; y++) {
 		for (int x = chunkFrame.x - 1; x <= chunkFrame.z + 1; x++) {
-			LOG("Requested " << x << " " << y);
+			//LOG("Requested " << x << " " << y);
 			m_chunkMessenger.sendMessageFront(ChunkPos(x, y));
 		}
 	}

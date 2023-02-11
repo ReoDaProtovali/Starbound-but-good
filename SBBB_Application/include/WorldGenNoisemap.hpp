@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include <mutex>
+#include "util/SharedMap.hpp"
 
 #define NOISEMAP_TILE_SIZE 512
 
@@ -43,7 +44,7 @@ private:
 	FrameBuffer m_FBO;
 	Mesh<GLfloat> m_square;
 
-	std::mutex m_readMutex;
-	std::unordered_map<glm::ivec2, std::vector<NoiseTile>, ivec2Hash> m_map;
+	//std::mutex m_readMutex;
+	SharedMap<glm::ivec2, std::vector<NoiseTile>, ivec2Hash> m_map;
 };
 

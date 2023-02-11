@@ -26,10 +26,8 @@ WorldGenNoisemap::WorldGenNoisemap()
 
 glm::vec4 WorldGenNoisemap::getPixel(int32_t p_worldPosX, int32_t p_worldPosY, const std::string& p_generatorName) 
 {
-	//std::unique_lock<std::mutex> lock(m_readMutex);
 	glm::ivec2 tilePos = globalPosToTilePos(p_worldPosX, p_worldPosY);
 
-	//genTile(tilePos.x, tilePos.y, p_generatorName);
 	std::vector<NoiseTile>& data = m_map[tilePos];
 	
 	for (auto& tile : data) {

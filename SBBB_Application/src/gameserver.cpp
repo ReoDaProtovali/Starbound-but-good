@@ -17,7 +17,7 @@ void GameServer::run() {
 	// must be done on this thread because the serverside opengl context needs access to the shaders
 	res.loadGeneratorShaders();
 
-	//world.genFixed(10, 10);
+	world.genFixed(30, 30);
 	world.startThreads();
 
 	while (true) {
