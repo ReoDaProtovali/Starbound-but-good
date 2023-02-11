@@ -17,7 +17,6 @@ class GameServer
 	// thread management
 	std::thread serverThread;
 	std::atomic_bool m_stopping = false;
-	Messenger<ChunkPos, WorldChunk*>& m_chunkMessenger = Messenger<ChunkPos, WorldChunk*>::Get();
 
 	// offscreen rendering on server thread
 	GameWindow serverWindow;

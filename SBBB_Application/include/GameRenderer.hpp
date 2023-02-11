@@ -6,6 +6,7 @@
 #include "Camera.hpp"
 #include <util/ext/glm/glm.hpp>
 #include "Lighting.hpp"
+#include "WorldRenderer.hpp"
 #include "Framework/Graphics/FrameBuffer.hpp"
 #include "Framework/Graphics/GenericShaders.hpp"
 #include "Framework/Window/GameWindow.hpp"
@@ -55,7 +56,7 @@ public:
 	/// Handles what to do when the window changes size, relies on the values of windowWidth and windowHeight being up to date.
 	void setViewport(uint16_t p_w, uint16_t p_h);
 
-	int drawWorld(ChunkManager& p_world, DrawSurface& p_target);
+	int drawWorld();
 
 	/// Simply tells the lighting subclass to draw based on it's current values.
 	void drawLighting();
@@ -87,6 +88,7 @@ public:
 
 private:
 
+	WorldRenderer worldRenderer;
 	GenericShaders& gs = GenericShaders::Get();
 
 	TextContext ftctx; // freetype library context

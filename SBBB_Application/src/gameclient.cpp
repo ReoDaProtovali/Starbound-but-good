@@ -26,14 +26,7 @@ void GameClient::run() {
 	auto& res = ResourceManager::Get();
 	auto& gs = GenericShaders::Get();
 
-	LOG("Sending chunk pos! 0, 4!");
-	m_chunkMessenger.sendMessageFront(ChunkPos(0, 4));
-
 	while (true) {
-		auto msg = m_chunkMessenger.getMessageBack();
-		if (msg.has_value()) {
-			LOG("Recieved message! " << msg.value());
-		}
 
 		if (gw.hasChangedFullscreenState()) {
 			resizeWindow(gw.windowWidth, gw.windowHeight);
@@ -59,6 +52,7 @@ void GameClient::render()
 	renderer.clearScreen();
 
 	glEnable(GL_DEPTH_TEST);
+	renderer.drawWorld();
 	renderer.testDraw();
 
 	gw.clear();

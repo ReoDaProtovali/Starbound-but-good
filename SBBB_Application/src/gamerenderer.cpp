@@ -13,6 +13,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	cam->pos = glm::vec3(-16.f, 200.f, 32.0f);
 	cam->tileScale = 40.f;
 	cam->setDimensions(windowWidth, windowHeight);
+	worldRenderer.setCamera(cam);
 
 	currentCamera = cam;
 
@@ -105,60 +106,62 @@ void GameRenderer::setViewport(uint16_t p_w, uint16_t p_h)
 	overviewCam->updateFrame();
 }
 
-int GameRenderer::drawWorld(ChunkManager& p_world, DrawSurface& p_target)
+int GameRenderer::drawWorld()
 {
-	Texture* tilesheet = res.getTileSheetTexture();
-	//tilesheet->setFiltering(GL_NEAREST, GL_NEAREST);
+	worldRenderer.draw(m_screenFBO);
+	return 0;
+	//Texture* tilesheet = res.getTileSheetTexture();
+	////tilesheet->setFiltering(GL_NEAREST, GL_NEAREST);
 
-	m_tileDrawStates.attachTexture(tilesheet);
+	//m_tileDrawStates.attachTexture(tilesheet);
 
-	m_tileShader.setIntUniform(1, tilesheet->height);
+	//m_tileShader.setIntUniform(1, tilesheet->height);
 
-	int drawnChunkCount = 0;
+	//int drawnChunkCount = 0;
 
-	auto f = cam->getFrame();
-	f.y -= CHUNKSIZE * 4;
-	f.w += CHUNKSIZE;
-	f.z += CHUNKSIZE * 2;
-	f.x -= CHUNKSIZE * 2;
+	//auto f = cam->getFrame();
+	//f.y -= CHUNKSIZE * 4;
+	//f.w += CHUNKSIZE;
+	//f.z += CHUNKSIZE * 2;
+	//f.x -= CHUNKSIZE * 2;
 
-	static glm::ivec4 chunkFramePrev;
-	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f / 2.f) * 2;
+	//static glm::ivec4 chunkFramePrev;
+	//glm::ivec4 chunkFrame = utils::frameToChunkCoords(f / 2.f) * 2;
 
 
-	if (chunkFrame == chunkFramePrev) {
-		if (!p_world.notifyNewChunk) {
-			return 0;
-		}
-		p_world.notifyNewChunk = false;
-	};
+	//if (chunkFrame == chunkFramePrev) {
+	//	if (!p_world.notifyNewChunk) {
+	//		return 0;
+	//	}
+	//	p_world.notifyNewChunk = false;
+	//};
 
-	float pixelsPerTile = (float)windowWidth / (float)cam->tileScale;
-	float pixelsPerTileMin = std::fminf(pixelsPerTile, 8.f);
+	//float pixelsPerTile = (float)windowWidth / (float)cam->tileScale;
+	//float pixelsPerTileMin = std::fminf(pixelsPerTile, 8.f);
 
-	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
-	tileCam->setFrame(
-		(float)chunkFrameTiles.x, (float)chunkFrameTiles.y, float(chunkFrameTiles.z - chunkFrameTiles.x), float(chunkFrameTiles.w - chunkFrameTiles.y)
-	);
-	//glEnable(GL_DEPTH_TEST);
-	//glDisable(GL_BLEND);
-	FBOSprite.setBounds(Rect(0, 0, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y));
-	FBOSprite.setPosition(glm::vec3(tileCam->getFrame().x, tileCam->getFrame().w, 0));
+	//glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
+	//tileCam->setFrame(
+	//	(float)chunkFrameTiles.x, (float)chunkFrameTiles.y, float(chunkFrameTiles.z - chunkFrameTiles.x), float(chunkFrameTiles.w - chunkFrameTiles.y)
+	//);
+	////glEnable(GL_DEPTH_TEST);
+	////glDisable(GL_BLEND);
+	//FBOSprite.setBounds(Rect(0, 0, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y));
+	//FBOSprite.setPosition(glm::vec3(tileCam->getFrame().x, tileCam->getFrame().w, 0));
 
-	m_tileFBO.setDimensions(glm::vec2(pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x), pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y)));
-	//std::cout << pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x) << " " << pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y) << '\n';
-	m_tileDrawStates.setTransform(tileCam->getTransform());
-	m_tileFBO.clear();
-	if (currentCamera.lock()->tileScale > 500.f) {
-		m_tileShader.setBoolUniform(4, false);
-	}
-	else {
-		m_tileShader.setBoolUniform(4, true);
-	}
-	drawnChunkCount = p_world.drawChunkFrame(chunkFrame.x - 1, chunkFrame.y - 1, chunkFrame.z + 1, chunkFrame.w + 1, m_tileFBO, m_tileDrawStates, m_tileShader);
+	//m_tileFBO.setDimensions(glm::vec2(pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x), pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y)));
+	////std::cout << pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x) << " " << pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y) << '\n';
+	//m_tileDrawStates.setTransform(tileCam->getTransform());
+	//m_tileFBO.clear();
+	//if (currentCamera.lock()->tileScale > 500.f) {
+	//	m_tileShader.setBoolUniform(4, false);
+	//}
+	//else {
+	//	m_tileShader.setBoolUniform(4, true);
+	//}
+	//drawnChunkCount = p_world.drawChunkFrame(chunkFrame.x - 1, chunkFrame.y - 1, chunkFrame.z + 1, chunkFrame.w + 1, m_tileFBO, m_tileDrawStates, m_tileShader);
 
-	chunkFramePrev = chunkFrame;
-	return drawnChunkCount;
+	//chunkFramePrev = chunkFrame;
+	//return drawnChunkCount;
 }
 // debug function
 void GameRenderer::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h, glm::vec3 p_col) {

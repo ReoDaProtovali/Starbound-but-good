@@ -17,7 +17,7 @@ void GameServer::run() {
 	// must be done on this thread because the serverside opengl context needs access to the shaders
 	res.loadGeneratorShaders();
 
-	world.genFixed(10, 10);
+	//world.genFixed(10, 10);
 	world.startThreads();
 
 	while (true) {
@@ -25,13 +25,8 @@ void GameServer::run() {
 		ts.processFrameStart();
 		while (ts.accumulatorFull()) {
 			ts.drain();
-
-			auto msg = m_chunkMessenger.getMessageFront();
-			if (msg.has_value()) {
-				LOG("Server Got Message! x: " << msg.value().x << " y: " << msg.value().y);
-				LOG("Sending a silly pointer!");
-				m_chunkMessenger.sendMessageBack((WorldChunk*)0x69696969);
-			}
+			
+			world.processRequests();
 			tickGauge.update(30);
 
 			//if (rand() % 20 == 0) {

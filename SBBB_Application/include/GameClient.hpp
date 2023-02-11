@@ -23,7 +23,6 @@ class GameClient
 	// thread management
 	std::thread clientThread;
 	std::atomic_bool m_stopping = false;
-	Messenger<ChunkPos, WorldChunk*>& m_chunkMessenger = Messenger<ChunkPos, WorldChunk*>::Get();
 
 
 public:

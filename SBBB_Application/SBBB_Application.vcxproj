@@ -255,6 +255,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\util\Array3D.hpp" />
     <ClInclude Include="include\util\Messenger.hpp" />
     <ClInclude Include="include\util\Rect.hpp" />
+    <ClInclude Include="include\util\SharedMap.hpp" />
     <ClInclude Include="include\util\StaticArray2D.h" />
     <ClInclude Include="include\util\utils.hpp" />
     <ClInclude Include="include\Framework\FrameworkConstants.hpp" />

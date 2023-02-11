@@ -3,14 +3,12 @@
 
 void ChunkManager::regenVBOs()
 {
-	std::unique_lock<std::mutex> lock(m_chunkReadWriteMutex);
 	for (auto& it : m_chunkMap) {
 		it.second.generateVBO(*this);
 	}
 }
 void ChunkManager::flip()
 {
-	std::unique_lock<std::mutex> lock(m_chunkReadWriteMutex);
 	for (auto& it : m_chunkMap) {
 		it.second.flip();
 	}
@@ -18,7 +16,6 @@ void ChunkManager::flip()
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 {
 	std::unique_lock<std::mutex> lock(m_queueMutex);
-	std::unique_lock<std::mutex> lock2(m_chunkReadWriteMutex);
 	if (!chunkExistsAt(p_chunkPos)) {
 		static auto allGenerators = res.getAllGeneratorShaders();
 		for (auto& str : allGenerators) {
@@ -67,10 +64,12 @@ void ChunkManager::genFromQueueThreaded(ChunkManager& instance)
 	while (true) {
 		if (instance.m_stopAllThreads) break;
 
-
 		instance.m_workCount.acquire();
 		std::unique_lock<std::mutex> lock(instance.m_queueMutex);
-		if (instance.m_loadQueue.empty()) continue;
+		if (instance.m_loadQueue.empty()) {
+			lock.unlock();
+			continue;
+		};
 
 		// enable this if you don't want to have to move the camera to see new chunks
 		//instance.notifyNewChunk = true;
@@ -84,7 +83,7 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance)
 {
 
 	WorldChunk c = WorldChunk(p_chunkPos, 0); // world ID is hardcoded for now. Will most def be a different system later.
-	std::unique_lock<std::mutex> lock(instance.m_chunkReadWriteMutex);
+
 	c.worldGenerate(instance.m_noiseMap);
 	instance.m_chunkMap[p_chunkPos] = std::move(c);
 	//for (int i = -1; i <= 1; i++) {
@@ -122,6 +121,17 @@ void ChunkManager::logChunks() {
 	}
 }
 
+void ChunkManager::processRequests() {
+	while (auto opt = m_chunkMessenger.getMessageFront()) {
+		ChunkPos pos = opt.value();
+		if (validChunkExistsAt(pos)) {
+			m_chunkMessenger.sendMessageBack(&m_chunkMap[pos]);
+		} else {
+			enqueueGen(pos);
+		}
+	}
+}
+
 std::optional<WorldChunk*> ChunkManager::getChunkPtr(ChunkPos p_chunkPos)
 {
 	if (!validChunkExistsAt(p_chunkPos)) return std::nullopt;
@@ -131,7 +141,6 @@ std::optional<WorldChunk*> ChunkManager::getChunkPtr(ChunkPos p_chunkPos)
 int ChunkManager::drawChunkFrame(int p_x1, int p_y1, int p_x2, int p_y2, DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader) {
 
 	int drawnCount = 0;
-	std::unique_lock<std::mutex> lock(m_chunkReadWriteMutex);
 	for (int y = p_y1; y <= p_y2; y++) {
 		for (int x = p_x1; x <= p_x2; x++) {
 			if (!validChunkExistsAt(ChunkPos(x, y))) continue;
@@ -149,18 +158,10 @@ int ChunkManager::drawChunkFrame(int p_x1, int p_y1, int p_x2, int p_y2, DrawSur
 	return drawnCount;
 }
 bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {
-	auto it = m_chunkMap.find(p_chunkPos);
-	if (it != m_chunkMap.end()) {
-		return true;
-	}
-	return false;
+	return m_chunkMap.contains(p_chunkPos);
 }
 bool ChunkManager::chunkExistsAt(int p_chunkX, int p_chunkY) {
-	auto it = m_chunkMap.find(ChunkPos(p_chunkX, p_chunkY));
-	if (it != m_chunkMap.end()) {
-		return true;
-	}
-	return false;
+	return m_chunkMap.contains(ChunkPos(p_chunkX, p_chunkY));
 }
 bool ChunkManager::validChunkExistsAt(ChunkPos p_chunkPos) {
 	auto it = m_chunkMap.find(p_chunkPos);

@@ -96,7 +96,7 @@ void WorldGenNoisemap::genTilesNeighboringChunk(int p_chunkX, int p_chunkY, cons
 {
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
-			glm::ivec2 tilePos = globalPosToTilePos(p_chunkX * CHUNKSIZE + CHUNKSIZE * j, -p_chunkY * CHUNKSIZE + CHUNKSIZE * i);
+			glm::ivec2 tilePos = globalPosToTilePos(p_chunkX * CHUNKSIZE + CHUNKSIZE * j, p_chunkY * CHUNKSIZE + CHUNKSIZE * i);
 			genTile(tilePos.x, tilePos.y, p_generatorName);
 		}
 	}

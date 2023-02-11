@@ -19,6 +19,8 @@
 
 #include "Camera.hpp"
 #include "Framework/Window/GameWindow.hpp"
+#include "util/Messenger.hpp"
+#include "util/SharedMap.hpp"
 #include "WorldGenNoisemap.hpp"
 
 #define GENERATION_THREAD_COUNT 4
@@ -45,6 +47,7 @@ public:
 
 	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
 
+	void processRequests();
 	//void updateDrawList(glm::vec4 p_frame, bool force = false);
 	//int drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
 	int drawChunkFrame(int p_x, int p_y, int p_w, int p_h, DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
@@ -73,12 +76,13 @@ private:
 
 	std::vector<std::thread> m_genThreads;
 	std::mutex m_queueMutex;
-	std::mutex m_chunkReadWriteMutex;
+	//std::mutex m_chunkReadWriteMutex;
 	std::atomic<bool> m_stopAllThreads = false;
 	std::counting_semaphore<> m_workCount{0};
 
-	std::unordered_map<ChunkPos, WorldChunk, ChunkPos> m_chunkMap;
+	SharedMap<ChunkPos, WorldChunk, ChunkPos> m_chunkMap;
 	std::queue<ChunkPos> m_loadQueue;
+	Messenger<ChunkPos, WorldChunk*>& m_chunkMessenger = Messenger<ChunkPos, WorldChunk*>::Get();
 	//std::forward_list<WorldChunk*> m_drawList;
 	//std::vector<WorldChunk*> m_drawList;
 
