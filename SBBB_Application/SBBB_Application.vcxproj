@@ -131,7 +131,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <DisableSpecificWarnings>6386;6268;26451</DisableSpecificWarnings>
+      <DisableSpecificWarnings>6386;6268;26451;26800</DisableSpecificWarnings>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -276,6 +276,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="README.md" />
     <None Include="res\tilesets\vanilla\tiledata\Dirt.TileProperties" />
     <None Include="res\tilesets\vanilla\tiledata\NeonGrid.TileProperties" />
+    <None Include="res\tilesets\vanilla\tiledata\RichStone.TileProperties" />
     <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties" />
     <None Include="res\tilesets\vanilla\tileset.json" />
     <None Include="SDL2.dll" />

@@ -51,6 +51,11 @@ public:
 		std::shared_lock<std::shared_mutex> lock(m_accessMutex);
 		return m_map.size();
 	}
+
+	static SharedMap<Kty, Ty, Hasher>& Get() {
+		static SharedMap<Kty, Ty, Hasher> instance = SharedMap<Kty, Ty, Hasher>();
+		return instance;
+	}
 private:
 	std::unordered_map<Kty, Ty, Hasher> m_map;
 	std::shared_mutex m_accessMutex;

@@ -20,28 +20,33 @@ void GameClient::stop() {
 	clientThread.join();
 }
 void GameClient::run() {
-	// important, opengl NEEDS this
-	gw.bindToThisThread();
-	//gw.setVSync(false);
-	auto& res = ResourceManager::Get();
-	auto& gs = GenericShaders::Get();
+	try {
+		// important, opengl NEEDS this
+		gw.bindToThisThread();
+		//gw.setVSync(false);
+		auto& res = ResourceManager::Get();
+		auto& gs = GenericShaders::Get();
 
-	while (true) {
+		while (true) {
 
-		if (gw.hasChangedFullscreenState()) {
-			resizeWindow(gw.windowWidth, gw.windowHeight);
+			if (gw.hasChangedFullscreenState()) {
+				resizeWindow(gw.windowWidth, gw.windowHeight);
+			}
+			if (flagResize) {
+				flagResize = false;
+				resizeWindow(newWidth, newHeight);
+			}
+
+			renderFPSGauge.update(30);
+			testInput();
+			processDebugStats();
+			render();
+
+			if (m_stopping) break;
 		}
-		if (flagResize) {
-			flagResize = false;
-			resizeWindow(newWidth, newHeight);
-		}
-
-		renderFPSGauge.update(30);
-		testInput();
-		processDebugStats();
-		render();
-
-		if (m_stopping) break;
+	}
+	catch (std::exception& ex) {
+		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
 	}
 }
 
@@ -51,8 +56,11 @@ void GameClient::render()
 	renderer.setClearColor(glm::vec4(0.8f, 0.8f, 1.0f, 0.0f));
 	renderer.clearScreen();
 
+	DebugStats& db = DebugStats::Get();
+	int drawnChunkCount = 0;
+	drawnChunkCount = renderer.drawWorld();
+	if (drawnChunkCount != 0) db.drawnChunkCount = drawnChunkCount;
 	glEnable(GL_DEPTH_TEST);
-	renderer.drawWorld();
 	renderer.testDraw();
 
 	gw.clear();

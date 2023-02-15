@@ -10,7 +10,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	LOAD_LOG("GameRenderer instantiated...");
 
-	cam->pos = glm::vec3(-16.f, 200.f, 32.0f);
+	cam->pos = glm::vec3(-16.f, 96.f, 32.0f);
 	cam->tileScale = 40.f;
 	cam->setDimensions(windowWidth, windowHeight);
 	worldRenderer.setCamera(cam);
@@ -22,24 +22,6 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	overviewCam->tileScale = 1024.0f;
 	overviewCam->setDimensions(windowWidth, windowHeight);
 
-
-	tileCam = std::make_shared<Camera>();
-	tileCam->pos = glm::vec3(-16.f, 200.f, 32.0f);
-	tileCam->tileScale = 40.0f;
-	tileCam->disableAutoFrame();
-
-	FBOSprite.attachTexture(m_tileFBO.getColorTex(0));
-	FBOSprite.attachShader(&gs.imageShader);
-
-	// Needs to be a shared pointer such that any DrawStates using it are able to safely copy it
-	//m_tileShader = std::make_shared<Shader>(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl");
-	m_tileShader = Shader(".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl");
-	m_tileShader.setTexUniform("tileSheet", 0);
-
-	m_tileShader.setBoolUniform(4, true);
-
-	m_tileDrawStates.attachShader(&m_tileShader);
-
 	videotype.setPixelHeight(50);
 
 	loadTextures();
@@ -47,17 +29,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	testReoSprite.attachShader(&gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
 	testReoSprite.attachTexture(testReoTexture);
-	testReoSprite.setPosition(glm::vec3(-16.f, 200.f, 1.f));
-
-	//res.loadTileSet(std::filesystem::path(".\\res\\tilesets\\vanilla"));
-	res.loadAllTileSets();
-
-	Texture& t = *res.getTileSheetTexture();
-	testTileSheet.attachShader(&gs.imageShader);
-	testTileSheet.setBounds(Rect(0.f, 0.f, (float)t.width / 40.f, (float)t.height / 40.f));
-	testTileSheet.attachTexture(&t);
-
-	//m_screenFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
+	testReoSprite.setPosition(glm::vec3(-16.f, 96.f, 1.f));
 
 	LOAD_LOG("Creating lighting subsystem...");
 
@@ -73,7 +45,6 @@ GameRenderer::~GameRenderer()
 
 // Will be changed ----------------------------------------------------------
 void GameRenderer::loadTextures() {
-	//res.loadTexID("./res/tiles/spritesheet.png", TextureID::TILESHEET_TEXTURE);
 	res.loadTexID("./res/roetest.png", TextureID::REO_TEST);
 	res.loadTexID("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
 	res.loadTexID("./res/cameraframe2.png", TextureID::CAMERA_FRAME_TEXTURE2);
@@ -108,60 +79,10 @@ void GameRenderer::setViewport(uint16_t p_w, uint16_t p_h)
 
 int GameRenderer::drawWorld()
 {
-	worldRenderer.draw(m_screenFBO);
-	return 0;
-	//Texture* tilesheet = res.getTileSheetTexture();
-	////tilesheet->setFiltering(GL_NEAREST, GL_NEAREST);
-
-	//m_tileDrawStates.attachTexture(tilesheet);
-
-	//m_tileShader.setIntUniform(1, tilesheet->height);
-
-	//int drawnChunkCount = 0;
-
-	//auto f = cam->getFrame();
-	//f.y -= CHUNKSIZE * 4;
-	//f.w += CHUNKSIZE;
-	//f.z += CHUNKSIZE * 2;
-	//f.x -= CHUNKSIZE * 2;
-
-	//static glm::ivec4 chunkFramePrev;
-	//glm::ivec4 chunkFrame = utils::frameToChunkCoords(f / 2.f) * 2;
-
-
-	//if (chunkFrame == chunkFramePrev) {
-	//	if (!p_world.notifyNewChunk) {
-	//		return 0;
-	//	}
-	//	p_world.notifyNewChunk = false;
-	//};
-
-	//float pixelsPerTile = (float)windowWidth / (float)cam->tileScale;
-	//float pixelsPerTileMin = std::fminf(pixelsPerTile, 8.f);
-
-	//glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
-	//tileCam->setFrame(
-	//	(float)chunkFrameTiles.x, (float)chunkFrameTiles.y, float(chunkFrameTiles.z - chunkFrameTiles.x), float(chunkFrameTiles.w - chunkFrameTiles.y)
-	//);
-	////glEnable(GL_DEPTH_TEST);
-	////glDisable(GL_BLEND);
-	//FBOSprite.setBounds(Rect(0, 0, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y));
-	//FBOSprite.setPosition(glm::vec3(tileCam->getFrame().x, tileCam->getFrame().w, 0));
-
-	//m_tileFBO.setDimensions(glm::vec2(pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x), pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y)));
-	////std::cout << pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x) << " " << pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y) << '\n';
-	//m_tileDrawStates.setTransform(tileCam->getTransform());
-	//m_tileFBO.clear();
-	//if (currentCamera.lock()->tileScale > 500.f) {
-	//	m_tileShader.setBoolUniform(4, false);
-	//}
-	//else {
-	//	m_tileShader.setBoolUniform(4, true);
-	//}
-	//drawnChunkCount = p_world.drawChunkFrame(chunkFrame.x - 1, chunkFrame.y - 1, chunkFrame.z + 1, chunkFrame.w + 1, m_tileFBO, m_tileDrawStates, m_tileShader);
-
-	//chunkFramePrev = chunkFrame;
-	//return drawnChunkCount;
+	cam->updateFrame();
+	DrawStates state;
+	state.setTransform(currentCamera.lock()->getTransform());
+	return worldRenderer.draw(m_screenFBO, state, windowWidth);
 }
 // debug function
 void GameRenderer::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h, glm::vec3 p_col) {
@@ -261,6 +182,7 @@ void GameRenderer::drawLighting() {
 
 void GameRenderer::testDraw()
 {
+	cam->updateFrame();
 	// it's a bit bad to use the depth test function here, but I haven't moved it into the DrawSurface class yet so whatevs
 	glDisable(GL_DEPTH_TEST);
 	testFrame++;
@@ -272,17 +194,9 @@ void GameRenderer::testDraw()
 
 	state.setTransform(currentCamera.lock()->getTransform());
 
-	//static Sprite testFBOsprite(glm::vec3(0, 0, 5), Rect(0, 0, 10, 10));
-	//testFBOsprite.setPosition(glm::vec3(cam->pos.x, cam->pos.y, 0));
-
-	FBOSprite.draw(m_screenFBO, state);
-
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);
 	testReoSprite.setRotation(testFrame / 50.f);
-	//testReoSprite.draw(m_screenFBO, state);
-
-	testTileSheet.setOriginRelative(OriginLoc::TOP_LEFT);
-	testTileSheet.draw(m_screenFBO, state);
+	testReoSprite.draw(m_screenFBO, state);
 
 	static Text debugText(videotype, "");
 	static DebugStats& db = DebugStats::Get();
@@ -330,8 +244,5 @@ void GameRenderer::swapCameras()
 	}
 	else if (cameraIndex == 0) {
 		currentCamera = cam;
-	}
-	else {
-		currentCamera = tileCam;
 	}
 }

@@ -44,12 +44,13 @@ public:
 	bool checkIfInit() { 
 		for (auto texturePtr : m_texturePtrs) {
 			if (texturePtr == nullptr) {
-				LOG("Texture failed initialization check.");
+				ERROR_LOG("Texture failed initialization check.");
 				return false;
 			}
 		}
 		if (!m_shaderPtr) {
-			LOG("Shader failed initialization check.");
+
+			ERROR_LOG("Shader failed initialization check.");
 			return false;
 		}
 		return true;

@@ -26,6 +26,19 @@ enum class Corner {
 	BOTTOM_RIGHT
 };
 
+//enum class ChunkPacketStatus {
+//	VALID,
+//	GENERATING,
+//	UPDATE,
+//	REMOVAL
+//};
+//
+//struct ChunkPacket {
+//	ChunkPacketStatus status;
+//	ChunkPos pos;
+//	WorldChunk* data;
+//};
+
 #define TILESET_PATH "res\\tilesets"
 #define GENERATORS_JSON_PATH ".\\src\\Shaders\\noisegenerators\\generators.json"
 

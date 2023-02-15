@@ -18,6 +18,8 @@
 #include "util/Array3D.hpp"
 #include "WorldGenNoisemap.hpp"
 
+#include <atomic>
+
 struct ChunkPos {
 	ChunkPos() { x = -1; y = -1; }
 	ChunkPos(int p_x, int p_y) : x(p_x), y(p_y) {};
@@ -75,15 +77,16 @@ struct WorldChunk : public TransformObject
 	ChunkPos worldPos;
 	int worldID;
 
-	bool vertsAreCurrent = false;
-	bool vboIsPushed = false;
-	bool invalid = true;
-	bool isEmpty = true;
+	std::atomic<bool> vboIsPushed{ false };
+	std::atomic<bool> drawable{ false };
+	std::atomic<bool> invalid{ true };
+	std::atomic<bool> isEmpty{ true };
 	Mesh<TileVert> tileMesh{NO_VAO_INIT};
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
 private:
+	std::mutex m_vboMutex;
 	Array3D<Tile> m_tiles;
 
 };
