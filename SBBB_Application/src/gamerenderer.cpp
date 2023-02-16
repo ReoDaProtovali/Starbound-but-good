@@ -196,7 +196,7 @@ void GameRenderer::testDraw()
 
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);
 	testReoSprite.setRotation(testFrame / 50.f);
-	testReoSprite.draw(m_screenFBO, state);
+	//testReoSprite.draw(m_screenFBO, state);
 
 	static Text debugText(videotype, "");
 	static DebugStats& db = DebugStats::Get();

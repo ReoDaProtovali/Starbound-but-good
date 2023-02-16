@@ -6,9 +6,10 @@
 #include "ChunkManager.hpp"
 #include "Framework/Window/GameWindow.hpp"
 #include "util/Messenger.hpp"
+#include "util/SharedQueue.hpp"
 class GameServer
 {
-	void run();
+	void run(SharedQueue<std::exception_ptr>& p_exceptionQueue);
 
 	Timestepper ts {UPDATE_RATE_FPS};
 	
@@ -22,7 +23,7 @@ class GameServer
 	GameWindow serverWindow;
 public:
 	GameServer() {};
-	void start();
+	void start(SharedQueue<std::exception_ptr>& p_exceptionQueue);
 	void stop();
 };
 

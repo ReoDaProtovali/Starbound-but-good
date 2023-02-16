@@ -22,12 +22,15 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 			m_noiseMap.genTilesNeighboringChunk(p_chunkPos.x, p_chunkPos.y, str);
 		}
 		m_loadQueue.push(p_chunkPos);
-		// because this is a map, it inserts a default constructed chunk when you do this
+		// because this is a std::unordered_map, it inserts a default constructed chunk when you do this
 		s_chunkMap[p_chunkPos];
 		m_workCount.release();
 	};
 }
 
+void ChunkManager::processRequests() {
+
+}
 void ChunkManager::startThreads()
 {
 	if (m_genThreads.size() > 0) return;

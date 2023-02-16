@@ -35,6 +35,7 @@ public:
 	void flip();
 	void enqueueGen(ChunkPos p_chunkPos);
 	void genFixed(uint32_t x, uint32_t y);
+	void processRequests();
 
 	void startThreads();
 	void stopThreads();
@@ -69,6 +70,7 @@ private:
 	std::atomic<bool> m_stopAllThreads = false;
 	std::counting_semaphore<> m_workCount{0};
 	
+	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 	std::queue<ChunkPos> m_loadQueue;
 };

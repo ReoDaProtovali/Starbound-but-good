@@ -1,11 +1,8 @@
 #pragma once
 
 #include <unordered_map>
-#include <thread>
 #include <mutex>
 #include <shared_mutex>
-
-
 
 template<typename Kty, typename Ty, typename Hasher>
 // Threadsafe map, not entirely comprehensive but it's enough
@@ -39,10 +36,12 @@ public:
 		std::shared_lock<std::shared_mutex> lock(m_accessMutex);
 		return m_map.contains(p_key);
 	}
+	// POTENTIALLY UNSAFE, BECAUSE I THINK ITERATORS CAN BE INVALIDATED BY OTHER THREADS
 	auto begin() {
 		std::shared_lock<std::shared_mutex> lock(m_accessMutex);
 		return m_map.begin();
 	}
+	// POTENTIALLY UNSAFE, BECAUSE I THINK ITERATORS CAN BE INVALIDATED BY OTHER THREADS
 	auto end() {
 		std::shared_lock<std::shared_mutex> lock(m_accessMutex);
 		return m_map.end();

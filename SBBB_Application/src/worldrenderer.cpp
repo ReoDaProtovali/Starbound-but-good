@@ -46,6 +46,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	m_tileSprite.draw(p_surface, p_states);
 
 	auto f = m_viewCam->getFrame();
+	// magic numbers
 	f.y -= CHUNKSIZE * 4;
 	f.w += CHUNKSIZE;
 	f.z += CHUNKSIZE * 2;

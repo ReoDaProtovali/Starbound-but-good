@@ -4,10 +4,11 @@
 #include "Framework/Window/GameWindow.hpp"
 #include "GameRenderer.hpp"
 #include "util/Messenger.hpp"
+#include "util/SharedQueue.hpp"
 
 class GameClient
 {
-	void run();
+	void run(SharedQueue<std::exception_ptr>& p_exceptionQueue);
 	void render();
 	void testInput();
 	void processDebugStats();
@@ -23,12 +24,13 @@ class GameClient
 	// thread management
 	std::thread clientThread;
 	std::atomic_bool m_stopping = false;
+	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 
 
 public:
 	GameClient();
 	~GameClient();
-	void start();
+	void start(SharedQueue<std::exception_ptr>& p_exceptionQueue);
 	void stop();
 	uint32_t getWindowID() { return gw.getWindowID(); }
 

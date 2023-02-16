@@ -216,7 +216,6 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\worldrenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameServer.hpp" />
     <ClInclude Include="include\Application.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Chunk.hpp" />
@@ -253,6 +252,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\ChunkManager.hpp" />
     <ClInclude Include="include\util\Array2D.hpp" />
     <ClInclude Include="include\util\Array3D.hpp" />
+    <ClInclude Include="include\util\SharedQueue.hpp" />
     <ClInclude Include="include\util\Messenger.hpp" />
     <ClInclude Include="include\util\Rect.hpp" />
     <ClInclude Include="include\util\SharedMap.hpp" />

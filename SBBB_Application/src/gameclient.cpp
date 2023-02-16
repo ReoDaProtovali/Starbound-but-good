@@ -9,17 +9,17 @@ GameClient::~GameClient() {
 	gw.cleanUp();
 }
 
-void GameClient::start() {
+void GameClient::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	// important
 	gw.unbindFromThisThread();
-	clientThread = std::thread(&GameClient::run, this);
+	clientThread = std::thread(&GameClient::run, this, std::ref(p_exceptionQueue));
 }
 
 void GameClient::stop() {
 	m_stopping = true;
 	clientThread.join();
 }
-void GameClient::run() {
+void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	try {
 		// important, opengl NEEDS this
 		gw.bindToThisThread();
@@ -44,9 +44,13 @@ void GameClient::run() {
 
 			if (m_stopping) break;
 		}
+		gw.cleanUp();
 	}
 	catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
+		gw.cleanUp();
+		p_exceptionQueue.push(std::current_exception());
+		return;
 	}
 }
 
@@ -126,7 +130,7 @@ void GameClient::processDebugStats()
 		debugUpdateCounter = 0;
 		DebugStats& db = DebugStats::Get();
 		//db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
-		db.drawFPS = 1.0 / utils::averageVector(renderFPSGauge.frametimeBuffer);
+		db.drawFPS = (float)(1.0 / utils::averageVector(renderFPSGauge.frametimeBuffer));
 		db.camX = renderer.cam->pos.x;
 		db.camY = renderer.cam->pos.y;
 		auto f = renderer.cam->getFrame();

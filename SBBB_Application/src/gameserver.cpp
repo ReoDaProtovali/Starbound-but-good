@@ -1,25 +1,26 @@
 #include "GameServer.hpp"
 #include "GameConstants.hpp"
 
-void GameServer::start() {
-	serverThread = std::thread(&GameServer::run, this);
+void GameServer::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
+	serverThread = std::thread(&GameServer::run, this, std::ref(p_exceptionQueue));
 }
 
 void GameServer::stop() {
 	m_stopping = true;
 	serverThread.join();
 }
-void GameServer::run() {
-	try {
-		serverWindow.create("shouldn't be visible", 100, 100, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-		serverWindow.bindToThisThread();
-		ChunkManager world;
-		ResourceManager& res = ResourceManager::Get();
-		// must be done on this thread because the serverside opengl context needs access to the shaders
-		res.loadGeneratorShaders();
+void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
+	serverWindow.create("shouldn't be visible", 100, 100, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+	serverWindow.bindToThisThread();
 
-		world.genFixed(10, 10);
-		world.startThreads();
+	ResourceManager& res = ResourceManager::Get();
+	res.loadGeneratorShaders();
+
+	// this kinda has to be outside of the try...catch so it is scoped in the catch block
+	ChunkManager world;
+	world.genFixed(10, 10);
+	world.startThreads();
+	try {
 
 		DebugStats& db = DebugStats::Get();
 		while (true) {
@@ -28,23 +29,24 @@ void GameServer::run() {
 			while (ts.accumulatorFull()) {
 				ts.drain();
 
-				//world.processRequests();
+				world.processRequests();
 				tickGauge.update(30);
 
-				db.updateFPS = 1.f / utils::averageVector(tickGauge.frametimeBuffer);
+				db.updateFPS = (float)(1.0 / utils::averageVector(tickGauge.frametimeBuffer));
 
 				ts.processFrameStart();
 			}
 			// prevent it from overworking
 			std::this_thread::sleep_for(std::chrono::microseconds(1000000 / (UPDATE_RATE_FPS * 2)));
-
 			if (m_stopping) break;
 		}
 		world.stopThreads();
 		serverWindow.cleanUp();
-
 	}
 	catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
+		world.stopThreads();
+		serverWindow.cleanUp();
+		p_exceptionQueue.push(std::current_exception());
 	}
 }
