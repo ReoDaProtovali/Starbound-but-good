@@ -291,7 +291,7 @@ void WorldChunk::pushVBO()
 {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	tileMesh.pushVBOToGPU();
-	//tileMesh.clean();
+	tileMesh.clean();
 	vboIsPushed = true;
 }
 
