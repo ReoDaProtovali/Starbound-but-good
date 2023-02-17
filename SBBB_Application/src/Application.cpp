@@ -31,6 +31,7 @@ void Application::run()
 	}
 
     client.stop();
+
 	localServer.stop();
 }
 

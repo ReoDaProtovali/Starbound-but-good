@@ -21,6 +21,7 @@
 #include "Framework/Window/GameWindow.hpp"
 #include "util/Messenger.hpp"
 #include "util/SharedMap.hpp"
+#include "util/SharedQueue.hpp"
 #include "WorldGenNoisemap.hpp"
 
 #define GENERATION_THREAD_COUNT 4
@@ -39,8 +40,8 @@ public:
 
 	void startThreads();
 	void stopThreads();
-	static void genFromQueueThreaded(ChunkManager& instance);
-	static void genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance);
+	void genFromQueueThreaded();
+	void genChunkThreaded(ChunkPos p_chunkPos);
 
 	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
 
@@ -65,12 +66,10 @@ private:
 	ResourceManager& res = ResourceManager::Get();
 
 	std::vector<std::thread> m_genThreads;
-	std::mutex m_queueMutex;
 	std::mutex m_chunkVBOMutex;
 	std::atomic<bool> m_stopAllThreads = false;
-	std::counting_semaphore<> m_workCount{0};
 	
 	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
-	std::queue<ChunkPos> m_loadQueue;
+	SharedQueue<ChunkPos> m_loadQueue;
 };

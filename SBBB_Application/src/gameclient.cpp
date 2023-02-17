@@ -44,11 +44,9 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 			if (m_stopping) break;
 		}
-		gw.cleanUp();
-	}
-	catch (std::exception& ex) {
+		//gw.cleanUp();
+	} catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
-		gw.cleanUp();
 		p_exceptionQueue.push(std::current_exception());
 		return;
 	}

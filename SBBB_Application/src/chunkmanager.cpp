@@ -15,7 +15,6 @@ void ChunkManager::flip()
 }
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 {
-	std::unique_lock<std::mutex> lock(m_queueMutex);
 	if (!chunkExistsAt(p_chunkPos)) {
 		static auto allGenerators = res.getAllGeneratorShaders();
 		for (auto& str : allGenerators) {
@@ -24,7 +23,7 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 		m_loadQueue.push(p_chunkPos);
 		// because this is a std::unordered_map, it inserts a default constructed chunk when you do this
 		s_chunkMap[p_chunkPos];
-		m_workCount.release();
+		//m_workCount.release();
 	};
 }
 
@@ -35,51 +34,46 @@ void ChunkManager::startThreads()
 {
 	if (m_genThreads.size() > 0) return;
 	for (int i = 0; i < GENERATION_THREAD_COUNT; i++) {
-		m_genThreads.emplace_back(&ChunkManager::genFromQueueThreaded, std::ref(*this));
+		m_genThreads.emplace_back(&ChunkManager::genFromQueueThreaded, this);
 	}
 }
 void ChunkManager::stopThreads()
 {
 	m_stopAllThreads = true;
-	m_workCount.release(GENERATION_THREAD_COUNT);
+
+	// force close waiting threads
+	m_loadQueue.forceAllThreadsToPop();
+
 	for (auto& t : m_genThreads) {
 		t.join();
 	}
 }
-void ChunkManager::genFromQueueThreaded(ChunkManager& instance)
+void ChunkManager::genFromQueueThreaded()
 {
 	while (true) {
-		if (instance.m_stopAllThreads) break;
+		ChunkPos pos = m_loadQueue.pop();
 
-		instance.m_workCount.acquire();
-		std::unique_lock<std::mutex> lock(instance.m_queueMutex);
-		if (instance.m_loadQueue.empty()) {
-			lock.unlock();
-			continue;
-		};
+		// must be done here, because if it terminates, the position from .pop() is invalid 
+		if (m_stopAllThreads) break;
 
-		// enable this if you don't want to have to move the camera to see new chunks
-		//instance.notifyNewChunk = true;
-		ChunkPos pos = instance.m_loadQueue.front();
-		instance.m_loadQueue.pop();
-		lock.unlock();
-		ChunkManager::genChunkThreaded(pos, instance);
+		ChunkManager::genChunkThreaded(pos);
 	}
 }
-void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance)
+void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 {
 
 	WorldChunk c = WorldChunk(p_chunkPos, 0); // world ID is hardcoded for now. Will most def be a different system later.
 
-	c.worldGenerate(instance.m_noiseMap);
-	instance.s_chunkMap[p_chunkPos] = std::move(c);
+	// assume valid noisemap at position
+	c.worldGenerate(m_noiseMap);
+	s_chunkMap[p_chunkPos] = std::move(c);
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
 			//if (j == 0 && i == 0) continue;
-			auto& neighbor = instance.s_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)];
-			if (instance.validChunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
+			auto& neighbor = s_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)];
+			if (validChunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
 				neighbor.drawable = false;
-				neighbor.generateVBO(instance);
+				neighbor.generateVBO(*this);
 				neighbor.drawable = true;
 			}
 		}
