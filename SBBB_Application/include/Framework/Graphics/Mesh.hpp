@@ -177,6 +177,7 @@ public:
 		if (!VAOInitialized) {
 			glGenVertexArrays(1, &VAO->ID);
 			GLGEN_LOG("Generated Vertex Array " << VAO->ID);
+			VAOInitialized = true;
 		}
 		glBindVertexArray(VAO->ID);
 		if (!VBOInitialized) {

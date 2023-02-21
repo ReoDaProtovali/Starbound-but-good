@@ -3,6 +3,9 @@
 #include "FrameworkConstants.hpp"
 #include <iostream>
 
+// always should be exposed
+#define ERROR_LOG(expr) std::cout << "\nERROR: " << expr << "\n\n";
+
 // A bit messy but obvious
 #ifdef SBBB_DEBUG
 
@@ -28,7 +31,6 @@
 // general log macro without a toggle
 #define LOG(expr) std::cout << expr << std::endl
 #define CONDITIONAL_LOG(cond, expr) if (cond) std::cout << expr << '\n'
-#define ERROR_LOG(expr) std::cout << "\nERROR: " << expr << "\n\n";
 #define WARNING_LOG(expr) std::cout << "WARNING: " << expr << '\n';
 
 
@@ -36,7 +38,6 @@
 
 #define LOG(expr)
 #define CONDITIONAL_LOG(cond, expr)
-#define ERROR_LOG(expr)
 #define WARNING_LOG(expr)
 #define LOAD_LOG(expr)
 #define DELETE_LOG(expr)

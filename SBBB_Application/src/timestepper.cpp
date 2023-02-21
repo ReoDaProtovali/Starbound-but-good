@@ -6,7 +6,7 @@ Timestepper::Timestepper(int p_gameUpdateFPS)
 void Timestepper::processFrameStart() {
 	fg.stopStopwatch();
 	fg.startStopwatch();
-	accumulator += fg.getSecondsElapsed();
+	accumulator +=	(float)fg.getSecondsElapsed();
 }
 void Timestepper::drain()
 {

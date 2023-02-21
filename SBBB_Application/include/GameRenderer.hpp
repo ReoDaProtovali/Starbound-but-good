@@ -6,6 +6,7 @@
 #include "Camera.hpp"
 #include <util/ext/glm/glm.hpp>
 #include "Lighting.hpp"
+#include "WorldRenderer.hpp"
 #include "Framework/Graphics/FrameBuffer.hpp"
 #include "Framework/Graphics/GenericShaders.hpp"
 #include "Framework/Window/GameWindow.hpp"
@@ -55,7 +56,7 @@ public:
 	/// Handles what to do when the window changes size, relies on the values of windowWidth and windowHeight being up to date.
 	void setViewport(uint16_t p_w, uint16_t p_h);
 
-	int drawWorld(ChunkManager& p_world, DrawSurface& p_target);
+	int drawWorld();
 
 	/// Simply tells the lighting subclass to draw based on it's current values.
 	void drawLighting();
@@ -67,12 +68,9 @@ public:
 	// The cameras are pointers, such that they can be easily switched between
 	std::shared_ptr<Camera> cam = std::make_shared<Camera>();
 	std::shared_ptr<Camera> overviewCam;
-	std::shared_ptr<Camera> tileCam;
 
 	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
 	Texture* testReoTexture = nullptr;
-
-	Sprite testTileSheet{ glm::vec3(-16.0f, 325.0f, 2.0f), Rect(0.f, 0.f, 0.f, 0.f) };
 
 	float testFrame = 0;
 	void testDraw();
@@ -82,11 +80,10 @@ public:
 
 	Lighting m_lighting;
 	FrameBuffer m_screenFBO;
-	FrameBuffer m_tileFBO;
-	Sprite FBOSprite{ glm::vec3(0, 0, 5), Rect(0, 0, 1, 1) };
 
 private:
 
+	WorldRenderer worldRenderer;
 	GenericShaders& gs = GenericShaders::Get();
 
 	TextContext ftctx; // freetype library context
@@ -94,11 +91,5 @@ private:
 
 	std::weak_ptr<Camera> currentCamera;
 	bool cameraToggle = false;
-
-	/// Uses packed chunk coordinates and block IDs
-	Shader m_tileShader;
-
-	DrawStates m_tileDrawStates;
-
 };
 

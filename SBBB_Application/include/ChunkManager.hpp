@@ -19,6 +19,9 @@
 
 #include "Camera.hpp"
 #include "Framework/Window/GameWindow.hpp"
+#include "util/Messenger.hpp"
+#include "util/SharedMap.hpp"
+#include "util/SharedQueue.hpp"
 #include "WorldGenNoisemap.hpp"
 
 #define GENERATION_THREAD_COUNT 4
@@ -27,27 +30,20 @@ class ChunkManager
 {
 public:
 	// Basic init, reserving a block of memory for future chunks.
-	ChunkManager() { m_chunkMap.reserve(1024); };
+	ChunkManager() { s_chunkMap.reserve(1024); };
 
-	//bool genChunk(ChunkPos p_chunkPos);
-	//bool genChunk(int p_chunkX, int p_chunkY);
 	void regenVBOs();
 	void flip();
 	void enqueueGen(ChunkPos p_chunkPos);
-	//bool genFromQueue();
 	void genFixed(uint32_t x, uint32_t y);
-	bool autoGen(Camera& p_cam);
+	void processRequests();
 
 	void startThreads();
 	void stopThreads();
-	static void genFromQueueThreaded(ChunkManager& instance);
-	static void genChunkThreaded(ChunkPos p_chunkPos, ChunkManager& instance);
+	void genFromQueueThreaded();
+	void genChunkThreaded(ChunkPos p_chunkPos);
 
 	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
-
-	//void updateDrawList(glm::vec4 p_frame, bool force = false);
-	//int drawVisible(DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
-	int drawChunkFrame(int p_x, int p_y, int p_w, int p_h, DrawSurface& p_target, DrawStates& p_states, Shader& p_tileShader);
 
 	// tells you if a map entry has been made
 	bool chunkExistsAt(ChunkPos p_chunkPos);
@@ -61,25 +57,19 @@ public:
 	void removeChunks();
 
 	void logSize();
-	int getChunkCount() { return (int)m_chunkMap.size(); }
+	int getChunkCount() { return (int)s_chunkMap.size(); }
 	int getEmptyChunkCount();
 	void logChunks();
 
-	Camera* generatorCam = nullptr;
-	std::atomic<bool> notifyNewChunk = true;
 private:
 	WorldGenNoisemap m_noiseMap;
 	ResourceManager& res = ResourceManager::Get();
 
 	std::vector<std::thread> m_genThreads;
-	std::mutex m_queueMutex;
-	std::mutex m_chunkReadWriteMutex;
+	std::mutex m_chunkVBOMutex;
 	std::atomic<bool> m_stopAllThreads = false;
-	std::counting_semaphore<> m_workCount{0};
-
-	std::unordered_map<ChunkPos, WorldChunk, ChunkPos> m_chunkMap;
-	std::queue<ChunkPos> m_loadQueue;
-	//std::forward_list<WorldChunk*> m_drawList;
-	//std::vector<WorldChunk*> m_drawList;
-
+	
+	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
+	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
+	SharedQueue<ChunkPos> m_loadQueue;
 };

@@ -17,4 +17,5 @@ void main()
     vec4 col4 = texture(tileSheet, tuv);
     vec4 outCol = vec4(col4.xyz * (zLevel + 1)/4, col4.a);
     FragColor = outCol;
+    //FragColor = vec4(0, 0, 0, 1);
 }

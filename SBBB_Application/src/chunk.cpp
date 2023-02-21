@@ -21,10 +21,9 @@ WorldChunk::WorldChunk(const WorldChunk& other) noexcept :
 	m_tiles(other.m_tiles),
 	worldID(other.worldID),
 	worldPos(other.worldPos),
-	invalid(other.invalid),
-	vertsAreCurrent(other.vertsAreCurrent),
-	vboIsPushed(other.vboIsPushed),
-	isEmpty(other.isEmpty)
+	invalid(other.invalid.load()),
+	vboIsPushed(other.vboIsPushed.load()),
+	isEmpty(other.isEmpty.load())
 {
 	// Don't forget the base class
 	setPosition(glm::vec3((float)worldPos.x * CHUNKSIZE, (float)worldPos.y * CHUNKSIZE, 0.f));
@@ -38,10 +37,9 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 	m_tiles = other.m_tiles;
 	worldID = other.worldID;
 	worldPos = other.worldPos;
-	vertsAreCurrent = other.vertsAreCurrent;
-	vboIsPushed = other.vboIsPushed;
-	invalid = other.invalid;
-	isEmpty = other.isEmpty;
+	vboIsPushed = other.vboIsPushed.load();
+	invalid = other.invalid.load();
+	isEmpty = other.isEmpty.load();
 
 	setPosition(glm::vec3((float)worldPos.x * CHUNKSIZE, (float)worldPos.y * CHUNKSIZE, 0.f));
 	calculateTransform();
@@ -54,10 +52,9 @@ WorldChunk::WorldChunk(WorldChunk&& other) noexcept :
 	m_tiles(std::move(other.m_tiles)),
 	worldID(other.worldID),
 	worldPos(other.worldPos),
-	vertsAreCurrent(other.vertsAreCurrent),
-	vboIsPushed(other.vboIsPushed),
-	invalid(other.invalid),
-	isEmpty(other.isEmpty)
+	vboIsPushed(other.vboIsPushed.load()),
+	invalid(other.invalid.load()),
+	isEmpty(other.isEmpty.load())
 {
 	setPosition(glm::vec3((float)worldPos.x * CHUNKSIZE, (float)worldPos.y * CHUNKSIZE, 0.f));
 	calculateTransform();
@@ -77,7 +74,6 @@ void WorldChunk::fillRandom() {
 			}
 		}
 	}
-	vertsAreCurrent = false;
 	isEmpty = false;
 }
 void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
@@ -88,7 +84,7 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 	TileInfo& DirtInfo = res.getTileInfo("vanilla:dirt").value();
 	TileInfo& StoneInfo = res.getTileInfo("vanilla:stone").value();
 	TileInfo& NeonInfo = res.getTileInfo("vanilla:neongrid").value();
-
+	TileInfo& RichStoneInfo = res.getTileInfo("vanilla:richstone").value();
 
 	float surfaceLevel = -1.5f * CHUNKSIZE;
 	float globalX;
@@ -118,7 +114,12 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), DirtInfo.spriteIndex);
 								}
 								else {
-									m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+									if (perlin.w > 0.6) {
+										m_tiles(x, y, z) = Tile(glm::ivec2(x, y), RichStoneInfo.spriteIndex);
+									}
+									else {
+										m_tiles(x, y, z) = Tile(glm::ivec2(x, y), StoneInfo.spriteIndex);
+									}
 								}
 							}
 						}
@@ -193,11 +194,11 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 			}
 		}
 	}
-	vertsAreCurrent = false;
 	invalid = false;
 }
 
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
+	std::unique_lock<std::mutex> lock(m_vboMutex);
 	if (isEmpty) return;
 	tileMesh.clean();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
@@ -283,12 +284,12 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 			}
 		}
 	}
-	vertsAreCurrent = true;
 	vboIsPushed = false;
 }
 
 void WorldChunk::pushVBO()
 {
+	std::unique_lock<std::mutex> lock(m_vboMutex);
 	tileMesh.pushVBOToGPU();
 	tileMesh.clean();
 	vboIsPushed = true;

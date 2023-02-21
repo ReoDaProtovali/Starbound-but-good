@@ -1,0 +1,15 @@
+{
+	"id": "richstone",
+	"name": "richstone",
+	"genericDescription": "A mineral, highly dense in particularily valuable ores.",
+	"categories": [ "hard", "stonelike", "natural" ],
+	"rarity": "uncommon",
+	"imageFile": "richstone.png",
+	"maxHP": 80,
+	"isAnimated": false,
+	"transparent": false,
+	"variationCount": 4,
+	"lightAbsorption": 0.8,
+	"emissive": false,
+	"lightingColor": [ 0, 0, 0 ]
+}

@@ -126,6 +126,12 @@
     <ClCompile Include="src\gameserver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\worldrenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\worldgenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -254,10 +260,25 @@
     <ClInclude Include="include\GameClient.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameServer.hpp">
+    <ClInclude Include="include\GameServer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameServer.hpp">
+    <ClInclude Include="include\util\Messenger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SharedMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SharedQueue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\GenericMessage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldGenerator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -305,6 +326,7 @@
     <None Include="res\tilesets\vanilla\tiledata\NeonGrid.TileProperties" />
     <None Include="src\Shaders\SolidColorVS.glsl" />
     <None Include="src\Shaders\SolidColorFS.glsl" />
+    <None Include="res\tilesets\vanilla\tiledata\RichStone.TileProperties" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\freetype.lib" />

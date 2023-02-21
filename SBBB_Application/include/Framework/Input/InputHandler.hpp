@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <mutex>
 
 class InputHandler
 {
@@ -16,5 +17,7 @@ public:
 private:
 	std::vector<int> m_keys;
 	std::vector<int> m_keyDowns;
+
+	std::mutex m_inputMutex;
 };
 

@@ -34,7 +34,6 @@ public:
 	void setBlendMode(BlendMode p_blendMode);
 
 	// Just a function for convenience, so you don't have to worry about indexing the texure vector if you're only utilizing one texture as in most cases.
-	// Reference overload
 	void attachTexture(Texture* p_texture);
 
 	void addTexture(Texture* p_texture);
@@ -45,12 +44,13 @@ public:
 	bool checkIfInit() { 
 		for (auto texturePtr : m_texturePtrs) {
 			if (texturePtr == nullptr) {
-				LOG("Texture failed initialization check.");
+				ERROR_LOG("Texture failed initialization check.");
 				return false;
 			}
 		}
 		if (!m_shaderPtr) {
-			LOG("Shader failed initialization check.");
+
+			ERROR_LOG("Shader failed initialization check.");
 			return false;
 		}
 		return true;

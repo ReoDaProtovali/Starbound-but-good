@@ -84,7 +84,6 @@ public:
 	}
 	void bind()
 	{
-
 		useViewport();
 		glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID);
 		glDrawBuffers((GLsizei)m_DrawBuffers.size(), (const GLenum*)m_DrawBuffers.data());

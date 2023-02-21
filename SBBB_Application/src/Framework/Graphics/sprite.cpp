@@ -1,4 +1,5 @@
 #include "Framework/Graphics/Sprite.hpp"
+#include "Framework/Graphics/GenericShaders.hpp"
 
 Sprite::Sprite()
 {
@@ -42,6 +43,10 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
 		});
 	m_spriteMesh.pushVBOToGPU();
+
+	auto& gs = GenericShaders::Get();
+	// default shader
+	m_attachedShader = &gs.imageShader;
 }
 
 

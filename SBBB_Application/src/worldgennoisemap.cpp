@@ -26,10 +26,8 @@ WorldGenNoisemap::WorldGenNoisemap()
 
 glm::vec4 WorldGenNoisemap::getPixel(int32_t p_worldPosX, int32_t p_worldPosY, const std::string& p_generatorName) 
 {
-	//std::unique_lock<std::mutex> lock(m_readMutex);
 	glm::ivec2 tilePos = globalPosToTilePos(p_worldPosX, p_worldPosY);
 
-	//genTile(tilePos.x, tilePos.y, p_generatorName);
 	std::vector<NoiseTile>& data = m_map[tilePos];
 	
 	for (auto& tile : data) {
@@ -44,7 +42,7 @@ glm::vec4 WorldGenNoisemap::getPixel(int32_t p_worldPosX, int32_t p_worldPosY, c
 			);
 		}
 	}
-	//throw std::exception("Tried to get pixel from non-generated region.");
+	throw std::exception("Tried to get pixel from non-generated region.");
 	return glm::vec4(0);
 }
 
@@ -96,7 +94,7 @@ void WorldGenNoisemap::genTilesNeighboringChunk(int p_chunkX, int p_chunkY, cons
 {
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
-			glm::ivec2 tilePos = globalPosToTilePos(p_chunkX * CHUNKSIZE + CHUNKSIZE * j, -p_chunkY * CHUNKSIZE + CHUNKSIZE * i);
+			glm::ivec2 tilePos = globalPosToTilePos(p_chunkX * CHUNKSIZE + CHUNKSIZE * j, p_chunkY * CHUNKSIZE + CHUNKSIZE * i);
 			genTile(tilePos.x, tilePos.y, p_generatorName);
 		}
 	}

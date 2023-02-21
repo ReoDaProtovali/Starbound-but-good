@@ -17,42 +17,16 @@ class Application {
 	GameClient client;
 	GameServer localServer;
 
-	fpsGauge updateFPSGauge;
-	fpsGauge renderFPSGauge;
+	SharedQueue<std::exception_ptr> m_exceptionQueue;
 
-	GameWindow gw{"Barstound"};
-	GameRenderer renderer;
-
-	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
-
-	InputHandler inp;
-
-	ChunkManager world;
-
-	Timestepper ts = Timestepper(GAME_UPDATE_SPEED);
-
-	int printConsoleCounter = 0; // to limit the amount the console updates as to not cause lag
-	int lastChunkDrawnCount = 0;
-
-	uint32_t renderFrame = 0;
-	uint32_t updateFrame = 0;
-
-	bool gameActive = false;
+	bool gameActive = true;
 
 	void startClient();
 	void startServer();
-
-	void render();
-	void update();
 	void pollEvents();
-	void handleInput();
-	void resizeWindow(uint16_t p_w, uint16_t p_h);
-	void processConsoleStats();
 
 public:
 	Application();
 
 	void run();
-	void cleanUp();
-
 };
