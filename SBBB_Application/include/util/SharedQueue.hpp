@@ -9,7 +9,6 @@ template<typename T>
 // T must be default constructable 
 class SharedQueue {
 public:
-
 	void push(const T& p_value) {
 		std::unique_lock<std::mutex> lock(m_mutex);
 		m_queue.push(p_value);

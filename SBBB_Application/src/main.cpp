@@ -2,7 +2,6 @@
 #include <crtdbg.h>
 
 #include "Application.hpp"
-#include "GameClient.hpp"
 
 int main(int argc, char* argv[]) {
 	// LOG("Debug mode active!");

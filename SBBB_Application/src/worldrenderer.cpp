@@ -26,8 +26,6 @@ WorldRenderer::WorldRenderer()
 	m_tileDrawStates.attachTexture(res.getTileSheetTexture());
 
 	m_tileDrawStates.attachShader(&m_tileShader);
-
-
 }
 
 void WorldRenderer::setCamera(std::shared_ptr<Camera> p_cam)

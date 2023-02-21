@@ -15,27 +15,27 @@ struct Rect {
 	}
 	// functions to get corners of the rect.
 	// Gets the top left coordinate of the rectangle as a vec2.
-	const glm::vec2 getBL() {
+	glm::vec2 getBL() const {
 		return xy;
 	}
 	// Gets the top right coordinate of the rectangle as a vec2.
-	const glm::vec2 getBR() {
+	glm::vec2 getBR() const {
 		return glm::vec2(xy.x + wh.x, xy.y);
 	}
 	// Gets the bottom right coordinate of the rectangle as a vec2.
-	const glm::vec2 getTL() {
+	glm::vec2 getTL() const {
 		return glm::vec2(xy.x, xy.y + wh.y);
 	}
 	// Gets the bottom right coordinate of the rectangle as a vec2.
-	const glm::vec2 getTR() {
+	glm::vec2 getTR() const {
 		return glm::vec2(xy.x + wh.x, xy.y + wh.y);
 	}
 	// Gets the midpoint of the box.
-	const glm::vec2 getCenter() {
+	glm::vec2 getCenter() const {
 		return glm::vec2(xy.x + wh.x / 2.f, xy.y + wh.y / 2.f);
 	}
 	// Defined internally with x, y, width, and height.
-	const float getArea() {
+	float getArea() const {
 		return (wh.x * wh.y);
 	}
 	glm::vec2 xy;

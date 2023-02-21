@@ -15,6 +15,7 @@ class Messenger {
 public:
     Messenger() {}
 
+    // Non-blocking
     std::optional<TFront> getMessageFront() {
         std::unique_lock<std::mutex> lock(m_frontMutex);
         if (m_frontQueue.empty()) return std::nullopt;
@@ -23,6 +24,7 @@ public:
         return out;
     }
 
+    // Non-blocking
     std::optional<TBack> getMessageBack() {
         std::unique_lock<std::mutex> lock(m_backMutex);
         if (m_backQueue.empty()) return std::nullopt;
