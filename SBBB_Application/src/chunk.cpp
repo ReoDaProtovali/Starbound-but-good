@@ -196,7 +196,9 @@ void WorldChunk::worldGenerate(WorldGenNoisemap& noiseGen) {
 	}
 	invalid = false;
 }
-
+void WorldChunk::setTiles(Array3D<Tile>&& p_tiles) {
+	m_tiles = p_tiles;
+}
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	if (isEmpty) return;

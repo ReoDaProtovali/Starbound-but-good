@@ -66,7 +66,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 
 		glCheck(glDeleteShader(vs)); // Don't leak the shader.
 
-		throw new std::runtime_error("Shader was unable to compile.");
+		throw std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
 
@@ -93,7 +93,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* fs_filePath) 
 		// Provide the infolog in whatever manor you deem best.
 		// Exit with failure.
 		glCheck(glDeleteShader(fs)); // Don't leak the shader.
-		throw new std::runtime_error("Shader was unable to compile.");
+		throw std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
 
@@ -148,7 +148,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 
 		glDeleteShader(vs); // Don't leak the shader.
 
-		throw new std::runtime_error("Shader was unable to compile.");
+		throw std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
 
@@ -175,7 +175,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 
 		glDeleteShader(gs); // Don't leak the shader.
 
-		throw new std::runtime_error("Shader was unable to compile.");
+		throw std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
 
@@ -202,7 +202,7 @@ GLuint Shader::compileShaders(const char* vs_filePath, const char* gs_filePath, 
 		// Provide the infolog in whatever manor you deem best.
 		// Exit with failure.
 		glDeleteShader(fs); // Don't leak the shader.
-		throw new std::runtime_error("Shader was unable to compile.");
+		throw std::runtime_error("Shader was unable to compile.");
 		return -1;
 	}
 
@@ -247,7 +247,7 @@ void Shader::setUniforms(std::vector<Uniform> p_uniforms) {
 			Shader::setMat4Uniform(p_uniforms[i].name, p_uniforms[i].mat4Value);
 			break;
 		default:
-			throw new std::runtime_error("Attempted to set uniform with invalid type.");
+			throw std::runtime_error("Attempted to set uniform with invalid type.");
 		}
 	}
 }

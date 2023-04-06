@@ -1,6 +1,9 @@
 #include "Framework/Window/GameWindow.hpp"
 
-GameWindow::GameWindow()
+GameWindow::GameWindow() 
+	: m_window(NULL),
+	windowWidth(0),
+	windowHeight(0)
 {
 }
 

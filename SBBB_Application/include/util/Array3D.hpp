@@ -37,7 +37,11 @@ public:
 	}
 
 	T& operator()(int x, int y, int z) {
-
+#ifdef SBBB_DEBUG
+		if (!bounded(x, y, z)) {
+			throw std::out_of_range("3D Array index out of bounds.");
+		}
+#endif
 		if (!invertDepth) {
 			return data[(z * width * height) + ((y * width) + x)];
 		} else {

@@ -1,13 +1,5 @@
 #TODO::
 
-CLEAN THE CODE UP, GET RID OF UNNECESSARY CODE / CONSOLIDATE, it should be readable somewhat
-Find a way to handle textures better, not on a class-by-class basis
-
-Allow variable attribute names to be passed into the generic shader
-
-Maybe encapsulate framebuffer creation and management to its own class
-
-Sort out the #pragma once's and include guards, pick one or the other and not both lol
 
 Implement tile lighting, test using it within the shader
 	- Add a getTile method to the world class
@@ -15,10 +7,7 @@ Implement tile lighting, test using it within the shader
 
 Add seamless tile connections, tile decor
 MAKE MORE TILES
-Add more tile properties
-Organized tile properties, json definable, figure out better ways to get properties of a specific tile
 
-World seeds, json definable world types, biomes, and more
 World chunk serialization, saving to disk
 
 Begin on entities, discuss how physics will work, convince reo that making a physics engine by hand will be a pain
@@ -27,7 +16,6 @@ perhaps meddle with particles, maybe
 
 Figure out how multi-tile objects placed within the world will work, accounting for chunk borders
 
-optimize, optimize, optimize
 
 LONG TERM::
 Liquid physics
@@ -39,7 +27,17 @@ get more people hyped to learn c++ and opengl
 solid, defined modding engine, helpful for development also
 All basic game things should be able to be done using a coherent system, a layer of abstraction that allows easy expansion
 
+ONGOING::
 
+Sort out the #pragma once's and include guards, pick one or the other and not both lol
+
+CLEAN THE CODE UP, GET RID OF UNNECESSARY CODE / CONSOLIDATE, it should be readable somewhat
+
+World seeds, json definable world types, biomes, and more
+
+Find a way to handle textures better, not on a class-by-class basis
+
+optimize, optimize, optimize
 
 
 COMPLETED::
@@ -48,3 +46,6 @@ Check for memory leaks, or at least figure out how to properly delete the Array2
 	- Storing Array2D data in a vector, avoiding using new by relying on standard library allocation and deallocation
 cut down on compiler warnings, they are ugly 
 Make resourceloader use std::map instead of a vector
+Add more tile properties
+Organized tile properties, json definable, figure out better ways to get properties of a specific tile
+Maybe encapsulate framebuffer creation and management to its own class

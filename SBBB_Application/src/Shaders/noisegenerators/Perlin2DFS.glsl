@@ -51,5 +51,6 @@ void main() {
     vec2 uv = TexCoord;
     uv += WorldPos;
     // layer the color channels with octaves because why not
-    fragColor = vec4(noise(uv), noise(uv*2.f + 10.f), noise(uv*5.f + 20.f), noise(uv*10.f + 30.f));
+    //fragColor = vec4(noise(uv), noise(uv*2.f + 10.f), noise(uv*5.f + 20.f), noise(uv*10.f + 30.f));
+    fragColor = vec4(noise(uv*10.f + 30.f), noise(uv*5.f + 20.f), noise(uv*2.f + 10.f), noise(uv));
 }

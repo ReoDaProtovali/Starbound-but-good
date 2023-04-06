@@ -23,6 +23,7 @@
 #include "util/SharedMap.hpp"
 #include "util/SharedQueue.hpp"
 #include "WorldGenNoisemap.hpp"
+#include "WorldGenerator.hpp"
 
 #define GENERATION_THREAD_COUNT 4
 
@@ -63,6 +64,7 @@ public:
 
 private:
 	WorldGenNoisemap m_noiseMap;
+	WorldGenerator m_worldgen;
 	ResourceManager& res = ResourceManager::Get();
 
 	std::vector<std::thread> m_genThreads;

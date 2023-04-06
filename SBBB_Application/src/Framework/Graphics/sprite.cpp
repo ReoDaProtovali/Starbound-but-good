@@ -9,8 +9,6 @@ Sprite::Sprite()
 	m_spriteMesh.setStreamType(GL_DYNAMIC_DRAW);
 	m_spriteMesh.addFloatAttrib(3); // Position
 	m_spriteMesh.addFloatAttrib(2); // Texcoord
-	m_spriteMesh.pushVBOToGPU();
-
 }
 
 Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
@@ -42,7 +40,6 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 5
 		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
 		});
-	m_spriteMesh.pushVBOToGPU();
 
 	auto& gs = GenericShaders::Get();
 	// default shader
@@ -65,6 +62,9 @@ void Sprite::attachTexture(Texture* p_texture)
 
 void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
+	if (!m_spriteMesh.VBOInitialized) {
+		m_spriteMesh.pushVBOToGPU();
+	}
 	DrawStates newStates = DrawStates(p_drawStates);
 	if (m_attachedShader != nullptr) {
 		newStates.attachShader(m_attachedShader);

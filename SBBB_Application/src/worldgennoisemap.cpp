@@ -1,5 +1,4 @@
 #include "WorldGenNoisemap.hpp"
-#include "ResourceManager.hpp"
 #include "GameConstants.hpp"
 WorldGenNoisemap::WorldGenNoisemap()
 {
@@ -69,7 +68,6 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 
 	currentVec.emplace_back(p_generatorName, StaticArray2D<uint8_t>());
 	
-	ResourceManager& res = ResourceManager::Get();
 	Shader& generatorShader = res.getGeneratorShader(p_generatorName);
 
 	DrawStates d;

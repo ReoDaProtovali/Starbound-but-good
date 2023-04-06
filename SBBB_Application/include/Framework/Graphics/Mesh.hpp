@@ -183,6 +183,7 @@ public:
 		if (!VBOInitialized) {
 			glGenBuffers(1, &VBO->ID);
 			GLGEN_LOG("Generated Vertex Buffer " << VBO->ID);
+			VBOInitialized = true;
 		}
 		else {
 			GLGEN_LOG("Re-generated Vertex Buffer " << VBO->ID);
@@ -218,30 +219,31 @@ public:
 			glCheck(glEnableVertexAttribArray(i));
 		}
 		glEnableVertexAttribArray(0);
-		VBOInitialized = true;
 	};
 
 	void pushIBOToGPU() {
 		if (!VAOInitialized) {
 			glGenVertexArrays(1, &VAO->ID);
 			GLGEN_LOG("Generated Vertex Array " << VAO->ID);
+			VAOInitialized = true;
 		}
 		if (m_indices.size() == 0) return;
 		glCheck(glBindVertexArray(VAO->ID));
 		if (!IBOInitialized) {
 			glGenBuffers(1, &IBO->ID);
 			GLGEN_LOG("Generated Index Buffer " << IBO->ID);
+			IBOInitialized = true;
 		}
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO->ID));
 		glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_indices.size(), m_indices.data(), m_streamType));
 		glEnableVertexAttribArray(GL_NONE);
-		IBOInitialized = true;
 	}
 	void subCurrentVBOData() {
 		glCheck(glBindVertexArray(VAO->ID));
 		if (!VBOInitialized) {
 			glGenBuffers(1, &VBO->ID);
 			GLGEN_LOG("Generated Vertex Buffer " << VBO->ID);
+			VBOInitialized = true;
 		}
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
 		glCheck(glBufferSubData(GL_ARRAY_BUFFER, 0, m_verts.size() * sizeof(T), m_verts.data()));
@@ -251,6 +253,7 @@ public:
 		if (!VBOInitialized) {
 			glGenBuffers(1, &VBO->ID);
 			GLGEN_LOG("Generated Vertex Buffer " << VBO->ID);
+			VBOInitialized = true;
 		}
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
 		glCheck(glBufferSubData(GL_ARRAY_BUFFER, p_startIndex * sizeof(T), (p_endIndex - p_startIndex) * sizeof(T), p_data));

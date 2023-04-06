@@ -13,6 +13,8 @@ layout(location = 4) uniform bool generateConnections;
 
 out vec2 TexCoord;
 out float zLevel;
+out float out_ID; // for testing
+out float greyscale; // for testing
 
 in DATA {
 	uint ID;
@@ -44,28 +46,36 @@ vec2 IDToTexOffset(uint ID) {
 // uhhhhh texbounds is (x1, y1, x2, y2) while regionbounds is (x1, y1, w, h)
 // warning i think the origin is at the bottom left and that's kinda stupid
 void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
-	uint randp = abs(uint(float(18729) * rand(gl_in[0].gl_Position.xy + worldPos * 2.f))) % data_in[0].variationCount;
+	uint randp = abs(uint(18729.f * rand(gl_in[0].gl_Position.xy + worldPos * 2.f))) % data_in[0].variationCount;
 	vec2 offset =  IDToTexOffset(data_in[0].ID) + vec2(SPRITE_WIDTH * randp, 0);
 	// boo flickering
 	regionBounds += vec4(-0.002f, -0.002f, 0.004f, 0.004f);
 	gl_Position = transform * (gl_in[0].gl_Position + vec4(regionBounds.x, regionBounds.y, z, 0));
 	TexCoord = vec2(texBounds.xw + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	out_ID = float(data_in[0].ID);
+	greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
 
 	gl_Position = transform * (gl_in[0].gl_Position + vec4(regionBounds.x + regionBounds.z, regionBounds.y, z, 0));
 	TexCoord = vec2(texBounds.zw + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	out_ID = float(data_in[0].ID);
+	greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
 
 	gl_Position = transform * (gl_in[0].gl_Position + vec4(regionBounds.x, regionBounds.y + regionBounds.w, z, 0));
 	TexCoord = vec2(texBounds.xy + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	out_ID = float(data_in[0].ID);
+	greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
 
 	gl_Position = transform * (gl_in[0].gl_Position + vec4(regionBounds.x + regionBounds.z, regionBounds.y + regionBounds.w, z, 0));
 	TexCoord = vec2(texBounds.zy + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	out_ID = float(data_in[0].ID);
+	greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
 
 	EndPrimitive();

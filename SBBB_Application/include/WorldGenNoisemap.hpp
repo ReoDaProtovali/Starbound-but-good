@@ -7,6 +7,7 @@
 #include <string>
 #include <mutex>
 #include "util/SharedMap.hpp"
+#include "ResourceManager.hpp"
 
 #define NOISEMAP_TILE_SIZE 512
 
@@ -43,6 +44,8 @@ private:
 	glm::ivec2 globalPosToTilePos(int32_t p_worldPosX, int32_t p_worldPosY);
 	FrameBuffer m_FBO;
 	Mesh<GLfloat> m_square;
+
+	ResourceManager& res = ResourceManager::Get();
 
 	//std::mutex m_readMutex;
 	SharedMap<glm::ivec2, std::vector<NoiseTile>, ivec2Hash> m_map;

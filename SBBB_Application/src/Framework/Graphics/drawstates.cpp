@@ -79,7 +79,7 @@ void DrawStates::addTexture(Texture* p_texture)
 void DrawStates::setTexture(size_t p_index, Texture* p_texture)
 {
 	if (p_index >= m_texturePtrs.size() || m_texturePtrs.size() == 0) {
-		throw new std::runtime_error("Attempted to set DrawState texture index out of range.");
+		throw std::runtime_error("Attempted to set DrawState texture index out of range.");
 		return;
 	}
 	m_texturePtrs[p_index] = p_texture;

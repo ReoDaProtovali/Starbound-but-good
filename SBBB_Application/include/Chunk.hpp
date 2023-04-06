@@ -36,8 +36,8 @@ struct ChunkPos {
 	size_t operator()(const ChunkPos& p_key) const {
 		return (p_key.y << 16) ^ p_key.x;
 	}
-	int x;
-	int y;
+	int32_t x;
+	int32_t y;
 };
 
 class ChunkManager;
@@ -60,6 +60,7 @@ struct WorldChunk : public TransformObject
 	void fillRandom();
 	void worldGenerate(WorldGenNoisemap& noiseGen);
 	void setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
+	void setTiles(Array3D<Tile>&& p_tiles);
 	Tile& getChunkTile(int p_x, int p_y, int p_z);
 	// conditionally returns either an internal tile or a tile from a neigboring chunk based on the given position.
 	std::optional<Tile*> getNeigboringChunkTile(int p_chunkX, int p_chunkY, int p_chunkZ, ChunkManager& p_chnks);

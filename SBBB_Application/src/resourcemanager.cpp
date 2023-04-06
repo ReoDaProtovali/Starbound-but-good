@@ -214,7 +214,7 @@ void ResourceManager::loadGeneratorShaders() {
 		generatorsJSON = json::parse(utils::readFile(generatorsJSONPath.string().c_str()));
 	}
 	catch (json::parse_error e) {
-		ERROR_LOG("Failed to parse noise generator JSON.");
+		ERROR_LOG("Failed to parse noise generator JSON.\n" << e.what());
 		return;
 	}
 
@@ -235,8 +235,8 @@ void ResourceManager::loadGeneratorShaders() {
 }
 
 Shader& ResourceManager::getGeneratorShader(const std::string& p_name) {
-	if (m_generatorShaders.find(p_name) == m_generatorShaders.end()) {
-		ERROR_LOG("Failed to get requested shader.");
+	if (!m_generatorShaders.contains(p_name)) {
+		ERROR_LOG("Failed to get requested shader: " + p_name);
 		throw std::exception("Try again nerd");
 	}
 	return m_generatorShaders[p_name];

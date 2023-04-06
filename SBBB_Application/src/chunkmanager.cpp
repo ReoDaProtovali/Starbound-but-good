@@ -18,12 +18,12 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 	if (!chunkExistsAt(p_chunkPos)) {
 		static auto allGenerators = res.getAllGeneratorShaders();
 		for (auto& str : allGenerators) {
-			m_noiseMap.genTilesNeighboringChunk(p_chunkPos.x, p_chunkPos.y, str);
+			//m_noiseMap.genTilesNeighboringChunk(p_chunkPos.x, p_chunkPos.y, str);
+			m_worldgen.loadNoiseValuesAtChunk(p_chunkPos.x, p_chunkPos.y);
 		}
 		m_loadQueue.push(p_chunkPos);
 		// because this is a std::unordered_map, it inserts a default constructed chunk when you do this
 		s_chunkMap[p_chunkPos];
-		//m_workCount.release();
 	};
 }
 
@@ -65,7 +65,12 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 	WorldChunk c = WorldChunk(p_chunkPos, 0); // world ID is hardcoded for now. Will most def be a different system later.
 
 	// assume valid noisemap at position
-	c.worldGenerate(m_noiseMap);
+	//c.worldGenerate(m_noiseMap);
+	bool empty = true;
+	c.setTiles(m_worldgen.generateChunk(p_chunkPos.x, p_chunkPos.y, empty));
+	c.isEmpty = empty;
+	c.invalid = false;
+
 	s_chunkMap[p_chunkPos] = std::move(c);
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {

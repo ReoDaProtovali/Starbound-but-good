@@ -31,6 +31,11 @@ public:
 	}
 	
 	T& operator()(int x, int y) {
+#ifdef SBBB_DEBUG
+		if (!bounded(x, y)) {
+			throw std::out_of_range("2D Array index out of bounds.");
+		}
+#endif
 		return data[((y * width) + x)];
 	}
 
