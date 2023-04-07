@@ -5,6 +5,7 @@
 #include "Framework/Graphics/FrameBuffer.hpp"
 #include "Framework/Graphics/Sprite.hpp"
 #include "util/Messenger.hpp"
+#include "util/DebugDraw.hpp"
 
 class WorldRenderer {
 
@@ -31,6 +32,6 @@ public:
 
 	// If we want to draw the world, we kinda have to know where we are in it
 	void setCamera(std::shared_ptr<Camera> p_cam);
-
+	bool drawChunkBorders = false;
 	int draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p_windowWidth);
 };

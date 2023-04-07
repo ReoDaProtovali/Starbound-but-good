@@ -49,7 +49,6 @@ in vec2 TexCoord;
 
 void main() {
     vec2 uv = vec2(TexCoord.x, 0.0f);
-    uv.x += WorldPos.x;
-    // layer the color channels with octaves because why not
-    fragColor = vec4(noise(uv), noise(uv*2.f + 10.f), noise(uv*5.f + 20.f), noise(uv*10.f + 30.f));
+    uv.x += WorldPos.x; 
+    fragColor = vec4((noise(uv) + noise(uv*2.f + 10.f) * 0.3f + noise(uv*5.f + 20.f) * 0.4f + noise(uv*10.f + 30.f) * 0.2f * noise(uv*10.f + 30.f)));
 }

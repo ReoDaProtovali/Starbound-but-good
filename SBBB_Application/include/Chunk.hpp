@@ -58,7 +58,6 @@ struct WorldChunk : public TransformObject
 	WorldChunk(WorldChunk&& other) noexcept;
 
 	void fillRandom();
-	void worldGenerate(WorldGenNoisemap& noiseGen);
 	void setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
 	void setTiles(Array3D<Tile>&& p_tiles);
 	Tile& getChunkTile(int p_x, int p_y, int p_z);

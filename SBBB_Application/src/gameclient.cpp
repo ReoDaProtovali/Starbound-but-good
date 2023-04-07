@@ -37,7 +37,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				resizeWindow(newWidth, newHeight);
 			}
 
-			renderFPSGauge.update(30);
+			renderFPSGauge.update(0.5f);
 			testInput();
 			processDebugStats();
 			render();
@@ -59,8 +59,7 @@ void GameClient::render()
 	renderer.clearScreen();
 
 	DebugStats& db = DebugStats::Get();
-	int drawnChunkCount = 0;
-	drawnChunkCount = renderer.drawWorld();
+	int drawnChunkCount = renderer.drawWorld();
 	if (drawnChunkCount != 0) db.drawnChunkCount = drawnChunkCount;
 	glEnable(GL_DEPTH_TEST);
 	renderer.testDraw();
@@ -124,11 +123,11 @@ void GameClient::processDebugStats()
 
 	static uint32_t debugUpdateCounter = 0;
 	debugUpdateCounter++;
-	if ((debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { // means the console updates every second
+	if ((debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { 
 		debugUpdateCounter = 0;
 		DebugStats& db = DebugStats::Get();
 		//db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
-		db.drawFPS = (float)(1.0 / utils::averageVector(renderFPSGauge.frametimeBuffer));
+		db.drawFPS = (float)(1.0 / renderFPSGauge.getFrametimeAverage());
 		db.camX = renderer.cam->pos.x;
 		db.camY = renderer.cam->pos.y;
 		auto f = renderer.cam->getFrame();

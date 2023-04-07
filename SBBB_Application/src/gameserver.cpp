@@ -18,7 +18,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 	// this kinda has to be outside of the try...catch so it is scoped in the catch block
 	ChunkManager world;
-	world.genFixed(10, 10);
+	world.genFixed(10, 20);
 	world.startThreads();
 	try {
 
@@ -30,9 +30,9 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				ts.drain();
 
 				world.processRequests();
-				tickGauge.update(30);
+				tickGauge.update(0.9);
 
-				db.updateFPS = (float)(1.0 / utils::averageVector(tickGauge.frametimeBuffer));
+				db.updateFPS = (float)(1.0 / tickGauge.getFrametimeAverage());
 
 				ts.processFrameStart();
 			}

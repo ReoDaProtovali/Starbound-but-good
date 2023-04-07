@@ -132,6 +132,9 @@
     <ClCompile Include="src\worldgenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\util\debugdraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -281,6 +284,9 @@
     <ClInclude Include="include\WorldGenerator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\util\DebugDraw.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\TODO.txt" />
@@ -322,7 +328,7 @@
     <None Include="freetype.dll" />
     <None Include="src\Shaders\TextVS.glsl" />
     <None Include="src\Shaders\TextFS.glsl" />
-    <None Include="src\Shaders\noisegenerators\Perlin1DFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\TestHeightmapFS.glsl" />
     <None Include="res\tilesets\vanilla\tiledata\NeonGrid.TileProperties" />
     <None Include="src\Shaders\SolidColorVS.glsl" />
     <None Include="src\Shaders\SolidColorFS.glsl" />

@@ -6,6 +6,7 @@
 #include "Framework/Log.hpp"
 #include "GlCheck.hpp"
 #include "GlIDs.hpp"
+#include <assert.h>
 
 
 enum {

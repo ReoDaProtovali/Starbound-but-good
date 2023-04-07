@@ -8,15 +8,15 @@ WorldGenerator::WorldGenerator() {
 
 void WorldGenerator::initTestSettings()
 {
-	m_settings.heightmap.shaderName = "perlin1d";
-	m_settings.heightmap.strength = 20.f;
+	m_settings.heightmap.shaderName = "testheightmap";
+	m_settings.heightmap.strength = 160.f;
 
 	gen::GeneratorSettings2D_4Layer testHollow;
 	testHollow.shaderName = "cavern";
-	testHollow.cutoff1 = 0.8f;
-	testHollow.cutoff2 = 0.6f;
-	testHollow.cutoff3 = 0.4f;
-	testHollow.cutoff4 = 0.2f;
+	testHollow.cutoffs[0] = 1.0f;
+	testHollow.cutoffs[1] = 0.5f;
+	testHollow.cutoffs[2] = 0.35f;
+	testHollow.cutoffs[3] = 0.15f;
 
 	m_settings.testBiome.hollowGenerators.push_back(testHollow);
 
@@ -29,6 +29,7 @@ void WorldGenerator::initTestSettings()
 }
 
 void WorldGenerator::loadNoiseValuesAtChunk(int32_t p_chunkX, int32_t p_chunkY) {
+	m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, m_settings.heightmap.shaderName);
 	for (auto& hollowGenerator : m_settings.testBiome.hollowGenerators) {
 		m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, hollowGenerator.shaderName);
 	}
@@ -50,6 +51,22 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
+				// has to be up here because it can be goto'd past
+				std::pair<std::string, float> record = { "NULL", 999.f };
+
+
+				float heightmapValue = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, m_settings.heightmap.shaderName).r * m_settings.heightmap.strength;
+				if (globalChunkY - y > heightmapValue) {
+					out(x, y, z) = Tile(x, y, 0);
+					goto out; // ewww goto ewwwwwww
+				}
+				for (auto& hollowGenerator : m_settings.testBiome.hollowGenerators) {
+					float hollowValue = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, hollowGenerator.shaderName)[0];
+					if (hollowValue > hollowGenerator.cutoffs[z]) {
+						out(x, y, z) = Tile(x, y, 0);
+						goto out; // ewww goto ewwwwwww
+					}
+				}
 				// get all generator outputs and compute tile distances
 				for (auto& materialGenerator : m_settings.testBiome.materialGenerators) {
 
@@ -57,7 +74,7 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 						distances[range.materialName] = 0.f;
 					}
 
-					float noiseMapOutput = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, materialGenerator.first).r;
+					float noiseMapOutput = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, materialGenerator.first)[0];
 					// to compute the distance, we need the range the material can generate in as well as the values
 					for (gen::MaterialRange& range : materialGenerator.second) {
 						// invalidate if tile is not qualified for any one range
@@ -69,7 +86,6 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 						distances[range.materialName] += noiseMapOutput * noiseMapOutput - 2 * range.center() * noiseMapOutput + range.center() * range.center();
 					}
 				}
-				std::pair<std::string, float> record = { "NULL", 999.f };
 				for (auto& dist : distances) {
 					if (dist.second < record.second) record = dist;
 				}
@@ -81,6 +97,8 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 				else {
 					out(x, y, z) = Tile(x, y, 0);
 				}
+			out:
+				; // lolft
 			}
 
 		}

@@ -146,7 +146,8 @@ struct fpsGauge {
 	fpsGauge() { }
 	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 	std::chrono::microseconds elapsed = std::chrono::microseconds(0);
-	std::vector<double> frametimeBuffer;
+	//std::vector<double> frametimeBuffer;
+	double lastFrametimeAverage = 0.0f;
 
 	void startStopwatch() {
 		start = std::chrono::system_clock::now();
@@ -161,13 +162,13 @@ struct fpsGauge {
 	* 
 	* @param maxBufferLength - The maximum length of the buffer before it starts removing old values
 	*/
-	void update(int maxBufferLength) {
+	void update(float persistence) {
 		stopStopwatch();
 		startStopwatch();
-		frametimeBuffer.push_back(getSecondsElapsed());
-		if (frametimeBuffer.size() > (size_t)maxBufferLength) { // quarter second fps display buffer
-			frametimeBuffer.erase(frametimeBuffer.begin());
-		}
+		lastFrametimeAverage = lastFrametimeAverage * persistence + getSecondsElapsed() * (1.f - persistence);
+	}
+	float getFrametimeAverage() {
+		return (float)lastFrametimeAverage;
 	}
 
 };

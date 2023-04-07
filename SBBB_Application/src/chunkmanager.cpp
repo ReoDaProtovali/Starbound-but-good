@@ -65,9 +65,12 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 	WorldChunk c = WorldChunk(p_chunkPos, 0); // world ID is hardcoded for now. Will most def be a different system later.
 
 	// assume valid noisemap at position
-	//c.worldGenerate(m_noiseMap);
 	bool empty = true;
 	c.setTiles(m_worldgen.generateChunk(p_chunkPos.x, p_chunkPos.y, empty));
+	stats.chunkCount++;
+	stats.chunkGenCounter++;
+	if (empty) stats.emptyChunkCount++;
+
 	c.isEmpty = empty;
 	c.invalid = false;
 

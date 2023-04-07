@@ -61,7 +61,6 @@ public:
 	/// Simply tells the lighting subclass to draw based on it's current values.
 	void drawLighting();
 
-	void drawBoxImmediate(float p_x, float p_y, float p_w, float p_h, glm::vec3 p_col);
 
 	// TEST ----------------------------------------------------------------------------
 	/// The camera is bound directly to the renderer for now.

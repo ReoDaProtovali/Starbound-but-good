@@ -188,6 +188,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\util\debugdraw.cpp" />
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />
@@ -253,6 +254,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\ChunkManager.hpp" />
     <ClInclude Include="include\util\Array2D.hpp" />
     <ClInclude Include="include\util\Array3D.hpp" />
+    <ClInclude Include="include\util\DebugDraw.hpp" />
     <ClInclude Include="include\util\GenericMessage.hpp" />
     <ClInclude Include="include\util\SharedQueue.hpp" />
     <ClInclude Include="include\util\Messenger.hpp" />
@@ -293,7 +295,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\SolidColorVS.glsl" />
     <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl" />
     <None Include="src\Shaders\noisegenerators\Perlin2DFS.glsl" />
-    <None Include="src\Shaders\noisegenerators\Perlin1DFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\TestHeightmapFS.glsl" />
     <None Include="src\Shaders\TextFS.glsl" />
     <None Include="src\Shaders\TextVS.glsl" />
     <None Include="src\Shaders\TileFS.glsl" />

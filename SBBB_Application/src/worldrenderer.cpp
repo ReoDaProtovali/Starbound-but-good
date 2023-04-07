@@ -88,7 +88,9 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 				}
 				m_tileShader.setVec2Uniform(2, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 				chunk.draw(m_tileFBO, m_tileDrawStates);
-
+				if (drawChunkBorders) {
+					DebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
+				}
 				drawnChunkCount++;
 			};
 		}

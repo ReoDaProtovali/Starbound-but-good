@@ -1,6 +1,7 @@
 #include "GameRenderer.hpp"
 #include <sstream>
 #include <iomanip>
+
 GameRenderer::GameRenderer(const GameWindow& p_window) :
 	windowWidth(p_window.windowWidth),
 	windowHeight(p_window.windowHeight),
@@ -84,97 +85,6 @@ int GameRenderer::drawWorld()
 	state.setTransform(currentCamera.lock()->getTransform());
 	return worldRenderer.draw(m_screenFBO, state, windowWidth);
 }
-// debug function
-void GameRenderer::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h, glm::vec3 p_col) {
-	static Mesh<float> s_Mesh{ NO_VAO_INIT };
-	static bool firstRun = true;
-	if (!s_Mesh.VAOInitialized) {
-		s_Mesh.setStreamType(GL_DYNAMIC_DRAW);
-		s_Mesh.addFloatAttrib(3);
-	}
-
-	s_Mesh.clean();
-
-	// top side
-	Rect localBounds = Rect(-0.5f, -0.5f, p_w + 1.f, 1.f);
-	auto tl = localBounds.getTL();
-	auto tr = localBounds.getTR();
-	auto bl = localBounds.getBL();
-	auto br = localBounds.getBR();
-
-	s_Mesh.pushVertices({
-		tl.x, -tl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		br.x, -br.y, 0.f
-		});
-
-	// left side
-	localBounds = Rect(-0.5f, -0.5f, 1.f, p_h + 1.f);
-	tl = localBounds.getTL();
-	tr = localBounds.getTR();
-	bl = localBounds.getBL();
-	br = localBounds.getBR();
-
-	s_Mesh.pushVertices({
-		tl.x, -tl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		br.x, -br.y, 0.f
-		});
-
-	// right side
-	localBounds = Rect(p_w - 0.5f, -0.5f, 1.f, p_h + 1.f);
-	tl = localBounds.getTL();
-	tr = localBounds.getTR();
-	bl = localBounds.getBL();
-	br = localBounds.getBR();
-
-	s_Mesh.pushVertices({
-		tl.x, -tl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		br.x, -br.y, 0.f
-		});
-
-	// bottom side
-	localBounds = Rect(-0.5f, p_h - 0.5f, p_w + 1.f, 1.0f);
-	tl = localBounds.getTL();
-	tr = localBounds.getTR();
-	bl = localBounds.getBL();
-	br = localBounds.getBR();
-
-	s_Mesh.pushVertices({
-		tl.x, -tl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		bl.x, -bl.y, 0.f,
-		tr.x, -tr.y, 0.f,
-		br.x, -br.y, 0.f
-		});
-
-	if (firstRun) {
-		s_Mesh.pushVBOToGPU();
-	}
-	else {
-		s_Mesh.subCurrentVBOData();
-	}
-
-	DrawStates d;
-	d.attachShader(&gs.solidColorShader);
-	gs.solidColorShader.setVec3Uniform(1, p_col);
-	auto currentTransform = glm::mat4(1);
-	currentTransform = glm::translate(currentTransform, glm::vec3(p_x, p_y, 0));
-	d.setTransform(currentCamera.lock()->getTransform() * currentTransform);
-	m_screenFBO.draw(s_Mesh, GL_TRIANGLES, d);
-	firstRun = false;
-}
 
 void GameRenderer::drawLighting() {
 	m_lighting.draw(m_screenFBO);
@@ -228,7 +138,7 @@ void GameRenderer::testDraw()
 	debugText.setText(infoString.str());
 	debugText.draw(glm::vec2(-0.98f, 0.95f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
 
-	drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f));
+	DebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
 	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
 
 	glEnable(GL_DEPTH_TEST);

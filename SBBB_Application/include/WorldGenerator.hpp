@@ -26,15 +26,12 @@ namespace gen {
 	// 2d generator, determines empty regions of the world
 	struct GeneratorSettings2D_4Layer {
 		GeneratorSettings2D_4Layer() 
-			: shaderName("NULL"), cutoff1(0.f), cutoff2(0.f), cutoff3(0.f), cutoff4(0.f) {};
+			: shaderName("NULL") {};
 		std::string shaderName;
 		uint64_t seed = 0; // UNIMPLEMENTED
 		// determines the greyscale cutoff point for how sparse or solid the generator is
-		// Currently, cutoff1, 2, 3, and 4 affect the empty regions of each world layer individually. Might make it more flexible later 
-		float cutoff1;
-		float cutoff2;
-		float cutoff3;
-		float cutoff4;
+		// static array with one value per each world layer, might make it more controllable later
+		float cutoffs[CHUNKDEPTH] = {0};
 		bool operator==(const GeneratorSettings2D_4Layer& rhs) const {
 			return this->shaderName == rhs.shaderName && this->seed == rhs.seed;
 		}

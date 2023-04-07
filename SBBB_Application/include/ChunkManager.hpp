@@ -63,13 +63,13 @@ public:
 	void logChunks();
 
 private:
-	WorldGenNoisemap m_noiseMap;
 	WorldGenerator m_worldgen;
 	ResourceManager& res = ResourceManager::Get();
 
 	std::vector<std::thread> m_genThreads;
 	std::mutex m_chunkVBOMutex;
 	std::atomic<bool> m_stopAllThreads = false;
+	DebugStats& stats = DebugStats::Get();
 	
 	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();

@@ -5,8 +5,8 @@
       "file": "Perlin2DFS.glsl"
     },
     {
-      "name": "perlin1d",
-      "file": "Perlin1DFS.glsl"
+      "name": "testheightmap",
+      "file": "TestHeightmapFS.glsl"
     },
     {
       "name": "cavern",
