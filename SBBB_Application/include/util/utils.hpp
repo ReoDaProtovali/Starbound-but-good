@@ -17,6 +17,7 @@
 constexpr auto SIXTY_TIMES_PER_SECOND = 0.01666666666f;
 constexpr auto ONE_TIME_PER_SECOND = 0.001f;
 // A collection of single functions that are useful in a variety of situations
+// breaks if not inline for some reason
 namespace utils {
 	inline float hireTimeInSeconds() {
 		float t = (float)SDL_GetTicks();
@@ -66,7 +67,6 @@ namespace utils {
 	}
 	inline bool pointCollidingRect(glm::vec2 p_pointPos, glm::vec2 p_rectPos, glm::vec2 p_rectDim) {
 		glm::vec2 relativePos = p_rectPos - p_pointPos;
-		//printf("%f, %f \n", relativePos.x, relativePos.y);
 		if ((relativePos.x <= p_rectDim.x) && (relativePos.y <= p_rectDim.y) && (relativePos.x > 0.0f) && (relativePos.y > 0.0f)) {
 			return true;
 		};

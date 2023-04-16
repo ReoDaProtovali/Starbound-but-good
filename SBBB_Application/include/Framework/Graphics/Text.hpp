@@ -2,7 +2,7 @@
 #include <ft2build.h>
 #include <util/ext/glm/vec2.hpp>
 #include "Framework/Log.hpp"
-#include "util/StaticArray2D.h"
+#include "util/StaticArray2D.hpp"
 #include "Framework/Graphics/Texture.hpp"
 #include "Framework/Graphics/Mesh.hpp"
 #include "Framework/Graphics/DrawStates.hpp"

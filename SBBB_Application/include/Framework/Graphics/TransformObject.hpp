@@ -17,6 +17,10 @@ class TransformObject {
 public:
 	TransformObject();
 
+	TransformObject& operator=(const TransformObject& other) {
+		cloneTransform(other);
+		return *this;
+	}
 	// Sets the origin to be used. Affects rotation, position, etc
 	void setOrigin(glm::vec2 p_origin);
 	void setOrigin(Rect p_bounds, OriginLoc p_origin);
@@ -47,6 +51,8 @@ public:
 	void calculateTransform();
 
 	glm::mat4 getObjectTransform();
+
+	void cloneTransform(const TransformObject& p_other);
 
 
 

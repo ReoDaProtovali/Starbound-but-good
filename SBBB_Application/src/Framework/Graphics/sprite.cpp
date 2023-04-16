@@ -5,10 +5,6 @@ Sprite::Sprite()
 {
 	m_attachedShader = nullptr;
 	m_attachedTexture = nullptr;
-	// Keep it as dynamic for now, 
-	m_spriteMesh.setStreamType(GL_DYNAMIC_DRAW);
-	m_spriteMesh.addFloatAttrib(3); // Position
-	m_spriteMesh.addFloatAttrib(2); // Texcoord
 }
 
 Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
@@ -19,18 +15,23 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 	bounds = p_bounds;
 	// Default origin:
 	setOrigin(bounds.getCenter());
+	m_attachedShader = nullptr;
+	m_attachedTexture = nullptr;
+}
 
+
+void Sprite::initForDraw()
+{
 	// Keep it as dynamic for now, 
 	m_spriteMesh.setStreamType(GL_DYNAMIC_DRAW);
 	m_spriteMesh.addFloatAttrib(3); // Position
 	m_spriteMesh.addFloatAttrib(2); // Texcoord
-	
+
 	// The four corner coordinates of the bounding rectangle. Note that the rectangle is in model space and not world space.
 	glm::vec2 tl = bounds.getTL();
 	glm::vec2 tr = bounds.getTR();
 	glm::vec2 bl = bounds.getBL();
 	glm::vec2 br = bounds.getBR();
-
 
 	m_spriteMesh.pushVertices({
 		tl.x, tl.y, 0.0f, 0.0f, 0.0f, // vertex 1
@@ -43,9 +44,12 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 
 	auto& gs = GenericShaders::Get();
 	// default shader
-	m_attachedShader = &gs.imageShader;
-}
+	if (!m_attachedShader)
+		m_attachedShader = &gs.imageShader;
 
+	m_spriteMesh.pushVBOToGPU();
+	m_drawReady = true;
+}
 
 void Sprite::attachShader(Shader* p_shader)
 {
@@ -62,6 +66,10 @@ void Sprite::attachTexture(Texture* p_texture)
 
 void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
+#ifdef SBBB_DEBUG
+	if (std::this_thread::get_id() != DebugStats::Get().drawThread) throw std::exception();
+#endif
+	if (!m_drawReady) initForDraw();
 	if (!m_spriteMesh.VBOInitialized) {
 		m_spriteMesh.pushVBOToGPU();
 	}
@@ -93,13 +101,16 @@ void Sprite::setBounds(Rect p_bounds)
 	glm::vec2 bl = bounds.getBL();
 	glm::vec2 br = bounds.getBR();
 
-	std::vector<GLfloat> newVBOData = {
+	m_spriteMesh.remove();
+	m_spriteMesh.pushVertices({
 		tl.x, tl.y, 0.0f, 0.0f, 0.0f, // vertex 1
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 2
 		bl.x, bl.y, 0.0f, 0.0f, 1.0f, // vertex 3
 		bl.x, bl.y, 0.0f, 0.0f, 1.0f, // vertex 4
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 5
 		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
-	};
-	m_spriteMesh.subVBOData(0, 30, newVBOData.data());
+	});
+
+	m_spriteMesh.pushVBOToGPU();
+
 }

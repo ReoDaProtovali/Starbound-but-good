@@ -22,6 +22,9 @@
 
 #include "Framework/Graphics/Text.hpp"
 
+#include "util/SharedDynArray.hpp"
+#include "TestEntity.hpp"
+#include "box2d.h"
 
 class Lighting;
 class GameWindow;
@@ -68,12 +71,15 @@ public:
 	std::shared_ptr<Camera> cam = std::make_shared<Camera>();
 	std::shared_ptr<Camera> overviewCam;
 
-	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 315.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
+	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 109.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
 	Texture* testReoTexture = nullptr;
 
+	
 	float testFrame = 0;
 	void testDraw();
 	void swapCameras();
+
+	SharedDynArray<TestEntity>& entities = SharedDynArray<TestEntity>::Get();
 
 	// ---------------------------------------------------------------------------------
 

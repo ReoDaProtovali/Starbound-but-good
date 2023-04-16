@@ -113,3 +113,12 @@ glm::mat4 TransformObject::getObjectTransform()
 	calculateTransform();
 	return m_transform;
 }
+
+void TransformObject::cloneTransform(const TransformObject& p_other)
+{
+	m_origin = p_other.m_origin;
+	m_position = p_other.m_position;
+	m_rotation = p_other.m_rotation;
+	m_rotationAxis = p_other.m_rotationAxis;
+	m_scale = p_other.m_scale;
+}

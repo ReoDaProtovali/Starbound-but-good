@@ -5,7 +5,7 @@
 
 // shrimple dimple
 // used for initilizing uniforms in the constructor of shaders
-
+// kinda depreciated but don't want to get rid of it
 enum class UniformTypes {
 	UNDEFINED,
 	FLOAT,

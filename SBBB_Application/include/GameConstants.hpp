@@ -3,9 +3,10 @@
 
 #include "Framework/FrameworkConstants.hpp"
 #include <atomic>
+#include <thread>
 #define POLLING_RATE_MS 10
 #define UPDATE_RATE_FPS 60
-#define FRAMES_BETWEEN_STAT_UPDATES 10
+#define FRAMES_BETWEEN_STAT_UPDATES 60
 #define DISABLE_RUNTIME_CONSOLE false
 
 // do NOT increase this beyond limits. it does NOT like to be changed easily
@@ -25,6 +26,7 @@ enum class Corner {
 	BOTTOM_LEFT,
 	BOTTOM_RIGHT
 };
+
 
 //enum class ChunkPacketStatus {
 //	VALID,
@@ -65,6 +67,8 @@ struct DebugStats {
 	int loadQueueSize = 0;
 	std::atomic<int> chunkGenCounter = 0;
 	bool statUpdate = true;
+
+	std::thread::id drawThread;
 
 	// globals don't play nice
 	static DebugStats& Get() {

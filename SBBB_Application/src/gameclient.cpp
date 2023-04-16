@@ -23,6 +23,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	try {
 		// important, opengl NEEDS this
 		gw.bindToThisThread();
+		DebugStats::Get().drawThread = std::this_thread::get_id();
 		//gw.setVSync(false);
 		auto& res = ResourceManager::Get();
 		auto& gs = GenericShaders::Get();

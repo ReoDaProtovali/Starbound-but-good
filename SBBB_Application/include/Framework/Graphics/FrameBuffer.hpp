@@ -8,7 +8,7 @@
 #include <initializer_list>
 #include <vector>
 #include "util/Array2D.hpp"
-#include "util/StaticArray2D.h"
+#include "util/StaticArray2D.hpp"
 
 
 // Wrapper class for a FBO, which enables rendering directly into textures instead of the screen. Very handy for post processing and offscreen rendering.

@@ -91,6 +91,11 @@
     <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>.\build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgInstalledDir>C:\dev\vcpkg\installed</VcpkgInstalledDir>
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+    <VcpkgConfiguration>$(Configuration)</VcpkgConfiguration>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -128,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SBBB_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <DisableSpecificWarnings>6386;6268;26451;26800</DisableSpecificWarnings>
@@ -140,7 +145,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\dev\glew-2.2.0\lib\Release\x64;C:\dev\SDL2\lib\x64;$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glu32.lib;opengl32.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,7 +156,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
       <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
@@ -192,6 +197,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />
+    <ClCompile Include="src\collisionobject.cpp" />
+    <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\Framework\Graphics\drawstates.cpp" />
     <ClCompile Include="src\Framework\Graphics\framebuffer.cpp" />
     <ClCompile Include="src\Framework\Graphics\genericshaders.cpp" />
@@ -209,6 +216,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pixmap.cpp" />
     <ClCompile Include="src\resourcemanager.cpp" />
+    <ClCompile Include="src\simulation.cpp" />
     <ClCompile Include="src\spritesheet.cpp" />
     <ClCompile Include="src\tile.cpp" />
     <ClCompile Include="src\timestepper.cpp" />
@@ -221,6 +229,9 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Application.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Chunk.hpp" />
+    <ClInclude Include="include\CollisionObject.hpp" />
+    <ClInclude Include="include\util\SharedDynArray.hpp" />
+    <ClInclude Include="include\util\DynArray.hpp" />
     <ClInclude Include="include\GameClient.hpp" />
     <ClInclude Include="include\Framework\Graphics\BlendMode.hpp" />
     <ClInclude Include="include\Framework\Graphics\DrawStates.hpp" />
@@ -239,6 +250,9 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Framework\Graphics\TransformObject.hpp" />
     <ClInclude Include="include\Framework\Graphics\Uniform.hpp" />
     <ClInclude Include="include\GameServer.hpp" />
+    <ClInclude Include="include\Entity.hpp" />
+    <ClInclude Include="include\Simulation.hpp" />
+    <ClInclude Include="include\TestEntity.hpp" />
     <ClInclude Include="include\util\Bitwise.hpp" />
     <ClInclude Include="include\Framework\Input\InputHandler.hpp" />
     <ClInclude Include="include\Framework\Window\GameWindow.hpp" />
@@ -249,7 +263,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\ResourceManager.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\Tile.hpp" />
-    <ClInclude Include="include\TileVert.h" />
+    <ClInclude Include="include\TileVert.hpp" />
     <ClInclude Include="include\Timestepper.hpp" />
     <ClInclude Include="include\ChunkManager.hpp" />
     <ClInclude Include="include\util\Array2D.hpp" />
@@ -260,7 +274,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\util\Messenger.hpp" />
     <ClInclude Include="include\util\Rect.hpp" />
     <ClInclude Include="include\util\SharedMap.hpp" />
-    <ClInclude Include="include\util\StaticArray2D.h" />
+    <ClInclude Include="include\util\StaticArray2D.hpp" />
     <ClInclude Include="include\util\utils.hpp" />
     <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
     <ClInclude Include="include\Framework\FrameworkDraw.hpp" />

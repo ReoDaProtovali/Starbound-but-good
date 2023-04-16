@@ -13,7 +13,7 @@ struct Rect {
 	bool operator==(const Rect& rect2) {
 		return (xy == rect2.xy && wh == rect2.wh);
 	}
-	// functions to get corners of the rect.
+
 	// Gets the top left coordinate of the rectangle as a vec2.
 	glm::vec2 getBL() const {
 		return xy;

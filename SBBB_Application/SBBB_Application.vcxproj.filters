@@ -49,6 +49,12 @@
     <Filter Include="Source Files\Framework">
       <UniqueIdentifier>{d9ba77d6-a58d-478d-9815-4d0472eb919f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Client and Server">
+      <UniqueIdentifier>{6877b820-0bfd-4961-82a5-8015bbc4e76c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering\Framework">
+      <UniqueIdentifier>{24c65bb3-fb54-49a6-816c-5ee5498add85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\chunk.cpp">
@@ -135,6 +141,15 @@
     <ClCompile Include="include\util\debugdraw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\collisionobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -170,121 +185,139 @@
     <ClInclude Include="include\ResourceManager.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\BlendMode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\DrawStates.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\DrawSurface.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\GlCheck.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\Mesh.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\Pixmap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\Shader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\Sprite.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\Texture.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\TransformObject.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\Uniform.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Input\InputHandler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\Array2D.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\Rect.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\utils.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\util\DebugDraw.hpp">
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="include\Framework\Window\GameWindow.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\FrameworkConstants.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\FrameworkDraw.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Log.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\GlIDs.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Application.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\TileVert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WorldGenNoisemap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\StaticArray2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Framework\Graphics\Text.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\Array3D.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\Bitwise.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameClient.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Framework</Filter>
     </ClInclude>
     <ClInclude Include="include\GameServer.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Client and Server</Filter>
     </ClInclude>
-    <ClInclude Include="include\util\Messenger.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WorldRenderer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\SharedMap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\SharedQueue.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\GameClient.hpp">
+      <Filter>Header Files\Client and Server</Filter>
     </ClInclude>
     <ClInclude Include="include\util\GenericMessage.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GenericMeshes.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\FrameworkConstants.hpp">
+      <Filter>Header Files\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GenericShaders.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Input\InputHandler.hpp">
+      <Filter>Header Files\Game Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Bitwise.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Log.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Messenger.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Application.hpp">
+      <Filter>Header Files\Client and Server</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Array2D.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Array3D.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SharedMap.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SharedQueue.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\StaticArray2D.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TileVert.hpp">
+      <Filter>Header Files\Tile/Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\utils.hpp">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="include\WorldGenerator.hpp">
+      <Filter>Header Files\Game Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldGenNoisemap.hpp">
+      <Filter>Header Files\Game Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldRenderer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\BlendMode.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\DrawStates.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\DrawSurface.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\FrameBuffer.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\FrameworkDraw.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GlIDs.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\GlCheck.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Mesh.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Shader.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Text.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Texture.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Uniform.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Pixmap.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\Sprite.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Framework\Graphics\TransformObject.hpp">
+      <Filter>Header Files\Rendering\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\Rect.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Entity.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\util\DebugDraw.hpp">
+    <ClInclude Include="include\CollisionObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TestEntity.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\DynArray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Simulation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SharedDynArray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

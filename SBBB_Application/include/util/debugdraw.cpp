@@ -1,6 +1,6 @@
 #include "util/DebugDraw.hpp"
 
-void DebugDraw::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h, glm::vec3 p_col, DrawSurface& p_surface, Camera& p_camera) {
+void SBBBDebugDraw::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h, glm::vec3 p_col, DrawSurface& p_surface, Camera& p_camera) {
 	static Mesh<float> s_Mesh{ NO_VAO_INIT };
 	static bool firstRun = true;
 	if (!s_Mesh.VAOInitialized) {

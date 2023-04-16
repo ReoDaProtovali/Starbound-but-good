@@ -70,14 +70,14 @@ public:
 	*
 	* @returns A vec4 representing the camera's frame. the x and y represent the top left corner coords, z and w represent the bottom right corner coords.
 	*/
-	const glm::vec4 getFrame();
+	const glm::vec4 getFrame() const;
 
 	/**
 	* Getter for the camera's frame dimensions. Camera frame units are in tiles.
 	*
 	* @returns A vec2 representing the width and height of the frame.
 	*/
-	const glm::vec2 getFrameDimensions();
+	const glm::vec2 getFrameDimensions() const;
 	/**
 	* Used to update the camera's frame value based on camera's pixel dimensions. Should be done at some point after a window resize.
 	*
@@ -137,7 +137,7 @@ public:
 	/// Disables perspective projection, and defaults to orthographic.
 	void disablePerspective() { m_perspective = false; }
 
-	// the caller is responsible for actually doing the interpolation
+	// the caller is responsible for actually running .interpolate() and setting .lastVelocity
 	void enableInterpolation() { m_interpolation = true; }
 
 	void disableInterpolation() { m_interpolation = false; }

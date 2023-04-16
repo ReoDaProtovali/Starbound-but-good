@@ -5,6 +5,7 @@
 #include <algorithm>
 template<class T>
 // an Array2D that keeps its data in a raw pointer, handles its own memory
+// Allocated data must be past in externally at the moment, serves as a wrapper.
 // WARNING: DOES NOT BOUNDS CHECK
 // IF YOU READ OUT OF BOUNDS IT'S YOUR OWN FAULT, LOL
 class StaticArray2D {
@@ -27,7 +28,6 @@ public:
 
 	~StaticArray2D() {
 		if (data) free(data);
-
 	}
 	StaticArray2D<T> operator=(const StaticArray2D<T>& other) = delete;
 

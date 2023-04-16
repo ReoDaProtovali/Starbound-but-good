@@ -19,6 +19,7 @@ public:
 	~Sprite() {
 		DELETE_LOG("Sprite Destroyed");
 	}
+
 	// Shader must have the appropriate vertex attribute format
 	void attachShader(Shader* p_shader);
 	void attachTexture(Texture* p_texture);
@@ -28,13 +29,17 @@ public:
 	// We don't want to override the setorigin class of the inherited class, so we name it something different
 	void setOriginRelative(OriginLoc p_origin);
 	void setBounds(Rect p_bounds);
+
 	Rect bounds;
+
 private:
-	Mesh<GLfloat> m_spriteMesh;
+	void initForDraw(); // manual init in cases where gpu stuff can't be done right off the bat
+
+	Mesh<GLfloat> m_spriteMesh{NO_VAO_INIT};
 	// Optional attachments directly to the sprite, so you don't have to worry about setting your drawStates properly before draw().
 	Shader* m_attachedShader;
 	Texture* m_attachedTexture;
-
+	bool m_drawReady = false;
 };
 
 #endif

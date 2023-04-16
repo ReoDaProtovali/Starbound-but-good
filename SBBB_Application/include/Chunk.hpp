@@ -9,7 +9,7 @@
 
 
 #include "Tile.hpp"
-#include "TileVert.h"
+#include "TileVert.hpp"
 #include <util/ext/glm/vec2.hpp>
 #include <util/ext/glm/vec3.hpp>
 #include <util/ext/glm/vec4.hpp>

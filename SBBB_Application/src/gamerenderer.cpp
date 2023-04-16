@@ -30,7 +30,12 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	testReoSprite.attachShader(&gs.imageShader);
 	testReoTexture = res.getTexture(TextureID::REO_TEST);
 	testReoSprite.attachTexture(testReoTexture);
-	testReoSprite.setPosition(glm::vec3(-16.f, 96.f, 1.f));
+	testReoSprite.setPosition(glm::vec3(-16.f, 102.f, 1.f));
+
+	//ground.onSpawn(testb2World);
+	//box1.onSpawn(testb2World);
+	//box2.onSpawn(testb2World);
+	//box3.onSpawn(testb2World);
 
 	LOAD_LOG("Creating lighting subsystem...");
 
@@ -49,6 +54,7 @@ void GameRenderer::loadTextures() {
 	res.loadTexID("./res/roetest.png", TextureID::REO_TEST);
 	res.loadTexID("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
 	res.loadTexID("./res/cameraframe2.png", TextureID::CAMERA_FRAME_TEXTURE2);
+	res.loadTexID("./res/me.png", TextureID::ME_TEXTURE);
 }
 // --------------------------------------------------------------------------
 
@@ -106,7 +112,12 @@ void GameRenderer::testDraw()
 
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);
 	testReoSprite.setRotation(testFrame / 50.f);
-	//testReoSprite.draw(m_screenFBO, state);
+	testReoSprite.draw(m_screenFBO, state);
+
+	for (auto& entity : entities) {
+		entity.draw(m_screenFBO, state);
+	}
+
 
 	static Text debugText(videotype, "");
 	static DebugStats& db = DebugStats::Get();
@@ -138,7 +149,7 @@ void GameRenderer::testDraw()
 	debugText.setText(infoString.str());
 	debugText.draw(glm::vec2(-0.98f, 0.95f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
 
-	DebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
+	//SBBBDebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
 	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
 
 	glEnable(GL_DEPTH_TEST);

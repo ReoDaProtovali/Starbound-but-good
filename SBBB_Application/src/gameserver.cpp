@@ -1,5 +1,6 @@
 #include "GameServer.hpp"
 #include "GameConstants.hpp"
+#include "Simulation.hpp"
 
 void GameServer::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	serverThread = std::thread(&GameServer::run, this, std::ref(p_exceptionQueue));
@@ -18,8 +19,10 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 	// this kinda has to be outside of the try...catch so it is scoped in the catch block
 	ChunkManager world;
-	world.genFixed(10, 20);
-	world.startThreads();
+	Simulation sim;
+	sim.init();
+	//world.genFixed(10, 20);
+	//world.startThreads();
 	try {
 
 		DebugStats& db = DebugStats::Get();
@@ -30,7 +33,9 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				ts.drain();
 
 				world.processRequests();
-				tickGauge.update(0.9);
+				sim.tick();
+
+				tickGauge.update(0.9f);
 
 				db.updateFPS = (float)(1.0 / tickGauge.getFrametimeAverage());
 
@@ -45,7 +50,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	}
 	catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
-		world.stopThreads();
+		//world.stopThreads();
 		serverWindow.cleanUp();
 		p_exceptionQueue.push(std::current_exception());
 	}

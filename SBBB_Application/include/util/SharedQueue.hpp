@@ -38,6 +38,7 @@ public:
 	// force threads to exit
 	void forceAllThreadsToPop() {
 		m_terminateWaiting = true;
+		//for (int i = 0; i < 5; i++) // lol
 		m_cv.notify_all();
 	}
 private:

@@ -121,7 +121,7 @@ void Camera::setFrame(float p_trX, float p_trY, float p_width, float p_height)
 	Camera::m_frame = glm::vec4(p_trX, p_trY, p_trX + p_width, p_trY + p_height);
 }
 
-const glm::vec2 Camera::getFrameDimensions()
+const glm::vec2 Camera::getFrameDimensions() const
 {
 	return glm::vec2(m_frame.z - m_frame.x, m_frame.y - m_frame.w);
 }
@@ -173,6 +173,6 @@ void Camera::interpolate(float p_alpha) {
 	glm::vec3 newPos = pos + lastVelocity * p_alpha;
 	setApparentPos(newPos.x, newPos.y);
 }
-const glm::vec4 Camera::getFrame() {
+const glm::vec4 Camera::getFrame() const {
 	return m_frame;
 }

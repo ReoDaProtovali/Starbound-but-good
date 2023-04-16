@@ -20,6 +20,13 @@ public:
 	// Uniforms:
 	// imageTexture: 0
 	Shader imageShader;
+	// Basic Solid Color Shader
+	// Fills fragments with a flat color
+	// Attributes to use:
+	// vec3 position
+	// vec2 texcoord (ignored, but there)
+	// Uniforms:
+	// vec3 color
 	Shader solidColorShader;
 
 private:
