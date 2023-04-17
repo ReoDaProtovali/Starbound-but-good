@@ -1,11 +1,14 @@
 #version 330
+#extension GL_ARB_explicit_uniform_location : enable
+
+layout(location = 3) uniform int Seed;
 
 float map(float value, float min1, float max1, float min2, float max2) {
   return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
 
 float hash( int x ) {
-    int n = x;
+    int n = x ^ Seed;
     n = (n<<13)^n;
     n = (n*(n*n*15731+789221)+1376312589)>>16;
     return float(n);
@@ -14,6 +17,8 @@ float hash( int x ) {
 // Credit goes to Inigo Quilez
 vec2 grad( ivec2 z )  // replace this anything that returns a random vector
 {
+    z.x = z.x ^ Seed;
+    z.y = z.y ^ Seed;
     // 2D to 1D  (feel free to replace by some other)
     int n = z.x+z.y*11111;
 
@@ -60,7 +65,6 @@ float fractalDistortNoise( in vec2 uv, int level, float harmonic, float amount )
     }
     return (1.f + noise(result)) / 2.f;
 }
-#extension GL_ARB_explicit_uniform_location : enable
 
 layout(location = 0) out vec4 fragColor;
 layout(location = 2) uniform vec2 WorldPos;

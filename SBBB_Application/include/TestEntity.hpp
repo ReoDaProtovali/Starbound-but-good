@@ -29,7 +29,7 @@ public:
 		return *this;
 	}
 
-	void initCollisionSettings() {
+	void onSpawn(b2World& p_world) {
 		setColliderStartPosition(glm::vec2(m_position.x, m_position.y));
 
 		if (m_stationary) {
@@ -46,9 +46,6 @@ public:
 		setFriction(0.2f);
 		setRestitution(0.1f);
 
-	}
-	void onSpawn(b2World& p_world) {
-		initCollisionSettings();
 		spawnCollider(p_world);
 	}
 
@@ -56,7 +53,7 @@ public:
 		p_world.DestroyBody(m_body);
 	}
 	void onUpdate() {
-		auto& transform = getCollisionTransform();
+		auto transform = getCollisionTransform();
 		m_position.x = transform.p.x;
 		m_position.y = transform.p.y;
 		setRotation(transform.q.GetAngle());
@@ -64,7 +61,7 @@ public:
 	}
 	void draw(DrawSurface& p_target, DrawStates& p_states) {
 		if (m_sprite.bounds.xy.x == 0) { // scuffed init checking
-			m_sprite.setBounds(Rect(0.f, 0.f, m_collisionDims.x, m_collisionDims.y));
+			m_sprite.setBounds(Rect(0.f, 0.f, m_collisionDims.x + 0.03f, m_collisionDims.y + 0.03f));
 			m_sprite.attachTexture(ResourceManager::Get().getTexture(TextureID::ME_TEXTURE));
 
 		}

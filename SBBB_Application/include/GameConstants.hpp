@@ -9,6 +9,8 @@
 #define FRAMES_BETWEEN_STAT_UPDATES 60
 #define DISABLE_RUNTIME_CONSOLE false
 
+#define TILES_TO_METERS 0.5f
+#define METERS_TO_TILES 2.0f
 // do NOT increase this beyond limits. it does NOT like to be changed easily
 // Currently works from 2-64
 constexpr auto CHUNKSIZE = 64;
@@ -40,6 +42,12 @@ enum class Corner {
 //	ChunkPos pos;
 //	WorldChunk* data;
 //};
+
+// just a unique struct for it because stoopid
+struct ChunkUpdate {
+	int x;
+	int y;
+};
 
 #define TILESET_PATH "res\\tilesets"
 #define GENERATORS_JSON_PATH ".\\src\\Shaders\\noisegenerators\\generators.json"

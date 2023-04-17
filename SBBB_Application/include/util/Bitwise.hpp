@@ -10,6 +10,10 @@ struct Bitwise32 {
 	operator uint32_t() const {
 		return packed;
 	}
+	Bitwise32& operator|=(uint32_t bits) {
+		packed |= bits;
+		return *this;
+	}
 	// end inclusive
 	void setRange(uint8_t p_startOffset, uint8_t p_endOffset, uint32_t p_value) {
 #ifdef SBBB_DEBUG
@@ -32,7 +36,7 @@ struct Bitwise32 {
 	uint32_t unpackRange(uint8_t p_startOffset, uint8_t p_endOffset) {
 #ifdef SBBB_DEBUG
 		if (p_endOffset > 31) {
-			ERROR_LOG("Bitwise setRange overflow!");
+			ERROR_LOG("Bitwise unpackRange overflow!");
 			throw std::exception("Bitwise overflow");
 		}
 #endif

@@ -9,10 +9,12 @@ WorldGenerator::WorldGenerator() {
 void WorldGenerator::initTestSettings()
 {
 	m_settings.heightmap.shaderName = "testheightmap";
-	m_settings.heightmap.strength = 160.f;
+	m_settings.heightmap.strength = 100.f;
+	m_settings.heightmap.seed = 0;
 
 	gen::GeneratorSettings2D_4Layer testHollow;
 	testHollow.shaderName = "cavern";
+	testHollow.seed = 92429;
 	testHollow.cutoffs[0] = 1.0f;
 	testHollow.cutoffs[1] = 0.5f;
 	testHollow.cutoffs[2] = 0.35f;
@@ -21,20 +23,26 @@ void WorldGenerator::initTestSettings()
 	m_settings.testBiome.hollowGenerators.push_back(testHollow);
 
 	// this vector will contain every generation criteria that dirt can spawn in
-	auto& perlinRanges = m_settings.testBiome.materialGenerators["perlin"];
+	auto& perlinRanges = m_settings.testBiome.materialGenerators[gen::GeneratorSettings2D_4Layer("perlin", 54)];
 	// Only one criteria, when the perlin noise is between 0.5f and 1.0f.
 	perlinRanges.emplace_back(gen::MaterialRange{ "vanilla:dirt", 0.3f, 1.0f });
-	perlinRanges.emplace_back(gen::MaterialRange{ "vanilla:stone", 0.0f, 0.7f });
+	perlinRanges.emplace_back(gen::MaterialRange{ "vanilla:stone", 0.0f, 1.0f });
+	perlinRanges.emplace_back(gen::MaterialRange{ "vanilla:richstone", 0.0f, 0.33f });
+
 
 }
 
+void WorldGenerator::clearNoisemap() {
+	m_noiseMap.clear();
+}
 void WorldGenerator::loadNoiseValuesAtChunk(int32_t p_chunkX, int32_t p_chunkY) {
-	m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, m_settings.heightmap.shaderName);
+
+	m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, m_settings.heightmap.shaderName, m_settings.heightmap.seed);
 	for (auto& hollowGenerator : m_settings.testBiome.hollowGenerators) {
-		m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, hollowGenerator.shaderName);
+		m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, hollowGenerator.shaderName, hollowGenerator.seed);
 	}
 	for (auto& materialGenerator : m_settings.testBiome.materialGenerators) {
-		m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, materialGenerator.first);
+		m_noiseMap.genTilesNeighboringChunk(p_chunkX, p_chunkY, materialGenerator.first.shaderName, materialGenerator.first.seed);
 	}
 }
 Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, bool& wasEmpty)
@@ -55,13 +63,13 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 				std::pair<std::string, float> record = { "NULL", 999.f };
 
 
-				float heightmapValue = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, m_settings.heightmap.shaderName).r * m_settings.heightmap.strength;
+				float heightmapValue = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, m_settings.heightmap.shaderName, m_settings.heightmap.seed).r * m_settings.heightmap.strength;
 				if (globalChunkY - y > heightmapValue) {
 					out(x, y, z) = Tile(x, y, 0);
 					goto out; // ewww goto ewwwwwww
 				}
 				for (auto& hollowGenerator : m_settings.testBiome.hollowGenerators) {
-					float hollowValue = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, hollowGenerator.shaderName)[0];
+					float hollowValue = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, hollowGenerator.shaderName, hollowGenerator.seed)[0];
 					if (hollowValue > hollowGenerator.cutoffs[z]) {
 						out(x, y, z) = Tile(x, y, 0);
 						goto out; // ewww goto ewwwwwww
@@ -74,7 +82,7 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 						distances[range.materialName] = 0.f;
 					}
 
-					float noiseMapOutput = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, materialGenerator.first)[0];
+					float noiseMapOutput = m_noiseMap.getPixel(globalChunkX + x, globalChunkY - y, materialGenerator.first.shaderName, materialGenerator.first.seed)[0];
 					// to compute the distance, we need the range the material can generate in as well as the values
 					for (gen::MaterialRange& range : materialGenerator.second) {
 						// invalidate if tile is not qualified for any one range
@@ -98,7 +106,7 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 					out(x, y, z) = Tile(x, y, 0);
 				}
 			out:
-				; // lolft
+				; // lol
 			}
 
 		}

@@ -3,8 +3,9 @@
 #include <cstdlib>
 void Simulation::init()
 {
-	for (int i = 0; i < 500; i++) {
-		m_entities.emplace(-16.f + (float(rand() % 10) - 5.f), 515.f + (float(rand() % 300) - 5.f), 2.f, 2.f, false);
+	for (int i = 0; i < 150; i++) {
+		m_entities.emplace(-16.f + (float(rand() % 10) - 5.f), 715.f + (float(rand() % 300) - 5.f), 2.f, 2.f, false);
+		m_entities.at(m_entities.length() - 1).value()->allowColliderRotation(false);
 	}
 	m_entities.emplace(-16.f, 96.f, 200.f, 5.f, true);
 	m_entities.emplace(-16.f - 100.f, 106.f, 5.f, 20.f, true);

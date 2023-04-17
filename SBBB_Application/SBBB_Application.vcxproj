@@ -30,26 +30,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -87,7 +87,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good\libnoise;$(SolutionDir)\glm;C:\dev\SDL2\include;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext\FreeType;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good;C:\dev\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good;C:\dev\SDL2\lib\x86;C:\dev\vcpkg\installed\x64-windows\lib;$(LibraryPath)</LibraryPath>
     <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>.\build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -95,6 +95,9 @@
     <VcpkgInstalledDir>C:\dev\vcpkg\installed</VcpkgInstalledDir>
     <VcpkgUseStatic>false</VcpkgUseStatic>
     <VcpkgConfiguration>$(Configuration)</VcpkgConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -152,7 +155,6 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -167,6 +169,8 @@
       <Optimization>MaxSpeed</Optimization>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DisableSpecificWarnings>6386</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -198,7 +202,6 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />
     <ClCompile Include="src\collisionobject.cpp" />
-    <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\Framework\Graphics\drawstates.cpp" />
     <ClCompile Include="src\Framework\Graphics\framebuffer.cpp" />
     <ClCompile Include="src\Framework\Graphics\genericshaders.cpp" />

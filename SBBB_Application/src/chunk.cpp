@@ -123,41 +123,18 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				}
 
 				// Set tile adjacencies
-				for (int i = -1; i <= 1; i++) {
-					for (int j = -1; j <= 1; j++) {
-						if (j == 0 && i == 0) continue;
+				for (int i = 0; i < 9; i++) {
+					if (i == 4) continue;
+					auto opt = getNeigboringChunkTile(x + (i % 3) - 1, y + (i / 3) - 1, z, p_chnks);
+					auto centerOpt = getNeigboringChunkTile(x, y, z, p_chnks);
 
-						// in the case the tile lies on the edge you have to do this garbage
-						auto opt = getNeigboringChunkTile(x + j, y + i, z, p_chnks);
-						if (opt.has_value()) {
-							if (opt.value()->m_tileID != 0) continue;
-						}
-
-						if (i == -1 && j == -1) {
-							v.setAdjacent(Adjacency::TL);
-						}
-						else if (i == -1 && j == 0) {
-							v.setAdjacent(Adjacency::T);
-						}
-						else if (i == -1 && j == 1) {
-							v.setAdjacent(Adjacency::TR);
-						}
-						else if (i == 0 && j == -1) {
-							v.setAdjacent(Adjacency::L);
-						}
-						else if (i == 0 && j == 1) {
-							v.setAdjacent(Adjacency::R);
-						}
-						else if (i == 1 && j == -1) {
-							v.setAdjacent(Adjacency::BL);
-						}
-						else if (i == 1 && j == 0) {
-							v.setAdjacent(Adjacency::B);
-						}
-						else if (i == 1 && j == 1) {
-							v.setAdjacent(Adjacency::BR);
-						}
+					if (opt.has_value()) {
+						if (opt.value()->m_tileID != 0) continue;
 					}
+
+					v.setAdjacent(128u >> i);
+					centerOpt.value()->adjacent |= 128u >> i;
+
 				}
 				tileMesh.pushVertex(v);
 				db.vertCount++;
@@ -167,6 +144,7 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 		}
 	}
 	vboIsPushed = false;
+
 }
 
 void WorldChunk::pushVBO()

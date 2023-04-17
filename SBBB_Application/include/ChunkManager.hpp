@@ -36,8 +36,9 @@ public:
 	void regenVBOs();
 	void flip();
 	void enqueueGen(ChunkPos p_chunkPos);
-	void genFixed(uint32_t x, uint32_t y);
+	void genFixed(int x, int y, uint32_t w, uint32_t h);
 	void processRequests();
+	void tidyNoisemapIfDone();
 
 	void startThreads();
 	void stopThreads();
@@ -74,4 +75,7 @@ private:
 	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 	SharedQueue<ChunkPos> m_loadQueue;
+	SharedQueue<int> m_generatingQueue; // just a list for the generator threads to say "hey, don't delete the noisemap data!"
+
+	SharedQueue<ChunkUpdate>& g_chunkUpdates = SharedQueue<ChunkUpdate>::Get();
 };

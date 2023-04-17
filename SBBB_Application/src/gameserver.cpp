@@ -21,8 +21,8 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	ChunkManager world;
 	Simulation sim;
 	sim.init();
-	//world.genFixed(10, 20);
-	//world.startThreads();
+	world.genFixed(-10, 0, 20, 6);
+	world.startThreads();
 	try {
 
 		DebugStats& db = DebugStats::Get();
@@ -33,6 +33,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				ts.drain();
 
 				world.processRequests();
+				world.tidyNoisemapIfDone();
 				sim.tick();
 
 				tickGauge.update(0.9f);
@@ -50,7 +51,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	}
 	catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
-		//world.stopThreads();
+		world.stopThreads();
 		serverWindow.cleanUp();
 		p_exceptionQueue.push(std::current_exception());
 	}

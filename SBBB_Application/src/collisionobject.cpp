@@ -1,4 +1,5 @@
 #include "CollisionObject.hpp"
+#include "GameConstants.hpp"
 
 void CollisionObject::setColliderBodyDef(const b2BodyDef& p_def)
 {
@@ -13,7 +14,7 @@ void CollisionObject::allowColliderRotation(bool p_enabled)
 
 void CollisionObject::setColliderStartPosition(const glm::vec2& p_pos)
 {
-	m_def.position.Set(p_pos.x, p_pos.y);
+	m_def.position.Set(p_pos.x * TILES_TO_METERS, p_pos.y * TILES_TO_METERS);
 }
 
 void CollisionObject::setColliderAsStatic()
@@ -28,7 +29,7 @@ void CollisionObject::setColliderAsDynamic()
 
 void CollisionObject::setColliderShapeAsBox(float p_w, float p_h)
 {
-	m_shape.SetAsBox(p_w / 2.f, p_h / 2.f);
+	m_shape.SetAsBox((p_w / 2.f) * TILES_TO_METERS, (p_h / 2.f) * TILES_TO_METERS);
 }
 
 void CollisionObject::setColliderFixtureDef(const b2FixtureDef& p_def)
@@ -72,7 +73,11 @@ void CollisionObject::respawnCollider(b2World& p_world)
 
 }
 
-const b2Transform& CollisionObject::getCollisionTransform()
+b2Transform CollisionObject::getCollisionTransform()
 {
-	return m_body->GetTransform();
+	auto transform = m_body->GetTransform();
+	transform.p.x *= METERS_TO_TILES;
+	transform.p.y *= METERS_TO_TILES;
+
+	return transform;
 }

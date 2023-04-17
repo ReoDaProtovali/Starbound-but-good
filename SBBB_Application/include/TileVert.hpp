@@ -38,6 +38,9 @@ struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID i
 	void setAdjacent(Adjacency a) {
 		adjacent = a | adjacent;
 	}
+	void setAdjacent(uint32_t a) {
+		adjacent = a | adjacent;
+	}
 	glm::uvec4 toUvec4() { // undoes the packing and formats nicely
 		return glm::uvec4(
 			xyzID.unpackRange(26, 31), 

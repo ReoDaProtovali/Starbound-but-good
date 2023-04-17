@@ -1,8 +1,12 @@
 #version 330
+#extension GL_ARB_explicit_uniform_location : enable
+layout(location = 3) uniform int Seed;
 
 // Credit goes to Inigo Quilez
 vec2 grad( ivec2 z )  // replace this anything that returns a random vector
 {
+    z.x = z.x ^ Seed;
+    z.y = z.y ^ Seed;
     // 2D to 1D  (feel free to replace by some other)
     int n = z.x+z.y*11111;
 

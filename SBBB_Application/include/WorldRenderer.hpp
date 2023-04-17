@@ -6,6 +6,7 @@
 #include "Framework/Graphics/Sprite.hpp"
 #include "util/Messenger.hpp"
 #include "util/DebugDraw.hpp"
+#include "util/SharedQueue.hpp"
 
 class WorldRenderer {
 
@@ -20,7 +21,7 @@ class WorldRenderer {
 	std::unordered_map<ChunkPos, WorldChunk*, ChunkPos> m_drawMap;
 	std::queue<ChunkPos> m_retryQueue;
     SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
-
+	SharedQueue<ChunkUpdate>& g_chunkUpdates = SharedQueue<ChunkUpdate>::Get();
 
 	//void requestFrame();
 	//void checkForResponses();

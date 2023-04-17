@@ -21,6 +21,7 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 			//m_noiseMap.genTilesNeighboringChunk(p_chunkPos.x, p_chunkPos.y, str);
 			m_worldgen.loadNoiseValuesAtChunk(p_chunkPos.x, p_chunkPos.y);
 		}
+		m_generatingQueue.push(0);
 		m_loadQueue.push(p_chunkPos);
 		// because this is a std::unordered_map, it inserts a default constructed chunk when you do this
 		s_chunkMap[p_chunkPos];
@@ -28,7 +29,15 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 }
 
 void ChunkManager::processRequests() {
+	if (auto opt = s_generationRequest.getMessageFront()) {
+		enqueueGen(ChunkPos(opt.value().x, opt.value().y));
+	}
+}
 
+void ChunkManager::tidyNoisemapIfDone() {
+	if (m_generatingQueue.length() == 0) {
+		m_worldgen.clearNoisemap();
+	}
 }
 void ChunkManager::startThreads()
 {
@@ -57,6 +66,7 @@ void ChunkManager::genFromQueueThreaded()
 		if (m_stopAllThreads) break;
 
 		ChunkManager::genChunkThreaded(pos);
+		m_generatingQueue.pop();
 	}
 }
 void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
@@ -83,15 +93,18 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 				neighbor.drawable = false;
 				neighbor.generateVBO(*this);
 				neighbor.drawable = true;
+				g_chunkUpdates.push(ChunkUpdate{ p_chunkPos.x + j, p_chunkPos.y + i });
 			}
 		}
 	}
+	g_chunkUpdates.push(ChunkUpdate{ p_chunkPos.x, p_chunkPos.y });
+
 
 }
-void ChunkManager::genFixed(uint32_t x, uint32_t y) {
-	for (size_t i = 0; i < y; i++) {
-		for (size_t j = 0; j < x; j++) {
-			enqueueGen(ChunkPos((int)j - x / 2, (int)i - y / 2));
+void ChunkManager::genFixed(int x, int y, uint32_t w, uint32_t h) {
+	for (size_t i = 0; i < h; i++) {
+		for (size_t j = 0; j < w; j++) {
+			enqueueGen(ChunkPos((int)j + x, (int)i + y));
 		}
 	}
 }

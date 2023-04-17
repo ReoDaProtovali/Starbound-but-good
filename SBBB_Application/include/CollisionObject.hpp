@@ -53,7 +53,7 @@ public:
 	// deletes first, then respawns
 	void respawnCollider(b2World& p_world);
 
-	const b2Transform& getCollisionTransform();
+	b2Transform getCollisionTransform();
 protected:
 	// used for setup
 	b2BodyDef m_def{};

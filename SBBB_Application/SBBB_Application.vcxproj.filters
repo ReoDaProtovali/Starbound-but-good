@@ -144,9 +144,6 @@
     <ClCompile Include="src\collisionobject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\simulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

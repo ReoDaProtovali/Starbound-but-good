@@ -113,10 +113,10 @@ public:
     }
 
     // for if you don't care about the internal block format, and just want a reference to T (safely)
-    std::optional<std::reference_wrapper<T>> at(size_t p_index) {
+    std::optional<T*> at(size_t p_index) {
         std::shared_lock<std::shared_mutex> lock(m_mtx);
         if (length() == 0 || p_index >= length() || !m_arr[p_index].valid) return std::nullopt;
-        return  std::ref(m_arr[p_index].data);
+        return &m_arr[p_index].data;
     }
 
     void dump() const {

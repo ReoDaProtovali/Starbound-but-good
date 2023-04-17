@@ -37,6 +37,15 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 {
 	if (!m_viewCam) return 0;
 
+
+	//if (auto opt = g_chunkUpdates.tryPop()) {
+	//	ChunkUpdate u = opt.value();
+	//	if (s_chunkMap.contains(ChunkPos(u.x, u.y))) {
+	//		
+	//		
+	//	}
+	//}
+
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	p_surface.bind();
@@ -51,7 +60,8 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	f.x -= CHUNKSIZE * 2;
 
 	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f / 2.f) * 2;
-	if (chunkFrame == m_chunkFramePrev) return 0;
+	//                                    vvvv temporary until chunk specific drawing is added
+	if (chunkFrame == m_chunkFramePrev && !g_chunkUpdates.tryPop()) return 0;
 
 
 	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;

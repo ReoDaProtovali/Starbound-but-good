@@ -41,6 +41,16 @@ public:
 		//for (int i = 0; i < 5; i++) // lol
 		m_cv.notify_all();
 	}
+
+	size_t length() {
+		std::unique_lock<std::mutex> lock(m_mutex);
+		return m_queue.size();
+	}
+
+	static SharedQueue<T>& Get() {
+		static SharedQueue<T> instance;
+		return instance;
+	}
 private:
 	std::queue<T> m_queue;
 	std::mutex m_mutex;
