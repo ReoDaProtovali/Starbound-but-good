@@ -32,9 +32,21 @@ public:
 		std::shared_lock<std::shared_mutex> lock(m_accessMutex);
 		return m_map.find(p_key);
 	}
+	// only safe if you've locked the map yourself
+	auto find_noMutexLock(const Kty& p_key) {
+		return m_map.find(p_key);
+	}
 	bool contains(const Kty& p_key) {
 		std::shared_lock<std::shared_mutex> lock(m_accessMutex);
 		return m_map.contains(p_key);
+	}
+	// careful using these, it can only be locked in very specific cases without causing deadlock
+	void lock() {
+		m_accessMutex.lock();
+	}
+	// careful using these, it can only be locked in very specific cases without causing deadlock
+	void unlock() {
+		m_accessMutex.unlock();
 	}
 	// POTENTIALLY UNSAFE, BECAUSE I THINK ITERATORS CAN BE INVALIDATED BY OTHER THREADS
 	auto begin() {

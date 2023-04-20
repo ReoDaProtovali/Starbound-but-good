@@ -32,7 +32,13 @@ public:
 	StaticArray2D<T> operator=(const StaticArray2D<T>& other) = delete;
 
 	T& operator()(int x, int y) {
-		if (!initialized) throw std::exception();
+#ifdef SBBB_DEBUG
+		if (!bounded(x, y)) {
+			ERROR_LOG("Invalid Index (" << x << ", " << y << ")");
+			throw std::exception("2d array out of bounds");
+		}
+#endif
+		if (!initialized) throw std::exception("uninitialized 2d array access");
 		return data[((y * width) + x)];
 	}
 	// Can only be ran if the array does not have data, otherwise, it is fixed and cannot change

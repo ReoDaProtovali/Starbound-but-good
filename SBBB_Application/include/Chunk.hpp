@@ -19,6 +19,7 @@
 #include "WorldGenNoisemap.hpp"
 
 #include <atomic>
+#include <box2d.h>
 
 struct ChunkPos {
 	ChunkPos() { x = -1; y = -1; }
@@ -59,6 +60,7 @@ struct WorldChunk : public TransformObject
 
 	void fillRandom();
 	void setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
+	uint8_t getTileAdjacent(int p_x, int p_y, int p_z);
 	void setTiles(Array3D<Tile>&& p_tiles);
 	Tile& getChunkTile(int p_x, int p_y, int p_z);
 	// conditionally returns either an internal tile or a tile from a neigboring chunk based on the given position.
@@ -66,6 +68,7 @@ struct WorldChunk : public TransformObject
 
 	Tile* getTiles();
 	void generateVBO(ChunkManager& p_chnks);
+	void genCollider(b2World& p_world, ChunkManager& tmp);
 
 	void pushVBO();
 	uint32_t getVBOSize();
@@ -81,12 +84,18 @@ struct WorldChunk : public TransformObject
 	std::atomic<bool> drawable{ false };
 	std::atomic<bool> invalid{ true };
 	std::atomic<bool> isEmpty{ true };
+	std::atomic<bool> colliderValid{ false };
 	Mesh<TileVert> tileMesh{NO_VAO_INIT};
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
+	b2World* associatedWorld = nullptr; // so it can delete its own collider
+
 private:
 	std::mutex m_vboMutex;
+	std::mutex m_colliderGenMutex;
 	Array3D<Tile> m_tiles;
+
+	b2Body* m_collisionBody = nullptr;
 
 };

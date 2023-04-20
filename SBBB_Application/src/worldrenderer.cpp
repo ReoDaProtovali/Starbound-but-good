@@ -37,19 +37,11 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 {
 	if (!m_viewCam) return 0;
 
-
-	//if (auto opt = g_chunkUpdates.tryPop()) {
-	//	ChunkUpdate u = opt.value();
-	//	if (s_chunkMap.contains(ChunkPos(u.x, u.y))) {
-	//		
-	//		
-	//	}
-	//}
-
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	p_surface.bind();
 	m_tileSprite.attachTexture(m_tileFBO.getColorTex(0));
+	m_tileSprite.setOrigin(glm::vec2(0.f));
 	m_tileSprite.draw(p_surface, p_states);
 
 	auto f = m_viewCam->getFrame();
@@ -60,8 +52,16 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	f.x -= CHUNKSIZE * 2;
 
 	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f / 2.f) * 2;
-	//                                    vvvv temporary until chunk specific drawing is added
-	if (chunkFrame == m_chunkFramePrev && !g_chunkUpdates.tryPop()) return 0;
+
+	bool forceDraw = false;
+	// vvvv temporary until chunk specific drawing is added
+	while (auto update = m_chunkUpdateObserver.observe()) {
+		if (update.value().type == ChunkUpdateType::DONE_GENERATING) {
+			forceDraw = true;
+		};
+	}
+
+	if (chunkFrame == m_chunkFramePrev && !forceDraw) return 0;
 
 
 	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
@@ -85,14 +85,24 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	else {
 		m_tileShader.setBoolUniform(4, true);
 	}
-	
+
+
 	int drawnChunkCount = 0;
 	for (int y = chunkFrame.y - 1; y <= chunkFrame.w + 1; y++) {
 		for (int x = chunkFrame.x - 1; x <= chunkFrame.z + 1; x++) {
 			if (s_chunkMap.contains(ChunkPos(x, y))) {
+
+				//s_chunkMap.lock(); // for the rare case where the chunk data changes between getting the chunk and drawing it
 				WorldChunk& chunk = s_chunkMap[ChunkPos(x, y)];
-				if (!chunk.drawable) continue;
-				if (chunk.isEmpty) continue;
+				if (!chunk.drawable) {
+
+					//s_chunkMap.unlock();
+					continue;
+				}
+				if (chunk.isEmpty) {
+					//s_chunkMap.unlock();
+					continue;
+				};
 				if (!chunk.vboIsPushed) {
 					chunk.pushVBO();
 				}
@@ -101,11 +111,11 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 				if (drawChunkBorders) {
 					SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
 				}
+				//s_chunkMap.unlock();
 				drawnChunkCount++;
 			};
 		}
 	}
-
 
 	m_chunkFramePrev = chunkFrame;
 	return drawnChunkCount;

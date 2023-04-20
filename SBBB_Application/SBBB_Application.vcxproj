@@ -48,7 +48,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -86,8 +86,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good\libnoise;$(SolutionDir)\glm;C:\dev\SDL2\include;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext\FreeType;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\daysh\source\repos\ReoDaProtovali\Starbound-but-good;C:\dev\SDL2\lib\x86;C:\dev\vcpkg\installed\x64-windows\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\dev\SDL2\include;$(ProjectDir)include\util\ext\FreeType;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;C:\dev\SDL2\lib\x86;C:\dev\vcpkg\installed\x64-windows\lib;$(LibraryPath)</LibraryPath>
     <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>.\build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -156,7 +156,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -171,6 +171,7 @@
       <DisableSpecificWarnings>6386</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -190,14 +191,15 @@ del $(OutDir)SBBG_Project.vcxproj.FileListAbsolute.txt
 rmdir /s /q $(OutDir)obj
 rmdir /s /q $(OutDir)SBBG_Project.tlog
 rmdir /s /q $(OutDir)res
-rmdir /s /q $(OutDir)shaders
+rmdir /s /q $(OutDir)src
 echo Moving game folders with build exe
-Xcopy /E /I shaders $(OutDir)shaders
+Xcopy /E /I src\Shaders $(OutDir)src\Shaders
 Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\util\debugdraw.cpp" />
+    <ClCompile Include="include\util\SubjectObserver.hpp" />
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\chunk.cpp" />

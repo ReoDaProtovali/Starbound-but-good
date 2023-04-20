@@ -168,8 +168,11 @@ public:
 	}
 
 	bool hasData() { return (bool)m_verts.size(); };
+	// confusing, but it's the count of attributes that were sent to the gpu at some point.
 	size_t getTotalVBOSize() { return m_GPUVertsSize; }
 	size_t getTotalIBOSize() { return m_GPUIndicesSize; }
+
+	size_t getStoredVertCount() { return m_verts.size(); }
 
 	GLuint* getIBOPointer() { return m_indices.data(); }
 

@@ -42,6 +42,12 @@ public:
 		m_cv.notify_all();
 	}
 
+	void clear() {
+		std::unique_lock<std::mutex> lock(m_mutex);
+		std::queue<T> empty;
+		m_queue.swap(empty);
+	}
+
 	size_t length() {
 		std::unique_lock<std::mutex> lock(m_mutex);
 		return m_queue.size();

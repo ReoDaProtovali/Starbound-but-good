@@ -42,11 +42,22 @@ enum class Corner {
 //	ChunkPos pos;
 //	WorldChunk* data;
 //};
+struct KeyEvent {
+	bool wasDown;
+	int keyCode;
+};
 
+enum class ChunkUpdateType {
+	DONE_GENERATING,
+	NEW_TILE_DATA,
+	NEW_VBO_DATA,
+	REMOVED
+};
 // just a unique struct for it because stoopid
 struct ChunkUpdate {
 	int x;
 	int y;
+	ChunkUpdateType type;
 };
 
 #define TILESET_PATH "res\\tilesets"

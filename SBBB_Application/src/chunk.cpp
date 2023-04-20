@@ -1,8 +1,10 @@
-#include "Chunk.hpp"
+﻿#include "Chunk.hpp"
 #include "ChunkManager.hpp"
 #include <util/ext/glm/glm.hpp>
 #include <stdexcept>
 #include "GameConstants.hpp"
+#include <unordered_set>
+#include "util/StaticArray2D.hpp"
 WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	worldPos(p_chunkPos),
 	worldID(p_worldID),
@@ -75,17 +77,20 @@ void WorldChunk::fillRandom() {
 		}
 	}
 	isEmpty = false;
+	colliderValid = false;
 }
 void WorldChunk::setTiles(Array3D<Tile>&& p_tiles) {
 	m_tiles = p_tiles;
+	colliderValid = false;
 }
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	if (isEmpty) return;
+	auto& db = DebugStats::Get();
+	db.vertCount -= (int)tileMesh.getStoredVertCount();
 	tileMesh.clean();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
 	ResourceManager& res = ResourceManager::Get();
-	auto& db = DebugStats::Get();
 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
@@ -125,15 +130,16 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				// Set tile adjacencies
 				for (int i = 0; i < 9; i++) {
 					if (i == 4) continue;
+
 					auto opt = getNeigboringChunkTile(x + (i % 3) - 1, y + (i / 3) - 1, z, p_chnks);
+
 					auto centerOpt = getNeigboringChunkTile(x, y, z, p_chnks);
 
 					if (opt.has_value()) {
 						if (opt.value()->m_tileID != 0) continue;
 					}
 
-					v.setAdjacent(128u >> i);
-					centerOpt.value()->adjacent |= 128u >> i;
+					v.setAdjacent(128u >> (i > 4 ? i - 1 : i));
 
 				}
 				tileMesh.pushVertex(v);
@@ -145,6 +151,259 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	}
 	vboIsPushed = false;
 
+}
+
+inline b2Vec2 localToColliderP(int x, int y)
+{
+	return b2Vec2((float)x * TILES_TO_METERS - float(CHUNKSIZE) * TILES_TO_METERS * 0.5f, -(float)y * TILES_TO_METERS + float(CHUNKSIZE) * TILES_TO_METERS * 0.5f);
+}
+
+// 0 is empty, 1 is solid
+uint8_t WorldChunk::getTileAdjacent(int p_x, int p_y, int p_z) {
+	uint8_t result = 0;
+	for (int i = 0; i < 9; i++) {
+		if (i == 4) continue;
+		int x = p_x + (i % 3) - 1;
+		int y = p_y + (i / 3) - 1;
+		if (!m_tiles.bounded(x, y, p_z)) continue;
+		if (m_tiles(x, y, p_z).m_tileID == 0) continue;
+		result |= 128u >> (i > 4 ? i - 1 : i);
+	}
+	return result;
+}
+void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
+{
+	std::unique_lock<std::mutex> lock(m_colliderGenMutex);
+	associatedWorld = &p_world;
+	if (colliderValid) return;
+	if (isEmpty) return;
+	if (m_collisionBody) p_world.DestroyBody(m_collisionBody);
+	float worldMetersX = float(worldPos.x * CHUNKSIZE) * TILES_TO_METERS;
+	float worldMetersY = float(worldPos.y * CHUNKSIZE) * TILES_TO_METERS;
+	constexpr float chunkSizeMeters = float(CHUNKSIZE) * TILES_TO_METERS;
+
+
+	b2BodyDef bodyDef;
+
+	bodyDef.position.Set(worldMetersX + chunkSizeMeters / 2.f, worldMetersY - chunkSizeMeters / 2.f);
+	bodyDef.type = b2_staticBody;
+	m_collisionBody = p_world.CreateBody(&bodyDef);
+
+
+	std::vector<b2Vec2> verts = {};
+
+	verts.reserve(1024);
+
+	StaticArray2D<uint8_t> visitedEdges;
+	visitedEdges.resize(CHUNKSIZE, CHUNKSIZE);
+	// visitedTiles owns the data now, it will be freed
+	visitedEdges.setData((uint8_t*)calloc((size_t)CHUNKSIZE * CHUNKSIZE, sizeof(uint8_t)));
+
+	for (int y = 0; y < CHUNKSIZE; y++) {
+		for (int x = 0; x < CHUNKSIZE; x++) {
+			if (m_tiles(x, y, 3).m_tileID == 0) continue;
+			uint8_t adj = getTileAdjacent(x, y, 3);
+			if ((adj & 0b01011010) == 0b01011010) continue;
+			if (!(adj & 0b01000000)) { // we'll just start loops from wherever there's a free top tile
+				int edgeTileX = x;
+				int edgeTileY = y;
+				// tells you which side of the tile the current edge is on
+				// 0 is top
+				// 1 is left
+				// 2 is bottom
+				// 3 is right
+				int currentSide = 0; 
+				// don't start a new loop if one is already here
+				if (visitedEdges(x, y) & 0b1000) continue;
+				verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY));
+				verts.push_back(localToColliderP(edgeTileX, edgeTileY));
+
+				while (true) {
+					adj = getTileAdjacent(edgeTileX, edgeTileY, 3);
+					switch (currentSide) {
+					// top edge
+					// . _ .
+					// . # .
+					// . . .
+					case 0: 
+						if (visitedEdges(edgeTileX, edgeTileY) & 0b1000) goto out;
+						// top left
+						// #|_ .
+						// . # .
+						// . . .
+						if (adj & 0b10000000) { 
+							verts.push_back(localToColliderP(edgeTileX, edgeTileY - 1));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileX--;
+							edgeTileY--;
+							currentSide = 3;
+							break;
+						}
+						// left
+						// _ _ .
+						// # # .
+						// . . .
+						if (adj & 0b00010000) { 
+							verts.push_back(localToColliderP(edgeTileX - 1, edgeTileY));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileX--;
+							currentSide = 0;
+							break;
+						}
+						// no tile in direction of traversal
+						// . _ .
+						// .|# .
+						// . . .
+						verts.push_back(localToColliderP(edgeTileX, edgeTileY + 1));
+						visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
+						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+						currentSide = 1;
+						break;
+					// left edge
+					// . . .
+					// .|# .
+					// . . .
+					case 1:
+						if (visitedEdges(edgeTileX, edgeTileY) & 0b0100) goto out;
+						// bottom left
+						// . . .
+						// _|# .
+						// # . .
+						if (adj & 0b00000100) {
+							verts.push_back(localToColliderP(edgeTileX - 1, edgeTileY + 1));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b0100;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileX--;
+							edgeTileY++;
+							currentSide = 0;
+							break;
+						}
+						// bottom
+						// . . .
+						// .|# .
+						// .|# .
+						if (adj & 0b00000010) {
+							verts.push_back(localToColliderP(edgeTileX, edgeTileY + 2));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b0100;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileY++;
+							currentSide = 1;
+							break;
+						}
+						// no tile in direction of traversal
+						// . . .
+						// .|# .
+						// . ‾ .
+						verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY + 1));
+						visitedEdges(edgeTileX, edgeTileY) |= 0b0100;
+						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+						currentSide = 2;
+						break;
+					// bottom edge
+					// . . .
+					// . # .
+					// . ‾ .
+					case 2:
+						if (visitedEdges(edgeTileX, edgeTileY) & 0b0010) goto out;
+						// bottom right
+						// . . .
+						// . # .
+						// . ‾|#
+						if (adj & 0b00000001) {
+							verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY + 2));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b0010;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileX++;
+							edgeTileY++;
+							currentSide = 1;
+							break;
+						}
+						// right
+						// . . .
+						// . # #
+						// . ‾ ‾
+						if (adj & 0b00001000) {
+							verts.push_back(localToColliderP(edgeTileX + 2, edgeTileY + 1));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b0010;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileX++;
+							currentSide = 2;
+							break;
+						}
+						// no tile in direction of traversal
+						// . . .
+						// . #| .
+						// . ‾ .
+						verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY));
+						visitedEdges(edgeTileX, edgeTileY) |= 0b0010;
+						currentSide = 3;
+						break;
+					// right edge
+					// . . .
+					// . #|.
+					// . . .
+					case 3:
+						if (visitedEdges(edgeTileX, edgeTileY) & 0b0001) goto out;
+						// top right
+						// . . #
+						// . #|‾
+						// . . .
+						if (adj & 0b00100000) {
+							verts.push_back(localToColliderP(edgeTileX + 2, edgeTileY));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b0001;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileX++;
+							edgeTileY--;
+							currentSide = 2;
+							break;
+						}
+						// top
+						// . #|.
+						// . #|.
+						// . . .
+						if (adj & 0b01000000) {
+							verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY - 1));
+							visitedEdges(edgeTileX, edgeTileY) |= 0b0001;
+							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+							edgeTileY--;
+							currentSide = 3;
+							break;
+						}
+						// no tile in direction of traversal
+						// . _ .
+						// . #|.
+						// . . .
+						verts.push_back(localToColliderP(edgeTileX, edgeTileY));
+						visitedEdges(edgeTileX, edgeTileY) |= 0b0001;
+						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
+						currentSide = 0;
+						break;
+					}
+				}
+			}
+		out:;
+			if (verts.size() > 3) {
+				b2ChainShape shape;
+				shape.CreateLoop(verts.data(), verts.size());
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &shape;
+				fixtureDef.density = 1.0f;
+				fixtureDef.friction = 0.3f;
+				fixtureDef.restitution = 0.1f;
+				m_collisionBody->CreateFixture(&fixtureDef);
+				verts.clear();
+			}
+		}
+	}
+
+
+	//b2PolygonShape shape;
+	//shape.SetAsBox(chunkSizeMeters / 2.f, chunkSizeMeters / 2.f);
+
+
+	colliderValid = true;
 }
 
 void WorldChunk::pushVBO()
@@ -170,6 +429,7 @@ Tile* WorldChunk::getTiles() {
 
 void WorldChunk::setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID) {
 	m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z) = Tile(p_chunkCoordinates, p_tileID);
+	colliderValid = false;
 	return;
 }
 
@@ -206,6 +466,7 @@ std::optional<Tile*> WorldChunk::getNeigboringChunkTile(int p_chunkX, int p_chun
 }
 
 void WorldChunk::remove() {
+	associatedWorld->DestroyBody(m_collisionBody);
 	tileMesh.remove();
 }
 

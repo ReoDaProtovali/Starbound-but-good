@@ -21,7 +21,9 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	ChunkManager world;
 	Simulation sim;
 	sim.init();
-	world.genFixed(-10, 0, 20, 6);
+	world.setCollisionWorld(sim.getCollisionWorldPtr());
+
+	world.genFixed(-5, -7, 10, 12);
 	world.startThreads();
 	try {
 
@@ -34,6 +36,8 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 				world.processRequests();
 				world.tidyNoisemapIfDone();
+				world.generateColliders();
+				
 				sim.tick();
 
 				tickGauge.update(0.9f);

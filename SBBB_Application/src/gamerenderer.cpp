@@ -11,7 +11,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	LOAD_LOG("GameRenderer instantiated...");
 
-	cam->pos = glm::vec3(-16.f, 96.f, 32.0f);
+	cam->pos = glm::vec3(-0.f, 0.f, 32.0f);
 	cam->tileScale = 40.f;
 	cam->setDimensions(windowWidth, windowHeight);
 	worldRenderer.setCamera(cam);
@@ -118,7 +118,6 @@ void GameRenderer::testDraw()
 		entity.draw(m_screenFBO, state);
 	}
 
-
 	static Text debugText(videotype, "");
 	static DebugStats& db = DebugStats::Get();
 	static fpsGauge updateTimer;
@@ -139,7 +138,7 @@ void GameRenderer::testDraw()
 			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
 			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
 			<< "Tile Vertex Count Total: " << db.vertCount << '\n'
-			<< "Chunk Gens Per Second - " << db.chunkGenCounter;
+			<< "Chunk Gens Per Second - " << db.chunkGenCounter / updateTimer.getSecondsElapsed();
 		db.statUpdate = false;
 		db.drawCalls = 0;
 		db.chunkGenCounter = 0;

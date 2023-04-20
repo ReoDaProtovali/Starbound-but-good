@@ -7,7 +7,7 @@
 #include "util/Messenger.hpp"
 #include "util/DebugDraw.hpp"
 #include "util/SharedQueue.hpp"
-
+#include "util/SubjectObserver.hpp"
 class WorldRenderer {
 
 	FrameBuffer m_tileFBO;
@@ -18,18 +18,15 @@ class WorldRenderer {
 	Camera m_tileCam;
 	glm::ivec4 m_chunkFramePrev;
 
-	std::unordered_map<ChunkPos, WorldChunk*, ChunkPos> m_drawMap;
-	std::queue<ChunkPos> m_retryQueue;
     SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
-	SharedQueue<ChunkUpdate>& g_chunkUpdates = SharedQueue<ChunkUpdate>::Get();
 
-	//void requestFrame();
-	//void checkForResponses();
 	void tidy();
 
 public:
 	WorldRenderer();
 	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 5), Rect(0, 0, 10, 10));
+
+	Observer<ChunkUpdate> m_chunkUpdateObserver;
 
 	// If we want to draw the world, we kinda have to know where we are in it
 	void setCamera(std::shared_ptr<Camera> p_cam);

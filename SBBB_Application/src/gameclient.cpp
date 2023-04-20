@@ -56,7 +56,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 void GameClient::render()
 {
 	renderer.bindScreenFBOAsRenderTarget();
-	renderer.setClearColor(glm::vec4(0.8f, 0.8f, 1.0f, 0.0f));
+	renderer.setClearColor(glm::vec4(0.2f, 0.2f, 0.3f, 0.0f));
 	renderer.clearScreen();
 
 	DebugStats& db = DebugStats::Get();

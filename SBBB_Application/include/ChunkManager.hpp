@@ -25,6 +25,7 @@
 #include "WorldGenNoisemap.hpp"
 #include "WorldGenerator.hpp"
 
+#include "util/SubjectObserver.hpp"
 #define GENERATION_THREAD_COUNT 4
 
 class ChunkManager
@@ -46,6 +47,8 @@ public:
 	void genChunkThreaded(ChunkPos p_chunkPos);
 
 	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
+	void setCollisionWorld(b2World* p_world);
+	void generateColliders();
 
 	// tells you if a map entry has been made
 	bool chunkExistsAt(ChunkPos p_chunkPos);
@@ -77,5 +80,8 @@ private:
 	SharedQueue<ChunkPos> m_loadQueue;
 	SharedQueue<int> m_generatingQueue; // just a list for the generator threads to say "hey, don't delete the noisemap data!"
 
-	SharedQueue<ChunkUpdate>& g_chunkUpdates = SharedQueue<ChunkUpdate>::Get();
+	Subject<ChunkUpdate>& m_chunkUpdateSubject = Subject<ChunkUpdate>::Get();
+	Observer<ChunkUpdate> m_updateObserver; // not insane, because the main server thread is just as clueless about when this stuff happens
+
+	b2World* m_collisionWorldPtr = nullptr;
 };

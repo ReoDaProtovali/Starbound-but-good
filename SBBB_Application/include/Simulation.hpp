@@ -9,9 +9,12 @@ public:
 
 	void init();
 
+	void spawnTestEntities();
+
 	void tick();
 
+	b2World* getCollisionWorldPtr() { return &m_physicsWorld; }
 private:
-	b2World m_physicsWorld{b2Vec2(0.f, -10.f)};
+	b2World m_physicsWorld{b2Vec2(0.f, -0.f)};
 	SharedDynArray<TestEntity>& m_entities = SharedDynArray<TestEntity>::Get();
 };

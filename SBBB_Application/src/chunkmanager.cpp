@@ -87,19 +87,17 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 	s_chunkMap[p_chunkPos] = std::move(c);
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
-			if (j == 0 && i == 0) continue;
+			//if (j == 0 && i == 0) continue;
 			auto& neighbor = s_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)];
 			if (validChunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
 				neighbor.drawable = false;
 				neighbor.generateVBO(*this);
 				neighbor.drawable = true;
-				g_chunkUpdates.push(ChunkUpdate{ p_chunkPos.x + j, p_chunkPos.y + i });
+				m_chunkUpdateSubject.notifyAll(ChunkUpdate(p_chunkPos.x + j, p_chunkPos.y + i, ChunkUpdateType::NEW_VBO_DATA));
 			}
 		}
 	}
-	g_chunkUpdates.push(ChunkUpdate{ p_chunkPos.x, p_chunkPos.y });
-
-
+	m_chunkUpdateSubject.notifyAll(ChunkUpdate(p_chunkPos.x, p_chunkPos.y, ChunkUpdateType::DONE_GENERATING));
 }
 void ChunkManager::genFixed(int x, int y, uint32_t w, uint32_t h) {
 	for (size_t i = 0; i < h; i++) {
@@ -131,6 +129,22 @@ std::optional<WorldChunk*> ChunkManager::getChunkPtr(ChunkPos p_chunkPos)
 {
 	if (!validChunkExistsAt(p_chunkPos)) return std::nullopt;
 	return std::optional<WorldChunk*>(&s_chunkMap[p_chunkPos]);
+}
+
+void ChunkManager::setCollisionWorld(b2World* p_world)
+{
+	m_collisionWorldPtr = p_world;
+}
+
+void ChunkManager::generateColliders()
+{
+	while (auto opt = m_updateObserver.observe()) {
+		if (opt.value().type == ChunkUpdateType::DONE_GENERATING || opt.value().type == ChunkUpdateType::NEW_TILE_DATA) {
+			WorldChunk& c = s_chunkMap[ChunkPos(opt.value().x, opt.value().y)];
+			if (c.invalid || c.isEmpty) return;
+			c.genCollider(*m_collisionWorldPtr, *this);
+		}
+	}
 }
 
 bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {

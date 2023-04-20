@@ -147,6 +147,9 @@
     <ClCompile Include="src\simulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\util\SubjectObserver.hpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
