@@ -56,6 +56,9 @@ struct WorldChunk : public TransformObject
 
 	WorldChunk& operator=(const WorldChunk& other);
 
+	WorldChunk& operator=(WorldChunk&& other);
+
+
 	WorldChunk(WorldChunk&& other) noexcept;
 
 	void fillRandom();

@@ -47,7 +47,23 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 	calculateTransform();
 
 	return *this;
-};
+}
+WorldChunk& WorldChunk::operator=(WorldChunk&& other)
+{
+	tileMesh = std::move(other.tileMesh);
+	m_tiles = std::move(other.m_tiles);
+	worldID = other.worldID;
+	worldPos = other.worldPos;
+	vboIsPushed = other.vboIsPushed.load();
+	invalid = other.invalid.load();
+	isEmpty = other.isEmpty.load();
+
+	setPosition(glm::vec3((float)worldPos.x * CHUNKSIZE, (float)worldPos.y * CHUNKSIZE, 0.f));
+	calculateTransform();
+
+	return *this;
+}
+;
 
 WorldChunk::WorldChunk(WorldChunk&& other) noexcept :
 	tileMesh(std::move(other.tileMesh)),

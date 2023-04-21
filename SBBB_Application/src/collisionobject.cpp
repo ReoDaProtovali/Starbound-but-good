@@ -57,6 +57,26 @@ void CollisionObject::setDensity(float p_density)
 	m_fixtureDef.density = p_density;
 }
 
+void CollisionObject::applyForce(b2Vec2 p_force)
+{
+	m_body->ApplyForceToCenter(p_force, true);
+}
+
+void CollisionObject::applyImpulse(b2Vec2 p_impulse)
+{
+	m_body->ApplyLinearImpulseToCenter(p_impulse, true);
+}
+
+void CollisionObject::applyForce(const glm::vec2& p_force)
+{
+	m_body->ApplyForceToCenter(b2Vec2(p_force.x, p_force.y), true);
+}
+
+void CollisionObject::applyImpulse(const glm::vec2& p_impulse)
+{
+	m_body->ApplyLinearImpulseToCenter(b2Vec2(p_impulse.x, p_impulse.y), true);
+}
+
 void CollisionObject::spawnCollider(b2World& p_world)
 {
 	m_body = p_world.CreateBody(&m_def);

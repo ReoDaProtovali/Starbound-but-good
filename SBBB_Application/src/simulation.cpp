@@ -2,6 +2,7 @@
 #include "GameConstants.hpp"
 #include <cstdlib>
 #include "util/SubjectObserver.hpp"
+#include "Player.hpp"
 void Simulation::init()
 {
 
@@ -12,17 +13,21 @@ void Simulation::init()
 	spawnTestEntities();
 
 	for (auto& entity : m_entities) {
-		entity.onSpawn(m_physicsWorld);
+		entity->onSpawn(m_physicsWorld);
 	}
 
 }
 
 void Simulation::spawnTestEntities()
 {
-	for (int i = 0; i < 700; i++) {
-		m_entities.emplace((rand() % 50), (rand() % 200) + 300.f, 1.f, 1.f, false);
-		m_entities.at(m_entities.length() - 1).value()->allowColliderRotation(true);
+	for (int i = 0; i < 20; i++) {
+		auto e = new TestEntity((rand() % 50), (rand() % 200) + 300.f, 1.f, 1.f, false);
+		m_entities.push(e);
+		allocedEntities.push_back(e);
 	}
+	auto e = new Player(0.f, 100.f, 3.f, 3.f);
+	m_entities.push(e);
+	allocedEntities.push_back(e); // temp fix
 }
 
 void Simulation::tick()
@@ -77,6 +82,6 @@ void Simulation::tick()
 	//	m_entities.invalidate(randomIndex);
 	//};
 	for (auto& entity : m_entities) {
-		entity.onUpdate();
+		entity->onUpdate();
 	}
 }

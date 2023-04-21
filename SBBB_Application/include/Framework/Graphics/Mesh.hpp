@@ -84,6 +84,7 @@ public:
 		m_singleVertexSize = p_other.m_singleVertexSize;
 		m_GPUVertsSize = p_other.m_GPUVertsSize;
 		m_streamType = p_other.m_streamType;
+
 		// We can't copy these, so we have to create new opengl buffers. Copying is discouraged.
 		GLGEN_LOG("Copied mesh! VAO: " << p_other.VAO->ID);
 		VBO = std::make_unique<glBuffer>();
@@ -94,6 +95,23 @@ public:
 
 		//pushVBOToGPU();
 		//pushIBOToGPU();
+		return *this;
+	}
+
+	Mesh<T>& operator=(Mesh<T>&& p_other) {
+		m_verts = p_other.m_verts;
+		m_indices = p_other.m_indices;
+		m_attribList = p_other.m_attribList;
+		m_singleVertexSize = p_other.m_singleVertexSize;
+		m_GPUVertsSize = p_other.m_GPUVertsSize;
+		m_streamType = p_other.m_streamType;
+
+		GLGEN_LOG("Moved mesh! VAO: " << p_other.VAO->ID);
+
+		VBO = std::move(p_other.VBO);
+		VAO = std::move(p_other.VAO);
+		IBO = std::move(p_other.IBO);
+
 		return *this;
 	}
 

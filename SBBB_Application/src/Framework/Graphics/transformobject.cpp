@@ -121,4 +121,5 @@ void TransformObject::cloneTransform(const TransformObject& p_other)
 	m_rotation = p_other.m_rotation;
 	m_rotationAxis = p_other.m_rotationAxis;
 	m_scale = p_other.m_scale;
+	m_transform = p_other.m_transform;
 }

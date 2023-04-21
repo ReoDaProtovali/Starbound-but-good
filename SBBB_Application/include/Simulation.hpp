@@ -6,7 +6,7 @@
 class Simulation {
 public:
 	Simulation() {};
-
+	~Simulation() { for (auto e : allocedEntities) delete e; }
 	void init();
 
 	void spawnTestEntities();
@@ -15,6 +15,7 @@ public:
 
 	b2World* getCollisionWorldPtr() { return &m_physicsWorld; }
 private:
-	b2World m_physicsWorld{b2Vec2(0.f, -0.f)};
-	SharedDynArray<TestEntity>& m_entities = SharedDynArray<TestEntity>::Get();
+	b2World m_physicsWorld{b2Vec2(0.f, -10.f)};
+	std::vector<Entity*> allocedEntities;
+	SharedDynArray<Entity*>& m_entities = SharedDynArray<Entity*>::Get();
 };

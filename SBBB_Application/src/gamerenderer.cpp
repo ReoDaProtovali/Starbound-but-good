@@ -114,8 +114,15 @@ void GameRenderer::testDraw()
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(m_screenFBO, state);
 
+	static glm::vec3 smoothedPlayerPos{ 0 };
+
 	for (auto& entity : entities) {
-		entity.draw(m_screenFBO, state);
+		if (entity->isPlayer) {
+			DrawStates newState(state);
+			smoothedPlayerPos = utils::lerp(smoothedPlayerPos, glm::vec3(entity->getSpritePos().x, entity->getSpritePos().y, cam->pos.z), 0.1f);
+			cam->setGlobalPos(smoothedPlayerPos.x, -smoothedPlayerPos.y);
+		}
+		entity->draw(m_screenFBO, state);
 	}
 
 	static Text debugText(videotype, "");

@@ -116,7 +116,7 @@ void GameClient::testInput()
 		gw.toggleFullscreen();
 	}
 	camVelocity *= 0.95;
-	cam.pos += glm::vec3(camVelocity.x, camVelocity.y, 0.f);
+	//cam.pos += glm::vec3(camVelocity.x, camVelocity.y, 0.f);
 }
 
 void GameClient::processDebugStats()

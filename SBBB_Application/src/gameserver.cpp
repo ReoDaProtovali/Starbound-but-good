@@ -39,6 +39,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				world.generateColliders();
 				
 				sim.tick();
+				//std::cin.get();
 
 				tickGauge.update(0.9f);
 

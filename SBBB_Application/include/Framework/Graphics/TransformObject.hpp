@@ -53,6 +53,7 @@ public:
 	glm::mat4 getObjectTransform();
 
 	void cloneTransform(const TransformObject& p_other);
+	void cloneTransform(const glm::mat4& p_other);
 
 
 

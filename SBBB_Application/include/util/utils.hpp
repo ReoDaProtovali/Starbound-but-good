@@ -140,6 +140,9 @@ namespace utils {
 		}
 		return out;
 	}
+	inline glm::vec3 lerp(const glm::vec3& v1, const glm::vec3& v2, float t) {
+		return (1.0f - t) * v1 + t * v2;
+	}
 }
 // A utility class that can provide fps readouts, and also just measure times.
 struct fpsGauge {

@@ -231,10 +231,17 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\worldgenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Desktop\yeah\AI.hpp" />
+    <ClInclude Include="..\..\..\..\Desktop\yeah\MovementController.hpp" />
+    <ClInclude Include="..\..\..\..\Desktop\yeah\Player.hpp" />
+    <ClInclude Include="include\AI.hpp" />
     <ClInclude Include="include\Application.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Chunk.hpp" />
     <ClInclude Include="include\CollisionObject.hpp" />
+    <ClInclude Include="include\MovementController.hpp" />
+    <ClInclude Include="include\Player.hpp" />
+    <ClInclude Include="include\PlayerAI.hpp" />
     <ClInclude Include="include\util\SharedDynArray.hpp" />
     <ClInclude Include="include\util\DynArray.hpp" />
     <ClInclude Include="include\GameClient.hpp" />

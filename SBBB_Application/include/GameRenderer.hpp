@@ -79,7 +79,7 @@ public:
 	void testDraw();
 	void swapCameras();
 
-	SharedDynArray<TestEntity>& entities = SharedDynArray<TestEntity>::Get();
+	SharedDynArray<Entity*>& entities = SharedDynArray<Entity*>::Get();
 
 	// ---------------------------------------------------------------------------------
 

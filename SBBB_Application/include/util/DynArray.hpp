@@ -21,7 +21,7 @@ public:
         m_end = m_arr;
     };
     ~DynArray() {
-        for (auto elm : m_newAllocedList) m_arr[elm].data.~T();
+        for (auto elm : m_newAllocedList) delete &m_arr[elm].data;
         free(m_arr);
     }
 
@@ -55,7 +55,7 @@ public:
     template <typename... Args>
     bool emplace(Args&&... args) {
         if (length() >= MAX_BLOCK_COUNT) return false;
-        if (m_newAllocedList.contains(length())) m_end->data.~T();
+        if (m_newAllocedList.contains(length())) delete &m_end->data;
         new (&m_end->data) T(std::forward<Args>(args)...);
         m_newAllocedList.insert(length());
         m_end->valid = true;

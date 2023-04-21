@@ -48,6 +48,11 @@ public:
 	void setRestitutionThreshold(float p_restitutionThreshold);
 	void setDensity(float p_density);
 
+	void applyForce(b2Vec2 p_force);
+	void applyImpulse(b2Vec2 p_impulse);
+	void applyForce(const glm::vec2& p_force);
+	void applyImpulse(const glm::vec2& p_impulse);
+
 	// Must be done after proper definitions
 	void spawnCollider(b2World& p_world);
 	// deletes first, then respawns

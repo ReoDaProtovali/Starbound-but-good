@@ -16,7 +16,7 @@ public:
         m_invalidCount = 0;
     };
     ~SharedDynArray() {
-        for (auto elm : m_newAllocedList) m_arr[elm].data.~T();
+        for (auto elm : m_newAllocedList) delete &m_arr[elm].data;
         //for (size_t i = 0; i < MAX_BLOCK_COUNT; i++) { m_arr->data.~T(); }
         free(m_arr);
     }
@@ -55,17 +55,17 @@ public:
         return true;
     }
 
-    template <typename... Args>
-    bool emplace(Args&&... args) {
-        std::unique_lock<std::shared_mutex> lock(m_mtx);
-        if (length() >= MAX_BLOCK_COUNT) return false;
-        if (m_newAllocedList.contains(length())) m_end->data.~T();
-        new (&m_end->data) T(std::forward<Args>(args)...);
-        m_newAllocedList.insert(length());
-        m_end->valid = true;
-        m_end++;
-        return true;
-    }
+    //template <typename... Args>
+    //bool emplace(Args&&... args) {
+    //    std::unique_lock<std::shared_mutex> lock(m_mtx);
+    //    if (length() >= MAX_BLOCK_COUNT) return false;
+    //    if (m_newAllocedList.contains(length())) delete &m_end->data;
+    //    new (&m_end->data) T(std::forward<Args>(args)...);
+    //    m_newAllocedList.insert(length());
+    //    m_end->valid = true;
+    //    m_end++;
+    //    return true;
+    //}
     // takes a single element out and keeps the internal array clean.
     // @returns a boolean stating if an element was removed or not.
     bool remove(size_t p_index) {
