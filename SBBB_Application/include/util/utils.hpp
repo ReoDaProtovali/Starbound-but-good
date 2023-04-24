@@ -42,8 +42,12 @@ namespace utils {
 		fileStream.close();
 		return content;
 	}
+	inline float lerp(float f1, float f2, float t) {
+		float offset = f2 - f1;
+		return f1 + offset * t;
+	}
 	inline glm::vec2 lerp(glm::vec2 v1, glm::vec2 v2, float t) {
-		glm::vec2 offset = v1 - v2;
+		glm::vec2 offset = v2 - v1;
 		return v1 + offset * t;
 	}
 	template <typename T>

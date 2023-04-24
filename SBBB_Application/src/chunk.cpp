@@ -402,7 +402,7 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 		out:;
 			if (verts.size() > 3) {
 				b2ChainShape shape;
-				shape.CreateLoop(verts.data(), verts.size());
+				shape.CreateLoop(verts.data(), (int)verts.size());
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &shape;
 				fixtureDef.density = 1.0f;

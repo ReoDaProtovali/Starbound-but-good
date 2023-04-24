@@ -216,6 +216,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\gameclient.cpp" />
     <ClCompile Include="src\gamerenderer.cpp" />
     <ClCompile Include="src\gameserver.cpp" />
+    <ClCompile Include="src\globals.cpp" />
     <ClCompile Include="src\inputhandler.cpp" />
     <ClCompile Include="src\lighting.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -239,9 +240,11 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Chunk.hpp" />
     <ClInclude Include="include\CollisionObject.hpp" />
+    <ClInclude Include="include\Globals.hpp" />
     <ClInclude Include="include\MovementController.hpp" />
     <ClInclude Include="include\Player.hpp" />
     <ClInclude Include="include\PlayerAI.hpp" />
+    <ClInclude Include="include\TestAI.hpp" />
     <ClInclude Include="include\util\SharedDynArray.hpp" />
     <ClInclude Include="include\util\DynArray.hpp" />
     <ClInclude Include="include\GameClient.hpp" />
@@ -282,6 +285,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\util\Array3D.hpp" />
     <ClInclude Include="include\util\DebugDraw.hpp" />
     <ClInclude Include="include\util\GenericMessage.hpp" />
+    <ClInclude Include="include\util\SharedList.hpp" />
     <ClInclude Include="include\util\SharedQueue.hpp" />
     <ClInclude Include="include\util\Messenger.hpp" />
     <ClInclude Include="include\util\Rect.hpp" />

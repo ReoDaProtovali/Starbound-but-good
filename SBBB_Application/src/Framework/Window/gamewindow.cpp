@@ -56,6 +56,7 @@ void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h, int p_f
 	SDL_DisplayMode mode;
 	SDL_GetDisplayMode(displayIndex, 0, &mode);
 
+	globals.refresh_rate = mode.refresh_rate;
 	screenWidth = mode.w;
 	screenHeight = mode.h;
 

@@ -11,10 +11,10 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	LOAD_LOG("GameRenderer instantiated...");
 
-	cam->pos = glm::vec3(-0.f, 0.f, 32.0f);
+	cam->pos = glm::vec3(-20.f, 88.f, 32.0f);
 	cam->tileScale = 40.f;
 	cam->setDimensions(windowWidth, windowHeight);
-	worldRenderer.setCamera(cam);
+	worldRenderer.setCamera(cam.get());
 
 	currentCamera = cam;
 
@@ -88,7 +88,12 @@ int GameRenderer::drawWorld()
 {
 	cam->updateFrame();
 	DrawStates state;
-	state.setTransform(currentCamera.lock()->getTransform());
+	if (!playerCam){
+		state.setTransform(currentCamera.lock()->getTransform());
+	}
+	else {
+		state.setTransform(playerCam->getTransform());
+	}
 	return worldRenderer.draw(m_screenFBO, state, windowWidth);
 }
 
@@ -98,6 +103,7 @@ void GameRenderer::drawLighting() {
 
 void GameRenderer::testDraw()
 {
+
 	cam->updateFrame();
 	// it's a bit bad to use the depth test function here, but I haven't moved it into the DrawSurface class yet so whatevs
 	glDisable(GL_DEPTH_TEST);
@@ -108,22 +114,42 @@ void GameRenderer::testDraw()
 	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
 	DrawStates state;
 
-	state.setTransform(currentCamera.lock()->getTransform());
+	for (auto& entity : entities) {
+		if (entity->isPlayer) {
+			//smoothedPlayerPos = utils::lerp(smoothedPlayerPos, glm::vec3(entity->getInterpolatedPosition().x, entity->getInterpolatedPosition().y, cam->pos.z), 0.1f);
+
+			entity->myCam.setDimensions(windowWidth, windowHeight);
+			entity->myCam.setTileScale(cam->tileScale);
+			//cam->setGlobalPos(entity->myCam.pos.x, entity->myCam.pos.y);
+			//cam->zRotation = entity->getRotation();
+
+			state.setTransform(entity->myCam.getTransform());
+			playerCam = &entity->myCam;
+			worldRenderer.setCamera(playerCam);
+		}
+		entity->draw(m_screenFBO, state);
+	}
+
+	static glm::vec2 mousePos = glm::vec2(0.f);
+	while (auto opt = m_mouseObserver.observe()) {
+		MouseEvent m = opt.value();
+		mousePos.x = m.x;
+		mousePos.y = m.y;
+	}
+
+	if (!playerCam) {
+		state.setTransform(currentCamera.lock()->getTransform());
+	}
+	else {
+		state.setTransform(playerCam->getTransform());
+		auto mouseTileLoc = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
+		testReoSprite.setPosition(glm::vec3(mouseTileLoc.x, mouseTileLoc.y, 5.f));
+	}
+
 
 	testReoSprite.setOriginRelative(OriginLoc::CENTER);
 	testReoSprite.setRotation(testFrame / 50.f);
 	testReoSprite.draw(m_screenFBO, state);
-
-	static glm::vec3 smoothedPlayerPos{ 0 };
-
-	for (auto& entity : entities) {
-		if (entity->isPlayer) {
-			DrawStates newState(state);
-			smoothedPlayerPos = utils::lerp(smoothedPlayerPos, glm::vec3(entity->getSpritePos().x, entity->getSpritePos().y, cam->pos.z), 0.1f);
-			cam->setGlobalPos(smoothedPlayerPos.x, -smoothedPlayerPos.y);
-		}
-		entity->draw(m_screenFBO, state);
-	}
 
 	static Text debugText(videotype, "");
 	static DebugStats& db = DebugStats::Get();
@@ -145,7 +171,9 @@ void GameRenderer::testDraw()
 			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
 			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
 			<< "Tile Vertex Count Total: " << db.vertCount << '\n'
-			<< "Chunk Gens Per Second - " << db.chunkGenCounter / updateTimer.getSecondsElapsed();
+			<< "Chunk Gens Per Second - " << db.chunkGenCounter / updateTimer.getSecondsElapsed() << '\n'
+			<< "Player Velocity: " << db.playerXVel << ", " << db.playerYVel << '\n'
+			<< "Player Acceleration: " << db.playerXAcc << ", " << db.playerYAcc << '\n';
 		db.statUpdate = false;
 		db.drawCalls = 0;
 		db.chunkGenCounter = 0;

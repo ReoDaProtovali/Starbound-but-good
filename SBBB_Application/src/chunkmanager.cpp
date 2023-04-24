@@ -29,6 +29,14 @@ void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 }
 
 void ChunkManager::processRequests() {
+	static Observer<KeyEvent> keyPresses;
+	while (auto opt = keyPresses.observe()) {
+		switch (opt.value().keyCode) {
+		case SDLK_4:
+			regenVBOs();
+			break;
+		}
+	}
 	if (auto opt = s_generationRequest.getMessageFront()) {
 		enqueueGen(ChunkPos(opt.value().x, opt.value().y));
 	}
@@ -37,6 +45,7 @@ void ChunkManager::processRequests() {
 void ChunkManager::tidyNoisemapIfDone() {
 	if (m_generatingQueue.length() == 0) {
 		m_worldgen.clearNoisemap();
+		globals.worldDoneGenerating = true;
 	}
 }
 void ChunkManager::startThreads()

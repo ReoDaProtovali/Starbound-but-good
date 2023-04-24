@@ -48,6 +48,8 @@ void Application::startServer()
 void Application::pollEvents()
 {
 	static SDL_Event event;
+	static Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get();
+
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 		case SDL_WINDOWEVENT:
@@ -68,6 +70,14 @@ void Application::pollEvents()
 			client.inp.processKeyUp(event.key.keysym.sym);
 			if (event.key.keysym.sym == SDLK_ESCAPE) gameActive = false;
 			break;
+		case SDL_MOUSEMOTION:
+			if (event.window.windowID != client.getWindowID()) break;
+			mouseSubject.notifyAll(MouseEvent{
+					(float)event.motion.x,
+					(float)event.motion.y,
+					false,
+					0
+				});
 		}
 	}
 }

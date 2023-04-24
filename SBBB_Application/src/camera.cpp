@@ -43,6 +43,8 @@ void Camera::lookForwards()
 	if (m_interpolation) cur = apparentPos;
 	Camera::m_target = cur - m_forward; // look forwards
 	Camera::view = glm::lookAt(cur, m_target, glm::vec3(0.0f, 1.0f, 0.0f));
+
+
 }
 
 void Camera::setDimensions(uint32_t p_windowWidth, uint32_t p_windowHeight)
@@ -56,8 +58,8 @@ void Camera::setDimensions(uint32_t p_windowWidth, uint32_t p_windowHeight)
 
 glm::mat4 Camera::getTransform()
 {
+	float screenScaling = 1.0;
 	if (!m_disableAutoFrame) {
-		float screenScaling = 1.0;
 		if (m_pixelDimensions.x < m_pixelDimensions.y)
 		{
 			screenScaling = m_pixelDimensions.x / m_pixelDimensions.y;
@@ -91,11 +93,12 @@ glm::mat4 Camera::getTransform()
 			screenCenterPos.x * 2.0f,
 			screenCenterPos.y * 2.0f);
 		view = glm::translate(view, glm::vec3(screenCenterPos, 0.0f));
+
 	}
 	else {
 		if (!m_perspective)
 		{
-			setGlobalPos(m_frame.x, -m_frame.y);
+			setGlobalPos(m_frame.x, m_frame.y);
 			m_proj = glm::ortho(
 				0.0f,
 				getFrameDimensions().x,
@@ -152,13 +155,12 @@ void Camera::setTileScale(float p_tileScale)
 
 void Camera::setGlobalPos(glm::vec2 p_globalPos)
 { // global pos is in the unit of tiles
-	glm::vec2 pos_yInv = glm::vec2(p_globalPos.x, -p_globalPos.y);
-	pos = glm::vec3(pos_yInv, pos.z);
+	pos = glm::vec3(glm::vec2(p_globalPos.x, p_globalPos.y), pos.z);
 }
 
 void Camera::setGlobalPos(float p_globalX, float p_globalY)
 { // global pos is in the unit of tiles
-	pos = glm::vec3(p_globalX, -p_globalY, pos.z);
+	pos = glm::vec3(p_globalX, p_globalY, pos.z);
 }
 void Camera::setApparentPos(glm::vec2 p_globalPos) {
 	apparentPos = glm::vec3(p_globalPos.x, p_globalPos.y, pos.z);
@@ -168,10 +170,17 @@ void Camera::setApparentPos(float p_globalX, float p_globalY)
 	apparentPos = glm::vec3(p_globalX, p_globalY, pos.z);
 }
 
-void Camera::interpolate(float p_alpha) {
+void Camera::interpolate(float p_alpha, float dt) {
 	// simple lerp
-	glm::vec3 newPos = pos + lastVelocity * p_alpha;
+	glm::vec3 newPos = pos + lastVelocity * p_alpha * dt;
 	setApparentPos(newPos.x, newPos.y);
+}
+glm::vec2 Camera::pixelToTileCoordinates(float p_pixelX, float p_pixelY)
+{
+	//getTransform(); i'll just assume it's up to date because it saves calculations
+	glm::vec4 out = glm::inverse(m_proj) * glm::inverse(view) * glm::vec4((p_pixelX / m_pixelDimensions.x) * 2.f - 1.f, -(p_pixelY / m_pixelDimensions.y) * 2.f + 1.f, 0.f, 0.f);
+	
+	return glm::vec2(out.x + pos.x, out.y + pos.y);
 }
 const glm::vec4 Camera::getFrame() const {
 	return m_frame;

@@ -112,6 +112,7 @@ void GameClient::testInput()
 	if (inp.testKeyDown(SDLK_3)) {
 		renderer.swapCameras();
 	}
+
 	if (inp.testKeyDown(SDLK_5)) {
 		gw.toggleFullscreen();
 	}

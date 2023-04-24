@@ -34,6 +34,7 @@ public:
 			if (m_dpadState & CardinalDirection::RIGHT) outDir.x++;
 			if (m_dpadState & CardinalDirection::LEFT) outDir.x--;
 			if (!holdInput) m_dpadState = 0.f;
+			if (outDir.x == 0.f && outDir.y == 0.0f) return glm::vec2(0.f);
 			return glm::normalize(outDir);
 		}
 		outDir = m_vecState;

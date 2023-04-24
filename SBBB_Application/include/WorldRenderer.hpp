@@ -14,7 +14,7 @@ class WorldRenderer {
 	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 	DrawStates m_tileDrawStates;
 
-	std::shared_ptr<Camera> m_viewCam;
+	Camera* m_viewCam;
 	Camera m_tileCam;
 	glm::ivec4 m_chunkFramePrev;
 
@@ -29,7 +29,7 @@ public:
 	Observer<ChunkUpdate> m_chunkUpdateObserver;
 
 	// If we want to draw the world, we kinda have to know where we are in it
-	void setCamera(std::shared_ptr<Camera> p_cam);
+	void setCamera(Camera* p_cam);
 	bool drawChunkBorders = false;
 	int draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p_windowWidth);
 };

@@ -2,6 +2,7 @@
 #define GAMECONSTANTS_H
 
 #include "Framework/FrameworkConstants.hpp"
+#include "Globals.hpp"
 #include <atomic>
 #include <thread>
 #define POLLING_RATE_MS 10
@@ -14,7 +15,8 @@
 // do NOT increase this beyond limits. it does NOT like to be changed easily
 // Currently works from 2-64
 constexpr auto CHUNKSIZE = 64;
-// Amount of world layers. Increasing heavily decreases chunk generation and vbo generation speed.
+// Amount of world layers. Increasing heavily decreases chunk generation and vbo generation speed, also, kinda set in stone now. Things will break beyond 4.
+// update: things also break under 4
 constexpr auto CHUNKDEPTH = 4;
 enum DefaultTileID {
 	EMPTY,
@@ -46,6 +48,12 @@ struct KeyEvent {
 	bool wasDown;
 	int keyCode;
 };
+struct MouseEvent {
+	float x;
+	float y;
+	bool wasClick;
+	uint32_t mouseState;
+};
 
 enum class ChunkUpdateType {
 	DONE_GENERATING,
@@ -64,6 +72,7 @@ struct ChunkUpdate {
 #define GENERATORS_JSON_PATH ".\\src\\Shaders\\noisegenerators\\generators.json"
 
 
+
 struct DebugStats {
 	float drawFPS = 0.f;
 	float updateFPS = 0.f;
@@ -73,6 +82,10 @@ struct DebugStats {
 	float camFY1 = 0.f;
 	float camFX2 = 0.f;
 	float camFY2 = 0.f;
+	float playerXVel = 0.f;
+	float playerYVel = 0.f;
+	float playerXAcc = 0.f;
+	float playerYAcc = 0.f;
 	int screenW = 0;
 	int screenH = 0;
 	int windowW = 0;
@@ -95,6 +108,10 @@ struct DebugStats {
 		return instance;
 	}
 };
-
+namespace Globals {
+	inline bool shouldInterpolate() {
+		return (float(UPDATE_RATE_FPS) / float(globals.refresh_rate)) < 0.8f; // 80% for now
+	}
+}
 
 #endif

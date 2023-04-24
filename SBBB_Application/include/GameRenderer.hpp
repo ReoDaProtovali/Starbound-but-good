@@ -22,7 +22,7 @@
 
 #include "Framework/Graphics/Text.hpp"
 
-#include "util/SharedDynArray.hpp"
+#include "util/SharedList.hpp"
 #include "TestEntity.hpp"
 #include "box2d.h"
 
@@ -70,6 +70,7 @@ public:
 	// The cameras are pointers, such that they can be easily switched between
 	std::shared_ptr<Camera> cam = std::make_shared<Camera>();
 	std::shared_ptr<Camera> overviewCam;
+	Camera* playerCam = nullptr;
 
 	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 109.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
 	Texture* testReoTexture = nullptr;
@@ -79,7 +80,7 @@ public:
 	void testDraw();
 	void swapCameras();
 
-	SharedDynArray<Entity*>& entities = SharedDynArray<Entity*>::Get();
+	SharedList<EntityWrapper>& entities = SharedList<EntityWrapper>::Get();
 
 	// ---------------------------------------------------------------------------------
 
@@ -87,6 +88,8 @@ public:
 	FrameBuffer m_screenFBO;
 
 private:
+
+	Observer<MouseEvent> m_mouseObserver;
 
 	WorldRenderer worldRenderer;
 	GenericShaders& gs = GenericShaders::Get();

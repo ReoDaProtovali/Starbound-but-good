@@ -126,7 +126,7 @@ public:
 	* 
 	* @param p_alpha - A number between 0-1 that represents the progress between the start and ending position. Given by the timestepper.
 	*/
-	void interpolate(float p_alpha);
+	void interpolate(float p_alpha, float dt);
 
 	/// Enables manually changing the view matrix without it defaulting to lookForwards();
 	void enableManualView() { m_manualView = true; }
@@ -146,7 +146,7 @@ public:
 
 	void disableAutoFrame() { m_disableAutoFrame = true; }
 
-
+	glm::vec2 pixelToTileCoordinates(float p_pixelX, float p_pixelY);
 
 	/// Tile scale is a value representing the amount of tiles on the longest axis.
 	float tileScale;

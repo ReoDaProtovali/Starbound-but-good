@@ -29,7 +29,16 @@ void CollisionObject::setColliderAsDynamic()
 
 void CollisionObject::setColliderShapeAsBox(float p_w, float p_h)
 {
-	m_shape.SetAsBox((p_w / 2.f) * TILES_TO_METERS, (p_h / 2.f) * TILES_TO_METERS);
+	m_polygonShape.SetAsBox((p_w / 2.f) * TILES_TO_METERS, (p_h / 2.f) * TILES_TO_METERS);
+	m_fixtureDef.shape = &m_polygonShape;
+}
+
+void CollisionObject::setColliderShapeAsCircle(float r)
+{
+	m_circleShape.m_p.SetZero();
+	m_circleShape.m_radius = r * TILES_TO_METERS;
+	m_fixtureDef.shape = &m_circleShape;
+	isCircle = true;
 }
 
 void CollisionObject::setColliderFixtureDef(const b2FixtureDef& p_def)
@@ -77,10 +86,20 @@ void CollisionObject::applyImpulse(const glm::vec2& p_impulse)
 	m_body->ApplyLinearImpulseToCenter(b2Vec2(p_impulse.x, p_impulse.y), true);
 }
 
+void CollisionObject::updateValues()
+{
+	bodyVelocity = glm::vec2(m_body->GetLinearVelocity().x, m_body->GetLinearVelocity().y);
+}
+
 void CollisionObject::spawnCollider(b2World& p_world)
 {
 	m_body = p_world.CreateBody(&m_def);
-	m_fixtureDef.shape = &m_shape;
+	if (isCircle) {
+		m_fixtureDef.shape = &m_circleShape;
+	}
+	else {
+		m_fixtureDef.shape = &m_polygonShape;
+	}
 	m_body->CreateFixture(&m_fixtureDef);
 }
 
@@ -88,7 +107,12 @@ void CollisionObject::respawnCollider(b2World& p_world)
 {
 	p_world.DestroyBody(m_body);
 	m_body = p_world.CreateBody(&m_def);
-	m_fixtureDef.shape = &m_shape;
+	if (isCircle) {
+		m_fixtureDef.shape = &m_circleShape;
+	}
+	else {
+		m_fixtureDef.shape = &m_polygonShape;
+	}
 	m_body->CreateFixture(&m_fixtureDef);
 
 }
@@ -100,4 +124,9 @@ b2Transform CollisionObject::getCollisionTransform()
 	transform.p.y *= METERS_TO_TILES;
 
 	return transform;
+}
+
+glm::vec2 CollisionObject::getVelocity()
+{
+	return bodyVelocity.load();
 }

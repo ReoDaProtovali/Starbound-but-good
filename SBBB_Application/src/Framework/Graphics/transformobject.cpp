@@ -17,6 +17,7 @@ const float fwrapSigned(float x, float r) {
 TransformObject::TransformObject() :
 	m_origin(glm::vec2(0.f, 0.f)),
 	m_position(glm::vec3(0.f, 0.f, 0.f)),
+	apparentPos(glm::vec3(0.f)),
 	m_rotation(0.f),
 	m_rotationAxis(glm::vec3(0.f, 0.f, 1.f)),
 	m_scale(glm::vec2(1.f, 1.f)),
@@ -96,9 +97,20 @@ void TransformObject::calculateTransform()
 		// Matrix multiplication is non-commutative, so it needs to be done in TRS order in this case. It's always the reverse order than you expect it to be.
 
 		// Translate to world space.
-		m_transform = glm::translate(glm::mat4(1.0f), m_position);
+		if (!m_useInterpolation) {
+			m_transform = glm::translate(glm::mat4(1.0f), m_position);
+		}
+		else {
+			m_transform = glm::translate(glm::mat4(1.0f), apparentPos);
+		}
+
 		// Rotate along axis
-		m_transform = glm::rotate(m_transform, m_rotation, m_rotationAxis);
+		if (!m_useInterpolation) {
+			m_transform = glm::rotate(m_transform, m_rotation, m_rotationAxis);
+		}
+		else {
+			m_transform = glm::rotate(m_transform, apparentRot, m_rotationAxis);
+		}
 		// Do the scaling.
 		m_transform = glm::scale(m_transform, glm::vec3(m_scale, 1.f));
 		// Transform to the origin, *technically* done first
@@ -122,4 +134,14 @@ void TransformObject::cloneTransform(const TransformObject& p_other)
 	m_rotationAxis = p_other.m_rotationAxis;
 	m_scale = p_other.m_scale;
 	m_transform = p_other.m_transform;
+}
+
+void TransformObject::enableTransformInterpolation()
+{
+	m_useInterpolation = true;
+}
+
+void TransformObject::disableTransformInterpolation()
+{
+	m_useInterpolation = false;
 }

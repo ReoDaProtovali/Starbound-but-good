@@ -16,8 +16,8 @@ public:
         m_invalidCount = 0;
     };
     ~SharedDynArray() {
-        for (auto elm : m_newAllocedList) delete &m_arr[elm].data;
-        //for (size_t i = 0; i < MAX_BLOCK_COUNT; i++) { m_arr->data.~T(); }
+        //for (auto elm : m_newAllocedList) m_arr[elm].data.~T();
+        for (size_t i = 0; i < MAX_BLOCK_COUNT; i++) { m_arr->data.~T(); }
         free(m_arr);
     }
 
@@ -55,17 +55,17 @@ public:
         return true;
     }
 
-    //template <typename... Args>
-    //bool emplace(Args&&... args) {
-    //    std::unique_lock<std::shared_mutex> lock(m_mtx);
-    //    if (length() >= MAX_BLOCK_COUNT) return false;
-    //    if (m_newAllocedList.contains(length())) delete &m_end->data;
-    //    new (&m_end->data) T(std::forward<Args>(args)...);
-    //    m_newAllocedList.insert(length());
-    //    m_end->valid = true;
-    //    m_end++;
-    //    return true;
-    //}
+    template <typename... Args>
+    bool emplace(Args&&... args) {
+        std::unique_lock<std::shared_mutex> lock(m_mtx);
+        if (length() >= MAX_BLOCK_COUNT) return false;
+        if (m_newAllocedList.contains(length() + 1)) m_end->data.~T();
+        new (&m_end->data) T(std::forward<Args>(args)...);
+        m_newAllocedList.insert(length() + 1);
+        m_end->valid = true;
+        m_end++;
+        return true;
+    }
     // takes a single element out and keeps the internal array clean.
     // @returns a boolean stating if an element was removed or not.
     bool remove(size_t p_index) {
@@ -73,6 +73,7 @@ public:
         if (p_index >= length()) return false;
         memmove(&m_arr[p_index], &m_arr[p_index] + 1, (length() - p_index - 1) * sizeof(DynArrayBlock<T>));
         (--m_end)->valid = false;
+        m_end->data.~T();
         return true;
     }
     // marks a single element as deleted, treated like it's gone.
@@ -81,6 +82,7 @@ public:
         std::unique_lock<std::shared_mutex> lock(m_mtx);
         if (length() == 0 || p_index >= length() || !m_arr[p_index].valid) return false;
         m_arr[p_index].valid = false;
+        m_arr[p_index].~T();
         m_invalidCount++;
         return true;
     }
@@ -110,6 +112,7 @@ public:
             m_invalidCount -= m_end - lastFallingEdge;
             m_end = lastFallingEdge;
         };
+        memset(m_end, 0, (MAX_BLOCK_COUNT - length()) * sizeof(DynArrayBlock<T>));
     }
 
     // for if you don't care about the internal block format, and just want a reference to T (safely)
@@ -121,7 +124,7 @@ public:
 
     void dump() const {
         for (auto itr = m_arr; itr != m_end; itr++) {
-            std::cout << "Data: " << itr->data << ", Valid: " << itr->valid << "\n";
+            std::cout << "Data: " << itr->data.m_eptr << ", Valid: " << itr->valid << "\n";
         }
     }
 

@@ -55,8 +55,11 @@ public:
 	void cloneTransform(const TransformObject& p_other);
 	void cloneTransform(const glm::mat4& p_other);
 
+	void enableTransformInterpolation();
+	void disableTransformInterpolation();
 
-
+	glm::vec3 apparentPos;
+	float apparentRot;
 protected:
 	glm::vec2 m_origin;
 	glm::vec3 m_position; // Decided to give it a z axis, as this is handy for certain effects and layering.
@@ -65,6 +68,7 @@ protected:
 	glm::vec2 m_scale; // xy
 	glm::mat4 m_transform;
 	bool m_transformOutOfDate = true;
+	bool m_useInterpolation = false;
 };
 
 #endif

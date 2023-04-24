@@ -28,7 +28,7 @@ WorldRenderer::WorldRenderer()
 	m_tileDrawStates.attachShader(&m_tileShader);
 }
 
-void WorldRenderer::setCamera(std::shared_ptr<Camera> p_cam)
+void WorldRenderer::setCamera(Camera* p_cam)
 {
 	m_viewCam = p_cam;
 }

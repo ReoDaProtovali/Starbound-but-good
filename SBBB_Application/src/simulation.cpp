@@ -20,57 +20,56 @@ void Simulation::init()
 
 void Simulation::spawnTestEntities()
 {
-	for (int i = 0; i < 20; i++) {
-		auto e = new TestEntity((rand() % 50), (rand() % 200) + 300.f, 1.f, 1.f, false);
-		m_entities.push(e);
-		allocedEntities.push_back(e);
+	for (int i = 0; i < 200; i++) {
+		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
-	auto e = new Player(0.f, 100.f, 3.f, 3.f);
-	m_entities.push(e);
-	allocedEntities.push_back(e); // temp fix
+	m_entities.emplace_front(new Player(0.f, 100.f, 3.f, 3.f));
 }
 
 void Simulation::tick()
 {
-	static Observer<KeyEvent> keyObserver;
-	while (auto opt = keyObserver.observe()) {
-		switch (opt.value().keyCode) {
-		case SDLK_g:
-			if (opt.value().wasDown) {
-				m_physicsWorld.SetGravity(b2Vec2(0, -10.f));
-			}
-			else {
-				m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-			}
-			break;
-		case SDLK_t:
-			if (opt.value().wasDown) {
-				m_physicsWorld.SetGravity(b2Vec2(0, 10.f));
-			}
-			else {
-				m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-			}
-			break;
-		case SDLK_f:
-			if (opt.value().wasDown) {
-				m_physicsWorld.SetGravity(b2Vec2(-10.f, 0.f));
-			}
-			else {
-				m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-			}
-			break;
-		case SDLK_h:
-			if (opt.value().wasDown) {
-				m_physicsWorld.SetGravity(b2Vec2(10.f, 0.f));
-			}
-			else {
-				m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-			}
-			break;
-		}
+	//static Observer<KeyEvent> keyObserver;
+	//while (auto opt = keyObserver.observe()) {
+	//	switch (opt.value().keyCode) {
+	//	case SDLK_g:
+	//		if (opt.value().wasDown) {
+	//			m_physicsWorld.SetGravity(b2Vec2(0, -10.f));
+	//		}
+	//		else {
+	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
+	//		}
+	//		break;
+	//	case SDLK_t:
+	//		if (opt.value().wasDown) {
+	//			m_physicsWorld.SetGravity(b2Vec2(0, 10.f));
+	//		}
+	//		else {
+	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
+	//		}
+	//		break;
+	//	case SDLK_f:
+	//		if (opt.value().wasDown) {
+	//			m_physicsWorld.SetGravity(b2Vec2(-10.f, 0.f));
+	//		}
+	//		else {
+	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
+	//		}
+	//		break;
+	//	case SDLK_h:
+	//		if (opt.value().wasDown) {
+	//			m_physicsWorld.SetGravity(b2Vec2(10.f, 0.f));
+	//		}
+	//		else {
+	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
+	//		}
+	//		break;
+	//	}
 
+	//}
+
+	if (globals.worldDoneGenerating) {
+		m_physicsWorld.SetGravity(b2Vec2(0.f, -20.f));
 	}
-
 	m_physicsWorld.Step(1.f / (float)UPDATE_RATE_FPS, 6, 3);
 
 	//if (rand() % 20 > 18) { 
