@@ -124,9 +124,9 @@ public:
 	/**
 	* Interpolates the apparent position of the camera. Required: lastVelocity needs to be up to date, and interpolation needs to be enabled.
 	* 
-	* @param p_alpha - A number between 0-1 that represents the progress between the start and ending position. Given by the timestepper.
+	* @param rate - A number between 0-1 that represents how quicky it tries to approach its new position. lower = slower
 	*/
-	void interpolate(float p_alpha, float dt);
+	void interpolate(float rate);
 
 	/// Enables manually changing the view matrix without it defaulting to lookForwards();
 	void enableManualView() { m_manualView = true; }
@@ -142,11 +142,14 @@ public:
 
 	void disableInterpolation() { m_interpolation = false; }
 
+	void toggleInterpolation() { m_interpolation = !m_interpolation; }
+
 	void enableAutoFrame() { m_disableAutoFrame = false; }
 
 	void disableAutoFrame() { m_disableAutoFrame = true; }
 
 	glm::vec2 pixelToTileCoordinates(float p_pixelX, float p_pixelY);
+	glm::vec2 tileToPixelCoordinates(float p_tileX, float p_tileY);
 
 	/// Tile scale is a value representing the amount of tiles on the longest axis.
 	float tileScale;

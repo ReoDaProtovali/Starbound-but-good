@@ -64,6 +64,6 @@ void Lighting::draw(FrameBuffer& p_screenFBO)
 		m_lightingStates.addTexture(p_screenFBO.getColorTex(0));
 		m_screenTexSet = true;
 	}
-
+	// something I realize now is that calling .draw on an FBO does not actually bind the FBO, it just draws to the current bound thing.
 	p_screenFBO.draw(m_overlayMesh, GL_TRIANGLES, m_lightingStates);
 }

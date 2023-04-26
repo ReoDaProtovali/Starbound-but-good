@@ -29,6 +29,8 @@
 class Lighting;
 class GameWindow;
 
+#define BOMB_COUNTER_MAX 50
+
 /// Serves as a wrapper for all of the rendering subsystems
 /// Keeps track of the window dimensions for ease of rendering
 /// Stores default spritesheets, and a resource loader that holds various textures.
@@ -75,6 +77,8 @@ public:
 	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 109.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
 	Texture* testReoTexture = nullptr;
 
+	Sprite bombSprite = Sprite(glm::vec3(9999.f, 9999.f, 2.f), Rect(0.f, 0.f, 1.f, 1.f));
+	int bombCounter = BOMB_COUNTER_MAX;
 	
 	float testFrame = 0;
 	void testDraw();
@@ -90,7 +94,6 @@ public:
 private:
 
 	Observer<MouseEvent> m_mouseObserver;
-
 	WorldRenderer worldRenderer;
 	GenericShaders& gs = GenericShaders::Get();
 

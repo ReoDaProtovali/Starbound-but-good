@@ -31,7 +31,7 @@ public:
 	std::chrono::microseconds deltaTimeSinceUpdate;
 	
 	bool isPlayer = false;
-	Camera myCam;
+	Camera entityCam;
 };
 
 

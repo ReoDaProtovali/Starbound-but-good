@@ -82,6 +82,14 @@ public:
 		bind();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+	// Clears the color buffer at the given attachment.
+	void clearRegion(GLint p_x, GLint p_y, GLsizei p_width, GLsizei p_height, size_t p_bufferIndex = 0) {
+		glCheck(glEnable(GL_SCISSOR_TEST));
+		glCheck(glScissor(p_x, p_y, p_width, p_height));
+		GLfloat col[4] = { 0.f, 0.f, 0.f, 0.f };
+		glCheck(glClearBufferfv(GL_COLOR, (GLint)p_bufferIndex, col));
+		glCheck(glDisable(GL_SCISSOR_TEST));
+	}
 	void bind()
 	{
 		useViewport();

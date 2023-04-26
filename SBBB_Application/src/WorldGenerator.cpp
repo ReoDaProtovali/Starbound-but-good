@@ -8,13 +8,14 @@ WorldGenerator::WorldGenerator() {
 
 void WorldGenerator::initTestSettings()
 {
+	srand(time(NULL));
 	m_settings.heightmap.shaderName = "testheightmap";
 	m_settings.heightmap.strength = 100.f;
-	m_settings.heightmap.seed = 0;
+	m_settings.heightmap.seed = rand();
 
 	gen::GeneratorSettings2D_4Layer testHollow;
 	testHollow.shaderName = "cavern";
-	testHollow.seed = 92429;
+	testHollow.seed = rand();
 	testHollow.cutoffs[0] = 1.0f;
 	testHollow.cutoffs[1] = 0.5f;
 	testHollow.cutoffs[2] = 0.35f;
@@ -23,13 +24,11 @@ void WorldGenerator::initTestSettings()
 	m_settings.testBiome.hollowGenerators.push_back(testHollow);
 
 	// this vector will contain every generation criteria that dirt can spawn in
-	auto& perlinRanges = m_settings.testBiome.materialGenerators[gen::GeneratorSettings2D_4Layer("perlin", 54)];
+	auto& perlinRanges = m_settings.testBiome.materialGenerators[gen::GeneratorSettings2D_4Layer("perlin", rand())];
 	// Only one criteria, when the perlin noise is between 0.5f and 1.0f.
 	perlinRanges.emplace_back(gen::MaterialRange{ "vanilla:dirt", 0.3f, 1.0f });
 	perlinRanges.emplace_back(gen::MaterialRange{ "vanilla:stone", 0.0f, 1.0f });
 	perlinRanges.emplace_back(gen::MaterialRange{ "vanilla:richstone", 0.0f, 0.33f });
-
-
 }
 
 void WorldGenerator::clearNoisemap() {

@@ -30,10 +30,13 @@ public:
 	void setOriginRelative(OriginLoc p_origin);
 	void setBounds(Rect p_bounds);
 
-	Rect bounds;
+	// only works with the basic image shader, unless uniform 2 is bound to opacity.
+	void setOpacity(float p_opacity);
 
+	Rect bounds;
 private:
 	void initForDraw(); // manual init in cases where gpu stuff can't be done right off the bat
+	float opacity = 0.f;
 
 	Mesh<GLfloat> m_spriteMesh{NO_VAO_INIT};
 	// Optional attachments directly to the sprite, so you don't have to worry about setting your drawStates properly before draw().

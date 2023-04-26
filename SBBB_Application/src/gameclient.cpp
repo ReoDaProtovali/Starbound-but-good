@@ -86,19 +86,19 @@ void GameClient::testInput()
 {
 	Camera& cam = *renderer.cam;
 
-	float camSpeed = 0.02f;
-	if (inp.testKey(SDLK_w)) {
-		camVelocity.y += camSpeed;
-	}
-	if (inp.testKey(SDLK_a)) {
-		camVelocity.x -= camSpeed;
-	}
-	if (inp.testKey(SDLK_s)) {
-		camVelocity.y -= camSpeed;
-	}
-	if (inp.testKey(SDLK_d)) {
-		camVelocity.x += camSpeed;
-	}
+	//float camSpeed = 0.02f;
+	//if (inp.testKey(SDLK_w)) {
+	//	camVelocity.y += camSpeed;
+	//}
+	//if (inp.testKey(SDLK_a)) {
+	//	camVelocity.x -= camSpeed;
+	//}
+	//if (inp.testKey(SDLK_s)) {
+	//	camVelocity.y -= camSpeed;
+	//}
+	//if (inp.testKey(SDLK_d)) {
+	//	camVelocity.x += camSpeed;
+	//}
 
 	if (inp.testKey(SDLK_q)) {
 		cam.tileScale *= 0.992f;
@@ -109,14 +109,14 @@ void GameClient::testInput()
 		cam.updateFrame();
 	}
 
-	if (inp.testKeyDown(SDLK_3)) {
-		renderer.swapCameras();
-	}
+	//if (inp.testKeyDown(SDLK_3)) {
+	//	renderer.swapCameras();
+	//}
 
 	if (inp.testKeyDown(SDLK_5)) {
 		gw.toggleFullscreen();
 	}
-	camVelocity *= 0.95;
+	//camVelocity *= 0.95;
 	//cam.pos += glm::vec3(camVelocity.x, camVelocity.y, 0.f);
 }
 

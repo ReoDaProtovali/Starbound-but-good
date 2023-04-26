@@ -17,6 +17,7 @@ public:
 	b2World* getCollisionWorldPtr() { return &m_physicsWorld; }
 private:
 	b2World m_physicsWorld{b2Vec2(0.f, 0.f)};
+	Entity* player = nullptr;
 	//std::vector<EntityWrapper> allocedEntities;
 	SharedList<EntityWrapper>& m_entities = SharedList<EntityWrapper>::Get();
 };

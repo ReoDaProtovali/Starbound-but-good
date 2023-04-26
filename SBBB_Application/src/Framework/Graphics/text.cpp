@@ -133,6 +133,10 @@ void Text::setText(std::string_view p_newText) {
 	m_text = p_newText;
 	m_textMesh.remove();
 }
+void Text::setLeftJustification(bool enabled)
+{
+	leftJustified = enabled;
+}
 void Text::generateVBO() {
 	std::string::const_iterator it;
 
@@ -140,38 +144,92 @@ void Text::generateVBO() {
 	float lineY = 0;
 	uint32_t i = 0;
 	const float scale = 1.f/float(m_font.charHeight);
-	for (it = m_text.begin(); it != m_text.end(); it++) {
-		if (*it == '\n') {
-			lineX = 0;
-			lineY -= (float)m_font.lineHeight * scale;
-			continue;
+
+	if (!leftJustified) {
+		for (it = m_text.begin(); it != m_text.end(); it++) {
+			if (*it == '\n') {
+				lineX = 0;
+				lineY -= (float)m_font.lineHeight * scale;
+				continue;
+			}
+			FreeTypeCharacter ch = m_font.charData[*it];
+
+			float x = lineX + ch.bearing.x * scale;
+			float y = lineY - (ch.size.y - ch.bearing.y) * scale;
+
+			float w = ch.size.x * scale;
+			float h = ch.size.y * scale;
+
+			float tw = ch.size.x / (float)m_font.texDims;
+			float th = ch.size.y / (float)m_font.texDims;
+			//float tw = 0.0;
+			//float th = 0.0;
+
+			m_textMesh.pushVertices({
+			x    , y    , 0.f, ch.texCoord.x     , ch.texCoord.y + th,
+			x + w, y    , 0.f, ch.texCoord.x + tw, ch.texCoord.y + th,
+			x    , y + h, 0.f, ch.texCoord.x     , ch.texCoord.y,
+			x    , y + h, 0.f, ch.texCoord.x     , ch.texCoord.y,
+			x + w, y    , 0.f, ch.texCoord.x + tw, ch.texCoord.y + th,
+			x + w, y + h, 0.f, ch.texCoord.x + tw, ch.texCoord.y
+				});
+
+			i += 6;
+			lineX += ch.advance * scale;
 		}
-		FreeTypeCharacter ch = m_font.charData[*it];
-
-		float x = lineX + ch.bearing.x * scale;
-		float y = lineY - (ch.size.y - ch.bearing.y) * scale;
-
-		float w = ch.size.x * scale;
-		float h = ch.size.y * scale;
-
-		float tw = ch.size.x / (float)m_font.texDims;
-		float th = ch.size.y / (float)m_font.texDims;
-		//float tw = 0.0;
-		//float th = 0.0;
-
-		m_textMesh.pushVertices({
-		x    , y    , 0.f, ch.texCoord.x     , ch.texCoord.y + th,
-		x + w, y    , 0.f, ch.texCoord.x + tw, ch.texCoord.y + th,
-		x    , y + h, 0.f, ch.texCoord.x     , ch.texCoord.y,
-		x    , y + h, 0.f, ch.texCoord.x     , ch.texCoord.y,
-		x + w, y    , 0.f, ch.texCoord.x + tw, ch.texCoord.y + th,
-		x + w, y + h, 0.f, ch.texCoord.x + tw, ch.texCoord.y
-			});
-
-		i += 6;
-		lineX += ch.advance * scale;
 	}
+	else {
+		float lineStart = 0.f;
+		for (it = m_text.begin(); it != m_text.end(); it++) {
+			if (*it == '\n') break;
+			lineStart -= m_font.charData[*it].advance * scale;
+		}
+		for (it = m_text.begin(); it != m_text.end(); it++) {
+			if (*it == '\n') {
+				lineX = 0;
+				lineY -= (float)m_font.lineHeight * scale;
+				lineStart = 0.f; 
+				auto newIt = it + 1;
+				while (newIt != m_text.end()) {
+					if (*newIt == '\n') {
+						break;
+					}
+					newIt++;
+				}
+				newIt--;
+				while (newIt != m_text.begin()) {
+					if (*newIt == '\n') break;
+					lineStart -= m_font.charData[*newIt].advance * scale;
+					newIt--;
+				}
+				continue;
+			}
+			FreeTypeCharacter ch = m_font.charData[*it];
 
+			float x = lineX + ch.bearing.x * scale + lineStart;
+			float y = lineY - (ch.size.y - ch.bearing.y) * scale;
+
+			float w = ch.size.x * scale;
+			float h = ch.size.y * scale;
+
+			float tw = ch.size.x / (float)m_font.texDims;
+			float th = ch.size.y / (float)m_font.texDims;
+			//float tw = 0.0;
+			//float th = 0.0;
+
+			m_textMesh.pushVertices({
+			x    , y    , 0.f, ch.texCoord.x     , ch.texCoord.y + th,
+			x + w, y    , 0.f, ch.texCoord.x + tw, ch.texCoord.y + th,
+			x    , y + h, 0.f, ch.texCoord.x     , ch.texCoord.y,
+			x    , y + h, 0.f, ch.texCoord.x     , ch.texCoord.y,
+			x + w, y    , 0.f, ch.texCoord.x + tw, ch.texCoord.y + th,
+			x + w, y + h, 0.f, ch.texCoord.x + tw, ch.texCoord.y
+				});
+
+			i += 6;
+			lineX += ch.advance * scale;
+		}
+	}
 	//m_textMesh.genIBO();
 	m_textMesh.pushVBOToGPU();
 }

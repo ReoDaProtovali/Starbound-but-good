@@ -23,49 +23,38 @@ void Simulation::spawnTestEntities()
 	for (int i = 0; i < 200; i++) {
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
+
 	m_entities.emplace_front(new Player(0.f, 100.f, 3.f, 3.f));
+
+	player = (*m_entities.begin()).m_eptr;
 }
 
 void Simulation::tick()
 {
-	//static Observer<KeyEvent> keyObserver;
-	//while (auto opt = keyObserver.observe()) {
-	//	switch (opt.value().keyCode) {
-	//	case SDLK_g:
-	//		if (opt.value().wasDown) {
-	//			m_physicsWorld.SetGravity(b2Vec2(0, -10.f));
-	//		}
-	//		else {
-	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-	//		}
-	//		break;
-	//	case SDLK_t:
-	//		if (opt.value().wasDown) {
-	//			m_physicsWorld.SetGravity(b2Vec2(0, 10.f));
-	//		}
-	//		else {
-	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-	//		}
-	//		break;
-	//	case SDLK_f:
-	//		if (opt.value().wasDown) {
-	//			m_physicsWorld.SetGravity(b2Vec2(-10.f, 0.f));
-	//		}
-	//		else {
-	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-	//		}
-	//		break;
-	//	case SDLK_h:
-	//		if (opt.value().wasDown) {
-	//			m_physicsWorld.SetGravity(b2Vec2(10.f, 0.f));
-	//		}
-	//		else {
-	//			m_physicsWorld.SetGravity(b2Vec2(0, 0.f));
-	//		}
-	//		break;
-	//	}
+	static Observer<KeyEvent> keyObserver;
+	while (auto opt = keyObserver.observe()) {
+		switch (opt.value().keyCode) {
+		case SDLK_b:
+			if (!player) break;
+			b2Vec2 explosionCenter = b2Vec2(player->getPosition().x * TILES_TO_METERS, player->getPosition().y * TILES_TO_METERS); // x and y are the coordinates of the explosion center
+			float explosionRadius = 10.0f; // the radius of the explosion
+			float explosionMagnitude = 10.0f; // the magnitude of the explosion
+			for (b2Body* body = m_physicsWorld.GetBodyList(); body != nullptr; body = body->GetNext())
+			{
+				b2Vec2 bodyCenter = body->GetWorldCenter();
+				float distance = (explosionCenter - bodyCenter).Length();
 
-	//}
+				if (distance < explosionRadius)
+				{
+					b2Vec2 direction = (bodyCenter - explosionCenter);
+					direction.Normalize();
+					float magnitude = explosionMagnitude * (1 - distance / explosionRadius);
+					body->ApplyLinearImpulseToCenter(magnitude * direction, true);
+				}
+			}
+			break;
+		}
+	}
 
 	if (globals.worldDoneGenerating) {
 		m_physicsWorld.SetGravity(b2Vec2(0.f, -20.f));

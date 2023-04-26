@@ -81,10 +81,15 @@ void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 		newStates.attachTexture(m_attachedTexture);
 	}
 
+	if (opacity != 0.f) {
+		m_attachedShader->use();
+		m_attachedShader->setFloatUniform(2, opacity);
+	}
 	// Multiply it with the existing state transform, just in case it's relative to another coordinate system. Model space to world space.
 	newStates.setTransform(p_drawStates.m_transform * getObjectTransform());
 
 	p_target.draw(m_spriteMesh, GL_TRIANGLES, newStates);
+	m_attachedShader->setFloatUniform(2, 0.f); // keep it defaulted for other things using the shader.
 }
 
 void Sprite::setOriginRelative(OriginLoc p_origin)
@@ -113,4 +118,9 @@ void Sprite::setBounds(Rect p_bounds)
 
 	m_spriteMesh.pushVBOToGPU();
 
+}
+
+void Sprite::setOpacity(float p_opacity)
+{
+	opacity = p_opacity;
 }

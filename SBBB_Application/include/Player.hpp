@@ -18,12 +18,12 @@ public:
 
 		m_sprite.setPosition(m_position);
 
-		myCam.pos.z = 32.f;
+		entityCam.pos.z = 32.f;
 
 		if (Globals::shouldInterpolate()) {
-			myCam.enableInterpolation();
-			m_sprite.enableTransformInterpolation();
-			myCam.apparentPos = myCam.pos;
+			entityCam.enableInterpolation();
+
+			entityCam.apparentPos = entityCam.pos;
 			m_sprite.apparentPos = m_position;
 			m_sprite.apparentRot = m_rotation;
 		}
@@ -34,10 +34,10 @@ public:
 
 		setColliderAsDynamic();
 		setDensity(1.f);
-		allowColliderRotation(true);
+		allowColliderRotation(false);
 
-		//setColliderShapeAsBox(m_entityDims.x / 2.f, m_entityDims.y);
-		setColliderShapeAsCircle(1.5f);
+		setColliderShapeAsBox(m_entityDims.x / 2.f, m_entityDims.y);
+		//setColliderShapeAsCircle(1.5f);
 		setFriction(1.0f);
 
 		setRestitution(0.06f);
@@ -58,20 +58,22 @@ public:
 		auto transform = getCollisionTransform();
 		m_position.x = transform.p.x;
 		m_position.y = transform.p.y;
-		setRotation(transform.q.GetAngle());
+		//setRotation(transform.q.GetAngle());
 
 		const float INTERP_FACTOR = (float(UPDATE_RATE_FPS) / float(globals.refresh_rate));
 		const float anticipationScale = 5.f * METERS_TO_TILES * (1.f / UPDATE_RATE_FPS);
 		const float anticipationSpeed = INTERP_FACTOR;
-		glm::vec3 newPos = utils::lerp(myCam.pos, glm::vec3(m_position.x + getVelocity().x * anticipationScale, m_position.y + getVelocity().y * anticipationScale, myCam.pos.z), anticipationSpeed);
-		myCam.pos = newPos;
+		glm::vec3 newPos = utils::lerp(entityCam.pos, glm::vec3(m_position.x + getVelocity().x * anticipationScale, m_position.y + getVelocity().y * anticipationScale, entityCam.pos.z), anticipationSpeed);
+		entityCam.pos = newPos;
+		//entityCam.pos.x = m_position.x;
+		//entityCam.pos.y = m_position.y;
 
-		//if (m_body->GetLinearVelocity().x < 0) {
-		//	setScale(glm::vec2(-1.f, 1.f));
-		//}
-		//else {
-		//	setScale(glm::vec2(1.f, 1.f));
-		//}
+		if (m_body->GetLinearVelocity().x < 0 && fabs(getVelocity().x) > 0.1f) {
+			setScale(glm::vec2(-1.f, 1.f));
+		}
+		if (m_body->GetLinearVelocity().x > 0 && fabs(getVelocity().x) > 0.1f) {
+			setScale(glm::vec2(1.f, 1.f));
+		}
 		updateTimestamp();
 	}
 	void draw(DrawSurface& p_target, DrawStates& p_states) {
@@ -81,18 +83,6 @@ public:
 		}
 
 		m_sprite.cloneTransform(*this);
-
-		if (Globals::shouldInterpolate()) {
-			// do the smoothing
-			const float INTERP_FACTOR = (float(UPDATE_RATE_FPS) / float(globals.refresh_rate));
-			myCam.apparentPos = utils::lerp(myCam.apparentPos, myCam.pos, INTERP_FACTOR);
-			m_sprite.apparentPos = utils::lerp(m_sprite.apparentPos, getPosition(), INTERP_FACTOR);
-			// a little bit of a silly solution
-			double angleDiff = fmod((double)getRotation() - (double)m_sprite.apparentRot + 3.0 * M_PI, 2.0 * M_PI) - M_PI;
-			double angle = m_sprite.apparentRot + INTERP_FACTOR * angleDiff;
-			angle += (angle < 0) ? 2.f * M_PI : -2.f * M_PI;
-			m_sprite.apparentRot = angle;
-		}
 
 		m_sprite.setOriginRelative(OriginLoc::CENTER);
 		m_sprite.draw(p_target, p_states);

@@ -55,8 +55,11 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	bool forceDraw = false;
 	// vvvv temporary until chunk specific drawing is added
+
+	std::queue<ChunkPos> redrawQueue;
 	while (auto update = m_chunkUpdateObserver.observe()) {
 		if (update.value().type == ChunkUpdateType::DONE_GENERATING) {
+			redrawQueue.emplace(update.value().x, update.value().y);
 			forceDraw = true;
 		};
 	}

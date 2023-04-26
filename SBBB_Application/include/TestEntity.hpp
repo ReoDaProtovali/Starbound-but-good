@@ -16,6 +16,7 @@ public:
 		m_position.y = y;
 		//m_sprite.attachShader(&gs.solidColorShader);
 
+		m_sprite.enableTransformInterpolation();
 		setOrigin(Rect(0.f, 0.f, w, h), OriginLoc::CENTER);
 		m_stationary = stationary;
 	}
@@ -34,7 +35,6 @@ public:
 
 		if (m_stationary) {
 			setColliderAsStatic();
-
 		}
 		else {
 			setColliderAsDynamic();
@@ -56,7 +56,7 @@ public:
 		p_world.DestroyBody(m_body);
 	}
 	void onUpdate() {
-		m_AI.update();
+		//m_AI.update();
 		auto transform = getCollisionTransform();
 		m_position.x = transform.p.x;
 		m_position.y = transform.p.y;
@@ -68,6 +68,19 @@ public:
 			m_sprite.setBounds(Rect(0.f, 0.f, m_entityDims.x + 0.03f, m_entityDims.y + 0.03f));
 			m_sprite.attachTexture(ResourceManager::Get().getTexture(TextureID::ME_TEXTURE));
 
+		}
+
+		if (Globals::shouldInterpolate()) {
+			// do the smoothing
+			const float INTERP_FACTOR = (float(UPDATE_RATE_FPS) / float(globals.refresh_rate)) / 2.f;
+
+			m_sprite.apparentPos = utils::lerp(m_sprite.apparentPos, getPosition(), INTERP_FACTOR);
+
+			// a little bit of a silly solution
+			double angleDiff = fmod((double)getRotation() - (double)m_sprite.apparentRot + 3.0 * M_PI, 2.0 * M_PI) - M_PI;
+			double angle = m_sprite.apparentRot + INTERP_FACTOR * angleDiff;
+			angle += (angle < 0) ? 2.f * M_PI : -2.f * M_PI;
+			m_sprite.apparentRot = (float)angle;
 		}
 
 		m_sprite.setOriginRelative(OriginLoc::CENTER);

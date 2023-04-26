@@ -68,6 +68,7 @@ public:
 	Text(Font& p_font, std::string_view p_initialText);
 
 	void setText(std::string_view p_newText);
+	void setLeftJustification(bool enabled);
 	void draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates& p_drawStates);
 	void draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec3& p_textColor, DrawSurface& p_target, bool extraLegible = false);
 
@@ -76,5 +77,6 @@ private:
 	Mesh<float> m_textMesh;
 	std::string m_text;
 	Font& m_font;
+	bool leftJustified = false;
 	//static Shader textShader;
 };
