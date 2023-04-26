@@ -62,6 +62,11 @@ namespace gen {
 		std::string materialName;
 		float min;
 		float max;
+		// if it is exclusive, then the generator *must* be within the range to be a canidate.
+		bool exclusive = true;
+		// specifies that narrower ranges get priority
+		// weird way of doing it
+		inline float variance() { return ((min - center()) * (min - center()) + (max - center()) * (max - center())) / (max - min); }
 		inline float center() { return (min + max) / 2.f; }
 		inline bool within(float value) { return value > min && value < max; }
 	};

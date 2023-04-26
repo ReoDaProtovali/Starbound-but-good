@@ -20,10 +20,15 @@ void Simulation::init()
 
 void Simulation::spawnTestEntities()
 {
-	for (int i = 0; i < 200; i++) {
+#ifdef SBBB_DEBUG
+	for (int i = 0; i < 50; i++) {
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
-
+#else
+	for (int i = 0; i < 300; i++) {
+		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
+}
+#endif
 	m_entities.emplace_front(new Player(0.f, 100.f, 3.f, 3.f));
 
 	player = (*m_entities.begin()).m_eptr;
@@ -38,7 +43,7 @@ void Simulation::tick()
 			if (!player) break;
 			b2Vec2 explosionCenter = b2Vec2(player->getPosition().x * TILES_TO_METERS, player->getPosition().y * TILES_TO_METERS); // x and y are the coordinates of the explosion center
 			float explosionRadius = 10.0f; // the radius of the explosion
-			float explosionMagnitude = 10.0f; // the magnitude of the explosion
+			float explosionMagnitude = 100.0f; // the magnitude of the explosion
 			for (b2Body* body = m_physicsWorld.GetBodyList(); body != nullptr; body = body->GetNext())
 			{
 				b2Vec2 bodyCenter = body->GetWorldCenter();

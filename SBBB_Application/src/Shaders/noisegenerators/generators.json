@@ -11,7 +11,10 @@
     {
       "name": "cavern",
       "file": "CavernFS.glsl"
+    },
+    {
+      "name": "gradient",
+      "file": "GradFS.glsl"
     }
-
   ]
 }

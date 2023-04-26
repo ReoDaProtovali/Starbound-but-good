@@ -399,6 +399,7 @@
     <None Include="src\Shaders\SolidColorVS.glsl" />
     <None Include="src\Shaders\SolidColorFS.glsl" />
     <None Include="res\tilesets\vanilla\tiledata\RichStone.TileProperties" />
+    <None Include="src\Shaders\noisegenerators\GradFS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\freetype.lib" />

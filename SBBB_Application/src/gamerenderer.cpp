@@ -150,22 +150,22 @@ void GameRenderer::testDraw()
 
 		if (entity->isPlayer) {
 			//smoothedPlayerPos = utils::lerp(smoothedPlayerPos, glm::vec3(entity->getInterpolatedPosition().x, entity->getInterpolatedPosition().y, cam->pos.z), 0.1f);
-			playerCam = &entity->entityCam;
-			worldRenderer.setCamera(playerCam);
+			//playerCam = &entity->entityCam;
+			//worldRenderer.setCamera(playerCam);
 
 			entity->entityCam.setDimensions(windowWidth, windowHeight);
 			entity->entityCam.setTileScale(cam->tileScale);
 			entity->entityCam.updateFrame();
 
 			// stop jitter
-			playerCam->disableInterpolation();
-			state.setTransform(playerCam->getTransform());
+			//playerCam->disableInterpolation();
+			//state.setTransform(playerCam->getTransform());
 			//auto mouseTileLoc = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
 			//testReoSprite.setPosition(glm::vec3(mouseTileLoc.x, mouseTileLoc.y, 5.f));
 			//testReoSprite.setOriginRelative(OriginLoc::CENTER);
 			//testReoSprite.setRotation(testFrame / 50.f);
 			//testReoSprite.draw(m_screenFBO, state);
-			playerCam->enableInterpolation();
+			//playerCam->enableInterpolation();
 
 		}
 		entity->draw(m_screenFBO, state);
