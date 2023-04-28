@@ -28,6 +28,7 @@ public:
 	void getPixels(size_t p_colorBufferIndex, uint8_t p_channels, Array2D<uint8_t>& o_out);
 	void getPixels(size_t p_colorBufferIndex, uint8_t p_channels, StaticArray2D<uint8_t>& o_out);
 	void useDepth(bool p_bool);
+	void clearDepthRegion(GLint p_x, GLint p_y, GLsizei p_width, GLsizei p_height);
 private:
 	
 	// x width, y height.

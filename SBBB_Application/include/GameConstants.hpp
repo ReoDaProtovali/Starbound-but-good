@@ -68,6 +68,16 @@ struct ChunkUpdate {
 	ChunkUpdateType type;
 };
 
+struct TileUpdateRequest {
+	int x;
+	int y;
+	int z;
+	int numericalID;
+	bool operator==(const TileUpdateRequest& other) const {
+		return other.x == x && other.y == y && other.z == z && other.numericalID == numericalID;
+	}
+};
+
 #define TILESET_PATH "res\\tilesets"
 #define GENERATORS_JSON_PATH ".\\src\\Shaders\\noisegenerators\\generators.json"
 

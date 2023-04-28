@@ -122,12 +122,31 @@ void GameRenderer::testDraw()
 	static DebugStats& db = DebugStats::Get();
 
 	static glm::vec2 mousePos = glm::vec2(0.f);
+	static bool lMouseDown = false;
+	static bool rMouseDown = false;
 	while (auto opt = m_mouseObserver.observe()) {
 		MouseEvent m = opt.value();
 		mousePos.x = m.x;
 		mousePos.y = m.y;
+		lMouseDown = bool(m.mouseState & SDL_BUTTON_LMASK);
+		rMouseDown = bool(m.mouseState & SDL_BUTTON_RMASK);
+
+	}
+	if (playerCam && lMouseDown) {
+		int spriteIndex = res.getTileInfo("vanilla:neongrid").value().get().spriteIndex;
+		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
+
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
 	}
 
+	if (playerCam && rMouseDown) {
+		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x + j, (int)tilePos.y + i, i + 2, 0 });
+			}
+		}
+	}
 
 	if (!playerCam) {
 		state.setTransform(currentCamera.lock()->getTransform());
@@ -149,23 +168,17 @@ void GameRenderer::testDraw()
 		if (playerCam) state.setTransform(playerCam->getTransform());
 
 		if (entity->isPlayer) {
-			//smoothedPlayerPos = utils::lerp(smoothedPlayerPos, glm::vec3(entity->getInterpolatedPosition().x, entity->getInterpolatedPosition().y, cam->pos.z), 0.1f);
-			//playerCam = &entity->entityCam;
-			//worldRenderer.setCamera(playerCam);
+			playerCam = &entity->entityCam;
+			worldRenderer.setCamera(playerCam);
 
 			entity->entityCam.setDimensions(windowWidth, windowHeight);
 			entity->entityCam.setTileScale(cam->tileScale);
 			entity->entityCam.updateFrame();
 
 			// stop jitter
-			//playerCam->disableInterpolation();
-			//state.setTransform(playerCam->getTransform());
-			//auto mouseTileLoc = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
-			//testReoSprite.setPosition(glm::vec3(mouseTileLoc.x, mouseTileLoc.y, 5.f));
-			//testReoSprite.setOriginRelative(OriginLoc::CENTER);
-			//testReoSprite.setRotation(testFrame / 50.f);
-			//testReoSprite.draw(m_screenFBO, state);
-			//playerCam->enableInterpolation();
+			playerCam->disableInterpolation();
+			state.setTransform(playerCam->getTransform());
+			playerCam->enableInterpolation();
 
 		}
 		entity->draw(m_screenFBO, state);
@@ -201,6 +214,10 @@ void GameRenderer::testDraw()
 	debugText.setText(infoString.str());
 	debugText.draw(glm::vec2(-0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
 
+	static Text controlsText(videotype, "SBBB beta v0.0002\nControls -  \nMove: WASD\nZoom: Q and E\nFullscreen: 5\nExplode: B");
+	controlsText.setLeftJustification(true);
+	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
+
 	if (bombCounter < BOMB_COUNTER_MAX) {
 		bombCounter--;
 		if (bombCounter <= 0) {
@@ -219,14 +236,13 @@ void GameRenderer::testDraw()
 		switch (opt.value().keyCode) {
 		case SDLK_b:
 			bombCounter--;
+			if (playerCam)
 			bombSprite.setPosition(glm::vec3(playerCam->apparentPos.x, playerCam->apparentPos.y, 2.f));
 			break;
 		}
 	}
 
-	static Text controlsText(videotype, "SBBB beta v0.0001\nControls -  \nMove: WASD\nZoom: Q and E\nFullscreen: 5\nExplode: B");
-	controlsText.setLeftJustification(true);
-	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
+
 
 	//SBBBDebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
 	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));

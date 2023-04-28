@@ -76,7 +76,7 @@ void Application::pollEvents()
 					(float)event.motion.x,
 					(float)event.motion.y,
 					false,
-					0
+					event.motion.state
 				});
 		}
 	}

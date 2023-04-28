@@ -21,11 +21,12 @@ class WorldRenderer {
     SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 
 	void tidy();
+	int redrawCameraView(const glm::vec4& chunkFrame);
 
 public:
 	WorldRenderer();
 	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 5), Rect(0, 0, 10, 10));
-
+	float m_pixelsPerTile = 8.f;
 	Observer<ChunkUpdate> m_chunkUpdateObserver;
 
 	// If we want to draw the world, we kinda have to know where we are in it

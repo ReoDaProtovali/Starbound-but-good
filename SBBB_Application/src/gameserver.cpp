@@ -17,13 +17,14 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	ResourceManager& res = ResourceManager::Get();
 	res.loadGeneratorShaders();
 
+	Observer<MouseEvent> mouseObserver;
 	// this kinda has to be outside of the try...catch so it is scoped in the catch block
 	ChunkManager world;
 	Simulation sim;
 	sim.init();
 	world.setCollisionWorld(sim.getCollisionWorldPtr());
 
-	world.genFixed(-5, -7, 10, 12);
+	world.genFixed(-5, -3, 20, 10);
 	world.startThreads();
 	try {
 
@@ -38,6 +39,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				world.tidyNoisemapIfDone();
 				world.generateColliders();
 				
+
 				sim.tick();
 				//std::cin.get();
 

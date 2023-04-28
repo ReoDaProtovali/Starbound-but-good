@@ -353,6 +353,9 @@
     <ClInclude Include="include\TestAI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\util\StaticArray3D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\TODO.txt" />
@@ -400,6 +403,7 @@
     <None Include="src\Shaders\SolidColorFS.glsl" />
     <None Include="res\tilesets\vanilla\tiledata\RichStone.TileProperties" />
     <None Include="src\Shaders\noisegenerators\GradFS.glsl" />
+    <None Include="res\tilesets\vanilla\tiledata\Test.TileProperties" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\freetype.lib" />

@@ -29,6 +29,7 @@ public:
 	}
 	std::optional<T> tryPop() {
 		if (!empty()) {
+			std::unique_lock<std::mutex> lock(m_mutex);
 			T out = m_queue.front();
 			m_queue.pop();
 			return out;

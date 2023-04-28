@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <mutex>
 #include <thread>
-#include <semaphore>
+#include <string_view>
 
 #include "Tile.hpp"
 #include "Chunk.hpp"
@@ -27,6 +27,8 @@
 
 #include "util/SubjectObserver.hpp"
 #define GENERATION_THREAD_COUNT 4
+#define VBO_THREAD_COUNT 2
+
 
 class ChunkManager
 {
@@ -44,6 +46,8 @@ public:
 	void startThreads();
 	void stopThreads();
 	void genFromQueueThreaded();
+	void genVBOFromQueueThreaded();
+
 	void genChunkThreaded(ChunkPos p_chunkPos);
 
 	std::optional<WorldChunk*> getChunkPtr(ChunkPos p_chunkPos);
@@ -61,6 +65,9 @@ public:
 	bool removeChunk(ChunkPos p_chunkPos);
 	void removeChunks();
 
+	void setTile(const std::string& p_tileID, int p_worldX, int p_worldY, int p_worldLayer);
+	void setTile(int p_tileID, int p_worldX, int p_worldY, int p_worldLayer);
+
 	void logSize();
 	int getChunkCount() { return (int)s_chunkMap.size(); }
 	int getEmptyChunkCount();
@@ -71,6 +78,9 @@ private:
 	ResourceManager& res = ResourceManager::Get();
 
 	std::vector<std::thread> m_genThreads;
+	std::vector<std::thread> m_vboThreads;
+	//std::thread m_vboThread;
+
 	std::mutex m_chunkVBOMutex;
 	std::atomic<bool> m_stopAllThreads = false;
 	DebugStats& stats = DebugStats::Get();
@@ -78,10 +88,13 @@ private:
 	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 	SharedQueue<ChunkPos> m_loadQueue;
+	SharedQueue<ChunkPos> m_vboQueue;
+
 	SharedQueue<int> m_generatingQueue; // just a list for the generator threads to say "hey, don't delete the noisemap data!"
 
 	Subject<ChunkUpdate>& m_chunkUpdateSubject = Subject<ChunkUpdate>::Get();
 	Observer<ChunkUpdate> m_updateObserver; // not insane, because the main server thread is just as clueless about when this stuff happens
+	Observer<TileUpdateRequest> m_tileRequests;
 
 	b2World* m_collisionWorldPtr = nullptr;
 };

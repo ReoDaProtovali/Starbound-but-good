@@ -1,0 +1,15 @@
+{
+	"id": "test",
+	"name": "test",
+	"genericDescription": "if you're reading this, wawa",
+	"categories": [ "test", "unnatural" ],
+	"rarity": "ubiquitous",
+	"imageFile": "template.png",
+	"isAnimated": false,
+	"emissive": false,
+	"transparent": false,
+	"lightingColor": [ 0.0, 0.0, 0.0 ],
+	"maxHP": 30,
+	"variationCount": 6,
+	"lightAbsorption": 0.8
+}

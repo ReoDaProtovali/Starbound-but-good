@@ -85,6 +85,7 @@ public:
 	void swapCameras();
 
 	SharedList<EntityWrapper>& entities = SharedList<EntityWrapper>::Get();
+	Subject<TileUpdateRequest>& m_tileRequester = Subject<TileUpdateRequest>::Get();
 
 	// ---------------------------------------------------------------------------------
 

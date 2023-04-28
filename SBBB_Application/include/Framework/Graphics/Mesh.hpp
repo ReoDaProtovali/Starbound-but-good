@@ -294,6 +294,10 @@ public:
 		m_indices = std::vector<GLuint>();
 	};
 
+	std::vector<T>& getVerts() {
+		return m_verts;
+	}
+
 	private:
 		std::vector<T> m_verts; // Vert data in any container you deem fit.
 		std::vector<GLuint> m_indices;

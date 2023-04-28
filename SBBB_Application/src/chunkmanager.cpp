@@ -1,6 +1,6 @@
 #include "ChunkManager.hpp"
 #include <cstdio>
-
+#include <set>
 void ChunkManager::regenVBOs()
 {
 	for (auto& it : s_chunkMap) {
@@ -37,8 +37,20 @@ void ChunkManager::processRequests() {
 			break;
 		}
 	}
-	if (auto opt = s_generationRequest.getMessageFront()) {
+	while (auto opt = s_generationRequest.getMessageFront()) {
 		enqueueGen(ChunkPos(opt.value().x, opt.value().y));
+	}
+
+	// shenanigans
+	TileUpdateRequest lastReq{ 999, 999, 999, -1 };
+	while (auto opt = m_tileRequests.observe()) {
+		if (lastReq.numericalID == -1) lastReq = opt.value();
+		if (opt.value() == lastReq) continue;
+		setTile(lastReq.numericalID, lastReq.x, lastReq.y, lastReq.z);
+		lastReq = opt.value();
+	}
+	if (lastReq.numericalID != -1) {
+		setTile(lastReq.numericalID, lastReq.x, lastReq.y, lastReq.z);
 	}
 }
 
@@ -54,6 +66,9 @@ void ChunkManager::startThreads()
 	for (int i = 0; i < GENERATION_THREAD_COUNT; i++) {
 		m_genThreads.emplace_back(&ChunkManager::genFromQueueThreaded, this);
 	}
+	for (int i = 0; i < VBO_THREAD_COUNT; i++) {
+		m_vboThreads.emplace_back(&ChunkManager::genVBOFromQueueThreaded, this);
+	}
 }
 void ChunkManager::stopThreads()
 {
@@ -61,8 +76,11 @@ void ChunkManager::stopThreads()
 
 	// force close waiting threads
 	m_loadQueue.forceAllThreadsToPop();
-
+	m_vboQueue.forceAllThreadsToPop();
 	for (auto& t : m_genThreads) {
+		t.join();
+	}
+	for (auto& t : m_vboThreads) {
 		t.join();
 	}
 }
@@ -76,6 +94,19 @@ void ChunkManager::genFromQueueThreaded()
 
 		ChunkManager::genChunkThreaded(pos);
 		m_generatingQueue.pop();
+	}
+}
+void ChunkManager::genVBOFromQueueThreaded()
+{
+	while (true) {
+		ChunkPos pos = m_vboQueue.pop();
+		if (!validChunkExistsAt(pos)) continue;
+		// must be done here, because if it terminates, the position from .pop() is invalid 
+		if (m_stopAllThreads) break;
+
+		s_chunkMap[pos].generateVBO(*this);
+		s_chunkMap[pos].drawable = true;
+		m_chunkUpdateSubject.notifyAll(ChunkUpdate(pos.x, pos.y, ChunkUpdateType::NEW_VBO_DATA));
 	}
 }
 void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
@@ -99,10 +130,11 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 			//if (j == 0 && i == 0) continue;
 			auto& neighbor = s_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)];
 			if (validChunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
-				neighbor.drawable = false;
-				neighbor.generateVBO(*this);
-				neighbor.drawable = true;
-				m_chunkUpdateSubject.notifyAll(ChunkUpdate(p_chunkPos.x + j, p_chunkPos.y + i, ChunkUpdateType::NEW_VBO_DATA));
+				//neighbor.drawable = false;
+				m_vboQueue.push(ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i));
+				//neighbor.generateVBO(*this);
+				//neighbor.drawable = true;
+				//m_chunkUpdateSubject.notifyAll(ChunkUpdate(p_chunkPos.x + j, p_chunkPos.y + i, ChunkUpdateType::NEW_VBO_DATA));
 			}
 		}
 	}
@@ -147,13 +179,20 @@ void ChunkManager::setCollisionWorld(b2World* p_world)
 
 void ChunkManager::generateColliders()
 {
+	static std::set<ChunkPos> seenPositions;
 	while (auto opt = m_updateObserver.observe()) {
 		if (opt.value().type == ChunkUpdateType::DONE_GENERATING || opt.value().type == ChunkUpdateType::NEW_TILE_DATA) {
+
 			WorldChunk& c = s_chunkMap[ChunkPos(opt.value().x, opt.value().y)];
-			if (c.invalid || c.isEmpty) return;
-			c.genCollider(*m_collisionWorldPtr, *this);
+			if (c.invalid || c.isEmpty) continue;
+			seenPositions.insert(ChunkPos(opt.value().x, opt.value().y));
 		}
 	}
+	for (ChunkPos pos : seenPositions) {
+		WorldChunk& c = s_chunkMap[pos];
+		c.genCollider(*m_collisionWorldPtr, *this);
+	}
+	seenPositions.clear();
 }
 
 bool ChunkManager::chunkExistsAt(ChunkPos p_chunkPos) {
@@ -187,5 +226,48 @@ bool ChunkManager::removeChunk(ChunkPos p_chunkPos)
 void ChunkManager::removeChunks()
 {
 	s_chunkMap.clear();
+}
+
+void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worldY, int p_worldLayer)
+{
+	int chunkX = utils::gridFloor(p_worldX, CHUNKSIZE);
+	int chunkY = utils::gridFloor(p_worldY, CHUNKSIZE) + 1;
+	if (!s_chunkMap.contains(ChunkPos(chunkX, chunkY))) return;
+	if (s_chunkMap[ChunkPos(chunkX, chunkY)].invalid) return;
+	WorldChunk& c = s_chunkMap[ChunkPos(chunkX, chunkY)];
+	int localTileX = utils::modUnsigned(p_worldX, CHUNKSIZE);
+	int localTileY = utils::modUnsigned(-p_worldY - 1, CHUNKSIZE);
+
+	auto tileInfoOpt = res.getTileInfo(p_tileID);
+	if (!tileInfoOpt.has_value()) throw std::exception("tile ID not found");
+
+	c(localTileX, localTileY, p_worldLayer).m_tileID = tileInfoOpt.value().get().spriteIndex;
+	if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
+	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
+
+	c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
+	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
+}
+
+void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_worldLayer)
+{
+	int chunkX = utils::gridFloor(p_worldX, CHUNKSIZE);
+	int chunkY = utils::gridFloor(p_worldY, CHUNKSIZE) + 1;
+	if (!s_chunkMap.contains(ChunkPos(chunkX, chunkY))) return;
+	if (s_chunkMap[ChunkPos(chunkX, chunkY)].invalid) return;
+	WorldChunk& c = s_chunkMap[ChunkPos(chunkX, chunkY)];
+	int localTileX = utils::modUnsigned(p_worldX, CHUNKSIZE);
+	int localTileY = utils::modUnsigned(-p_worldY - 1, CHUNKSIZE);
+
+
+	c(localTileX, localTileY, p_worldLayer).m_tileID = p_tileID;
+	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
+
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			c.genSingleTileVBO(localTileX + j, localTileY + i, p_worldLayer, *this);
+		}
+	}
+	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
 }
 

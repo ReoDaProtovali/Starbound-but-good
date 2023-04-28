@@ -83,6 +83,7 @@ void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
 
 
 void main() {
+	if (data_in[0].ID == 0u) return;
 	// i kinda messed up the indexing on this thing, it's funky
 	// tile layout:
 	//7 6 5

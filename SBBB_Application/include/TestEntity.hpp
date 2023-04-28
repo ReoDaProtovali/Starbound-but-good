@@ -46,8 +46,8 @@ public:
 		setFriction(0.2f);
 		setRestitution(0.1f);
 
-		m_def.awake = true;
-		m_def.allowSleep = false;
+		//m_def.awake = true;
+		//m_def.allowSleep = false;
 
 		spawnCollider(p_world);
 	}

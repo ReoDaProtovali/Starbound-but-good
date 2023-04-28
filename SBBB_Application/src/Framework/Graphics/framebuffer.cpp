@@ -133,3 +133,13 @@ void FrameBuffer::useDepth(bool p_bool)
 {
 	m_useDepth = p_bool;
 }
+
+void FrameBuffer::clearDepthRegion(GLint p_x, GLint p_y, GLsizei p_width, GLsizei p_height)
+{
+	if (!m_useDepth) throw std::exception("Cannot clear depth buffer of FBO that doesn't use one.");
+	bind();
+	glCheck(glEnable(GL_SCISSOR_TEST));
+	glCheck(glScissor(p_x, p_y, p_width, p_height));
+	glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+	glCheck(glDisable(GL_SCISSOR_TEST));
+}

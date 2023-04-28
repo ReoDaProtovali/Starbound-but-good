@@ -5,6 +5,7 @@
 #include "GameConstants.hpp"
 #include <unordered_set>
 #include "util/StaticArray2D.hpp"
+#include "util/StaticArray3D.hpp"
 WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	worldPos(p_chunkPos),
 	worldID(p_worldID),
@@ -99,6 +100,10 @@ void WorldChunk::setTiles(Array3D<Tile>&& p_tiles) {
 	m_tiles = p_tiles;
 	colliderValid = false;
 }
+Tile& WorldChunk::operator()(size_t p_x, size_t p_y, size_t p_depth)
+{
+	return m_tiles(p_x, p_y, p_depth);
+}
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	if (isEmpty) return;
@@ -111,7 +116,6 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
-				if (m_tiles(x, y, z).m_tileID == 0) continue;
 				uint32_t tID = m_tiles(x, y, z).m_tileID;
 
 				TileVert v = TileVert(
@@ -119,29 +123,33 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 					tID // numerical ID
 				);
 
+				if (m_tiles(x, y, z).m_tileID == 0) {
+					tileMesh.pushVertex(v);
+					continue;
+				};
 				// it's teeechnically possible to convert the image id into the cache id by subtracting one
 				TileInfo& tInfo = res.getTileInfo(tID - 1);
 				v.variationCount = tInfo.variationCount;
 
-				// Remove non-visible tiles
-				for (int layer = CHUNKDEPTH - 1; layer > z; layer--) {
-					uint8_t tileCount = 0;
-					for (int i = -1; i <= 1; i++) {
-						for (int j = -1; j <= 1; j++) {
-							auto opt = getNeigboringChunkTile(x + j, y + i, layer, p_chnks);
-							if (opt.has_value()) {
-								if (!opt.value()) continue;
-								if (opt.value()->m_tileID == 0) continue;
-								if (res.getTileInfo(opt.value()->m_tileID - 1).transparent) continue;
-								if (opt.value()->m_tileID != 0) tileCount++;
-							}
-						}
-					}
+				//// Remove non-visible tiles
+				//for (int layer = CHUNKDEPTH - 1; layer > z; layer--) {
+				//	uint8_t tileCount = 0;
+				//	for (int i = -1; i <= 1; i++) {
+				//		for (int j = -1; j <= 1; j++) {
+				//			auto opt = getNeigboringChunkTile(x + j, y + i, layer, p_chnks);
+				//			if (opt.has_value()) {
+				//				if (!opt.value()) continue;
+				//				if (opt.value()->m_tileID == 0) continue;
+				//				if (res.getTileInfo(opt.value()->m_tileID - 1).transparent) continue;
+				//				if (opt.value()->m_tileID != 0) tileCount++;
+				//			}
+				//		}
+				//	}
 
-					if (tileCount == 9) {
-						goto skip;
-					}
-				}
+					//if (tileCount == 9) {
+						//goto skip;
+					//}
+				//}
 
 				// Set tile adjacencies
 				for (int i = 0; i < 9; i++) {
@@ -169,6 +177,66 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 
 }
 
+void WorldChunk::genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkManager& p_chnks)
+{
+	ResourceManager& res = ResourceManager::Get();
+	// this is mostly dumb stuff i have to do for the edge case
+	auto tileOpt = getNeigboringChunkTile(p_tileX, p_tileY, p_tileZ, p_chnks);
+	if (!tileOpt.has_value()) return;
+	Tile* thisTile = tileOpt.value();
+	int x = thisTile->getChunkPos().x;
+	int y = thisTile->getChunkPos().y;
+	int z = p_tileZ;
+
+	WorldChunk* currentChunk = this;
+	// this will be the case if the tile is outside of this chunk
+	if (x != p_tileX || y != p_tileY) {
+		if (getIntrudedChunk(p_tileX, p_tileY, z, p_chnks).has_value()) {
+			currentChunk = getIntrudedChunk(p_tileX, p_tileY, z, p_chnks).value();
+
+		}
+	}
+	std::unique_lock<std::mutex> lock(currentChunk->m_vboMutex);
+	if (currentChunk->isEmpty) return;
+	if (currentChunk->invalid) return;
+	if (currentChunk->tileMesh.getTotalVBOSize() == 0) return;
+	uint32_t tID = thisTile->m_tileID;
+
+	TileVert v = TileVert(
+		x, y, z, // Position attributes
+		tID // numerical ID
+	);
+
+
+	// it's teeechnically possible to convert the image id into the cache id by subtracting one
+	if (tID != 0) {
+		TileInfo& tInfo = res.getTileInfo(tID - 1);
+		v.variationCount = tInfo.variationCount;
+	}
+	// Set tile adjacencies
+	for (int i = 0; i < 9; i++) {
+		if (i == 4) continue;
+
+		auto opt = currentChunk->getNeigboringChunkTile(x + (i % 3) - 1, y + (i / 3) - 1, z, p_chnks);
+
+		auto centerOpt = currentChunk->getNeigboringChunkTile(x, y, z, p_chnks);
+
+		if (opt.has_value()) {
+			if (opt.value()->m_tileID != 0) continue;
+		}
+
+		v.setAdjacent(128u >> (i > 4 ? i - 1 : i));
+
+	}
+
+	StaticArray3D<TileVert> tmpArr(CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH);
+	tmpArr.setData(currentChunk->tileMesh.getVerts().data());
+	tmpArr(x, y, z) = v;
+	currentChunk->tilesToSub.push(glm::ivec3(x, y, z));
+	// so it doesn't self delete
+	tmpArr.setData(nullptr);
+}
+
 inline b2Vec2 localToColliderP(int x, int y)
 {
 	return b2Vec2((float)x * TILES_TO_METERS - float(CHUNKSIZE) * TILES_TO_METERS * 0.5f, -(float)y * TILES_TO_METERS + float(CHUNKSIZE) * TILES_TO_METERS * 0.5f);
@@ -191,7 +259,7 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 {
 	std::unique_lock<std::mutex> lock(m_colliderGenMutex);
 	associatedWorld = &p_world;
-	if (colliderValid) return;
+	//if (colliderValid) return;
 	if (isEmpty) return;
 	if (m_collisionBody) p_world.DestroyBody(m_collisionBody);
 	float worldMetersX = float(worldPos.x * CHUNKSIZE) * TILES_TO_METERS;
@@ -228,7 +296,7 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 				// 1 is left
 				// 2 is bottom
 				// 3 is right
-				int currentSide = 0; 
+				int currentSide = 0;
 				// don't start a new loop if one is already here
 				if (visitedEdges(x, y) & 0b1000) continue;
 				verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY));
@@ -237,17 +305,17 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 				while (true) {
 					adj = getTileAdjacent(edgeTileX, edgeTileY, 3);
 					switch (currentSide) {
-					// top edge
-					// . _ .
-					// . # .
-					// . . .
-					case 0: 
+						// top edge
+						// . _ .
+						// . # .
+						// . . .
+					case 0:
 						if (visitedEdges(edgeTileX, edgeTileY) & 0b1000) goto out;
 						// top left
 						// #|_ .
 						// . # .
 						// . . .
-						if (adj & 0b10000000) { 
+						if (adj & 0b10000000) {
 							verts.push_back(localToColliderP(edgeTileX, edgeTileY - 1));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
 							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
@@ -260,7 +328,7 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						// _ _ .
 						// # # .
 						// . . .
-						if (adj & 0b00010000) { 
+						if (adj & 0b00010000) {
 							verts.push_back(localToColliderP(edgeTileX - 1, edgeTileY));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
 							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
@@ -277,10 +345,10 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 						currentSide = 1;
 						break;
-					// left edge
-					// . . .
-					// .|# .
-					// . . .
+						// left edge
+						// . . .
+						// .|# .
+						// . . .
 					case 1:
 						if (visitedEdges(edgeTileX, edgeTileY) & 0b0100) goto out;
 						// bottom left
@@ -317,10 +385,10 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 						currentSide = 2;
 						break;
-					// bottom edge
-					// . . .
-					// . # .
-					// . ‾ .
+						// bottom edge
+						// . . .
+						// . # .
+						// . ‾ .
 					case 2:
 						if (visitedEdges(edgeTileX, edgeTileY) & 0b0010) goto out;
 						// bottom right
@@ -356,10 +424,10 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						visitedEdges(edgeTileX, edgeTileY) |= 0b0010;
 						currentSide = 3;
 						break;
-					// right edge
-					// . . .
-					// . #|.
-					// . . .
+						// right edge
+						// . . .
+						// . #|.
+						// . . .
 					case 3:
 						if (visitedEdges(edgeTileX, edgeTileY) & 0b0001) goto out;
 						// top right
@@ -426,22 +494,31 @@ void WorldChunk::pushVBO()
 {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	tileMesh.pushVBOToGPU();
-	tileMesh.clean();
+	//tileMesh.clean();
 	vboIsPushed = true;
+}
+
+void WorldChunk::subSingleTileVBOS()
+{
+	while (auto opt = tilesToSub.tryPop()) {
+		glm::ivec3 tile = opt.value();
+		size_t startIdx = (tile.z * CHUNKSIZE * CHUNKSIZE) + ((tile.y * CHUNKSIZE) + tile.x);
+		m_vboMutex.lock();
+		tileMesh.subVBOData(startIdx, startIdx + 1, &tileMesh.getVerts()[startIdx]);
+		m_vboMutex.unlock();
+	}
 }
 
 uint32_t WorldChunk::getVBOSize() {
 	return (uint16_t)tileMesh.getTotalVBOSize();
 }
 
+// ill advised now
 void WorldChunk::flip()
 {
-	m_tiles.invertDepth = !m_tiles.invertDepth;
+	//m_tiles.invertDepth = !m_tiles.invertDepth;
 }
 
-Tile* WorldChunk::getTiles() {
-	return m_tiles.getData().data();
-}
 
 void WorldChunk::setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID) {
 	m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z) = Tile(p_chunkCoordinates, p_tileID);
@@ -449,7 +526,7 @@ void WorldChunk::setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID) 
 	return;
 }
 
-Tile& WorldChunk::getChunkTile(int p_x, int p_y, int p_z)
+Tile& WorldChunk::getChunkTile(size_t p_x, size_t p_y, size_t p_z)
 {
 	return m_tiles(p_x, p_y, p_z);
 }
@@ -470,8 +547,8 @@ std::optional<Tile*> WorldChunk::getNeigboringChunkTile(int p_chunkX, int p_chun
 		WorldChunk* neighbor = opt.value();
 
 		Tile& t = neighbor->getChunkTile(
-			(int)utils::fwrapUnsigned(float(p_chunkX), float(CHUNKSIZE)), // a bit weird to convert back and forth here but whatevs
-			(int)utils::fwrapUnsigned(float(p_chunkY), float(CHUNKSIZE)),
+			utils::modUnsigned(p_chunkX, CHUNKSIZE), 
+			utils::modUnsigned(p_chunkY, CHUNKSIZE),
 			p_chunkZ);
 
 		return &t;
@@ -479,6 +556,28 @@ std::optional<Tile*> WorldChunk::getNeigboringChunkTile(int p_chunkX, int p_chun
 	else {
 		return &m_tiles(p_chunkX, p_chunkY, p_chunkZ);
 	}
+}
+
+std::optional<WorldChunk*> WorldChunk::getIntrudedChunk(int p_localTileX, int p_localTileY, int localTileZ, ChunkManager& p_chnks)
+{
+		if (!m_tiles.bounded(p_localTileX, p_localTileY, localTileZ)) {
+			int intrudedChunkX;
+			int intrudedChunkY;
+			intrudedChunkX = (p_localTileX < 0) ? worldPos.x - 1 :
+				(p_localTileX > CHUNKSIZE - 1) ? worldPos.x + 1 :
+				worldPos.x;
+			intrudedChunkY = (p_localTileY < 0) ? worldPos.y + 1 :
+				(p_localTileY > CHUNKSIZE - 1) ? worldPos.y - 1 :
+				worldPos.y;
+			std::optional<WorldChunk*> opt = p_chnks.getChunkPtr(ChunkPos(intrudedChunkX, intrudedChunkY));
+			if (!opt.has_value()) return std::nullopt;
+			WorldChunk* neighbor = opt.value();
+
+			return neighbor;
+		}
+		else {
+			return std::nullopt;
+		}
 }
 
 void WorldChunk::remove() {

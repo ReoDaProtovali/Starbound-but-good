@@ -87,11 +87,11 @@ namespace utils {
 			return x % d;
 		}
 		else {
-			return d - 1 - abs(x % (int)d);
+			return d - 1 - abs((x + 1) % (int)d);
 		}
 	}
 	inline int gridFloor(int x, unsigned int d) {
-		return (x < 0) ? x / (int)d - 1 : x / (int)d;
+		return (x < 0) ? (x + 1) / (int)d - 1 : x / (int)d;
 	}
 	// scuffed as hell
 	inline glm::ivec4 frameToChunkCoords(glm::vec4 p_frame) {
@@ -133,13 +133,32 @@ namespace utils {
 			throw std::bad_alloc();
 			return nullptr;
 		}
-
 		for (uint32_t y = 0; y < p_height / n; y++) {
 			for (uint32_t x = 0; x < p_width * 4; x += n * 4) {
-				out[y * ((p_width * 4) / n) + x / n + 0] = p_data[y * n * p_width * 4 + x + 0];
-				out[y * ((p_width * 4) / n) + x / n + 1] = p_data[y * n * p_width * 4 + x + 1];
-				out[y * ((p_width * 4) / n) + x / n + 2] = p_data[y * n * p_width * 4 + x + 2];
-				out[y * ((p_width * 4) / n) + x / n + 3] = p_data[y * n * p_width * 4 + x + 3];
+				uint32_t total_red = 0;
+				uint32_t total_green = 0;
+				uint32_t total_blue = 0;
+				uint32_t total_alpha = 0;
+
+				for (uint32_t j = y * n; j < (y + 1) * n; j++) {
+					for (uint32_t i = x; i < x + n * 4; i += 4) {
+						total_red += p_data[j * p_width * 4 + i];
+						total_green += p_data[j * p_width * 4 + i + 1];
+						total_blue += p_data[j * p_width * 4 + i + 2];
+						total_alpha += p_data[j * p_width * 4 + i + 3];
+					}
+				}
+
+				uint32_t num_pixels = n * n;
+				uint8_t avg_red = total_red / num_pixels;
+				uint8_t avg_green = total_green / num_pixels;
+				uint8_t avg_blue = total_blue / num_pixels;
+				uint8_t avg_alpha = total_alpha / num_pixels;
+
+				out[y * ((p_width * 4) / n) + x / n + 0] = avg_red;
+				out[y * ((p_width * 4) / n) + x / n + 1] = avg_green;
+				out[y * ((p_width * 4) / n) + x / n + 2] = avg_blue;
+				out[y * ((p_width * 4) / n) + x / n + 3] = avg_alpha;
 			}
 		}
 		return out;

@@ -36,7 +36,7 @@ public:
 		return *this;
 	}
 
-	T& operator()(int x, int y, int z) {
+	T& operator()(size_t x, size_t y, size_t z) {
 #ifdef SBBB_DEBUG
 		if (!bounded(x, y, z)) {
 			throw std::out_of_range("3D Array index out of bounds.");
@@ -49,7 +49,20 @@ public:
 		}
 
 	}
+	T& operator()(int x, int y, int z) {
+#ifdef SBBB_DEBUG
+		if (!bounded((size_t)x, (size_t)y, (size_t)z)) {
+			throw std::out_of_range("3D Array index out of bounds.");
+		}
+#endif
+		if (!invertDepth) {
+			return data[((size_t)z * width * height) + (((size_t)y * width) + (size_t)x)];
+		}
+		else {
+			return data[((depth - 1 - (size_t)z) * width * height) + (((size_t)y * width) + (size_t)x)];
+		}
 
+	}
 	void fill(T p_fillValue) {
 		for (size_t i = 0; i < width * height * depth; i++) {
 			data[i] = p_fillValue;

@@ -1,5 +1,6 @@
 #include "WorldRenderer.hpp"
 #include "Framework/Graphics/GenericShaders.hpp"
+#include <set>
 void WorldRenderer::tidy()
 {
 }
@@ -37,12 +38,18 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 {
 	if (!m_viewCam) return 0;
 
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	p_surface.bind();
 	m_tileSprite.attachTexture(m_tileFBO.getColorTex(0));
 	m_tileSprite.setOrigin(glm::vec2(0.f));
 	m_tileSprite.draw(p_surface, p_states);
+
+	if (m_viewCam->tileScale > 500.f) {
+		m_tileShader.setBoolUniform(4, false);
+	}
+	else {
+		m_tileShader.setBoolUniform(4, true);
+	}
 
 	auto f = m_viewCam->getFrame();
 	// magic numbers
@@ -53,21 +60,59 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f / 2.f) * 2;
 
-	bool forceDraw = false;
-	// vvvv temporary until chunk specific drawing is added
+	int drawnChunkCount = 0;
 
-	std::queue<ChunkPos> redrawQueue;
+	// prevent overdrawing
+	static std::set<ChunkPos> seenPositions;
+
 	while (auto update = m_chunkUpdateObserver.observe()) {
-		if (update.value().type == ChunkUpdateType::DONE_GENERATING) {
-			redrawQueue.emplace(update.value().x, update.value().y);
-			forceDraw = true;
+		if (update.value().type == ChunkUpdateType::DONE_GENERATING || update.value().type == ChunkUpdateType::NEW_VBO_DATA) {
+			ChunkPos pos{ update.value().x, update.value().y };
+			seenPositions.insert(pos);
 		};
 	}
 
-	if (chunkFrame == m_chunkFramePrev && !forceDraw) return 0;
+	for (ChunkPos pos : seenPositions) {
+		float pixelsPerTile = (float)p_windowWidth / (float)m_viewCam->tileScale;
 
+		// has to be shifted one chunk down on the y for reasons
+		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE, pos.y * CHUNKSIZE - CHUNKSIZE);
+		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile), roundf(CHUNKSIZE * m_pixelsPerTile));
+		m_tileFBO.clearDepthRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile), roundf(CHUNKSIZE * m_pixelsPerTile));
+
+		if (s_chunkMap.contains(pos)) {
+
+			WorldChunk& chunk = s_chunkMap[pos];
+			if (!chunk.drawable) {
+				continue;
+			}
+			if (chunk.isEmpty) {
+				continue;
+			};
+			if (!chunk.vboIsPushed) {
+				chunk.pushVBO();
+			}
+			if (!chunk.tilesToSub.empty()) {
+				chunk.subSingleTileVBOS();
+			}
+			m_tileShader.setVec2Uniform(2, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
+			chunk.draw(m_tileFBO, m_tileDrawStates);
+			if (drawChunkBorders) {
+				SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
+			}
+			drawnChunkCount++;
+		}
+	}
+
+	seenPositions.clear();
+	if (chunkFrame == m_chunkFramePrev) return 0;
+
+
+	m_pixelsPerTile = std::fminf((float)p_windowWidth / (float)m_viewCam->tileScale, 8.f);
 
 	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
+	// breaks the frame, must be set manually
+	m_tileCam.setDimensions(m_pixelsPerTile * (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y));
 	m_tileCam.setFrame(
 		(float)chunkFrameTiles.x, (float)chunkFrameTiles.y, float(chunkFrameTiles.z - chunkFrameTiles.x), float(chunkFrameTiles.w - chunkFrameTiles.y)
 	);
@@ -75,51 +120,49 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	m_tileSprite.setBounds(Rect(0, 0, m_tileCam.getFrameDimensions().x, m_tileCam.getFrameDimensions().y));
 	m_tileSprite.setPosition(glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 0));
 
-	float pixelsPerTile = (float)p_windowWidth / (float)m_viewCam->tileScale;
-	float pixelsPerTileMin = std::fminf(pixelsPerTile, 8.f);
-	m_tileFBO.setDimensions(glm::vec2(pixelsPerTileMin * (chunkFrameTiles.z - chunkFrameTiles.x), pixelsPerTileMin * (chunkFrameTiles.w - chunkFrameTiles.y)));
 
+	m_tileFBO.setDimensions(glm::vec2(m_pixelsPerTile * (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y)));
 	m_tileDrawStates.setTransform(m_tileCam.getTransform());
 	m_tileFBO.clear();
 
-	if (m_viewCam->tileScale > 500.f) {
-		m_tileShader.setBoolUniform(4, false);
-	}
-	else {
-		m_tileShader.setBoolUniform(4, true);
-	}
 
+	drawnChunkCount += redrawCameraView(chunkFrame);
+	//m_tileFBO.clearRegion(m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).x, m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).y, pixelsPerTileMin * CHUNKSIZE, pixelsPerTileMin * CHUNKSIZE);
+	//auto test = m_tileCam.tileToPixelCoordinates(0.f, 30.f);
 
+	m_chunkFramePrev = chunkFrame;
+	return drawnChunkCount;
+}
+
+int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
+{
 	int drawnChunkCount = 0;
 	for (int y = chunkFrame.y - 1; y <= chunkFrame.w + 1; y++) {
 		for (int x = chunkFrame.x - 1; x <= chunkFrame.z + 1; x++) {
 			if (s_chunkMap.contains(ChunkPos(x, y))) {
 
-				//s_chunkMap.lock(); // for the rare case where the chunk data changes between getting the chunk and drawing it
 				WorldChunk& chunk = s_chunkMap[ChunkPos(x, y)];
 				if (!chunk.drawable) {
-
-					//s_chunkMap.unlock();
 					continue;
 				}
 				if (chunk.isEmpty) {
-					//s_chunkMap.unlock();
 					continue;
 				};
 				if (!chunk.vboIsPushed) {
 					chunk.pushVBO();
 				}
+				auto pixelCoords = m_tileCam.tileToPixelCoordinates(x * CHUNKSIZE, y * CHUNKSIZE - CHUNKSIZE);
+
+				m_tileFBO.clearDepthRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile), roundf(CHUNKSIZE * m_pixelsPerTile));
+
 				m_tileShader.setVec2Uniform(2, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 				chunk.draw(m_tileFBO, m_tileDrawStates);
 				if (drawChunkBorders) {
 					SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
 				}
-				//s_chunkMap.unlock();
 				drawnChunkCount++;
-			};
+			}
 		}
 	}
-
-	m_chunkFramePrev = chunkFrame;
 	return drawnChunkCount;
 }

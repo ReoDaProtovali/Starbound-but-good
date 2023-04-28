@@ -291,6 +291,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\util\Rect.hpp" />
     <ClInclude Include="include\util\SharedMap.hpp" />
     <ClInclude Include="include\util\StaticArray2D.hpp" />
+    <ClInclude Include="include\util\StaticArray3D.hpp" />
     <ClInclude Include="include\util\utils.hpp" />
     <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
     <ClInclude Include="include\Framework\FrameworkDraw.hpp" />
@@ -313,6 +314,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="res\tilesets\vanilla\tiledata\NeonGrid.TileProperties" />
     <None Include="res\tilesets\vanilla\tiledata\RichStone.TileProperties" />
     <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties" />
+    <None Include="res\tilesets\vanilla\tiledata\Test.TileProperties" />
     <None Include="res\tilesets\vanilla\tileset.json" />
     <None Include="SDL2.dll" />
     <None Include="src\Shaders\ImageFS.glsl" />

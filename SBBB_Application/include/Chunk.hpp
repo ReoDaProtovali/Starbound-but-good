@@ -17,6 +17,7 @@
 #include <vector>
 #include "util/Array3D.hpp"
 #include "WorldGenNoisemap.hpp"
+#include "util/SharedQueue.hpp"
 
 #include <atomic>
 #include <box2d.h>
@@ -65,15 +66,18 @@ struct WorldChunk : public TransformObject
 	void setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID); // unimplemented
 	uint8_t getTileAdjacent(int p_x, int p_y, int p_z);
 	void setTiles(Array3D<Tile>&& p_tiles);
-	Tile& getChunkTile(int p_x, int p_y, int p_z);
+	Tile& getChunkTile(size_t p_x, size_t p_y, size_t p_z);
 	// conditionally returns either an internal tile or a tile from a neigboring chunk based on the given position.
 	std::optional<Tile*> getNeigboringChunkTile(int p_chunkX, int p_chunkY, int p_chunkZ, ChunkManager& p_chnks);
-
-	Tile* getTiles();
+	std::optional<WorldChunk*> getIntrudedChunk(int p_localTileX, int p_localTileY, int localTileZ, ChunkManager& p_chnks);
+	Tile& operator()(size_t p_x, size_t p_y, size_t p_depth);
 	void generateVBO(ChunkManager& p_chnks);
+	void genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkManager& p_chnks);
+
 	void genCollider(b2World& p_world, ChunkManager& tmp);
 
 	void pushVBO();
+	void subSingleTileVBOS();
 	uint32_t getVBOSize();
 
 	void flip();
@@ -89,13 +93,14 @@ struct WorldChunk : public TransformObject
 	std::atomic<bool> isEmpty{ true };
 	std::atomic<bool> colliderValid{ false };
 	Mesh<TileVert> tileMesh{NO_VAO_INIT};
+	SharedQueue<glm::ivec3> tilesToSub;
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
 	b2World* associatedWorld = nullptr; // so it can delete its own collider
+	std::mutex m_vboMutex;
 
 private:
-	std::mutex m_vboMutex;
 	std::mutex m_colliderGenMutex;
 	Array3D<Tile> m_tiles;
 
