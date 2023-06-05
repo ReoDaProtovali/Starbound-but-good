@@ -3,8 +3,8 @@
 #include "Framework/Graphics/DrawSurface.hpp"
 #include "util/Rect.hpp"
 struct GUIEvent {
-	KeyEvent key;
 	MouseEvent mouse;
+	KeyEvent key;
 };
 // A single element of a GUI in its most basic form. A widget can hold other widgets, and has a few virual methods.
 class Widget {

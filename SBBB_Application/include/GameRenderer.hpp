@@ -85,13 +85,9 @@ public:
 	uint64_t testFrame = 0;
 	void testDraw();
 	void testDrawGUI();
-	Button testButton{ 0.25f, 0.25f, 0.3f, 0.5f };
-	Button testNestedButton{ 0.25f, 0.25f, 0.3f, 0.5f };
-	Button testNestedButton2{ 0.25f, 0.25f, 0.3f, 0.5f };
-	Button testNestedButton3{ 0.25f, 0.25f, 0.3f, 0.5f };
-	Button testNestedButton4{ 0.25f, 0.25f, 0.3f, 0.5f };
-	Button testNestedButton5{ 0.25f, 0.25f, 0.3f, 0.5f };
-	Button testNestedButton6{ 0.25f, 0.25f, 0.3f, 0.5f };
+	Button testButton{ 0.1f, 0.25f, 0.8f, 0.6f };
+	Button testNestedButton{ 0.7f, 0.1f, 0.2f, 0.8f };
+
 	void swapCameras();
 
 	SharedList<EntityWrapper>& entities = SharedList<EntityWrapper>::Get();

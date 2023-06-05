@@ -80,6 +80,15 @@ void Application::pollEvents()
 					false,
 					event.motion.state
 				});
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.window.windowID != client.getWindowID()) break;
+			mouseSubject.notifyAll(MouseEvent{
+					(float)event.motion.x,
+					(float)event.motion.y,
+					true,
+					event.motion.state
+				});
 		}
 	}
 }

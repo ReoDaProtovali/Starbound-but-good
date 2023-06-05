@@ -62,7 +62,7 @@ private:
 };
 
 // Drawable text
-class Text : TransformObject {
+class Text : public TransformObject {
 public:
 	Text(Font& p_font);
 	Text(Font& p_font, std::string_view p_initialText);

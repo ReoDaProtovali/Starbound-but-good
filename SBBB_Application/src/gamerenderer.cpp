@@ -37,20 +37,35 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	testButton.addChild(&testNestedButton);
 	testNestedButton.testColor = glm::vec3(0.f);
-	testNestedButton.addChild(&testNestedButton2);
-	testNestedButton2.testColor = glm::vec3(0.2f);
-	testNestedButton2.addChild(&testNestedButton3);
-	testNestedButton3.testColor = glm::vec3(0.0f);
-	testNestedButton3.addChild(&testNestedButton4);
-	testNestedButton4.testColor = glm::vec3(0.2f);
-	testNestedButton4.addChild(&testNestedButton5);
-	testNestedButton5.testColor = glm::vec3(0.0f);
-	testNestedButton5.addChild(&testNestedButton6);
-	testNestedButton6.testColor = glm::vec3(0.2f);
-	//ground.onSpawn(testb2World);
-	//box1.onSpawn(testb2World);
-	//box2.onSpawn(testb2World);
-	//box3.onSpawn(testb2World);
+	testNestedButton.innerText = "guh";
+	testNestedButton.buttonText.setText("guh");
+
+	testButton.onClick([
+		&](void) {
+			testButton.buttonText.setText("good job");
+			testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
+			testButton.disabled = true;
+		});
+	testButton.onHover(
+		[&](bool hovering) {
+			if (hovering) 
+				testButton.testColor = glm::vec3(0.f, 0.4f, 0.f);
+			else 
+				testButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
+		});
+	testNestedButton.onClick(
+		[&](void) {
+			testNestedButton.buttonText.setText("wah");
+			testNestedButton.testColor = glm::vec3(0.0f, 0.f, 0.5f);
+			testNestedButton.disabled = true;
+		});
+	testNestedButton.onHover(
+		[&](bool hovering) {
+			if (hovering) 
+				testNestedButton.testColor = glm::vec3(4.f, 0.1f, 0.f);
+			else 
+				testNestedButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
+		});
 
 	LOAD_LOG("Creating lighting subsystem...");
 

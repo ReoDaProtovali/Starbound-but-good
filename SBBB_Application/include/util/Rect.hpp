@@ -39,7 +39,7 @@ struct Rect {
 		return (wh.x * wh.y);
 	}
 	bool contains(float x, float y) {
-		return (xy.x > x) && (xy.y > y) && (xy.x < xy.x + wh.x) && (xy.y < xy.y + wh.y);
+		return (xy.x < x) && (xy.y < y) && (x < xy.x + wh.x) && (y < xy.y + wh.y);
 	}
 	glm::vec2 xy;
 	glm::vec2 wh;

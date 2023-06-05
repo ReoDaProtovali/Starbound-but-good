@@ -87,6 +87,7 @@ void GameClient::resizeWindow(uint32_t p_w, uint32_t p_h)
 
 void GameClient::testInput()
 {
+	static Observer<MouseEvent> mouseObserver;
 	Camera& cam = *renderer.cam;
 
 	float camSpeed = 0.02f;
@@ -121,6 +122,13 @@ void GameClient::testInput()
 	}
 	camVelocity *= 0.95;
 	cam.pos += glm::vec3(camVelocity.x, camVelocity.y, 0.f);
+
+	while (auto obs = mouseObserver.observe()) {
+		MouseEvent m = obs.value();
+		m.x = m.x / (float)gw.windowWidth;
+		m.y = m.y / (float)gw.windowHeight;
+		renderer.testButton.onUpdate(GUIEvent{ m, KeyEvent() });
+	}
 }
 
 void GameClient::processDebugStats()
