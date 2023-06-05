@@ -48,9 +48,9 @@ public:
 
 		// We'll assume that every shader uses a transform matrix, because that's pretty much a given.
 		shader->setMat4Uniform("transform", p_states.m_transform);
-
-		static DebugStats& db = DebugStats::Get();
-		db.drawCalls++;
+#ifndef DISABLE_DEBUG_STATS
+		globals.debug.drawCalls++;
+#endif
 		if (p_mesh.IBOInitialized) {
 			glDrawElements(p_primitiveType, (GLsizei)p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
 		}

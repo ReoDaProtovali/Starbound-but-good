@@ -1,0 +1,15 @@
+{
+	"id": "bluegem",
+	"name": "Large Blue Gem",
+	"genericDescription": "It's overly gaudy.",
+	"categories": [ "exotic", "unnatural", "crystal" ],
+	"rarity": "rare",
+	"imageFile": "bluegem.png",
+	"isAnimated": false,
+	"emissive": false,
+	"transparent": false,
+	"lightingColor": [ 0.0, 0.0, 0.4 ],
+	"maxHP": 30,
+	"variationCount": 1,
+	"lightAbsorption": 0.2
+}

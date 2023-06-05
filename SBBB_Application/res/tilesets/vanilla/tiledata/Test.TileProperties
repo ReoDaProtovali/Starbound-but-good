@@ -1,7 +1,7 @@
 {
 	"id": "test",
 	"name": "test",
-	"genericDescription": "if you're reading this, wawa",
+	"genericDescription": "it just says funnier thats it",
 	"categories": [ "test", "unnatural" ],
 	"rarity": "ubiquitous",
 	"imageFile": "template.png",

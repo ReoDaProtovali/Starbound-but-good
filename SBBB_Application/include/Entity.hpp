@@ -28,7 +28,7 @@ public:
 	}
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> lastUpdateTimestamp;
-	std::chrono::microseconds deltaTimeSinceUpdate;
+	std::chrono::microseconds deltaTimeSinceUpdate = std::chrono::microseconds(0);
 	
 	bool isPlayer = false;
 	Camera entityCam;

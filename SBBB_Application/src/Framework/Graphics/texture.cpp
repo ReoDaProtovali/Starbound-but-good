@@ -210,17 +210,17 @@ void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 	height = p_height;
 
 	if (!initialized) {
-		glGenTextures(1, &glID->ID);
+		glCheck(glGenTextures(1, &glID->ID));
 		// set the texture wrapping/filtering options (on the currently bound texture object)
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode);
-		glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode);
-		glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMin);
-		glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMag);
+		glCheck(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+		glCheck(glTexParameteri(type, GL_TEXTURE_WRAP_S, m_wrappingMode));
+		glCheck(glTexParameteri(type, GL_TEXTURE_WRAP_T, m_wrappingMode));
+		glCheck(glTexParameteri(type, GL_TEXTURE_MIN_FILTER, m_filteringMin));
+		glCheck(glTexParameteri(type, GL_TEXTURE_MAG_FILTER, m_filteringMag));
 	}
-	glBindTexture(type, glID->ID); // into the main texture buffer
+	glCheck(glBindTexture(type, glID->ID)); // into the main texture buffer
 
-	glTexImage2D( // actually put the image data into the texture buffer
+	glCheck(glTexImage2D( // actually put the image data into the texture buffer
 		type,
 		0,
 		channels,
@@ -229,7 +229,7 @@ void Texture::changeDimensions(uint32_t p_width, uint32_t p_height)
 		0,
 		channels,
 		GL_UNSIGNED_BYTE,
-		NULL);
+		NULL));
 
 	// WARNING:: very picky about if an image in in RGB format or RBGA format. Try to keep them all RGBA with a bit depth of 8
 	glBindTexture(type, 0);

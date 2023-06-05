@@ -198,6 +198,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\defaultfonts.cpp" />
+    <ClCompile Include="src\button.cpp" />
     <ClCompile Include="include\util\debugdraw.cpp" />
     <ClCompile Include="include\util\SubjectObserver.hpp" />
     <ClCompile Include="src\application.cpp" />
@@ -230,11 +232,12 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\worldgennoisemap.cpp" />
     <ClCompile Include="src\worldrenderer.cpp" />
     <ClCompile Include="src\worldgenerator.cpp" />
+    <ClCompile Include="src\widget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Desktop\yeah\AI.hpp" />
-    <ClInclude Include="..\..\..\..\Desktop\yeah\MovementController.hpp" />
-    <ClInclude Include="..\..\..\..\Desktop\yeah\Player.hpp" />
+    <ClInclude Include="include\DefaultFonts.hpp" />
+    <ClInclude Include="include\Button.hpp" />
+    <ClInclude Include="include\Widget.hpp" />
     <ClInclude Include="include\AI.hpp" />
     <ClInclude Include="include\Application.hpp" />
     <ClInclude Include="include\Camera.hpp" />

@@ -57,7 +57,7 @@ struct WorldChunk : public TransformObject
 
 	WorldChunk& operator=(const WorldChunk& other);
 
-	WorldChunk& operator=(WorldChunk&& other);
+	WorldChunk& operator=(WorldChunk&& other) noexcept;
 
 
 	WorldChunk(WorldChunk&& other) noexcept;

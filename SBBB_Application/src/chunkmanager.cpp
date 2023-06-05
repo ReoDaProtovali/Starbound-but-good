@@ -117,10 +117,11 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 	// assume valid noisemap at position
 	bool empty = true;
 	c.setTiles(m_worldgen.generateChunk(p_chunkPos.x, p_chunkPos.y, empty));
-	stats.chunkCount++;
-	stats.chunkGenCounter++;
-	if (empty) stats.emptyChunkCount++;
-
+#ifndef DISABLE_DEBUG_STATS
+	globals.debug.chunkCount++;
+	globals.debug.chunkGenCounter++;
+	if (empty) globals.debug.emptyChunkCount++;
+#endif
 	c.isEmpty = empty;
 	c.invalid = false;
 

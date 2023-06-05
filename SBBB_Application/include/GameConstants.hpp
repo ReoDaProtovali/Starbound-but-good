@@ -3,12 +3,11 @@
 
 #include "Framework/FrameworkConstants.hpp"
 #include "Globals.hpp"
-#include <atomic>
-#include <thread>
 #define POLLING_RATE_MS 10
 #define UPDATE_RATE_FPS 60
 #define FRAMES_BETWEEN_STAT_UPDATES 60
 #define DISABLE_RUNTIME_CONSOLE false
+//#define DISABLE_DEBUG_STATS
 
 #define TILES_TO_METERS 0.5f
 #define METERS_TO_TILES 2.0f
@@ -47,6 +46,7 @@ enum class Corner {
 struct KeyEvent {
 	bool wasDown;
 	int keyCode;
+	bool valid = false; // for compatability for things that expect a conditional keyevent
 };
 struct MouseEvent {
 	float x;
@@ -81,43 +81,6 @@ struct TileUpdateRequest {
 #define TILESET_PATH "res\\tilesets"
 #define GENERATORS_JSON_PATH ".\\src\\Shaders\\noisegenerators\\generators.json"
 
-
-
-struct DebugStats {
-	float drawFPS = 0.f;
-	float updateFPS = 0.f;
-	float camX = 0.f;
-	float camY = 0.f;
-	float camFX1 = 0.f;
-	float camFY1 = 0.f;
-	float camFX2 = 0.f;
-	float camFY2 = 0.f;
-	float playerXVel = 0.f;
-	float playerYVel = 0.f;
-	float playerXAcc = 0.f;
-	float playerYAcc = 0.f;
-	int screenW = 0;
-	int screenH = 0;
-	int windowW = 0;
-	int windowH = 0;
-	int chunkCount = 0;
-	int emptyChunkCount = 0;
-	int drawnChunkCount = 0;
-	int noisemapTileCount = 0;
-	int drawCalls = 0;
-	std::atomic<int> vertCount = 0;
-	int loadQueueSize = 0;
-	std::atomic<int> chunkGenCounter = 0;
-	bool statUpdate = true;
-
-	std::thread::id drawThread;
-
-	// globals don't play nice
-	static DebugStats& Get() {
-		static DebugStats instance;
-		return instance;
-	}
-};
 namespace Globals {
 	inline bool shouldInterpolate() {
 		return (float(UPDATE_RATE_FPS) / float(globals.refresh_rate)) < 0.8f; // 80% for now

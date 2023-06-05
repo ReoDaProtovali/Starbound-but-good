@@ -25,9 +25,9 @@ void Simulation::spawnTestEntities()
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
 #else
-	for (int i = 0; i < 300; i++) {
+	for (int i = 0; i < 100; i++) {
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
-}
+	}
 #endif
 	m_entities.emplace_front(new Player(0.f, 100.f, 3.f, 3.f));
 

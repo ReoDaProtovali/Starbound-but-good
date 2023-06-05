@@ -8,7 +8,7 @@ WorldGenerator::WorldGenerator() {
 
 void WorldGenerator::initTestSettings()
 {
-	srand(time(NULL));
+	srand((uint32_t)time(NULL));
 	m_settings.heightmap.shaderName = "testheightmap";
 	m_settings.heightmap.strength = 120.f;
 	m_settings.heightmap.seed = rand();
@@ -58,8 +58,8 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 
 	Array3D<Tile> out{ CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH };
 
-	float globalChunkX = p_chunkX * CHUNKSIZE;
-	float globalChunkY = p_chunkY * CHUNKSIZE;
+	int globalChunkX = p_chunkX * CHUNKSIZE;
+	int globalChunkY = p_chunkY * CHUNKSIZE;
 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {

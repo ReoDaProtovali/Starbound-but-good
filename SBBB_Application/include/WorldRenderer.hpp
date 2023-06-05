@@ -14,7 +14,7 @@ class WorldRenderer {
 	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 	DrawStates m_tileDrawStates;
 
-	Camera* m_viewCam;
+	Camera* m_viewCam = nullptr;
 	Camera m_tileCam;
 	glm::ivec4 m_chunkFramePrev;
 

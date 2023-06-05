@@ -86,7 +86,6 @@ public:
 
 		m_sprite.setOriginRelative(OriginLoc::CENTER);
 		m_sprite.draw(p_target, p_states);
-
 	}
 
 private:

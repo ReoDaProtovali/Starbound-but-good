@@ -49,7 +49,7 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 
 	return *this;
 }
-WorldChunk& WorldChunk::operator=(WorldChunk&& other)
+WorldChunk& WorldChunk::operator=(WorldChunk&& other) noexcept
 {
 	tileMesh = std::move(other.tileMesh);
 	m_tiles = std::move(other.m_tiles);
@@ -107,8 +107,7 @@ Tile& WorldChunk::operator()(size_t p_x, size_t p_y, size_t p_depth)
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	if (isEmpty) return;
-	auto& db = DebugStats::Get();
-	db.vertCount -= (int)tileMesh.getStoredVertCount();
+	globals.debug.vertCount -= (int)tileMesh.getStoredVertCount();
 	tileMesh.clean();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
 	ResourceManager& res = ResourceManager::Get();
@@ -167,9 +166,9 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 
 				}
 				tileMesh.pushVertex(v);
-				db.vertCount++;
-			skip:
-				{}
+				globals.debug.vertCount++;
+			//skip:
+			//	{}
 			}
 		}
 	}
@@ -193,7 +192,6 @@ void WorldChunk::genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkMa
 	if (x != p_tileX || y != p_tileY) {
 		if (getIntrudedChunk(p_tileX, p_tileY, z, p_chnks).has_value()) {
 			currentChunk = getIntrudedChunk(p_tileX, p_tileY, z, p_chnks).value();
-
 		}
 	}
 	std::unique_lock<std::mutex> lock(currentChunk->m_vboMutex);
@@ -504,7 +502,7 @@ void WorldChunk::subSingleTileVBOS()
 		glm::ivec3 tile = opt.value();
 		size_t startIdx = (tile.z * CHUNKSIZE * CHUNKSIZE) + ((tile.y * CHUNKSIZE) + tile.x);
 		m_vboMutex.lock();
-		tileMesh.subVBOData(startIdx, startIdx + 1, &tileMesh.getVerts()[startIdx]);
+		tileMesh.subVBOData((GLuint)startIdx, (GLuint)startIdx + 1, &tileMesh.getVerts()[startIdx]);
 		m_vboMutex.unlock();
 	}
 }

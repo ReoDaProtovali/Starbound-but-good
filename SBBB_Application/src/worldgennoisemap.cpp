@@ -61,8 +61,9 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 			}
 		}
 	};
-	static DebugStats& db = DebugStats::Get();
-	db.noisemapTileCount++;
+#ifndef DISABLE_DEBUG_STATS
+	globals.debug.noisemapTileCount++;
+#endif
 
 	auto& currentVec = m_map[glm::ivec2(p_mapX, p_mapY)];
 
@@ -101,8 +102,9 @@ void WorldGenNoisemap::genTilesNeighboringChunk(int p_chunkX, int p_chunkY, cons
 
 void WorldGenNoisemap::clear() {
 	if (m_map.size() > 0) {
-		DebugStats& db = DebugStats::Get();
-		db.noisemapTileCount = 0;
+#ifndef DISABLE_DEBUG_STATS
+		globals.debug.noisemapTileCount = 0;
+#endif
 		m_map.clear();
 	}
 }

@@ -44,6 +44,7 @@
 
 
 #include <utility>
+#pragma warning(disable : 26800)
 
 // #include <nlohmann/detail/abi_macros.hpp>
 //     __ _____ _____ _____
@@ -24591,6 +24592,7 @@ inline void swap(nlohmann::NLOHMANN_BASIC_JSON_TPL& j1, nlohmann::NLOHMANN_BASIC
 #undef JSON_HEDLEY_WARN_UNUSED_RESULT_MSG
 #undef JSON_HEDLEY_FALL_THROUGH
 
+#pragma warning(default : 26800)
 
 
 #endif  // INCLUDE_NLOHMANN_JSON_HPP_

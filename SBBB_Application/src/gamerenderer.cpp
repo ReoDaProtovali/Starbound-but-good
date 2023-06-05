@@ -23,7 +23,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	overviewCam->tileScale = 1024.0f;
 	overviewCam->setDimensions(windowWidth, windowHeight);
 
-	videotype.setPixelHeight(50);
+	DefaultFonts.videotype.setPixelHeight(50);
 
 	loadTextures();
 
@@ -35,6 +35,18 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	bombSprite.attachTexture(res.getTexture(TextureID::BOMB_TEXTURE));
 	bombSprite.setPosition(glm::vec3(33.f));
 
+	testButton.addChild(&testNestedButton);
+	testNestedButton.testColor = glm::vec3(0.f);
+	testNestedButton.addChild(&testNestedButton2);
+	testNestedButton2.testColor = glm::vec3(0.2f);
+	testNestedButton2.addChild(&testNestedButton3);
+	testNestedButton3.testColor = glm::vec3(0.0f);
+	testNestedButton3.addChild(&testNestedButton4);
+	testNestedButton4.testColor = glm::vec3(0.2f);
+	testNestedButton4.addChild(&testNestedButton5);
+	testNestedButton5.testColor = glm::vec3(0.0f);
+	testNestedButton5.addChild(&testNestedButton6);
+	testNestedButton6.testColor = glm::vec3(0.2f);
 	//ground.onSpawn(testb2World);
 	//box1.onSpawn(testb2World);
 	//box2.onSpawn(testb2World);
@@ -112,6 +124,7 @@ void GameRenderer::testDraw()
 	cam->updateFrame();
 	// it's a bit bad to use the depth test function here, but I haven't moved it into the DrawSurface class yet so whatevs
 	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 	testFrame++;
 
 	m_screenFBO.bind();
@@ -119,7 +132,6 @@ void GameRenderer::testDraw()
 	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
 	DrawStates state;
 
-	static DebugStats& db = DebugStats::Get();
 
 	static glm::vec2 mousePos = glm::vec2(0.f);
 	static bool lMouseDown = false;
@@ -132,32 +144,35 @@ void GameRenderer::testDraw()
 		rMouseDown = bool(m.mouseState & SDL_BUTTON_RMASK);
 
 	}
-	if (playerCam && lMouseDown) {
-		int spriteIndex = res.getTileInfo("vanilla:neongrid").value().get().spriteIndex;
-		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
+	if (playerCam) {
+		if (lMouseDown) {
+			int spriteIndex = res.getTileInfo("vanilla:richstone").value().get().spriteIndex;
+			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
 
-		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
-	}
+			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
+		}
 
-	if (playerCam && rMouseDown) {
-		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x + j, (int)tilePos.y + i, i + 2, 0 });
-			}
+		if (rMouseDown) {
+			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
+			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
 		}
 	}
+
+	DebugStats& db = globals.debug;
 
 	if (!playerCam) {
 		state.setTransform(currentCamera.lock()->getTransform());
 	}
 	else {
+
+#ifndef DISABLE_DEBUG_STATS
 		db.camFX1 = playerCam->getFrame().x;
 		db.camFY1 = playerCam->getFrame().y;
 		db.camFX2 = playerCam->getFrame().z;
 		db.camFY2 = playerCam->getFrame().w;
 		db.camX = playerCam->pos.x;
 		db.camY = playerCam->pos.y;
+#endif // !DISABLE_DEBUG_STATS
 
 		const float INTERP_FACTOR = (float(UPDATE_RATE_FPS) / float(globals.refresh_rate)) / 2.f;
 		playerCam->interpolate(INTERP_FACTOR);
@@ -184,40 +199,6 @@ void GameRenderer::testDraw()
 		entity->draw(m_screenFBO, state);
 	}
 
-
-	static Text debugText(videotype, "");
-	static fpsGauge updateTimer;
-
-	static std::stringstream infoString("");
-	if (db.statUpdate) {
-		updateTimer.stopStopwatch();
-		infoString.str("");
-		infoString << "Current draw FPS - " << db.drawFPS << '\n'
-			<< "Current update FPS - " << db.updateFPS << '\n'
-			<< "Camera Position - X: " << std::setprecision(5) << db.camX << " Y: " << db.camY << '\n'
-			<< "Camera Frame - Left: " << db.camFX1 << " Right: " << db.camFX2 << " Top: " << db.camFY2 << " Bottom: " << db.camFY1 << '\n'
-			<< "Screen Dimensions - " << db.screenW << "x" << db.screenH << '\n'
-			<< "Window Dimensions - " << db.windowW << "x" << db.windowH << '\n'
-			<< "Chunk Counts - Total: " << db.chunkCount << " Empty: " << db.emptyChunkCount << '\n'
-			<< "Drawn Chunk Count - " << db.drawnChunkCount << '\n'
-			<< "Noisemap tiles generated - " << db.noisemapTileCount << '\n'
-			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
-			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
-			<< "Tile Vertex Count Total: " << db.vertCount << '\n'
-			<< "Chunk Gens Per Second - " << db.chunkGenCounter / updateTimer.getSecondsElapsed() << '\n';
-		db.statUpdate = false;
-		db.drawCalls = 0;
-		db.chunkGenCounter = 0;
-		updateTimer.startStopwatch();
-	}
-
-	debugText.setText(infoString.str());
-	debugText.draw(glm::vec2(-0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
-
-	static Text controlsText(videotype, "SBBB beta v0.0002\nControls -  \nMove: WASD\nZoom: Q and E\nFullscreen: 5\nExplode: B");
-	controlsText.setLeftJustification(true);
-	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
-
 	if (bombCounter < BOMB_COUNTER_MAX) {
 		bombCounter--;
 		if (bombCounter <= 0) {
@@ -237,17 +218,72 @@ void GameRenderer::testDraw()
 		case SDLK_b:
 			bombCounter--;
 			if (playerCam)
-			bombSprite.setPosition(glm::vec3(playerCam->apparentPos.x, playerCam->apparentPos.y, 2.f));
+				bombSprite.setPosition(glm::vec3(playerCam->apparentPos.x, playerCam->apparentPos.y, 2.f));
 			break;
 		}
 	}
 
+	static Text fpsText(DefaultFonts.videotype, "");
+	static std::stringstream fpsString("");
 
+	if (testFrame % 20 == 0) {
+		fpsString.str("");
+		fpsString << "Current draw FPS - " << globals.drawFPS << '\n'
+			<< "Current update FPS - " << globals.updateFPS << '\n';
+		fpsText.setText(fpsString.str());
+	}
+	fpsText.draw(glm::vec2(-0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
 
+#ifndef DISABLE_DEBUG_STATS
+	static Text debugText(DefaultFonts.videotype, "");
+	static fpsGauge updateTimer;
+
+	static std::stringstream infoString("");
+
+	if (db.statUpdate) {
+		updateTimer.stopStopwatch();
+		infoString.str("");
+		infoString
+			<< "Camera Position - X: " << std::setprecision(5) << db.camX << " Y: " << db.camY << '\n'
+			<< "Camera Frame - Left: " << db.camFX1 << " Right: " << db.camFX2 << " Top: " << db.camFY2 << " Bottom: " << db.camFY1 << '\n'
+			<< "Screen Dimensions - " << db.screenW << "x" << db.screenH << '\n'
+			<< "Window Dimensions - " << db.windowW << "x" << db.windowH << '\n'
+			<< "Chunk Counts - Total: " << db.chunkCount << " Empty: " << db.emptyChunkCount << '\n'
+			<< "Drawn Chunk Count - " << db.drawnChunkCount << '\n'
+			<< "Noisemap tiles generated - " << db.noisemapTileCount << '\n'
+			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
+			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
+			<< "Tile Vertex Count Total: " << db.vertCount << '\n'
+			<< "Chunk Gens Per Second - " << db.chunkGenCounter / updateTimer.getSecondsElapsed() << '\n';
+		db.statUpdate = false;
+		db.drawCalls = 0;
+		db.chunkGenCounter = 0;
+		updateTimer.startStopwatch();
+	}
+
+	debugText.setText(infoString.str());
+	debugText.draw(glm::vec2(-0.98f, 0.80f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
+#endif
+
+	static Text controlsText(DefaultFonts.videotype, "SBBB alpha v0.0002\nControls -  \nMove: WASD\nZoom: Q and E\nFullscreen: 5\nExplode: B");
+	controlsText.setLeftJustification(true);
+	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), m_screenFBO, true);
+
+	testDrawGUI();
 	//SBBBDebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
 	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
 
-	glEnable(GL_DEPTH_TEST);
+}
+
+void GameRenderer::testDrawGUI()
+{
+	DrawStates GUIStates;
+	glm::mat4 mat = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, 1.f, 0.f)) * glm::scale(glm::mat4(1.f), glm::vec3(2.f, -2.f, 1.f));
+
+	GUIStates.setTransform(mat);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	testButton.draw(m_screenFBO, GUIStates);
 }
 
 void GameRenderer::swapCameras()

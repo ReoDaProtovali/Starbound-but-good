@@ -98,7 +98,7 @@ public:
 		return *this;
 	}
 
-	Mesh<T>& operator=(Mesh<T>&& p_other) {
+	Mesh<T>& operator=(Mesh<T>&& p_other) noexcept {
 		m_verts = p_other.m_verts;
 		m_indices = p_other.m_indices;
 		m_attribList = p_other.m_attribList;

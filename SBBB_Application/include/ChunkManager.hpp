@@ -83,7 +83,6 @@ private:
 
 	std::mutex m_chunkVBOMutex;
 	std::atomic<bool> m_stopAllThreads = false;
-	DebugStats& stats = DebugStats::Get();
 	
 	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();

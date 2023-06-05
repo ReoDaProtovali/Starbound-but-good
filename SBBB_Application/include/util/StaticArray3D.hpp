@@ -11,12 +11,8 @@ template<class T>
 // IF YOU READ OUT OF BOUNDS IT'S YOUR OWN FAULT, LOL
 class StaticArray3D {
 public:
-	StaticArray3D() { width = 0; height = 0; data = nullptr; }
-	StaticArray3D(size_t p_width, size_t p_height, size_t p_depth) {
-		width = p_width;
-		height = p_height;
-		depth = p_depth;
-	}
+	StaticArray3D() : width(0), height(0), data(nullptr), invertDepth(false) {}
+	StaticArray3D(size_t p_width, size_t p_height, size_t p_depth) : width(p_width), height(p_height), depth(p_depth), data(nullptr), invertDepth(false) {}
 	StaticArray3D(const StaticArray3D<T>& other) = delete;
 
 	StaticArray3D(StaticArray3D<T>&& other) noexcept {

@@ -28,7 +28,6 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	world.startThreads();
 	try {
 
-		DebugStats& db = DebugStats::Get();
 		while (true) {
 
 			ts.processFrameStart();
@@ -45,7 +44,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 				tickGauge.update(0.9f);
 
-				db.updateFPS = (float)(1.0 / tickGauge.getFrametimeAverage());
+				globals.updateFPS = (float)(1.0 / tickGauge.getFrametimeAverage());
 
 				ts.processFrameStart();
 			}

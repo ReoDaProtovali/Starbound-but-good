@@ -23,8 +23,10 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	try {
 		// important, opengl NEEDS this
 		gw.bindToThisThread();
-		DebugStats::Get().drawThread = std::this_thread::get_id();
-		//gw.setVSync(false);
+#ifndef DISABLE_DEBUG_STATS
+		globals.debug.drawThread = std::this_thread::get_id();
+#endif // DISABLE_DEBUG_STATS
+
 		auto& res = ResourceManager::Get();
 		auto& gs = GenericShaders::Get();
 
@@ -59,9 +61,10 @@ void GameClient::render()
 	renderer.setClearColor(glm::vec4(0.2f, 0.2f, 0.3f, 0.0f));
 	renderer.clearScreen();
 
-	DebugStats& db = DebugStats::Get();
 	int drawnChunkCount = renderer.drawWorld();
-	if (drawnChunkCount != 0) db.drawnChunkCount = drawnChunkCount;
+#ifndef DISABLE_DEBUG_STATS
+	if (drawnChunkCount != 0) globals.debug.drawnChunkCount = drawnChunkCount;
+#endif
 	glEnable(GL_DEPTH_TEST);
 	renderer.testDraw();
 
@@ -122,14 +125,14 @@ void GameClient::testInput()
 
 void GameClient::processDebugStats()
 {
-
+	globals.drawFPS = (float)(1.0 / renderFPSGauge.getFrametimeAverage());
+#ifndef DISABLE_DEBUG_STATS
 	static uint32_t debugUpdateCounter = 0;
 	debugUpdateCounter++;
-	if ((debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) && !DISABLE_RUNTIME_CONSOLE) { 
+	if (debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) { 
 		debugUpdateCounter = 0;
-		DebugStats& db = DebugStats::Get();
+		DebugStats& db = globals.debug;
 		//db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
-		db.drawFPS = (float)(1.0 / renderFPSGauge.getFrametimeAverage());
 		db.camX = renderer.cam->pos.x;
 		db.camY = renderer.cam->pos.y;
 		auto f = renderer.cam->getFrame();
@@ -141,9 +144,7 @@ void GameClient::processDebugStats()
 		db.screenH = renderer.screenHeight;
 		db.windowW = renderer.windowWidth;
 		db.windowH = renderer.windowHeight;
-		//db.chunkCount = world.getChunkCount();
-		///db.emptyChunkCount = world.getEmptyChunkCount();
-		//db.drawnChunkCount = lastChunkDrawnCount;
 		db.statUpdate = true;
 	}
+#endif
 }

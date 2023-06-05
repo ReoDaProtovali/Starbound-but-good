@@ -14,6 +14,7 @@ public:
 		m_entityDims.y = h;
 		m_position.x = x;
 		m_position.y = y;
+		m_position.z = 5.f;
 		//m_sprite.attachShader(&gs.solidColorShader);
 
 		m_sprite.enableTransformInterpolation();

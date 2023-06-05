@@ -23,6 +23,8 @@ void Application::run()
 			}
 			catch (std::exception& e) {
 				ERROR_LOG("Main thread caught exception " << e.what());
+				client.stop();
+				localServer.stop();
 			}
 			break;
 		}

@@ -22,10 +22,12 @@
 
 #include "Framework/Graphics/Text.hpp"
 
+#include "Button.hpp"
+
 #include "util/SharedList.hpp"
 #include "TestEntity.hpp"
 #include "box2d.h"
-
+#include "DefaultFonts.hpp"
 class Lighting;
 class GameWindow;
 
@@ -80,8 +82,16 @@ public:
 	Sprite bombSprite = Sprite(glm::vec3(9999.f, 9999.f, 2.f), Rect(0.f, 0.f, 1.f, 1.f));
 	int bombCounter = BOMB_COUNTER_MAX;
 	
-	float testFrame = 0;
+	uint64_t testFrame = 0;
 	void testDraw();
+	void testDrawGUI();
+	Button testButton{ 0.25f, 0.25f, 0.3f, 0.5f };
+	Button testNestedButton{ 0.25f, 0.25f, 0.3f, 0.5f };
+	Button testNestedButton2{ 0.25f, 0.25f, 0.3f, 0.5f };
+	Button testNestedButton3{ 0.25f, 0.25f, 0.3f, 0.5f };
+	Button testNestedButton4{ 0.25f, 0.25f, 0.3f, 0.5f };
+	Button testNestedButton5{ 0.25f, 0.25f, 0.3f, 0.5f };
+	Button testNestedButton6{ 0.25f, 0.25f, 0.3f, 0.5f };
 	void swapCameras();
 
 	SharedList<EntityWrapper>& entities = SharedList<EntityWrapper>::Get();
@@ -97,9 +107,6 @@ private:
 	Observer<MouseEvent> m_mouseObserver;
 	WorldRenderer worldRenderer;
 	GenericShaders& gs = GenericShaders::Get();
-
-	TextContext ftctx; // freetype library context
-	Font videotype = { "res/fonts/videotype.ttf", ftctx };
 
 	std::weak_ptr<Camera> currentCamera;
 	bool cameraToggle = false;

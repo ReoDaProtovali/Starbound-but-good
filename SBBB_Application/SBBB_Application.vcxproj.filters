@@ -13,14 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Tile/Entity Related">
-      <UniqueIdentifier>{ac77ea1a-f6ce-4f84-be40-898a1f363f6c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{8938e4c6-ced9-4b6a-83db-e7fb88df3564}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tile/Entity Related">
-      <UniqueIdentifier>{772e5420-601e-4195-a37a-dcd9a4790ec3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{c69e26bf-55c9-4ea3-8bf7-e05d30333106}</UniqueIdentifier>
@@ -55,16 +49,52 @@
     <Filter Include="Header Files\Rendering\Framework">
       <UniqueIdentifier>{24c65bb3-fb54-49a6-816c-5ee5498add85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Tile Related">
+      <UniqueIdentifier>{ac77ea1a-f6ce-4f84-be40-898a1f363f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Entity Related">
+      <UniqueIdentifier>{ee29a292-eec8-4c23-9875-f81fec1a8eed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tile Related">
+      <UniqueIdentifier>{772e5420-601e-4195-a37a-dcd9a4790ec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entity Related">
+      <UniqueIdentifier>{f87f0b64-e7d6-421c-a473-c48595cde1ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Client and Server">
+      <UniqueIdentifier>{27d7b660-ff9e-47ee-95bd-506cde228873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Meta / Misc">
+      <UniqueIdentifier>{6fde04cc-1341-429f-9d7f-cba9d92684d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Meta / Misc">
+      <UniqueIdentifier>{67101993-e586-4e5e-9dc0-41eb25b3c507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Geometry Shaders">
+      <UniqueIdentifier>{4e51c954-ff3e-461c-a2a4-a4e1e8745cb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Tiles">
+      <UniqueIdentifier>{950f45a6-0e7e-4176-966b-e8897ea074ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dll">
+      <UniqueIdentifier>{a0c72d48-dfc5-4b13-acc9-bda4d9082407}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{f335d989-15bd-40e8-bcaf-c1273ea0b744}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{fbfbb7b6-d9de-4d62-8a5a-e146d2fdb3c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\chunk.cpp">
-      <Filter>Source Files\Tile/Entity Related</Filter>
+      <Filter>Source Files\Tile Related</Filter>
     </ClCompile>
     <ClCompile Include="src\tile.cpp">
-      <Filter>Source Files\Tile/Entity Related</Filter>
+      <Filter>Source Files\Tile Related</Filter>
     </ClCompile>
     <ClCompile Include="src\chunkmanager.cpp">
-      <Filter>Source Files\Tile/Entity Related</Filter>
+      <Filter>Source Files\Tile Related</Filter>
     </ClCompile>
     <ClCompile Include="src\camera.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -87,71 +117,80 @@
     <ClCompile Include="src\resourcemanager.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\drawstates.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\framebuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\genericshaders.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\sprite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\transformobject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Window\gamewindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pixmap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\worldgennoisemap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Framework\Graphics\text.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameclient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameserver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\worldrenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\worldgenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\util\debugdraw.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Client and Server</Filter>
     </ClCompile>
     <ClCompile Include="src\collisionobject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Entity Related</Filter>
+    </ClCompile>
+    <ClCompile Include="include\util\debugdraw.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\drawstates.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\framebuffer.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameclient.cpp">
+      <Filter>Source Files\Client and Server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameserver.cpp">
+      <Filter>Source Files\Client and Server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Window\gamewindow.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\shader.cpp">
+      <Filter>Source Files\Framework</Filter>
     </ClCompile>
     <ClCompile Include="src\simulation.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\sprite.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\transformobject.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\worldgenerator.cpp">
+      <Filter>Source Files\Tile Related</Filter>
+    </ClCompile>
+    <ClCompile Include="src\worldgennoisemap.cpp">
+      <Filter>Source Files\Tile Related</Filter>
+    </ClCompile>
+    <ClCompile Include="src\worldrenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\genericshaders.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pixmap.cpp">
+      <Filter>Source Files\Framework</Filter>
     </ClCompile>
     <ClCompile Include="include\util\SubjectObserver.hpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\text.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framework\Graphics\texture.cpp">
+      <Filter>Source Files\Framework</Filter>
     </ClCompile>
     <ClCompile Include="src\globals.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Meta / Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\Meta / Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\widget.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\button.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\defaultfonts.cpp">
+      <Filter>Source Files\Meta / Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,16 +210,13 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="include\Tile.hpp">
-      <Filter>Header Files\Tile/Entity Related</Filter>
+      <Filter>Header Files\Tile Related</Filter>
     </ClInclude>
     <ClInclude Include="include\ChunkManager.hpp">
-      <Filter>Header Files\Tile/Entity Related</Filter>
+      <Filter>Header Files\Tile Related</Filter>
     </ClInclude>
     <ClInclude Include="include\Chunk.hpp">
-      <Filter>Header Files\Tile/Entity Related</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameConstants.hpp">
-      <Filter>Header Files\Utils</Filter>
+      <Filter>Header Files\Tile Related</Filter>
     </ClInclude>
     <ClInclude Include="include\Timestepper.hpp">
       <Filter>Header Files\Game Updates</Filter>
@@ -243,16 +279,10 @@
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="include\TileVert.hpp">
-      <Filter>Header Files\Tile/Entity Related</Filter>
+      <Filter>Header Files\Tile Related</Filter>
     </ClInclude>
     <ClInclude Include="include\util\utils.hpp">
       <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WorldGenerator.hpp">
-      <Filter>Header Files\Game Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WorldGenNoisemap.hpp">
-      <Filter>Header Files\Game Updates</Filter>
     </ClInclude>
     <ClInclude Include="include\WorldRenderer.hpp">
       <Filter>Header Files\Rendering</Filter>
@@ -305,56 +335,65 @@
     <ClInclude Include="include\util\Rect.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\Entity.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\CollisionObject.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\TestEntity.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\DynArray.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Simulation.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\SharedDynArray.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Desktop\yeah\AI.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Desktop\yeah\MovementController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Desktop\yeah\Player.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Player.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\AI.hpp">
+      <Filter>Header Files\Entity Related</Filter>
     </ClInclude>
     <ClInclude Include="include\MovementController.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Entity Related</Filter>
     </ClInclude>
-    <ClInclude Include="include\AI.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Player.hpp">
+      <Filter>Header Files\Entity Related</Filter>
     </ClInclude>
-    <ClInclude Include="include\PlayerAI.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\SharedList.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Globals.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Entity.hpp">
+      <Filter>Header Files\Entity Related</Filter>
     </ClInclude>
     <ClInclude Include="include\TestAI.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TestEntity.hpp">
+      <Filter>Header Files\Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Simulation.hpp">
+      <Filter>Header Files\Game Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerAI.hpp">
+      <Filter>Header Files\Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SharedDynArray.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\SharedList.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\DynArray.hpp">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="include\util\StaticArray3D.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CollisionObject.hpp">
+      <Filter>Header Files\Entity Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldGenNoisemap.hpp">
+      <Filter>Header Files\Tile Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldGenerator.hpp">
+      <Filter>Header Files\Tile Related</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Globals.hpp">
+      <Filter>Header Files\Meta / Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Widget.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Button.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameConstants.hpp">
+      <Filter>Header Files\Meta / Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DefaultFonts.hpp">
+      <Filter>Header Files\Meta / Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -380,33 +419,74 @@
     <None Include="src\Shaders\LightingVS.glsl">
       <Filter>Shaders\Vertex Shaders</Filter>
     </None>
-    <None Include="glew32.dll" />
-    <None Include="libnoise.dll" />
     <None Include="README.md" />
-    <None Include="SDL2.dll" />
-    <None Include="zlib1.dll" />
     <None Include=".gitignore" />
-    <None Include="res\tilesets\vanilla\tiledata\Dirt.TileProperties" />
-    <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties" />
-    <None Include="res\tilesets\vanilla\tileset.json" />
-    <None Include="src\Shaders\TileGS.glsl" />
-    <None Include="src\Shaders\noisegenerators\Perlin2DFS.glsl" />
-    <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl" />
-    <None Include="src\Shaders\noisegenerators\CavernFS.glsl" />
-    <None Include="src\Shaders\noisegenerators\generators.json" />
-    <None Include="freetype.dll" />
-    <None Include="src\Shaders\TextVS.glsl" />
-    <None Include="src\Shaders\TextFS.glsl" />
-    <None Include="src\Shaders\noisegenerators\TestHeightmapFS.glsl" />
-    <None Include="res\tilesets\vanilla\tiledata\NeonGrid.TileProperties" />
-    <None Include="src\Shaders\SolidColorVS.glsl" />
-    <None Include="src\Shaders\SolidColorFS.glsl" />
-    <None Include="res\tilesets\vanilla\tiledata\RichStone.TileProperties" />
-    <None Include="src\Shaders\noisegenerators\GradFS.glsl" />
-    <None Include="res\tilesets\vanilla\tiledata\Test.TileProperties" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\freetype.lib" />
+    <None Include="src\Shaders\noisegenerators\Perlin2DFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\noisegenerators\GradFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\SolidColorVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\SolidColorFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TextVS.glsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TileGS.glsl">
+      <Filter>Shaders\Geometry Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TextFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\noisegenerators\TestHeightmapFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\noisegenerators\CavernFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
+    </None>
+    <None Include="res\tilesets\vanilla\tiledata\Dirt.TileProperties">
+      <Filter>Resource Files\Tiles</Filter>
+    </None>
+    <None Include="res\tilesets\vanilla\tiledata\RichStone.TileProperties">
+      <Filter>Resource Files\Tiles</Filter>
+    </None>
+    <None Include="res\tilesets\vanilla\tiledata\Stone.TileProperties">
+      <Filter>Resource Files\Tiles</Filter>
+    </None>
+    <None Include="res\tilesets\vanilla\tiledata\NeonGrid.TileProperties">
+      <Filter>Resource Files\Tiles</Filter>
+    </None>
+    <None Include="res\tilesets\vanilla\tiledata\Test.TileProperties">
+      <Filter>Resource Files\Tiles</Filter>
+    </None>
+    <None Include="zlib1.dll">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="SDL2.dll">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="libnoise.dll">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="glew32.dll">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="freetype.dll">
+      <Filter>dll</Filter>
+    </None>
+    <None Include="res\tilesets\vanilla\tileset.json">
+      <Filter>Resource Files\Tiles</Filter>
+    </None>
+    <None Include="src\Shaders\noisegenerators\generators.json">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png">
@@ -415,5 +495,10 @@
     <Image Include="res\tilesets\vanilla\images\stone.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\freetype.lib">
+      <Filter>dll</Filter>
+    </Library>
   </ItemGroup>
 </Project>

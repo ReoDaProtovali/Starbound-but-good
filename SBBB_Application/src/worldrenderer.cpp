@@ -76,10 +76,9 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 		float pixelsPerTile = (float)p_windowWidth / (float)m_viewCam->tileScale;
 
 		// has to be shifted one chunk down on the y for reasons
-		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE, pos.y * CHUNKSIZE - CHUNKSIZE);
-		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile), roundf(CHUNKSIZE * m_pixelsPerTile));
-		m_tileFBO.clearDepthRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile), roundf(CHUNKSIZE * m_pixelsPerTile));
-
+		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * (float)CHUNKSIZE, pos.y * (float)CHUNKSIZE - (float)CHUNKSIZE);
+		m_tileFBO.clearRegion((int)roundf(pixelCoords.x), (int)roundf(pixelCoords.y), (int)roundf(CHUNKSIZE * m_pixelsPerTile), (int)roundf(CHUNKSIZE * m_pixelsPerTile));
+		m_tileFBO.clearDepthRegion((int)roundf(pixelCoords.x), (int)roundf(pixelCoords.y), (int)roundf(CHUNKSIZE * m_pixelsPerTile), (int)roundf(CHUNKSIZE * m_pixelsPerTile));
 		if (s_chunkMap.contains(pos)) {
 
 			WorldChunk& chunk = s_chunkMap[pos];
@@ -112,7 +111,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
 	// breaks the frame, must be set manually
-	m_tileCam.setDimensions(m_pixelsPerTile * (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y));
+	m_tileCam.setDimensions(int(m_pixelsPerTile * float(chunkFrameTiles.z - chunkFrameTiles.x)), int(m_pixelsPerTile * float(chunkFrameTiles.w - chunkFrameTiles.y)));
 	m_tileCam.setFrame(
 		(float)chunkFrameTiles.x, (float)chunkFrameTiles.y, float(chunkFrameTiles.z - chunkFrameTiles.x), float(chunkFrameTiles.w - chunkFrameTiles.y)
 	);
@@ -137,8 +136,8 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 {
 	int drawnChunkCount = 0;
-	for (int y = chunkFrame.y - 1; y <= chunkFrame.w + 1; y++) {
-		for (int x = chunkFrame.x - 1; x <= chunkFrame.z + 1; x++) {
+	for (int y = (int)chunkFrame.y - 1; y <= (int)chunkFrame.w + 1; y++) {
+		for (int x = (int)chunkFrame.x - 1; x <= (int)chunkFrame.z + 1; x++) {
 			if (s_chunkMap.contains(ChunkPos(x, y))) {
 
 				WorldChunk& chunk = s_chunkMap[ChunkPos(x, y)];
@@ -151,9 +150,9 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 				if (!chunk.vboIsPushed) {
 					chunk.pushVBO();
 				}
-				auto pixelCoords = m_tileCam.tileToPixelCoordinates(x * CHUNKSIZE, y * CHUNKSIZE - CHUNKSIZE);
+				auto pixelCoords = m_tileCam.tileToPixelCoordinates(x * (float)CHUNKSIZE, y * (float)CHUNKSIZE - (float)CHUNKSIZE);
 
-				m_tileFBO.clearDepthRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile), roundf(CHUNKSIZE * m_pixelsPerTile));
+				m_tileFBO.clearDepthRegion((GLint)roundf(pixelCoords.x), (GLint)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile));
 
 				m_tileShader.setVec2Uniform(2, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 				chunk.draw(m_tileFBO, m_tileDrawStates);
