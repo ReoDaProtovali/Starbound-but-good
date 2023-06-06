@@ -22,7 +22,7 @@
 
 #include "Framework/Graphics/Text.hpp"
 
-#include "Button.hpp"
+#include "GUIButton.hpp"
 
 #include "util/SharedList.hpp"
 #include "TestEntity.hpp"
@@ -40,13 +40,10 @@ class GameRenderer
 {
 public:
 	GameRenderer() = delete;
-	GameRenderer(const GameWindow& p_window);
+	GameRenderer(GameWindow& p_window);
 	~GameRenderer();
 
-	uint32_t windowWidth;
-	uint32_t windowHeight;
-	uint32_t screenWidth;
-	uint32_t screenHeight;
+	GameWindow& window;
 
 	ResourceManager& res = ResourceManager::Get();
 
@@ -85,7 +82,7 @@ public:
 	uint64_t testFrame = 0;
 	void testDraw();
 	void testDrawGUI();
-	Button testButton{ 0.1f, 0.25f, 0.8f, 0.6f };
+	Button testButton{ 0.4f, 0.1f, 0.2f, 0.3f };
 	Button testNestedButton{ 0.7f, 0.1f, 0.2f, 0.8f };
 
 	void swapCameras();

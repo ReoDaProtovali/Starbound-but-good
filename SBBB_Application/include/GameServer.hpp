@@ -7,6 +7,9 @@
 #include "Framework/Window/GameWindow.hpp"
 #include "util/Messenger.hpp"
 #include "util/SharedQueue.hpp"
+#include "GameStates.hpp"
+#include "ServerWorldState.hpp"
+
 class GameServer
 {
 	void run(SharedQueue<std::exception_ptr>& p_exceptionQueue);
@@ -15,6 +18,9 @@ class GameServer
 	
 	fpsGauge tickGauge;
 
+	GameStateManager& stateManager = GameStateManager::Get();
+	ServerWorldState State_ServerWorld;
+
 	// thread management
 	std::thread serverThread;
 	std::atomic_bool m_stopping = false;
@@ -22,7 +28,7 @@ class GameServer
 	// offscreen rendering on server thread
 	GameWindow serverWindow;
 public:
-	GameServer() {};
+	GameServer();
 	void start(SharedQueue<std::exception_ptr>& p_exceptionQueue);
 	void stop();
 };

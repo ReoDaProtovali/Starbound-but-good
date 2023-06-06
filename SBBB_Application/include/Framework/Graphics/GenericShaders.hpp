@@ -29,6 +29,12 @@ public:
 	// vec3 color
 	Shader solidColorShader;
 
+	// for funsies
+	// attribs:
+	// vec3 pos
+	// vec2 texCoord
+	// uniform is time at location 1
+	Shader fancyShader;
 private:
 	GenericShaders();
 	void init();

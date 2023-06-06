@@ -3,8 +3,12 @@
 #include <thread>
 #include "Framework/Window/GameWindow.hpp"
 #include "GameRenderer.hpp"
+#include "GUI.hpp"
 #include "util/Messenger.hpp"
 #include "util/SharedQueue.hpp"
+#include "GameStates.hpp"
+
+#include "ClientWorldState.hpp"
 
 class GameClient
 {
@@ -16,6 +20,9 @@ class GameClient
 	// core systems
 	GameWindow gw { "Barstound" };
 	GameRenderer renderer{ gw };
+
+	GameStateManager& stateManager = GameStateManager::Get();
+	ClientWorldState State_ClientWorld{ gw, renderer };
 
 	// utility/testing
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);

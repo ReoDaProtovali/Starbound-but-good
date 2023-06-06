@@ -2,18 +2,18 @@
 
 GameWindow::GameWindow() 
 	: m_window(NULL),
-	windowWidth(0),
-	windowHeight(0)
+	width(0),
+	height(0)
 {
 }
 
 GameWindow::GameWindow(const char* p_title, uint32_t p_w, uint32_t p_h)
 	:m_window(NULL),
-	windowWidth(p_w),
-	windowHeight(p_h)
+	width(p_w),
+	height(p_h)
 {
 
-	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (m_window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -37,10 +37,10 @@ GameWindow::GameWindow(const char* p_title, uint32_t p_w, uint32_t p_h)
 
 void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h, int p_flags)
 {
-	windowWidth = p_w;
-	windowHeight = p_h;
+	width = p_w;
+	height = p_h;
 
-	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, p_flags);
+	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, p_flags);
 	if (m_window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -101,7 +101,7 @@ void GameWindow::initGL() {
 
 	// init inherited class's variables
 	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
-	setViewport(0, 0, windowWidth, windowHeight);
+	setViewport(0, 0, width, height);
 }
 
 void GameWindow::cleanUp() {
@@ -124,14 +124,14 @@ void GameWindow::toggleFullscreen() {
 	if (isFullscreen) {
 		SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
 		SDL_SetWindowSize(m_window, screenWidth, screenHeight);
-		windowWidth = screenWidth;
-		windowHeight = screenHeight;
+		width = screenWidth;
+		height = screenHeight;
 	}
 	else {
 		SDL_SetWindowFullscreen(m_window, 0);
 		SDL_SetWindowSize(m_window, screenWidth / 2, screenHeight / 2);
-		windowWidth = screenWidth / 2;
-		windowHeight = screenHeight / 2;
+		width = screenWidth / 2;
+		height = screenHeight / 2;
 	}
 	fullscreenChanged = true;
 }

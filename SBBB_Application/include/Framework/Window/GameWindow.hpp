@@ -47,8 +47,8 @@ public:
 
 	uint32_t getWindowID();
 
-	int windowWidth;
-	int windowHeight;
+	int width;
+	int height;
 	uint32_t screenWidth;
 	uint32_t screenHeight;
 

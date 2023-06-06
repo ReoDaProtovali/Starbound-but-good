@@ -183,14 +183,17 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files\Meta / Misc</Filter>
     </ClCompile>
-    <ClCompile Include="src\widget.cpp">
+    <ClCompile Include="src\guiwidget.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\button.cpp">
+    <ClCompile Include="src\guibutton.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\defaultfonts.cpp">
       <Filter>Source Files\Meta / Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -383,10 +386,10 @@
     <ClInclude Include="include\Globals.hpp">
       <Filter>Header Files\Meta / Misc</Filter>
     </ClInclude>
-    <ClInclude Include="include\Widget.hpp">
+    <ClInclude Include="include\GUIWidget.hpp">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="include\Button.hpp">
+    <ClInclude Include="include\GUIButton.hpp">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="include\GameConstants.hpp">
@@ -394,6 +397,27 @@
     </ClInclude>
     <ClInclude Include="include\DefaultFonts.hpp">
       <Filter>Header Files\Meta / Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GUI.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GUI_DebugSettings.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GUIText.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameStates.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gamestates.cpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ClientWorldState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ServerWorldState.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -486,6 +510,9 @@
     </None>
     <None Include="src\Shaders\noisegenerators\generators.json">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\FancyFS.glsl">
+      <Filter>Shaders\Fragment Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-#include "Widget.hpp"
+#include "GUIWidget.hpp"
 
 void Widget::onUpdate(GUIEvent e)
 {

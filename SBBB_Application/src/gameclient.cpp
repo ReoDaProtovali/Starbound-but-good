@@ -3,6 +3,8 @@
 #include "ResourceManager.hpp"
 
 GameClient::GameClient() {
+	stateManager.bindClientState(GameStateEnum::IN_WORLD, (GameState*)&State_ClientWorld);
+	stateManager.setState(GameStateEnum::IN_WORLD);
 	gw.setVSync(true);
 }
 GameClient::~GameClient() {
@@ -21,11 +23,6 @@ void GameClient::stop() {
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	try {
-		// important, opengl NEEDS this
-		gw.bindToThisThread();
-#ifndef DISABLE_DEBUG_STATS
-		globals.debug.drawThread = std::this_thread::get_id();
-#endif // DISABLE_DEBUG_STATS
 
 		auto& res = ResourceManager::Get();
 		auto& gs = GenericShaders::Get();
@@ -33,7 +30,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 		while (true) {
 
 			if (gw.hasChangedFullscreenState()) {
-				resizeWindow(gw.windowWidth, gw.windowHeight);
+				resizeWindow(gw.width, gw.height);
 			}
 			if (flagResize) {
 				flagResize = false;
@@ -43,7 +40,10 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			renderFPSGauge.update(0.5f);
 			testInput();
 			processDebugStats();
-			render();
+
+			stateManager.clientUpdate();
+
+			//render();
 
 			if (m_stopping) break;
 		}
@@ -78,8 +78,8 @@ void GameClient::render()
 
 void GameClient::resizeWindow(uint32_t p_w, uint32_t p_h)
 {
-	gw.windowWidth = p_w;
-	gw.windowHeight = p_h;
+	gw.width = p_w;
+	gw.height = p_h;
 	gw.setViewport(0, 0, p_w, p_h);
 	renderer.setViewport(p_w, p_h);
 	render();
@@ -125,8 +125,8 @@ void GameClient::testInput()
 
 	while (auto obs = mouseObserver.observe()) {
 		MouseEvent m = obs.value();
-		m.x = m.x / (float)gw.windowWidth;
-		m.y = m.y / (float)gw.windowHeight;
+		m.x = m.x / (float)gw.width;
+		m.y = m.y / (float)gw.height;
 		renderer.testButton.onUpdate(GUIEvent{ m, KeyEvent() });
 	}
 }
@@ -148,10 +148,10 @@ void GameClient::processDebugStats()
 		db.camFY1 = f.y;
 		db.camFX2 = f.z;
 		db.camFY2 = f.w;
-		db.screenW = renderer.screenWidth;
-		db.screenH = renderer.screenHeight;
-		db.windowW = renderer.windowWidth;
-		db.windowH = renderer.windowHeight;
+		db.screenW = renderer.window.screenWidth;
+		db.screenH = renderer.window.screenHeight;
+		db.windowW = renderer.window.width;
+		db.windowH = renderer.window.height;
 		db.statUpdate = true;
 	}
 #endif

@@ -2,18 +2,19 @@
 #include <sstream>
 #include <iomanip>
 
-GameRenderer::GameRenderer(const GameWindow& p_window) :
-	windowWidth(p_window.windowWidth),
+GameRenderer::GameRenderer(GameWindow& p_window) :
+	/*windowWidth(p_window.windowWidth),
 	windowHeight(p_window.windowHeight),
 	screenWidth(p_window.screenWidth),
-	screenHeight(p_window.screenHeight)
+	screenHeight(p_window.screenHeight)*/
+	window(p_window)
 {
 
 	LOAD_LOG("GameRenderer instantiated...");
 
 	cam->pos = glm::vec3(0.f, 0.f, 32.0f);
 	cam->tileScale = 40.f;
-	cam->setDimensions(windowWidth, windowHeight);
+	cam->setDimensions(window.width, window.height);
 	worldRenderer.setCamera(cam.get());
 
 	currentCamera = cam;
@@ -21,7 +22,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 	overviewCam = std::make_shared<Camera>();
 	overviewCam->pos = glm::vec3(-16.0f, 0.0f, 32.0f);
 	overviewCam->tileScale = 1024.0f;
-	overviewCam->setDimensions(windowWidth, windowHeight);
+	overviewCam->setDimensions(window.width, window.height);
 
 	DefaultFonts.videotype.setPixelHeight(50);
 
@@ -37,12 +38,11 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	testButton.addChild(&testNestedButton);
 	testNestedButton.testColor = glm::vec3(0.f);
-	testNestedButton.innerText = "guh";
-	testNestedButton.buttonText.setText("guh");
+	testNestedButton.setText("guh");
 
-	testButton.onClick([
-		&](void) {
-			testButton.buttonText.setText("good job");
+	testButton.onClick(
+		[&](void) {
+			testButton.setText("good job");
 			testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
 			testButton.disabled = true;
 		});
@@ -55,7 +55,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 		});
 	testNestedButton.onClick(
 		[&](void) {
-			testNestedButton.buttonText.setText("wah");
+			testNestedButton.setText("wah");
 			testNestedButton.testColor = glm::vec3(0.0f, 0.f, 0.5f);
 			testNestedButton.disabled = true;
 		});
@@ -71,7 +71,7 @@ GameRenderer::GameRenderer(const GameWindow& p_window) :
 
 	m_lighting.setDims(5, 5);
 
-	m_screenFBO.setDimensions(windowWidth, windowHeight); // Initializes
+	m_screenFBO.setDimensions(window.width, window.height); // Initializes
 
 }
 
@@ -107,12 +107,10 @@ void GameRenderer::clearScreen()
 
 void GameRenderer::setViewport(uint16_t p_w, uint16_t p_h)
 {
-	windowWidth = p_w;
-	windowHeight = p_h;
-	m_screenFBO.setDimensions(windowWidth, windowHeight);
-	cam->setDimensions(windowWidth, windowHeight);
+	m_screenFBO.setDimensions(p_w, p_h);
+	cam->setDimensions(p_w, p_h);
 	cam->updateFrame();
-	overviewCam->setDimensions(windowWidth, windowHeight);
+	overviewCam->setDimensions(p_w, p_h);
 	overviewCam->updateFrame();
 }
 
@@ -120,13 +118,13 @@ int GameRenderer::drawWorld()
 {
 	DrawStates state;
 	if (!playerCam) {
-		state.setTransform(currentCamera.lock()->getTransform());
+	state.setTransform(currentCamera.lock()->getTransform());
 	}
 	else {
 		playerCam->enableInterpolation();
 		state.setTransform(playerCam->getTransform());
 	}
-	return worldRenderer.draw(m_screenFBO, state, windowWidth);
+	return worldRenderer.draw(m_screenFBO, state, window.width);
 }
 
 void GameRenderer::drawLighting() {
@@ -201,7 +199,7 @@ void GameRenderer::testDraw()
 			playerCam = &entity->entityCam;
 			worldRenderer.setCamera(playerCam);
 
-			entity->entityCam.setDimensions(windowWidth, windowHeight);
+			entity->entityCam.setDimensions(window.width, window.height);
 			entity->entityCam.setTileScale(cam->tileScale);
 			entity->entityCam.updateFrame();
 
@@ -292,12 +290,12 @@ void GameRenderer::testDraw()
 
 void GameRenderer::testDrawGUI()
 {
-	DrawStates GUIStates;
-	glm::mat4 mat = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, 1.f, 0.f)) * glm::scale(glm::mat4(1.f), glm::vec3(2.f, -2.f, 1.f));
-
-	GUIStates.setTransform(mat);
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	DrawStates GUIStates;
+	// 0.0 to 1.0 on both axis. origin is top left.
+	glm::mat4 mat = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, 1.f, 0.f)) * glm::scale(glm::mat4(1.f), glm::vec3(2.f, -2.f, 1.f));
+	GUIStates.setTransform(mat);
+
 	testButton.draw(m_screenFBO, GUIStates);
 }
 

@@ -72,7 +72,6 @@ public:
 	 void loadGeneratorShaders();
 
 private:
-	/// Default constructor. Does nothing.
 	ResourceManager();
 	// Deletes all managed textures
 	~ResourceManager();

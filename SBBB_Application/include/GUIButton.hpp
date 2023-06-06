@@ -1,5 +1,5 @@
 #pragma once
-#include "Widget.hpp"
+#include "GUIWidget.hpp"
 #include "util/Rect.hpp"
 #include <string>
 #include <string_view>
