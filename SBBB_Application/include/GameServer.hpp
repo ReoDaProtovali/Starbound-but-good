@@ -8,8 +8,8 @@
 #include "util/Messenger.hpp"
 #include "util/SharedQueue.hpp"
 #include "GameStates.hpp"
-#include "ServerWorldState.hpp"
-
+#include "Game States/ServerWorldState.hpp"
+#include "Game States/TemplateState.hpp"
 class GameServer
 {
 	void run(SharedQueue<std::exception_ptr>& p_exceptionQueue);
@@ -20,6 +20,7 @@ class GameServer
 
 	GameStateManager& stateManager = GameStateManager::Get();
 	ServerWorldState State_ServerWorld;
+	TemplateState State_None;
 
 	// thread management
 	std::thread serverThread;

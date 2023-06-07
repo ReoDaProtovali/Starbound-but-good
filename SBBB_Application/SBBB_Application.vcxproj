@@ -198,7 +198,9 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game States\clientworldstate.cpp" />
     <ClCompile Include="src\defaultfonts.cpp" />
+    <ClCompile Include="src\Game States\serverworldstate.cpp" />
     <ClCompile Include="src\guibutton.cpp" />
     <ClCompile Include="include\util\debugdraw.cpp" />
     <ClCompile Include="include\util\SubjectObserver.hpp" />
@@ -236,6 +238,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\guiwidget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Game States\TemplateState.hpp" />
     <ClInclude Include="include\GameStates.hpp" />
     <ClInclude Include="include\GUI.hpp" />
     <ClInclude Include="include\DefaultFonts.hpp" />
@@ -252,7 +255,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\MovementController.hpp" />
     <ClInclude Include="include\Player.hpp" />
     <ClInclude Include="include\PlayerAI.hpp" />
-    <ClInclude Include="include\ServerWorldState.hpp" />
+    <ClInclude Include="include\Game States\ServerWorldState.hpp" />
     <ClInclude Include="include\TestAI.hpp" />
     <ClInclude Include="include\util\SharedDynArray.hpp" />
     <ClInclude Include="include\util\DynArray.hpp" />
@@ -309,7 +312,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\WorldRenderer.hpp" />
     <ClInclude Include="include\WorldGenerator.hpp" />
     <ClInclude Include="src\gamestates.cpp" />
-    <ClInclude Include="include\ClientWorldState.hpp" />
+    <ClInclude Include="include\Game States\ClientWorldState.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\randomthings.txt" />

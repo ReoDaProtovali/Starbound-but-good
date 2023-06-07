@@ -3,6 +3,7 @@
 #include "ResourceManager.hpp"
 
 GameClient::GameClient() {
+	stateManager.bindClientState(GameStateEnum::NO_STATE, (GameState*)&State_None);
 	stateManager.bindClientState(GameStateEnum::IN_WORLD, (GameState*)&State_ClientWorld);
 	stateManager.setState(GameStateEnum::IN_WORLD);
 	gw.setVSync(true);
@@ -55,26 +56,6 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	}
 }
 
-void GameClient::render()
-{
-	renderer.bindScreenFBOAsRenderTarget();
-	renderer.setClearColor(glm::vec4(0.2f, 0.2f, 0.3f, 0.0f));
-	renderer.clearScreen();
-
-	int drawnChunkCount = renderer.drawWorld();
-#ifndef DISABLE_DEBUG_STATS
-	if (drawnChunkCount != 0) globals.debug.drawnChunkCount = drawnChunkCount;
-#endif
-	glEnable(GL_DEPTH_TEST);
-	renderer.testDraw();
-
-	gw.clear();
-	gw.bind();
-	glDisable(GL_DEPTH_TEST);
-	renderer.drawLighting();
-	gw.displayNewFrame();
-}
-
 
 void GameClient::resizeWindow(uint32_t p_w, uint32_t p_h)
 {
@@ -82,7 +63,6 @@ void GameClient::resizeWindow(uint32_t p_w, uint32_t p_h)
 	gw.height = p_h;
 	gw.setViewport(0, 0, p_w, p_h);
 	renderer.setViewport(p_w, p_h);
-	render();
 }
 
 void GameClient::testInput()
@@ -113,6 +93,10 @@ void GameClient::testInput()
 		cam.updateFrame();
 	}
 
+	if (inp.testKeyDown(SDLK_b)) {
+		stateManager.swap(GameStateEnum::NO_STATE);
+	}
+
 	//if (inp.testKeyDown(SDLK_3)) {
 	//	renderer.swapCameras();
 	//}
@@ -123,12 +107,12 @@ void GameClient::testInput()
 	camVelocity *= 0.95;
 	cam.pos += glm::vec3(camVelocity.x, camVelocity.y, 0.f);
 
-	while (auto obs = mouseObserver.observe()) {
-		MouseEvent m = obs.value();
-		m.x = m.x / (float)gw.width;
-		m.y = m.y / (float)gw.height;
-		renderer.testButton.onUpdate(GUIEvent{ m, KeyEvent() });
-	}
+	//while (auto obs = mouseObserver.observe()) {
+	//	MouseEvent m = obs.value();
+	//	m.x = m.x / (float)gw.width;
+	//	m.y = m.y / (float)gw.height;
+	//	renderer.testButton.onUpdate(GUIEvent{ m, KeyEvent() });
+	//}
 }
 
 void GameClient::processDebugStats()

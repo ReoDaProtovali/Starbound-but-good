@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <unordered_map>
+#include <shared_mutex>
 
 enum class GameStateEnum {
 	NO_STATE,
@@ -14,13 +15,29 @@ public:
 	virtual void init() = 0;
 	virtual void update() = 0;
 	virtual void suspend() = 0;
-	virtual void close() = 0;
+	virtual void resume() = 0;
+	virtual void close() = 0; // must not require thread-specific functions
 
 	bool initialized = false;
 };
 struct GameStatePair {
 	GameState* clientState = nullptr;
 	GameState* serverState = nullptr;
+	void close() {
+		if (serverState) {
+			serverState->close();
+			serverState->initialized = false;
+		}
+		if (clientState) {
+			clientState->close();
+			clientState->initialized = false;
+		}
+	}
+	//void init() {
+	//	if (!ready() || serverState->initialized || clientState->initialized) throw std::exception("bad state init, either not ready, or already initialized");
+	//	//serverState->init();
+	//	//clientState->init();
+	//}
 	bool ready() { return clientState && serverState; };
 	GameStateEnum ID = GameStateEnum::NO_STATE;
 };
@@ -30,7 +47,9 @@ public:
 	GameStateManager() {};
 
 	void clientUpdate() {
+		std::shared_lock<std::shared_mutex> lock(m_stateLock); // ensure state is not changing
 		if (!m_activeState || !m_activeState->ready()) return;
+		// if the client is not running, and the server is, start the client
 		if (!m_activeState->clientState->initialized) {
 			if (m_activeState->serverState->initialized) {
 				m_activeState->clientState->init();
@@ -39,63 +58,70 @@ public:
 			return;
 		};
 		m_activeState->clientState->update();
-	};
+	}
+
 	void serverUpdate() {
+		std::shared_lock<std::shared_mutex> lock(m_stateLock); // ensure state is not changing
 		if (!m_activeState || !m_activeState->ready()) return;
-		if (!m_activeState->serverState->initialized) { // scuffed, but client won't start unless server
+		// if the server is not running, start it
+		if (!m_activeState->serverState->initialized) {
 			m_activeState->serverState->init();
 			m_activeState->serverState->initialized = true;
+			return;
 		}
 		m_activeState->serverState->update();
-	};
+	}
 
 	void bindClientState(GameStateEnum p_ID, GameState* p_clientState) {
+		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			getState(p_ID)->clientState = p_clientState;
 		}
 		m_allStates.push_back(GameStatePair());
-		m_allStates[m_allStates.size() - 1].clientState = p_clientState;
-		m_allStates[m_allStates.size() - 1].ID = p_ID;
-	};
+		auto& lastState = m_allStates[m_allStates.size() - 1];
+		lastState.clientState = p_clientState;
+		lastState.ID = p_ID;
+	}
+
 	void bindServerState(GameStateEnum p_ID, GameState* p_serverState) {
+		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			getState(p_ID)->serverState = p_serverState;
 		}
 		m_allStates.push_back(GameStatePair());
-		m_allStates[m_allStates.size() - 1].serverState = p_serverState;
-		m_allStates[m_allStates.size() - 1].ID = p_ID;
-	};
+		auto& lastState = m_allStates[m_allStates.size() - 1];
+		lastState.serverState = p_serverState;
+		lastState.ID = p_ID;
+	}
 
 	void setState(GameStateEnum p_ID) { // only to be used for setting the very first state, really. It's a forceful set.
+		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			m_activeState = getState(p_ID);
 		}
 	}
 	void swap(GameStateEnum newState) {
+		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (!m_activeState->ready()) throw std::exception("GameState has not been set up! Cannot swap existing state.");
-		m_activeState->clientState->close();
-		m_activeState->serverState->close();
-		m_activeState->clientState->initialized = false;
-		m_activeState->serverState->initialized = false;
+
+		m_activeState->close();
 
 		m_activeState = getState(newState);
-
-		m_activeState->serverState->init();
-		m_activeState->clientState->init();
+		if (!m_activeState->ready()) throw std::exception("An adequate server-client state pair has not been made for swapped state.");
+		// init is handled by update function to ensure correct thread
+		//m_activeState->init();
 	};
 	void close() {
+		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (!m_activeState) return;
-		if (m_activeState->clientState)
-			m_activeState->clientState->close();
-		if (m_activeState->serverState)
-			m_activeState->serverState->close();
+		m_activeState->close();
 	}
 	static GameStateManager& Get() {
 		static GameStateManager instance;
 		return instance;
 	}
 
-	GameStatePair* getState(GameStateEnum p_ID) {
+	GameStatePair* getState(GameStateEnum p_ID) { // silly linear search, doesn't matter too much
 		for (auto& s : m_allStates) {
 			if (s.ID == p_ID) return &s;
 		}
@@ -112,4 +138,5 @@ public:
 private:
 	std::vector<GameStatePair> m_allStates;
 	GameStatePair* m_activeState = nullptr;
+	std::shared_mutex m_stateLock;
 };

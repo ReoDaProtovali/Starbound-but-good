@@ -4,6 +4,7 @@
 
 GameServer::GameServer()
 {
+	stateManager.bindServerState(GameStateEnum::NO_STATE, (GameState*)&State_None);
 	stateManager.bindServerState(GameStateEnum::IN_WORLD, (GameState*)&State_ServerWorld);
 	stateManager.setState(GameStateEnum::IN_WORLD);
 }

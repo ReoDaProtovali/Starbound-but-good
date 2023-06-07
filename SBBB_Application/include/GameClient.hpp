@@ -8,12 +8,12 @@
 #include "util/SharedQueue.hpp"
 #include "GameStates.hpp"
 
-#include "ClientWorldState.hpp"
+#include "Game States/ClientWorldState.hpp"
+#include "Game States/TemplateState.hpp"
 
 class GameClient
 {
 	void run(SharedQueue<std::exception_ptr>& p_exceptionQueue);
-	void render();
 	void testInput();
 	void processDebugStats();
 	void resizeWindow(uint32_t p_w, uint32_t p_h);
@@ -23,6 +23,7 @@ class GameClient
 
 	GameStateManager& stateManager = GameStateManager::Get();
 	ClientWorldState State_ClientWorld{ gw, renderer };
+	TemplateState State_None;
 
 	// utility/testing
 	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);

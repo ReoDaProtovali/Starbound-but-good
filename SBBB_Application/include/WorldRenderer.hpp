@@ -25,7 +25,7 @@ class WorldRenderer {
 
 public:
 	WorldRenderer();
-	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 5), Rect(0, 0, 10, 10));
+	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 0), Rect(0, 0, 10, 10));
 	float m_pixelsPerTile = 8.f;
 	Observer<ChunkUpdate> m_chunkUpdateObserver;
 

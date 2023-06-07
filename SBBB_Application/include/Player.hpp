@@ -60,8 +60,8 @@ public:
 		m_position.y = transform.p.y;
 		//setRotation(transform.q.GetAngle());
 
-		const float INTERP_FACTOR = (float(UPDATE_RATE_FPS) / float(globals.refresh_rate));
-		const float anticipationScale = 5.f * METERS_TO_TILES * (1.f / UPDATE_RATE_FPS);
+		const float INTERP_FACTOR = (float(UPDATE_RATE_FPS * 2) / float(globals.refresh_rate));
+		const float anticipationScale = 2.f * METERS_TO_TILES * (1.f / UPDATE_RATE_FPS);
 		const float anticipationSpeed = INTERP_FACTOR;
 		glm::vec3 newPos = utils::lerp(entityCam.pos, glm::vec3(m_position.x + getVelocity().x * anticipationScale, m_position.y + getVelocity().y * anticipationScale, entityCam.pos.z), anticipationSpeed);
 		entityCam.pos = newPos;

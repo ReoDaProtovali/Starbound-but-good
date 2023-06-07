@@ -195,6 +195,12 @@
     <ClCompile Include="src\gui.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game States\clientworldstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game States\serverworldstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -413,10 +419,13 @@
     <ClInclude Include="src\gamestates.cpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ClientWorldState.hpp">
+    <ClInclude Include="include\Game States\ClientWorldState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ServerWorldState.hpp">
+    <ClInclude Include="include\Game States\ServerWorldState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game States\TemplateState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
