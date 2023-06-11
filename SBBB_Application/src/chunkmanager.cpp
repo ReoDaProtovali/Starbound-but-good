@@ -62,6 +62,7 @@ void ChunkManager::tidyNoisemapIfDone() {
 }
 void ChunkManager::startThreads()
 {
+	LOAD_LOG("ChunkManager generation threads started...");
 	if (m_genThreads.size() > 0) return;
 	for (int i = 0; i < GENERATION_THREAD_COUNT; i++) {
 		m_genThreads.emplace_back(&ChunkManager::genFromQueueThreaded, this);
@@ -72,6 +73,7 @@ void ChunkManager::startThreads()
 }
 void ChunkManager::stopThreads()
 {
+	LOAD_LOG("ChunkManager generation threads stopping...");
 	m_stopAllThreads = true;
 
 	// force close waiting threads
@@ -262,6 +264,7 @@ void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_world
 
 
 	c(localTileX, localTileY, p_worldLayer).m_tileID = p_tileID;
+	if (p_tileID != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 
 	for (int i = -1; i <= 1; i++) {

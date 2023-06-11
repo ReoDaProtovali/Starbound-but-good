@@ -226,7 +226,7 @@ void WorldChunk::genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkMa
 		v.setAdjacent(128u >> (i > 4 ? i - 1 : i));
 
 	}
-
+	// only doing this because too lazy to do 3d array access math lol
 	StaticArray3D<TileVert> tmpArr(CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH);
 	tmpArr.setData(currentChunk->tileMesh.getVerts().data());
 	tmpArr(x, y, z) = v;
@@ -569,9 +569,7 @@ std::optional<WorldChunk*> WorldChunk::getIntrudedChunk(int p_localTileX, int p_
 				worldPos.y;
 			std::optional<WorldChunk*> opt = p_chnks.getChunkPtr(ChunkPos(intrudedChunkX, intrudedChunkY));
 			if (!opt.has_value()) return std::nullopt;
-			WorldChunk* neighbor = opt.value();
-
-			return neighbor;
+			return opt.value();
 		}
 		else {
 			return std::nullopt;

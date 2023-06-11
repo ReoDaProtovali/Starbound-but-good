@@ -158,7 +158,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\Users\daysh\source\repos\Starbound-but-good\SBBB_Application\include\util\ext;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;$(ProjectDir)include\util\ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
       <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>

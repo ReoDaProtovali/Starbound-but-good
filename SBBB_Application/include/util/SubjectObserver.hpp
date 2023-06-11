@@ -57,6 +57,10 @@ public:
 		return m_inbound.tryPop();
 	}
 
+	void clear() {
+		m_inbound.clear();
+	}
+
 private:
 	void recieve(const T& p_msg) {
 		m_inbound.push(p_msg);

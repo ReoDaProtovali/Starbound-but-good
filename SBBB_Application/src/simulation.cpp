@@ -21,11 +21,11 @@ void Simulation::init()
 void Simulation::spawnTestEntities()
 {
 #ifdef SBBB_DEBUG
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 0; i++) {
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
 #else
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 0; i++) {
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
 #endif

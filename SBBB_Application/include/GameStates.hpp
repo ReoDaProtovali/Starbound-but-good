@@ -33,11 +33,7 @@ struct GameStatePair {
 			clientState->initialized = false;
 		}
 	}
-	//void init() {
-	//	if (!ready() || serverState->initialized || clientState->initialized) throw std::exception("bad state init, either not ready, or already initialized");
-	//	//serverState->init();
-	//	//clientState->init();
-	//}
+
 	bool ready() { return clientState && serverState; };
 	GameStateEnum ID = GameStateEnum::NO_STATE;
 };
@@ -62,13 +58,13 @@ public:
 
 	void serverUpdate() {
 		std::shared_lock<std::shared_mutex> lock(m_stateLock); // ensure state is not changing
-		if (!m_activeState || !m_activeState->ready()) return;
 		// if the server is not running, start it
 		if (!m_activeState->serverState->initialized) {
 			m_activeState->serverState->init();
 			m_activeState->serverState->initialized = true;
 			return;
 		}
+		if (!m_activeState || !m_activeState->ready()) return;
 		m_activeState->serverState->update();
 	}
 
@@ -102,6 +98,7 @@ public:
 	}
 	void swap(GameStateEnum newState) {
 		std::unique_lock<std::shared_mutex> lock(m_stateLock);
+		if (m_activeState->ID == newState) return;
 		if (!m_activeState->ready()) throw std::exception("GameState has not been set up! Cannot swap existing state.");
 
 		m_activeState->close();

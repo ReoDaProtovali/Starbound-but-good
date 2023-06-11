@@ -1,6 +1,6 @@
 #include "Tile.hpp"
 
 
-glm::ivec2 Tile::getChunkPos() {
+glm::ivec2 Tile::getChunkPos() const {
 	return m_chunkPos;
 }

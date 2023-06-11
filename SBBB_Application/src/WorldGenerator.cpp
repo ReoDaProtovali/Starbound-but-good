@@ -53,7 +53,7 @@ void WorldGenerator::loadNoiseValuesAtChunk(int32_t p_chunkX, int32_t p_chunkY) 
 Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, bool& wasEmpty)
 {
 	// yeah i'm going to need to do this differently for speed later
-	wasEmpty = true;
+	wasEmpty = false;
 	std::unordered_map<std::string, float> distances;
 
 	Array3D<Tile> out{ CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH };

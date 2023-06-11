@@ -8,7 +8,7 @@ void SBBBDebugDraw::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h,
 		s_Mesh.addFloatAttrib(3);
 	}
 
-	s_Mesh.clean();
+	s_Mesh.remove();
 
 	// top side
 	Rect localBounds = Rect(-0.5f, -0.5f, p_w + 1.f, 1.f);

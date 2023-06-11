@@ -1,7 +1,8 @@
 #include "Game States/ServerWorldState.hpp"
-
+#include "Framework/Log.hpp"
 void ServerWorldState::init()
 {
+	LOAD_LOG("World Server State Started");
 	world = new ChunkManager(); // i really don't like doing this, but it has to be made on the right thread
 	sim = new Simulation();
 	sim->init();
