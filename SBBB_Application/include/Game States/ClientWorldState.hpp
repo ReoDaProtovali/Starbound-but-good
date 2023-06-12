@@ -3,6 +3,7 @@
 #include "GameRenderer.hpp"
 #include "WorldRenderer.hpp"
 #include "GameStates.hpp"
+#include "GUI.hpp"
 
 #define BOMB_COUNTER_MAX 50
 
@@ -30,6 +31,7 @@ public:
 	// ------------------------------------------------------------------
 	Camera* playerCam = nullptr;
 
+	GUI& gui = GUI::Get();
 	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 109.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
 	Texture* testReoTexture = nullptr;
 
@@ -38,9 +40,8 @@ public:
 
 	uint64_t testFrame = 0;
 	void testDraw();
-	void testDrawGUI();
-	Button testButton{ 0.4f, 0.1f, 0.2f, 0.3f };
-	Button testNestedButton{ 0.7f, 0.1f, 0.2f, 0.8f };
+	Button testButton{"testbutton", 0.4f, 0.1f, 0.2f, 0.3f};
+	Button testNestedButton{"testnestedbutton", 0.7f, 0.1f, 0.2f, 0.8f};
 
 	// ----------------------------------------------------------------------
 

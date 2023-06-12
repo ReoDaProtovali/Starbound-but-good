@@ -151,20 +151,10 @@ void ClientWorldState::testDraw()
 	controlsText.setLeftJustification(true);
 	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 
+	gui.draw(renderer.screenFBO);
 	//testDrawGUI();
 	//SBBBDebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
 	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
-}
-
-void ClientWorldState::testDrawGUI()
-{
-	glDisable(GL_DEPTH_TEST);
-	DrawStates GUIStates;
-	// 0.0 to 1.0 on both axis. origin is top left.
-	glm::mat4 mat = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, 1.f, 0.f)) * glm::scale(glm::mat4(1.f), glm::vec3(2.f, -2.f, 1.f));
-	GUIStates.setTransform(mat);
-
-	testButton.draw(renderer.screenFBO, GUIStates);
 }
 
 void ClientWorldState::loadTextures()
@@ -239,6 +229,8 @@ void ClientWorldState::init()
 			else
 				testNestedButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
 		});
+
+	gui.addElement(&testButton);
 
 	LOAD_LOG("Creating lighting subsystem...");
 

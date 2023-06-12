@@ -49,10 +49,10 @@ struct KeyEvent {
 	bool valid = false; // for compatability for things that expect a conditional keyevent
 };
 struct MouseEvent {
-	float x;
-	float y;
-	bool wasClick;
-	uint32_t mouseState;
+	float x = 0.f;
+	float y = 0.f;
+	bool wasClick = false;
+	uint32_t mouseState = 0;
 };
 
 enum class ChunkUpdateType {

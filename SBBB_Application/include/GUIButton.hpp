@@ -9,7 +9,7 @@
 #include "DefaultFonts.hpp"
 class Button : public Widget {
 public:
-	Button(float p_x, float p_y, float p_w, float p_h);
+	Button(std::string_view p_ID, float p_x, float p_y, float p_w, float p_h);
 	void setText(std::string_view p_text);
 	void onClick(std::function<void()> p_callback);
 	void onHover(std::function<void(bool)> p_callback);
@@ -24,5 +24,5 @@ public:
 protected:
 	std::function<void()> onClickFunc;
 	std::function<void(bool)> onHoverFunc;
-	Sprite m_sprite{ glm::vec3(screenBounds.xy.x, screenBounds.xy.y, 0.f), Rect(0.f, 0.f, screenBounds.wh.x, screenBounds.wh.y) };
+	Sprite m_sprite{ glm::vec3(absoluteBounds.xy.x, absoluteBounds.xy.y, 0.f), Rect(0.f, 0.f, absoluteBounds.wh.x, absoluteBounds.wh.y) };
 };

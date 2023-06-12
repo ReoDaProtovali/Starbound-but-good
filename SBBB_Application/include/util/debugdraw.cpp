@@ -101,7 +101,7 @@ void SBBBDebugDraw::drawLineImmediate(float px1, float py1, float px2, float py2
 		s_Mesh.addFloatAttrib(3);
 	}
 
-	s_Mesh.clean();
+	s_Mesh.remove();
 
 	glm::vec2 p1{ px1, py1 };
 	glm::vec2 p2{ px2, py2 };

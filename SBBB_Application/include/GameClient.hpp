@@ -21,6 +21,8 @@ class GameClient
 	GameWindow gw { "Barstound" };
 	GameRenderer renderer{ gw };
 
+	GUI& gui = GUI::Get();
+
 	GameStateManager& stateManager = GameStateManager::Get();
 	ClientWorldState State_ClientWorld{ gw, renderer };
 	TemplateState State_None;

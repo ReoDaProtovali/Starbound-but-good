@@ -32,7 +32,7 @@ public:
 
 	T& operator()(size_t x, size_t y, size_t z) {
 #ifdef SBBB_DEBUG
-		if (!bounded(x, y, z)) {
+		if (!bounded((int)x, (int)y, (int)z)) {
 			throw std::out_of_range("3D Array index out of bounds.");
 		}
 #endif

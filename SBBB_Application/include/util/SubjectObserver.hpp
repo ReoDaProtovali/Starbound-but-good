@@ -25,6 +25,11 @@ public:
 private:
 	void subscribe(Observer<T>* p_obs) {
 		std::unique_lock lock(m_obsLock);
+		for (auto i = m_observers.begin(); i != m_observers.end(); i++) {
+			if (*i == p_obs) {
+				return;
+			}
+		}
 		m_observers.push_back(p_obs);
 	}
 	void unsubscribe(Observer<T>* p_obs) {
@@ -53,6 +58,13 @@ public:
 	}
 	Observer(const Observer<T>&) = delete;
 
+	void subscribe() {
+		m_subject.subscribe(this);
+	};
+
+	void unsubscribe() {
+		m_subject.unsubscribe(this);
+	};
 	std::optional<T> observe() {
 		return m_inbound.tryPop();
 	}

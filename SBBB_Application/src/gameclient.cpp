@@ -23,6 +23,8 @@ void GameClient::stop() {
 	clientThread.join();
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
+	Observer<MouseEvent> mouseObserver;
+	Observer<KeyEvent> keyObserver;
 	try {
 
 		auto& res = ResourceManager::Get();
@@ -42,16 +44,35 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			testInput();
 			processDebugStats();
 
-			stateManager.clientUpdate();
+			GUIEvent e;
+			bool needsSent = false;
+			// compress mouse events, lots of redundancy
+			while (auto opt = mouseObserver.observe()) {
+				e.mouse.mouseState |= opt.value().mouseState;
+				e.mouse.wasClick |= opt.value().wasClick;
 
-			//render();
+				e.mouse.x = opt.value().x / gw.width;
+				e.mouse.y = opt.value().y / gw.height;
+				needsSent = true;
+			}
+			while (auto opt = keyObserver.observe()) {
+				if (opt.value().wasDown) {
+					e.key = opt.value();
+					e.key.valid = true;
+					gui.update(e);
+					needsSent = false;
+				}
+			}
+			if (needsSent) gui.update(e);
+			stateManager.clientUpdate();
 
 			if (m_stopping) break;
 		}
-		//gw.cleanUp();
+		gw.cleanUp();
 	} catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
 		p_exceptionQueue.push(std::current_exception());
+		gw.cleanUp();
 		return;
 	}
 }
