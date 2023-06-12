@@ -222,6 +222,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\gameserver.cpp" />
     <ClCompile Include="src\globals.cpp" />
     <ClCompile Include="src\gui.cpp" />
+    <ClCompile Include="src\guitextfield.cpp" />
     <ClCompile Include="src\inputhandler.cpp" />
     <ClCompile Include="src\lighting.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -243,8 +244,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\GUI.hpp" />
     <ClInclude Include="include\DefaultFonts.hpp" />
     <ClInclude Include="include\GUIButton.hpp" />
-    <ClInclude Include="include\GUIText.hpp" />
-    <ClInclude Include="include\GUI_DebugSettings.hpp" />
+    <ClInclude Include="include\GUITextField.hpp" />
     <ClInclude Include="include\GUIWidget.hpp" />
     <ClInclude Include="include\AI.hpp" />
     <ClInclude Include="include\Application.hpp" />

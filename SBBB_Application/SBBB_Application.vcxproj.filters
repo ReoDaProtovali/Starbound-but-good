@@ -201,6 +201,9 @@
     <ClCompile Include="src\Game States\serverworldstate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\guitextfield.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -407,10 +410,7 @@
     <ClInclude Include="include\GUI.hpp">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="include\GUI_DebugSettings.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GUIText.hpp">
+    <ClInclude Include="include\GUITextField.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GameStates.hpp">

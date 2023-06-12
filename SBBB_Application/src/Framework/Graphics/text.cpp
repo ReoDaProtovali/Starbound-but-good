@@ -139,7 +139,7 @@ void Text::setLeftJustification(bool enabled)
 }
 void Text::generateVBO() {
 	std::string::const_iterator it;
-
+	float recordWidth = 0.f;
 	float lineX = 0;
 	float lineY = 0;
 	uint32_t i = 0;
@@ -176,6 +176,7 @@ void Text::generateVBO() {
 
 			i += 6;
 			lineX += ch.advance * scale;
+			recordWidth = std::max(lineX, recordWidth);
 		}
 	}
 	else {
@@ -228,8 +229,10 @@ void Text::generateVBO() {
 
 			i += 6;
 			lineX += ch.advance * scale;
+			recordWidth = std::max(lineX, recordWidth);
 		}
 	}
+	m_normalizedWidth = recordWidth;
 	//m_textMesh.genIBO();
 	m_textMesh.pushVBOToGPU();
 }
@@ -283,4 +286,14 @@ void Text::draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec
 	setPosition(glm::vec3(0));
 	setScale(glm::vec2(1));
 
+}
+
+float Text::getMaxPixelWidth(float p_pixelHeight)
+{
+	return m_normalizedWidth * p_pixelHeight;
+}
+
+float Text::getMaxNormalizedWidth()
+{
+	return m_normalizedWidth;
 }

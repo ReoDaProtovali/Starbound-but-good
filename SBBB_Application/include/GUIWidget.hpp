@@ -23,6 +23,14 @@ public:
 
 	Rect queryAbsoluteRect(Rect p_childRect);
 
+	void setLocalBounds(Rect p_localBounds);
+	void setAbsoluteBounds(Rect p_absoluteBounds);
+	// Used to set a widgets position and size in screen pixels, not normalized.
+	// these two are a bit confusing, but they are just used whenever you want precise pixel positions for gui.
+	void setScreenBounds(Rect p_screenBounds);
+	void updateScreenBounds(float p_windowHeight, float p_windowWidth);
+
+
 	Widget* findChild(std::string_view p_childID);
 	Widget* findChildRecursive(std::string_view p_childID);
 	// only removes surface level children, returns false if not found.
@@ -32,7 +40,10 @@ public:
 protected:
 	Rect localBounds;
 	Rect absoluteBounds;
+	Rect screenBounds;
 
+	bool m_absolute = false;
+	bool m_usingScreenBounds = false;
 	std::string m_ID;
 	std::vector<Widget*> m_children;
 	Widget* m_parent = nullptr;

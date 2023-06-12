@@ -100,6 +100,15 @@ public:
 	glm::ivec4 getViewport() {
 		return m_viewport;
 	}
+	float getViewportHeight() {
+		return float(m_viewport.w - m_viewport.y);
+	}
+	float getViewportWidth() {
+		return float(m_viewport.z - m_viewport.x);
+	}
+	float getAspect() {
+		return float(m_viewport.z - m_viewport.x) / float(m_viewport.w - m_viewport.y);
+	}
 protected:
 	// If drawing to a frame buffer, it can be useful to have more than one shader output.
 	std::vector<GLenum> m_DrawBuffers = { GL_COLOR_ATTACHMENT0 };

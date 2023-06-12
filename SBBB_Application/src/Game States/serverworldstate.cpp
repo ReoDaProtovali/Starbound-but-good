@@ -8,7 +8,7 @@ void ServerWorldState::init()
 	sim->init();
 	world->setCollisionWorld(sim->getCollisionWorldPtr());
 
-	world->genFixed(-5, -3, 20, 10);
+	world->genFixed(-4, -7, 20, 10);
 	world->startThreads();
 }
 

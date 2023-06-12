@@ -7,6 +7,7 @@ out vec2 TexCoord;
 
 layout(location = 0) uniform mat4 transform;
 layout(location = 1) uniform vec3 col;
+layout(location = 2) uniform float opacity;
 
 void main()
 {

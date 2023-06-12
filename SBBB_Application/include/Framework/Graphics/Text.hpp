@@ -71,12 +71,16 @@ public:
 	void setLeftJustification(bool enabled);
 	void draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates& p_drawStates);
 	void draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec3& p_textColor, DrawSurface& p_target, bool extraLegible = false);
-
+	float getMaxPixelWidth(float p_pixelHeight);
+	// width in terms of height
+	float getMaxNormalizedWidth();
 private:
 	void generateVBO();
 	Mesh<float> m_textMesh;
 	std::string m_text;
 	Font& m_font;
 	bool leftJustified = false;
+	// this width is kinda baked in terms of text height, use handy function to convert to pixels instead
+	float m_normalizedWidth = 0.f;
 	//static Shader textShader;
 };

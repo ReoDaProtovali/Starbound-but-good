@@ -4,6 +4,7 @@
 #include "WorldRenderer.hpp"
 #include "GameStates.hpp"
 #include "GUI.hpp"
+#include "GUITextField.hpp"
 
 #define BOMB_COUNTER_MAX 50
 
@@ -40,8 +41,9 @@ public:
 
 	uint64_t testFrame = 0;
 	void testDraw();
-	Button testButton{"testbutton", 0.4f, 0.1f, 0.2f, 0.3f};
-	Button testNestedButton{"testnestedbutton", 0.7f, 0.1f, 0.2f, 0.8f};
+	GUIButton testButton{"testbutton", 0.4f, 0.1f, 0.2f, 0.3f};
+	GUITextField testButtonText{ "buttontext", Rect(0.f, 0.f, 1.f, 1.f) };
+	GUITextField testText{ "testtext", Rect(0.1f, 0.0f, 0.3f, 1.0f) };
 
 	// ----------------------------------------------------------------------
 

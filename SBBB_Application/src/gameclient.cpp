@@ -64,7 +64,11 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				}
 			}
 			if (needsSent) gui.update(e);
+			gw.clear();
 			stateManager.clientUpdate();
+			gui.draw(gw);
+
+			gw.displayNewFrame();
 
 			if (m_stopping) break;
 		}

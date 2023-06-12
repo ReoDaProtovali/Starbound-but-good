@@ -46,6 +46,10 @@ namespace utils {
 		float offset = f2 - f1;
 		return f1 + offset * t;
 	}
+	inline float rangeMap(float t, float s1, float s2, float e1, float e2) {
+		float r = (t - s1) / (s2 - s1);
+		return (e2 - e1) * r + e1;
+	}
 	inline glm::vec2 lerp(glm::vec2 v1, glm::vec2 v2, float t) {
 		glm::vec2 offset = v2 - v1;
 		return v1 + offset * t;

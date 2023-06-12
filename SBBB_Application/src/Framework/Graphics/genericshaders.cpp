@@ -20,6 +20,7 @@ void GenericShaders::init() {
 		"./src/Shaders/SolidColorFS.glsl"
 	);
 	solidColorShader.setVec3Uniform(1, glm::vec3(0.f));
+	solidColorShader.setFloatUniform(2, 1.f);
 
 	fancyShader = Shader(
 		"./src/Shaders/ImageVS.glsl",

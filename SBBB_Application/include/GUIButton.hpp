@@ -7,10 +7,9 @@
 #include "Framework/Graphics/Sprite.hpp"
 #include "Framework/Graphics/Text.hpp"
 #include "DefaultFonts.hpp"
-class Button : public Widget {
+class GUIButton : public Widget {
 public:
-	Button(std::string_view p_ID, float p_x, float p_y, float p_w, float p_h);
-	void setText(std::string_view p_text);
+	GUIButton(std::string_view p_ID, float p_x, float p_y, float p_w, float p_h);
 	void onClick(std::function<void()> p_callback);
 	void onHover(std::function<void(bool)> p_callback);
 
@@ -18,8 +17,6 @@ public:
 	void onUpdate(GUIEvent e) override;
 
 	glm::vec3 testColor{ 0.2f };
-	std::string innerText = "click me";
-	Text buttonText{ DefaultFonts.videotype, innerText };
 	bool disabled = false;
 protected:
 	std::function<void()> onClickFunc;

@@ -46,6 +46,37 @@ Rect Widget::queryAbsoluteRect(Rect p_childRect)
 	return m_parent->queryAbsoluteRect(Rect(newX, newY, newW, newH));
 }
 
+void Widget::setLocalBounds(Rect p_localBounds)
+{
+	m_absolute = false;
+	m_usingScreenBounds = false;
+	localBounds = p_localBounds;
+	absoluteBounds = queryAbsoluteRect(localBounds);
+}
+
+void Widget::setAbsoluteBounds(Rect p_absoluteBounds)
+{
+	m_absolute = true;
+	absoluteBounds = p_absoluteBounds;
+}
+
+void Widget::setScreenBounds(Rect p_screenBounds)
+{
+	m_absolute = true;
+	m_usingScreenBounds = true;
+	screenBounds = p_screenBounds;
+}
+
+void Widget::updateScreenBounds(float p_windowWidth, float p_windowHeight)
+{
+	float absoluteX = screenBounds.xy.x / p_windowWidth;
+	float absoluteY = screenBounds.xy.y / p_windowHeight;
+	float absoluteW = screenBounds.wh.x / p_windowWidth;
+	float absoluteH = screenBounds.wh.y / p_windowHeight;
+	Rect newRect = Rect(absoluteX, absoluteY, absoluteW, absoluteH);
+	absoluteBounds = newRect;
+}
+
 Widget* Widget::findChild(std::string_view p_childID)
 {
 	for (auto child : m_children) {

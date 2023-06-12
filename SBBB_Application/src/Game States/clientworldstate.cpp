@@ -151,7 +151,8 @@ void ClientWorldState::testDraw()
 	controlsText.setLeftJustification(true);
 	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 
-	gui.draw(renderer.screenFBO);
+	testReoSprite.draw(renderer.screenFBO, state);
+	//gui.draw(renderer.screenFBO);
 	//testDrawGUI();
 	//SBBBDebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
 	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
@@ -172,6 +173,9 @@ void ClientWorldState::resume()
 
 void ClientWorldState::close()
 {
+
+	gui.removeElement("testbutton");
+	gui.removeElement("testtext");
 }
 
 void ClientWorldState::init()
@@ -199,13 +203,9 @@ void ClientWorldState::init()
 	bombSprite.attachTexture(res.getTexture(TextureID::BOMB_TEXTURE));
 	bombSprite.setPosition(glm::vec3(33.f));
 
-	testButton.addChild(&testNestedButton);
-	testNestedButton.testColor = glm::vec3(0.f);
-	testNestedButton.setText("guh");
 
 	testButton.onClick(
 		[&](void) {
-			testButton.setText("good job");
 			testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
 			testButton.disabled = true;
 		});
@@ -216,20 +216,21 @@ void ClientWorldState::init()
 			else
 				testButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
 		});
-	testNestedButton.onClick(
-		[&](void) {
-			testNestedButton.setText("wah");
-			testNestedButton.testColor = glm::vec3(0.0f, 0.f, 0.5f);
-			testNestedButton.disabled = true;
-		});
-	testNestedButton.onHover(
-		[&](bool hovering) {
-			if (hovering)
-				testNestedButton.testColor = glm::vec3(4.f, 0.1f, 0.f);
-			else
-				testNestedButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
-		});
+	testButtonText.disableBackground();
+	testButtonText.enableRelativeScaling();
+	testButtonText.setTextHeight(0.2f);
+	testButtonText.setText("Clickable!");
+	testButton.addChild(&testButtonText);
 
+
+	testText.enableBackground();
+	testText.backgroundOpacity = 0.5f;
+	testText.setTextHeight(20);
+	testText.disableRelativeScaling();
+	testText.setText("hello yes why yes hello there :)");
+	testText.setScreenBounds(Rect(500, 500, 500, 45));
+
+	gui.addElement(&testText);
 	gui.addElement(&testButton);
 
 	LOAD_LOG("Creating lighting subsystem...");
@@ -257,7 +258,6 @@ void ClientWorldState::update()
 	renderer.window.bind();
 	glDisable(GL_DEPTH_TEST);
 	m_lighting.draw(renderer.screenFBO);
-	renderer.window.displayNewFrame();
 }
 
 void ClientWorldState::suspend()
