@@ -14,7 +14,7 @@ public:
 	void onHover(std::function<void(bool)> p_callback);
 
 	void draw(DrawSurface& p_target, DrawStates& p_states) override;
-	void onUpdate(GUIEvent e) override;
+	bool onUpdate(GUIEvent e) override;
 
 	glm::vec3 testColor{ 0.2f };
 	bool disabled = false;

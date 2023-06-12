@@ -198,6 +198,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\guidragbar.cpp" />
     <ClCompile Include="src\Game States\clientworldstate.cpp" />
     <ClCompile Include="src\defaultfonts.cpp" />
     <ClCompile Include="src\Game States\serverworldstate.cpp" />
@@ -244,6 +245,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\GUI.hpp" />
     <ClInclude Include="include\DefaultFonts.hpp" />
     <ClInclude Include="include\GUIButton.hpp" />
+    <ClInclude Include="include\GUIDragBar.hpp" />
     <ClInclude Include="include\GUITextField.hpp" />
     <ClInclude Include="include\GUIWidget.hpp" />
     <ClInclude Include="include\AI.hpp" />

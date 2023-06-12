@@ -204,6 +204,9 @@
     <ClCompile Include="src\guitextfield.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\guidragbar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -426,6 +429,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Game States\TemplateState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GUIDragBar.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

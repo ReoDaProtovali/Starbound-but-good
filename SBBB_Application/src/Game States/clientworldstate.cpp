@@ -20,8 +20,8 @@ void ClientWorldState::testDraw()
 	static bool rMouseDown = false;
 	while (auto opt = m_mouseObserver.observe()) {
 		MouseEvent m = opt.value();
-		mousePos.x = m.x;
-		mousePos.y = m.y;
+		mousePos.x = m.pixelX;
+		mousePos.y = m.pixelY;
 		lMouseDown = bool(m.mouseState & SDL_BUTTON_LMASK);
 		rMouseDown = bool(m.mouseState & SDL_BUTTON_RMASK);
 
@@ -112,9 +112,9 @@ void ClientWorldState::testDraw()
 		fpsString.str("");
 		fpsString << "Current draw FPS - " << globals.drawFPS << '\n'
 			<< "Current update FPS - " << globals.updateFPS << '\n';
-		fpsText.setText(fpsString.str());
+		fpsTextField.setText(fpsString.str());
 	}
-	fpsText.draw(glm::vec2(-0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
+	//fpsText.draw(glm::vec2(-0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 
 #ifndef DISABLE_DEBUG_STATS
 	static Text debugText(DefaultFonts.videotype, "");
@@ -175,7 +175,7 @@ void ClientWorldState::close()
 {
 
 	gui.removeElement("testbutton");
-	gui.removeElement("testtext");
+	gui.removeElement("fpstext");
 }
 
 void ClientWorldState::init()
@@ -203,11 +203,17 @@ void ClientWorldState::init()
 	bombSprite.attachTexture(res.getTexture(TextureID::BOMB_TEXTURE));
 	bombSprite.setPosition(glm::vec3(33.f));
 
+	testButtonText.disableBackground();
+	testButtonText.enableRelativeScaling();
+	testButtonText.setTextHeight(0.2f);
+	testButtonText.setText("gunch button");
+	testButton.addChild(&testButtonText);
 
 	testButton.onClick(
 		[&](void) {
 			testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
 			testButton.disabled = true;
+			testButtonText.setText("gunched");
 		});
 	testButton.onHover(
 		[&](bool hovering) {
@@ -216,22 +222,51 @@ void ClientWorldState::init()
 			else
 				testButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
 		});
-	testButtonText.disableBackground();
-	testButtonText.enableRelativeScaling();
-	testButtonText.setTextHeight(0.2f);
-	testButtonText.setText("Clickable!");
-	testButton.addChild(&testButtonText);
 
 
-	testText.enableBackground();
-	testText.backgroundOpacity = 0.5f;
-	testText.setTextHeight(20);
-	testText.disableRelativeScaling();
-	testText.setText("hello yes why yes hello there :)");
-	testText.setScreenBounds(Rect(500, 500, 500, 45));
 
-	gui.addElement(&testText);
+	//testText.enableBackground();
+	//testText.backgroundOpacity = 0.5f;
+	//testText.setTextHeight(20);
+	//testText.disableRelativeScaling();
+	//testText.setText("drag me");
+	//testText.setScreenBounds(Rect(500, 500, 500, 90));
+
+	fpsTextField.enableBackground();
+	fpsTextField.backgroundOpacity = 0.5f;
+	fpsTextField.setTextHeight(15);
+	fpsTextField.disableRelativeScaling();
+	fpsTextField.setText("No FPS Data");
+	fpsTextField.setScreenBounds(Rect(10.f, 10.f, 350.f, 60.f));
+	fpsTextField.centered = true;
+	//fpsTextField.
+	//testTextAbsolute.enableBackground();
+	//testTextAbsolute.backgroundOpacity = 0.5f;
+	//testTextAbsolute.setTextHeight(20);
+	//testTextAbsolute.disableRelativeScaling();
+	//testTextAbsolute.setText("drag me too!!");
+	////testTextAbsolute.centered = false;
+	//testTextAbsolute.setAbsoluteBounds(Rect(0.3f, 0.7f, 0.3f, 0.2f));
+
+
+	testDragBar.backgroundColor = glm::vec3(0.0f, 0.f, 0.3f);
+	testDragBar.backgroundOpacity = 0.5f;
+	testDragBar.enableBackground();
+	//testDragBar2.backgroundColor = glm::vec3(0.0f, 0.f, 0.3f);
+	//testDragBar2.backgroundOpacity = 0.5f;
+	//testDragBar2.enableBackground();
+	//testDragBar3.backgroundColor = glm::vec3(0.0f, 0.f, 0.3f);
+	//testDragBar3.backgroundOpacity = 0.5f;
+	//testDragBar3.enableBackground();
+	//testText.addChild(&testDragBar);
+	//testTextAbsolute.addChild(&testDragBar3);
+	fpsTextField.addChild(&testDragBar);
+	//gui.addElement(&testDragBar);
+
+	//gui.addElement(&testText);
 	gui.addElement(&testButton);
+	gui.addElement(&fpsTextField);
+	//gui.addElement(&testTextAbsolute);
 
 	LOAD_LOG("Creating lighting subsystem...");
 

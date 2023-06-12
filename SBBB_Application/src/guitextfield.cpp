@@ -25,11 +25,11 @@ void GUITextField::draw(DrawSurface& p_target, DrawStates& p_states)
 	if (centered) {
 		float textWidthAbsolute;
 		float textHeightAbsolute;
-		if (!m_usingScreenBounds) {
+		if (m_useRelativeScaling) { // in this case, textHeight is in local units
 			textWidthAbsolute = m_fieldText.getMaxPixelWidth(m_textHeight * (absoluteBounds.wh.y * p_target.getViewportHeight())) / p_target.getViewportWidth();
 			textHeightAbsolute = m_textHeight * absoluteBounds.wh.y * 0.8f; // the constant is a bit silly but looks nicer due to the font being bottom heavy
 		}
-		else {
+		else { // in this case, text height is in pixels
 			textWidthAbsolute = m_fieldText.getMaxPixelWidth(m_textHeight) / p_target.getViewportWidth();
 			textHeightAbsolute = (m_textHeight / p_target.getViewportHeight()) * 0.8f;
 		}

@@ -5,6 +5,7 @@
 #include "GameStates.hpp"
 #include "GUI.hpp"
 #include "GUITextField.hpp"
+#include "GUIDragBar.hpp"
 
 #define BOMB_COUNTER_MAX 50
 
@@ -41,9 +42,15 @@ public:
 
 	uint64_t testFrame = 0;
 	void testDraw();
-	GUIButton testButton{"testbutton", 0.4f, 0.1f, 0.2f, 0.3f};
+	GUIButton testButton{"testbutton", 0.4f, 0.1f, 0.3f, 0.1f};
 	GUITextField testButtonText{ "buttontext", Rect(0.f, 0.f, 1.f, 1.f) };
 	GUITextField testText{ "testtext", Rect(0.1f, 0.0f, 0.3f, 1.0f) };
+	GUITextField testTextAbsolute{ "testtextabs", Rect(0.1f, 0.0f, 0.3f, 1.0f) };
+	GUIDragBar testDragBar{ "testdragbar", Rect(0.f, 0.f, 1.f, 0.15f) };
+	GUIDragBar testDragBar2{ "testdragbar2", Rect(0.f, 0.f, 1.f, 0.15f) };
+	GUIDragBar testDragBar3{ "testdragbar2", Rect(0.f, 0.f, 1.f, 0.15f) };
+
+	GUITextField fpsTextField{ "fpstext", Rect(0.05f, 0.05f, 0.2f, 0.1f) };
 
 	// ----------------------------------------------------------------------
 

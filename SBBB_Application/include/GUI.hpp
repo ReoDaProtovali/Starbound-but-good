@@ -11,7 +11,7 @@
 class GUI {
 public:
 	void draw(DrawSurface& p_target);
-	void update(GUIEvent e);
+	bool update(GUIEvent e);
 
 	void addElement(Widget* p_elmBase);
 	bool removeElement(std::string_view p_id);

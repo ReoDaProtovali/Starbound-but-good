@@ -51,6 +51,9 @@ struct KeyEvent {
 struct MouseEvent {
 	float x = 0.f;
 	float y = 0.f;
+	// specifically for gui
+	float pixelX = 0.f;
+	float pixelY = 0.f;
 	bool wasClick = false;
 	uint32_t mouseState = 0;
 };

@@ -9,6 +9,7 @@ GUI::GUI()
 {
 	glm::mat4 mat = glm::translate(glm::mat4(1.f), glm::vec3(-1.f, 1.f, 0.f)) * glm::scale(glm::mat4(1.f), glm::vec3(2.f, -2.f, 1.f));
 	GUIDrawStates.setTransform(mat);
+	m_root.setAbsoluteBounds(Rect(0.f, 0.f, 1.f, 1.f));
 }
 
 void GUI::draw(DrawSurface& p_target)
@@ -17,9 +18,9 @@ void GUI::draw(DrawSurface& p_target)
 	m_root.draw(p_target, GUIDrawStates);
 }
 
-void GUI::update(GUIEvent e)
+bool GUI::update(GUIEvent e)
 {
-	m_root.onUpdate(e);
+	return m_root.onUpdate(e);
 }
 
 void GUI::addElement(Widget* p_elmBase)

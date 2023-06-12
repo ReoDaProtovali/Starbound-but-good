@@ -21,28 +21,40 @@ void Widget::draw(DrawSurface& p_target, DrawStates& p_states)
 	}
 }
 
-void Widget::onUpdate(GUIEvent e)
+bool Widget::onUpdate(GUIEvent e)
 {
+	bool consumed = false;
 	for (Widget* w : m_children) {
-		w->onUpdate(e);
+		consumed |= w->onUpdate(e);
 	}
+	return consumed;
 }
 
 void Widget::addChild(Widget* p_child)
 {
 	m_children.push_back(p_child);
 	p_child->m_parent = this;
-	p_child->absoluteBounds = p_child->queryAbsoluteRect(p_child->localBounds);
+	if (!p_child->m_absolute)
+		p_child->absoluteBounds = p_child->queryAbsoluteRect(p_child->localBounds);
 }
 
 Rect Widget::queryAbsoluteRect(Rect p_childRect)
 {
+
 	if (m_parent == nullptr) return p_childRect;
+	float newX, newY, newW, newH;
+	if (m_parent->isAbsolute()) {
+		newX = m_parent->absoluteBounds.xy.x + m_parent->absoluteBounds.wh.x * p_childRect.xy.x;
+		newY = m_parent->absoluteBounds.xy.y + m_parent->absoluteBounds.wh.y * p_childRect.xy.y;
+		newW = m_parent->absoluteBounds.wh.x * p_childRect.wh.x;
+		newH = m_parent->absoluteBounds.wh.y * p_childRect.wh.y;
+		return Rect(newX, newY, newW, newH);
+	}
 	// untested coordinate escalation
-	float newX = m_parent->localBounds.xy.x + m_parent->localBounds.wh.x * p_childRect.xy.x;
-	float newY = m_parent->localBounds.xy.y + m_parent->localBounds.wh.y * p_childRect.xy.y;
-	float newW = m_parent->localBounds.wh.x * p_childRect.wh.x;
-	float newH = m_parent->localBounds.wh.y * p_childRect.wh.y;
+	newX = m_parent->localBounds.xy.x + m_parent->localBounds.wh.x * p_childRect.xy.x;
+	newY = m_parent->localBounds.xy.y + m_parent->localBounds.wh.y * p_childRect.xy.y;
+	newW = m_parent->localBounds.wh.x * p_childRect.wh.x;
+	newH = m_parent->localBounds.wh.y * p_childRect.wh.y;
 	return m_parent->queryAbsoluteRect(Rect(newX, newY, newW, newH));
 }
 
@@ -52,12 +64,20 @@ void Widget::setLocalBounds(Rect p_localBounds)
 	m_usingScreenBounds = false;
 	localBounds = p_localBounds;
 	absoluteBounds = queryAbsoluteRect(localBounds);
+	updateChildBounds();
+}
+
+glm::vec2 Widget::toLocal(float x, float y)
+{
+	return glm::vec2((x - m_parent->absoluteBounds.xy.x) / m_parent->absoluteBounds.wh.x, (y - m_parent->absoluteBounds.xy.y) / m_parent->absoluteBounds.wh.y);
 }
 
 void Widget::setAbsoluteBounds(Rect p_absoluteBounds)
 {
 	m_absolute = true;
 	absoluteBounds = p_absoluteBounds;
+	localBounds = Rect(0.f, 0.f, 1.f, 1.f);
+	updateChildBounds();
 }
 
 void Widget::setScreenBounds(Rect p_screenBounds)
@@ -69,12 +89,25 @@ void Widget::setScreenBounds(Rect p_screenBounds)
 
 void Widget::updateScreenBounds(float p_windowWidth, float p_windowHeight)
 {
+
 	float absoluteX = screenBounds.xy.x / p_windowWidth;
 	float absoluteY = screenBounds.xy.y / p_windowHeight;
 	float absoluteW = screenBounds.wh.x / p_windowWidth;
 	float absoluteH = screenBounds.wh.y / p_windowHeight;
 	Rect newRect = Rect(absoluteX, absoluteY, absoluteW, absoluteH);
+	if (newRect == absoluteBounds) return;
 	absoluteBounds = newRect;
+	updateChildBounds();
+}
+
+void Widget::updateChildBounds()
+{
+	for (auto child : m_children) {
+		// only do so for relatively positioned children
+		if (child->isUsingScreenBounds() || child->isAbsolute()) continue;
+		child->absoluteBounds = child->queryAbsoluteRect(child->localBounds);
+		child->updateChildBounds();
+	}
 }
 
 Widget* Widget::findChild(std::string_view p_childID)

@@ -37,19 +37,25 @@ void GUIButton::draw(DrawSurface& p_target, DrawStates& p_states)
 	}
 }
 
-void GUIButton::onUpdate(GUIEvent e)
+bool GUIButton::onUpdate(GUIEvent e)
 {
-	if (!disabled)
+	bool consumed = false;
+	// ignore click if child already ate it
+	if (Widget::onUpdate(e)) return true;
+
+	if (!disabled) {
 		if (absoluteBounds.contains(e.mouse.x, e.mouse.y)) {
 			onHoverFunc(true);
 		}
 		else {
 			onHoverFunc(false);
 		}
-	if (e.mouse.wasClick) {
 		if ((e.mouse.mouseState & SDL_BUTTON_LMASK) && absoluteBounds.contains(e.mouse.x, e.mouse.y)) {
-			onClickFunc();
+			if (e.mouse.wasClick) {
+				onClickFunc();
+			}
+			consumed = true;
 		}
 	}
-	Widget::onUpdate(e);
+	return consumed;
 }

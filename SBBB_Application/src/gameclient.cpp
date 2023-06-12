@@ -23,7 +23,9 @@ void GameClient::stop() {
 	clientThread.join();
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
-	Observer<MouseEvent> mouseObserver;
+	Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get(); // one-way messenger for capturing mouse events
+	Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get(); // for re-transmitting mouse events to client
+
 	Observer<KeyEvent> keyObserver;
 	try {
 
@@ -47,23 +49,33 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			GUIEvent e;
 			bool needsSent = false;
 			// compress mouse events, lots of redundancy
-			while (auto opt = mouseObserver.observe()) {
+			while (auto opt = mouseMessenger.getMessageFront()) {
 				e.mouse.mouseState |= opt.value().mouseState;
 				e.mouse.wasClick |= opt.value().wasClick;
 
 				e.mouse.x = opt.value().x / gw.width;
 				e.mouse.y = opt.value().y / gw.height;
+				e.mouse.pixelX = opt.value().x;
+				e.mouse.pixelY = opt.value().y;
+
 				needsSent = true;
 			}
 			while (auto opt = keyObserver.observe()) {
 				if (opt.value().wasDown) {
 					e.key = opt.value();
 					e.key.valid = true;
-					gui.update(e);
+					if (!gui.update(e)) { // this is silly, but it tells you if the click should be eaten or not
+						// this is a bit sad, because it limits mouse polling to client fps. fix later.
+						mouseSubject.notifyAll(e.mouse);
+					};
 					needsSent = false;
 				}
 			}
-			if (needsSent) gui.update(e);
+			if (needsSent) {
+				if (!gui.update(e)) { 
+					mouseSubject.notifyAll(e.mouse);
+				};
+			}
 			gw.clear();
 			stateManager.clientUpdate();
 			gui.draw(gw);

@@ -50,7 +50,8 @@ void Application::startServer()
 void Application::pollEvents()
 {
 	static SDL_Event event;
-	static Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get();
+	//static Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get();
+	static Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get();
 
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
@@ -74,7 +75,9 @@ void Application::pollEvents()
 			break;
 		case SDL_MOUSEMOTION:
 			if (event.window.windowID != client.getWindowID()) break;
-			mouseSubject.notifyAll(MouseEvent{
+			mouseMessenger.sendMessageFront(MouseEvent{
+					(float)event.motion.x,
+					(float)event.motion.y,
 					(float)event.motion.x,
 					(float)event.motion.y,
 					false,
@@ -83,7 +86,9 @@ void Application::pollEvents()
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.window.windowID != client.getWindowID()) break;
-			mouseSubject.notifyAll(MouseEvent{
+			mouseMessenger.sendMessageFront(MouseEvent{
+					(float)event.motion.x,
+					(float)event.motion.y,
 					(float)event.motion.x,
 					(float)event.motion.y,
 					true,
