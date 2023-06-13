@@ -42,7 +42,7 @@ public:
 
 	uint64_t testFrame = 0;
 	void testDraw();
-	GUIButton testButton{"testbutton", 0.4f, 0.1f, 0.3f, 0.1f};
+	GUIButton testButton{"testbutton", 0.2f, 0.2f, 0.2f, 0.1f};
 	GUITextField testButtonText{ "buttontext", Rect(0.f, 0.f, 1.f, 1.f) };
 	GUITextField testText{ "testtext", Rect(0.1f, 0.0f, 0.3f, 1.0f) };
 	GUITextField testTextAbsolute{ "testtextabs", Rect(0.1f, 0.0f, 0.3f, 1.0f) };

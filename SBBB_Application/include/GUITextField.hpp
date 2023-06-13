@@ -17,6 +17,7 @@ public:
 
 	void draw(DrawSurface& p_target, DrawStates& p_states) override;
 	void setText(std::string_view p_text);
+	void appendText(std::string_view p_text);
 	void setTextHeight(float p_height);
 	void disableBackground();
 	void enableBackground();
@@ -26,10 +27,10 @@ public:
 	glm::vec3 backgroundColor{ 0.2f };
 	float backgroundOpacity = 1.f;
 	bool centered = true;
+	Text m_fieldText{ DefaultFonts.videotype, "" };
 protected:
 	GenericShaders& gs = GenericShaders::Get();
 	std::string m_textString;
-	Text m_fieldText{ DefaultFonts.videotype, "" };
 	Sprite m_backgroundSprite;
 	float m_textHeight = 50; // if not using relative scaling, it is pixel height. otherwise, 0-1.
 	bool m_useRelativeScaling = false; // false is pixel-based text height, true is local coord text height

@@ -81,6 +81,8 @@ void Application::pollEvents()
 					(float)event.motion.x,
 					(float)event.motion.y,
 					false,
+					false,
+					true,
 					event.motion.state
 				});
 			break;
@@ -92,8 +94,24 @@ void Application::pollEvents()
 					(float)event.motion.x,
 					(float)event.motion.y,
 					true,
+					false,
+					false,
 					event.motion.state
 				});
+			break;
+		case SDL_MOUSEBUTTONUP:
+			if (event.window.windowID != client.getWindowID()) break;
+			mouseMessenger.sendMessageFront(MouseEvent{
+					(float)event.motion.x,
+					(float)event.motion.y,
+					(float)event.motion.x,
+					(float)event.motion.y,
+					false,
+					true,
+					false,
+					event.motion.state
+				});
+			break;
 		}
 	}
 }

@@ -3,6 +3,7 @@
 #include "Framework/Graphics/DrawSurface.hpp"
 #include "util/Rect.hpp"
 #include <stdbool.h>
+class GUI;
 struct GUIEvent {
 	MouseEvent mouse;
 	KeyEvent key;
@@ -12,6 +13,7 @@ class Widget {
 public:
 	Widget();
 	Widget(std::string_view p_ID, Rect p_localBounds);
+
 	void setID(std::string_view p_newID);
 
 	// default behaviour, recursively draw children

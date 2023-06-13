@@ -144,12 +144,12 @@ void ClientWorldState::testDraw()
 	}
 
 	debugText.setText(infoString.str());
-	debugText.draw(glm::vec2(-0.98f, 0.80f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
+	//debugText.draw(glm::vec2(-0.98f, 0.80f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 #endif
 
 	static Text controlsText(DefaultFonts.videotype, "SBBB alpha v0.0002\nControls -  \nMove: WASD\nZoom: Q and E\nFullscreen: 5\nExplode: B");
 	controlsText.setLeftJustification(true);
-	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
+	//controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 
 	testReoSprite.draw(renderer.screenFBO, state);
 	//gui.draw(renderer.screenFBO);
@@ -204,16 +204,17 @@ void ClientWorldState::init()
 	bombSprite.setPosition(glm::vec3(33.f));
 
 	testButtonText.disableBackground();
-	testButtonText.enableRelativeScaling();
-	testButtonText.setTextHeight(0.2f);
-	testButtonText.setText("gunch button");
+	//testButtonText.enableRelativeScaling();
+	testButtonText.setTextHeight(30.f);
+	testButtonText.setText("bnnuton");
+	testButton.setLocalBounds(Rect(0.2f, 0.2f, 0.5f, 0.7f));
 	testButton.addChild(&testButtonText);
 
 	testButton.onClick(
 		[&](void) {
-			testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
-			testButton.disabled = true;
-			testButtonText.setText("gunched");
+			//testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
+			//testButton.disabled = false;
+			testButtonText.appendText('\n' + std::to_string(testButtonText.m_fieldText.getMaxPixelHeight(30.f)));
 		});
 	testButton.onHover(
 		[&](bool hovering) {
@@ -264,7 +265,7 @@ void ClientWorldState::init()
 	//gui.addElement(&testDragBar);
 
 	//gui.addElement(&testText);
-	gui.addElement(&testButton);
+	//gui.addElement(&testButton);
 	gui.addElement(&fpsTextField);
 	//gui.addElement(&testTextAbsolute);
 

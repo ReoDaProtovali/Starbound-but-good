@@ -72,8 +72,11 @@ public:
 	void draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates& p_drawStates);
 	void draw(const glm::vec2& p_position, float p_pixelHeight, const glm::vec3& p_textColor, DrawSurface& p_target, bool extraLegible = false);
 	float getMaxPixelWidth(float p_pixelHeight);
+	float getMaxPixelHeight(float p_pixelHeight);
 	// width in terms of height
 	float getMaxNormalizedWidth();
+	float getMaxNormalizedHeight();
+	float getNormalizedLineHeight();
 private:
 	void generateVBO();
 	Mesh<float> m_textMesh;
@@ -82,5 +85,7 @@ private:
 	bool leftJustified = false;
 	// this width is kinda baked in terms of text height, use handy function to convert to pixels instead
 	float m_normalizedWidth = 0.f;
+	float m_normalizedHeight = 0.f;
+	float m_normalizedLineHeight = 0.f;
 	//static Shader textShader;
 };

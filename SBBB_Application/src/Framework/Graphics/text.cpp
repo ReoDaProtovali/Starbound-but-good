@@ -140,10 +140,12 @@ void Text::setLeftJustification(bool enabled)
 void Text::generateVBO() {
 	std::string::const_iterator it;
 	float recordWidth = 0.f;
+	float recordHeight = 0.f;
 	float lineX = 0;
 	float lineY = 0;
 	uint32_t i = 0;
 	const float scale = 1.f/float(m_font.charHeight);
+	m_normalizedLineHeight = (float)m_font.lineHeight * scale;
 
 	if (!leftJustified) {
 		for (it = m_text.begin(); it != m_text.end(); it++) {
@@ -156,6 +158,8 @@ void Text::generateVBO() {
 
 			float x = lineX + ch.bearing.x * scale;
 			float y = lineY - (ch.size.y - ch.bearing.y) * scale;
+			recordWidth = std::max(std::abs(x), recordWidth);
+			recordHeight = std::max(std::abs(lineY), recordHeight);
 
 			float w = ch.size.x * scale;
 			float h = ch.size.y * scale;
@@ -176,7 +180,6 @@ void Text::generateVBO() {
 
 			i += 6;
 			lineX += ch.advance * scale;
-			recordWidth = std::max(lineX, recordWidth);
 		}
 	}
 	else {
@@ -209,6 +212,8 @@ void Text::generateVBO() {
 
 			float x = lineX + ch.bearing.x * scale + lineStart;
 			float y = lineY - (ch.size.y - ch.bearing.y) * scale;
+			recordWidth = std::max(std::abs(x), recordWidth);
+			recordHeight = std::max(std::abs(y), recordHeight);
 
 			float w = ch.size.x * scale;
 			float h = ch.size.y * scale;
@@ -229,10 +234,10 @@ void Text::generateVBO() {
 
 			i += 6;
 			lineX += ch.advance * scale;
-			recordWidth = std::max(lineX, recordWidth);
 		}
 	}
 	m_normalizedWidth = recordWidth;
+	m_normalizedHeight = recordHeight + m_font.lineHeight * scale; // i donno why this is needed
 	//m_textMesh.genIBO();
 	m_textMesh.pushVBOToGPU();
 }
@@ -293,7 +298,22 @@ float Text::getMaxPixelWidth(float p_pixelHeight)
 	return m_normalizedWidth * p_pixelHeight;
 }
 
+float Text::getMaxPixelHeight(float p_pixelHeight)
+{
+	return m_normalizedHeight * p_pixelHeight;
+}
+
 float Text::getMaxNormalizedWidth()
 {
 	return m_normalizedWidth;
+}
+
+float Text::getMaxNormalizedHeight()
+{
+	return m_normalizedHeight;
+}
+
+float Text::getNormalizedLineHeight()
+{
+	return m_normalizedLineHeight;
 }

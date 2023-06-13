@@ -25,16 +25,20 @@ void GUITextField::draw(DrawSurface& p_target, DrawStates& p_states)
 	if (centered) {
 		float textWidthAbsolute;
 		float textHeightAbsolute;
+		float pixelCharHeight = 0.f;
 		if (m_useRelativeScaling) { // in this case, textHeight is in local units
-			textWidthAbsolute = m_fieldText.getMaxPixelWidth(m_textHeight * (absoluteBounds.wh.y * p_target.getViewportHeight())) / p_target.getViewportWidth();
-			textHeightAbsolute = m_textHeight * absoluteBounds.wh.y * 0.8f; // the constant is a bit silly but looks nicer due to the font being bottom heavy
+			pixelCharHeight = m_textHeight * (absoluteBounds.wh.y * p_target.getViewportHeight());
+			textWidthAbsolute = m_fieldText.getMaxPixelWidth(pixelCharHeight) / p_target.getViewportWidth();
+			textHeightAbsolute = m_textHeight * m_fieldText.getMaxNormalizedHeight() * absoluteBounds.wh.y; // the constant is a bit silly but looks nicer due to the font being bottom heavy
 		}
 		else { // in this case, text height is in pixels
+			pixelCharHeight = m_textHeight;
 			textWidthAbsolute = m_fieldText.getMaxPixelWidth(m_textHeight) / p_target.getViewportWidth();
-			textHeightAbsolute = (m_textHeight / p_target.getViewportHeight()) * 0.8f;
+			textHeightAbsolute = ((m_textHeight * m_fieldText.getMaxNormalizedHeight()) / p_target.getViewportHeight());
 		}
 		float newX = (absoluteBounds.wh.x - textWidthAbsolute) / 2.f + absoluteBounds.xy.x;
-		float newY = -(absoluteBounds.wh.y - textHeightAbsolute) / 2.f + absoluteBounds.xy.y + absoluteBounds.wh.y;
+		// we shift it up a little to make it pretty
+		float newY = (absoluteBounds.wh.y - textHeightAbsolute) / 2.f + absoluteBounds.xy.y + m_fieldText.getNormalizedLineHeight() * 0.75f * (pixelCharHeight / p_target.getViewportHeight());
 
 		m_fieldText.setPosition(glm::vec3(newX, newY, 0.f));
 	}
@@ -53,6 +57,12 @@ void GUITextField::setText(std::string_view p_text)
 {
 	m_textString = p_text;
 	m_fieldText.setText(p_text);
+}
+
+void GUITextField::appendText(std::string_view p_text)
+{
+	m_textString += p_text;
+	m_fieldText.setText(m_textString);
 }
 
 void GUITextField::setTextHeight(float p_height)

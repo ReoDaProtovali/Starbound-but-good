@@ -37,10 +37,18 @@ public:
         std::unique_lock<std::mutex> lock(m_frontMutex);
         m_frontQueue.push(p_message);
     }
+    bool incomingFront() {
+        std::unique_lock<std::mutex> lock(m_frontMutex);
+        return m_frontQueue.size() > 0;
+    }
 
     void sendMessageBack(TBack p_message) {
         std::unique_lock<std::mutex> lock(m_backMutex);
         m_backQueue.push(p_message);
+    }
+    bool incomingBack() {
+        std::unique_lock<std::mutex> lock(m_backMutex);
+        return m_backQueue.size() > 0;
     }
     // reference overloads for less copying, non-const
     void sendMessageFront(TFront& p_message) {

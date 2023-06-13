@@ -46,19 +46,27 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			testInput();
 			processDebugStats();
 
-			GUIEvent e;
-			bool needsSent = false;
+			static GUIEvent e; // static so it keeps mouse pos between updates
+			bool needsSent = true;
+
+			// reset mouse state if we have a new update, otherwise hold current state.
+			if (mouseMessenger.incomingFront()) {
+				e.mouse.mouseState = 0;
+				e.mouse.wasClick = false;
+				e.mouse.wasRelease = false;
+			}
 			// compress mouse events, lots of redundancy
 			while (auto opt = mouseMessenger.getMessageFront()) {
-				e.mouse.mouseState |= opt.value().mouseState;
 				e.mouse.wasClick |= opt.value().wasClick;
+				e.mouse.wasRelease |= opt.value().wasRelease;
+				if (opt.value().wasClick) e.mouse.mouseState |= opt.value().mouseState;
+				if (opt.value().wasRelease) e.mouse.mouseState &= opt.value().mouseState;
+				if (opt.value().wasMove) e.mouse.mouseState |= opt.value().mouseState;
 
 				e.mouse.x = opt.value().x / gw.width;
 				e.mouse.y = opt.value().y / gw.height;
 				e.mouse.pixelX = opt.value().x;
 				e.mouse.pixelY = opt.value().y;
-
-				needsSent = true;
 			}
 			while (auto opt = keyObserver.observe()) {
 				if (opt.value().wasDown) {

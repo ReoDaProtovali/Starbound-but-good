@@ -21,7 +21,8 @@ bool GUIDragBar::onUpdate(GUIEvent e)
 {
 	bool consumed = false;
 	if (dragging) {
-		if (e.mouse.mouseState & SDL_BUTTON_LMASK) {
+		// potential bug, it does not care about which mouse button was released
+		if (!e.mouse.wasRelease) {
 			if (m_parent->isUsingScreenBounds()) {
 				m_parent->setScreenBounds(Rect(e.mouse.pixelX + initOffset.x, e.mouse.pixelY + initOffset.y, m_parent->screenBounds.wh.x, m_parent->screenBounds.wh.y));
 			}

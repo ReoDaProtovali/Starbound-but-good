@@ -55,6 +55,8 @@ struct MouseEvent {
 	float pixelX = 0.f;
 	float pixelY = 0.f;
 	bool wasClick = false;
+	bool wasRelease = false;
+	bool wasMove = false;
 	uint32_t mouseState = 0;
 };
 
