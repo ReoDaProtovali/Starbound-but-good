@@ -265,6 +265,7 @@ void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_world
 
 
 	//c(localTileX, localTileY, p_worldLayer).m_tileID = p_tileID;
+	if (c.getChunkTile(localTileX, localTileY, p_worldLayer).m_tileID == p_tileID) return;
 	c.setChunkTile(glm::ivec3(localTileX, localTileY, p_worldLayer), p_tileID);
 	if (p_tileID != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));

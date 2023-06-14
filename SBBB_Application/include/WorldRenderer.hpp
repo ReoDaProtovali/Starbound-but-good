@@ -26,7 +26,7 @@ class WorldRenderer {
     SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 
 	void tidy();
-	int redrawCameraView(const glm::vec4& chunkFrame, DrawSurface& p_surface);
+	int redrawCameraView(const glm::vec4& chunkFrame);
 
 public:
 	WorldRenderer();

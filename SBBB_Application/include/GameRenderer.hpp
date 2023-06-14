@@ -31,9 +31,9 @@
 
 class GameWindow;
 
-/// Serves as a wrapper for all of the rendering subsystems
 /// Keeps track of the window dimensions for ease of rendering
 /// Stores default spritesheets, and a resource loader that holds various textures.
+/// massively cut down, mostly just used for its fbo now
 class GameRenderer
 {
 public:

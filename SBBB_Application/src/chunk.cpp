@@ -525,6 +525,7 @@ void WorldChunk::flip()
 
 
 void WorldChunk::setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID) {
+	if (m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z).m_tileID == p_tileID) return;
 	m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z) = Tile(p_chunkCoordinates, p_tileID);
 	colliderValid = false;
 	feedbackMeshReady = false;

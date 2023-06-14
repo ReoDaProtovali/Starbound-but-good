@@ -70,53 +70,26 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	while (auto update = m_chunkUpdateObserver.observe()) {
 		if (update.value().type == ChunkUpdateType::DONE_GENERATING || update.value().type == ChunkUpdateType::NEW_VBO_DATA) {
-			drawnChunkCount += redrawCameraView(chunkFrame, p_surface);
+			ChunkPos pos{ update.value().x, update.value().y };
+			// workaround to fix chunk border bug
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					if (i == 0 && j == 0) continue;
+					auto neighborPos = ChunkPos(pos.x + i, pos.y + j);
+					if (!s_chunkMap.contains(neighborPos)) continue;
+					WorldChunk& c = s_chunkMap[neighborPos];
+					if (c.invalid) continue;
+					c.feedbackMeshReady = false;
+				}
+			}
+			drawnChunkCount += redrawCameraView(chunkFrame);
 			m_chunkUpdateObserver.clear();
 			break;
-			//ChunkPos pos{ update.value().x, update.value().y };
 			//seenPositions.insert(pos);
 		};
 	}
 
-	//for (ChunkPos pos : seenPositions) {
-		//float pixelsPerTile = (float)p_windowWidth / (float)m_viewCam->tileScale;
-
-		//
-		//if (s_chunkMap.contains(pos)) {
-
-		//	WorldChunk& chunk = s_chunkMap[pos];
-		//	if (!chunk.drawable) {
-		//		continue;
-		//	}
-		//	if (chunk.isEmpty) {
-		//		continue;
-		//	};
-		//	if (!chunk.vboIsPushed) {
-		//		chunk.pushVBO();
-		//	}
-		//	if (!chunk.tilesToSub.empty()) {
-		//		chunk.subSingleTileVBOS();
-		//	}
-
-		//	auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * (float)CHUNKSIZE, pos.y * (float)CHUNKSIZE - (float)CHUNKSIZE);
-		//	m_tileFBO.clearRegion((int)roundf(pixelCoords.x), (int)roundf(pixelCoords.y), (int)roundf(CHUNKSIZE * m_pixelsPerTile), (int)roundf(CHUNKSIZE * m_pixelsPerTile));
-		//	m_tileFBO.clearDepthRegion((int)roundf(pixelCoords.x), (int)roundf(pixelCoords.y), (int)roundf(CHUNKSIZE * m_pixelsPerTile), (int)roundf(CHUNKSIZE * m_pixelsPerTile));
-
-		//	m_tileShader.setVec2Uniform(2, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
-		//	chunk.draw(m_tileFBO, m_tileDrawStates);
-		//	if (drawChunkBorders) {
-		//		SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
-		//	}
-		//	m_tileFBO.clearDepthRegion((int)roundf(pixelCoords.x), (int)roundf(pixelCoords.y), (int)roundf(CHUNKSIZE * m_pixelsPerTile), (int)roundf(CHUNKSIZE * m_pixelsPerTile));
-
-		//	drawnChunkCount++;
-		//}
-
-	//}
-
-	//seenPositions.clear();
 	if (chunkFrame == m_chunkFramePrev) return 0;
-
 
 	m_pixelsPerTile = std::fminf((float)p_windowWidth / (float)m_viewCam->tileScale, 8.f);
 
@@ -136,7 +109,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	m_tileFBO.clear();
 
 
-	drawnChunkCount += redrawCameraView(chunkFrame, p_surface);
+	drawnChunkCount += redrawCameraView(chunkFrame);
 	//m_tileFBO.clearRegion(m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).x, m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).y, pixelsPerTileMin * CHUNKSIZE, pixelsPerTileMin * CHUNKSIZE);
 	//auto test = m_tileCam.tileToPixelCoordinates(0.f, 30.f);
 
@@ -144,7 +117,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	return drawnChunkCount;
 }
 
-int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame, DrawSurface& p_surface)
+int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 {
 	m_tileFBO.clear();
 	int drawnChunkCount = 0;
