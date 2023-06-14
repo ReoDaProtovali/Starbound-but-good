@@ -127,7 +127,7 @@ void ClientWorldState::testDraw()
 		infoString.str("");
 		infoString
 			<< "Camera Position - X: " << std::setprecision(5) << db.camX << " Y: " << db.camY << '\n'
-			<< "Camera Frame - Left: " << db.camFX1 << " Right: " << db.camFX2 << " Top: " << db.camFY2 << " Bottom: " << db.camFY1 << '\n'
+			<< "Camera Frame - \nLeft: " << db.camFX1 << " Right: " << db.camFX2 << "\n" << "Top: " << db.camFY2 << " Bottom : " << db.camFY1 << '\n'
 			<< "Screen Dimensions - " << db.screenW << "x" << db.screenH << '\n'
 			<< "Window Dimensions - " << db.windowW << "x" << db.windowH << '\n'
 			<< "Chunk Counts - Total: " << db.chunkCount << " Empty: " << db.emptyChunkCount << '\n'
@@ -135,7 +135,6 @@ void ClientWorldState::testDraw()
 			<< "Noisemap tiles generated - " << db.noisemapTileCount << '\n'
 			<< "Draw Calls Per Second - " << db.drawCalls / updateTimer.getSecondsElapsed() << '\n'
 			<< "Seconds Since Last Update: " << updateTimer.getSecondsElapsed() << '\n'
-			<< "Tile Vertex Count Total: " << db.vertCount << '\n'
 			<< "Chunk Gens Per Second - " << db.chunkGenCounter / updateTimer.getSecondsElapsed() << '\n';
 		db.statUpdate = false;
 		db.drawCalls = 0;
@@ -143,7 +142,7 @@ void ClientWorldState::testDraw()
 		updateTimer.startStopwatch();
 	}
 
-	debugText.setText(infoString.str());
+	debugTextField.setText(infoString.str());
 	//debugText.draw(glm::vec2(-0.98f, 0.80f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 #endif
 
@@ -151,7 +150,6 @@ void ClientWorldState::testDraw()
 	controlsText.setLeftJustification(true);
 	//controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 
-	testReoSprite.draw(renderer.screenFBO, state);
 	//gui.draw(renderer.screenFBO);
 	//testDrawGUI();
 	//SBBBDebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
@@ -176,6 +174,7 @@ void ClientWorldState::close()
 
 	gui.removeElement("testbutton");
 	gui.removeElement("fpstext");
+	gui.removeElement("debugtext");
 }
 
 void ClientWorldState::init()
@@ -195,11 +194,6 @@ void ClientWorldState::init()
 
 	loadTextures();
 
-	testReoSprite.attachShader(&gs.imageShader);
-	testReoTexture = res.getTexture(TextureID::REO_TEST);
-	testReoSprite.attachTexture(testReoTexture);
-	testReoSprite.setPosition(glm::vec3(-16.f, 102.f, 1.f));
-	//testReoSprite.setOpacity(0.5);
 	bombSprite.attachTexture(res.getTexture(TextureID::BOMB_TEXTURE));
 	bombSprite.setPosition(glm::vec3(33.f));
 
@@ -214,7 +208,7 @@ void ClientWorldState::init()
 		[&](void) {
 			//testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
 			//testButton.disabled = false;
-			testButtonText.appendText('\n' + std::to_string(testButtonText.m_fieldText.getMaxPixelHeight(30.f)));
+			//testButtonText.appendText('\n' + std::to_string(testButtonText.m_fieldText.getMaxPixelHeight(30.f)));
 		});
 	testButton.onHover(
 		[&](bool hovering) {
@@ -224,50 +218,41 @@ void ClientWorldState::init()
 				testButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
 		});
 
-
-
-	//testText.enableBackground();
-	//testText.backgroundOpacity = 0.5f;
-	//testText.setTextHeight(20);
-	//testText.disableRelativeScaling();
-	//testText.setText("drag me");
-	//testText.setScreenBounds(Rect(500, 500, 500, 90));
-
 	fpsTextField.enableBackground();
 	fpsTextField.backgroundOpacity = 0.5f;
-	fpsTextField.setTextHeight(15);
+	fpsTextField.setTextHeight(18);
 	fpsTextField.disableRelativeScaling();
 	fpsTextField.setText("No FPS Data");
 	fpsTextField.setScreenBounds(Rect(10.f, 10.f, 350.f, 60.f));
 	fpsTextField.centered = true;
-	//fpsTextField.
-	//testTextAbsolute.enableBackground();
-	//testTextAbsolute.backgroundOpacity = 0.5f;
-	//testTextAbsolute.setTextHeight(20);
-	//testTextAbsolute.disableRelativeScaling();
-	//testTextAbsolute.setText("drag me too!!");
-	////testTextAbsolute.centered = false;
-	//testTextAbsolute.setAbsoluteBounds(Rect(0.3f, 0.7f, 0.3f, 0.2f));
+	fpsTextField.autoScreenWidth = true;
+	fpsTextField.autoScreenHeight = true;
+
+	fpsDragBar.setLocalBounds(Rect(0.f, 0.f, 1.f, 0.1f));
+	fpsDragBar.backgroundColor = glm::vec3(1.f, 1.f, 1.f);
+	fpsDragBar.backgroundOpacity = 0.2f;
+	fpsDragBar.enableBackground();
+	fpsTextField.addChild(&fpsDragBar);
 
 
-	testDragBar.backgroundColor = glm::vec3(0.0f, 0.f, 0.3f);
-	testDragBar.backgroundOpacity = 0.5f;
-	testDragBar.enableBackground();
-	//testDragBar2.backgroundColor = glm::vec3(0.0f, 0.f, 0.3f);
-	//testDragBar2.backgroundOpacity = 0.5f;
-	//testDragBar2.enableBackground();
-	//testDragBar3.backgroundColor = glm::vec3(0.0f, 0.f, 0.3f);
-	//testDragBar3.backgroundOpacity = 0.5f;
-	//testDragBar3.enableBackground();
-	//testText.addChild(&testDragBar);
-	//testTextAbsolute.addChild(&testDragBar3);
-	fpsTextField.addChild(&testDragBar);
-	//gui.addElement(&testDragBar);
+	debugTextField.enableBackground();
+	debugTextField.backgroundOpacity = 0.5f;
+	debugTextField.setTextHeight(18);
+	debugTextField.disableRelativeScaling();
+	debugTextField.setText("No Debug Info");
+	debugTextField.setScreenBounds(Rect(10.f, 80.f, 500.f, 280.f));
+	debugTextField.centered = true;
+	debugTextField.autoScreenWidth = true;
+	debugTextField.autoScreenHeight = true;
 
-	//gui.addElement(&testText);
-	//gui.addElement(&testButton);
+	debugDragBar.setLocalBounds(Rect(0.f, 0.f, 1.f, 0.1f));
+	debugDragBar.backgroundColor = glm::vec3(1.f, 1.f, 1.f);
+	debugDragBar.backgroundOpacity = 0.2f;
+	debugDragBar.enableBackground();
+	debugTextField.addChild(&debugDragBar);
+
 	gui.addElement(&fpsTextField);
-	//gui.addElement(&testTextAbsolute);
+	gui.addElement(&debugTextField);
 
 	LOAD_LOG("Creating lighting subsystem...");
 

@@ -26,7 +26,7 @@ public:
 	* @param p_uniforms - A vector containing uniform objects, defined just above within Shader.hpp. Used to allow single-line init.
 	*/
 	Shader(const char* vs_filePath, const char* fs_filePath, std::vector<Uniform> p_uniforms);
-	/** Constructor that initializes by compiling the shader, geometry shader included.
+	/** Constructor that initializes by compiling the shader, geometry shader included. (depreciated)
 	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
 	* @param gs_filePath - The filepath to the GLSL geometry shader. In standard directory notation, folders separated by "/"
 	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
@@ -40,6 +40,12 @@ public:
 	*/
 	Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath);
 
+	/** Constructor that initializes by compiling the shader, geometry shader included, and transform feedback enabled.
+	* @param vs_filePath - The filepath to the GLSL vertex shader. In standard directory notation, folders separated by "/"
+	* @param gs_filePath - The filepath to the GLSL geometry shader. In standard directory notation, folders separated by "/"
+	* @param fs_filePath - The filepath the the GLSL fragment shader. In standard directory notation, folders separated by "/"
+	*/
+	Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath, const char* p_captureVariables[], GLsizei p_captureVariableCount);
 	Shader& operator=(const Shader& p_other);
 
 	// Move constructor, to handle our pointer
@@ -63,24 +69,38 @@ public:
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a boolean.
 	void setBoolUniform(const std::string& p_name, bool p_value) const;
 	void setBoolUniform(GLint p_loc, bool p_value) const;
+	static void setBoolUniformStatic(GLint p_loc, bool p_value);
+
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, an integer.
 	void setIntUniform(const std::string& p_name, GLint p_value) const;
 	void setIntUniform(GLint p_loc, GLint p_value) const;
+	static void setIntUniformStatic(GLint p_loc, GLint p_value);
+
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a float.
 	void setFloatUniform(const std::string& p_name, GLfloat p_value) const;
 	void setFloatUniform(GLint p_loc, GLfloat p_value) const;
+	static void setFloatUniformStatic(GLint p_loc, GLfloat p_value);
+
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, an OpenGL texture.
 	void setTexUniform(const std::string& p_name, GLuint p_value);
 	void setTexUniform(GLint p_loc, GLuint p_value);
+	static void setTexUniformStatic(GLint p_loc, GLuint p_value);
+
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a 4x4 matrix.
 	void setMat4Uniform(const std::string& p_name, glm::mat4& p_value);
 	void setMat4Uniform(GLint p_loc, glm::mat4& p_value);
+	void setMat4UniformStatic(const std::string& p_name, glm::mat4& p_value, GLuint p_progID);
+	static void setMat4UniformStaticNamed(const std::string& p_name, glm::mat4& p_value, GLuint p_progID);
+	static void setMat4UniformStatic(GLint p_loc, glm::mat4& p_value);
 
 	void setVec2Uniform(const std::string& p_name, glm::vec2 p_value);
 	void setVec2Uniform(GLint p_loc, glm::vec2 p_value) const;
+	static void setVec2UniformStatic(GLint p_loc, glm::vec2 p_value);
+
 
 	void setVec3Uniform(const std::string& p_name, glm::vec3 p_value) const;
 	void setVec3Uniform(GLint p_loc, glm::vec3 p_value) const;
+	static void setVec3UniformStatic(GLint p_loc, glm::vec3 p_value);
 	// Used to set a list of uniforms using uniform objects.
 	// Only works with strings, no locations.
 	void setUniforms(std::vector<Uniform> p_uniforms);

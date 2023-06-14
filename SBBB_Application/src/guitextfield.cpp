@@ -3,6 +3,8 @@
 void GUITextField::draw(DrawSurface& p_target, DrawStates& p_states)
 {
 	if (m_usingScreenBounds) {
+		if (autoScreenWidth) setScreenBounds(Rect(screenBounds.xy.x, screenBounds.xy.y, m_fieldText.getMaxPixelWidth(getPixelLineHeight(p_target.getViewportHeight())) + 20.f, screenBounds.wh.y));
+		if (autoScreenHeight) setScreenBounds(Rect(screenBounds.xy.x, screenBounds.xy.y, screenBounds.wh.x, m_fieldText.getMaxPixelHeight(getPixelLineHeight(p_target.getViewportHeight())) + 20.f));
 		updateScreenBounds(p_target.getViewportWidth(), p_target.getViewportHeight());
 	}
 
@@ -27,18 +29,16 @@ void GUITextField::draw(DrawSurface& p_target, DrawStates& p_states)
 		float textHeightAbsolute;
 		float pixelCharHeight = 0.f;
 		if (m_useRelativeScaling) { // in this case, textHeight is in local units
-			pixelCharHeight = m_textHeight * (absoluteBounds.wh.y * p_target.getViewportHeight());
 			textWidthAbsolute = m_fieldText.getMaxPixelWidth(pixelCharHeight) / p_target.getViewportWidth();
 			textHeightAbsolute = m_textHeight * m_fieldText.getMaxNormalizedHeight() * absoluteBounds.wh.y; // the constant is a bit silly but looks nicer due to the font being bottom heavy
 		}
 		else { // in this case, text height is in pixels
-			pixelCharHeight = m_textHeight;
 			textWidthAbsolute = m_fieldText.getMaxPixelWidth(m_textHeight) / p_target.getViewportWidth();
 			textHeightAbsolute = ((m_textHeight * m_fieldText.getMaxNormalizedHeight()) / p_target.getViewportHeight());
 		}
 		float newX = (absoluteBounds.wh.x - textWidthAbsolute) / 2.f + absoluteBounds.xy.x;
 		// we shift it up a little to make it pretty
-		float newY = (absoluteBounds.wh.y - textHeightAbsolute) / 2.f + absoluteBounds.xy.y + m_fieldText.getNormalizedLineHeight() * 0.75f * (pixelCharHeight / p_target.getViewportHeight());
+		float newY = (absoluteBounds.wh.y - textHeightAbsolute) / 2.f + absoluteBounds.xy.y + m_fieldText.getNormalizedLineHeight() * 0.75f * (getPixelLineHeight(p_target.getViewportHeight()) / p_target.getViewportHeight());
 
 		m_fieldText.setPosition(glm::vec3(newX, newY, 0.f));
 	}
@@ -88,4 +88,14 @@ void GUITextField::disableRelativeScaling()
 void GUITextField::enableRelativeScaling()
 {
 	m_useRelativeScaling = true;
+}
+
+float GUITextField::getPixelLineHeight(float viewportHeight)
+{
+	if (m_useRelativeScaling) { // in this case, textHeight is in local units
+		return m_textHeight * (absoluteBounds.wh.y * viewportHeight);
+	}
+	else {
+		return m_textHeight;
+	}
 }

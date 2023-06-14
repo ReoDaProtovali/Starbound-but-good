@@ -34,8 +34,6 @@ public:
 	Camera* playerCam = nullptr;
 
 	GUI& gui = GUI::Get();
-	Sprite testReoSprite = Sprite(glm::vec3(-16.0f, 109.0f, 2.0f), Rect(0.f, 0.f, 3.f, 3.f));
-	Texture* testReoTexture = nullptr;
 
 	Sprite bombSprite = Sprite(glm::vec3(9999.f, 9999.f, 2.f), Rect(0.f, 0.f, 1.f, 1.f));
 	int bombCounter = BOMB_COUNTER_MAX;
@@ -43,14 +41,13 @@ public:
 	uint64_t testFrame = 0;
 	void testDraw();
 	GUIButton testButton{"testbutton", 0.2f, 0.2f, 0.2f, 0.1f};
-	GUITextField testButtonText{ "buttontext", Rect(0.f, 0.f, 1.f, 1.f) };
-	GUITextField testText{ "testtext", Rect(0.1f, 0.0f, 0.3f, 1.0f) };
-	GUITextField testTextAbsolute{ "testtextabs", Rect(0.1f, 0.0f, 0.3f, 1.0f) };
-	GUIDragBar testDragBar{ "testdragbar", Rect(0.f, 0.f, 1.f, 0.15f) };
-	GUIDragBar testDragBar2{ "testdragbar2", Rect(0.f, 0.f, 1.f, 0.15f) };
-	GUIDragBar testDragBar3{ "testdragbar2", Rect(0.f, 0.f, 1.f, 0.15f) };
+	GUITextField testButtonText{ "buttontext" };
 
-	GUITextField fpsTextField{ "fpstext", Rect(0.05f, 0.05f, 0.2f, 0.1f) };
+	GUITextField fpsTextField{ "fpstext" };
+	GUIDragBar fpsDragBar{ "fpsdragbar" };
+
+	GUITextField debugTextField{ "debugtext" };
+	GUIDragBar debugDragBar{ "debugdragbar" };
 
 	// ----------------------------------------------------------------------
 

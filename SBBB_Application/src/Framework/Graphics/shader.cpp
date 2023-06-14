@@ -25,6 +25,22 @@ Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_
 	Shader::setUniforms(p_uniforms);
 }
 
+Shader::Shader(const char* vs_filePath, const char* gs_filePath, const char* fs_filePath, const char* p_captureVariables[], GLsizei p_captureVariableCount)
+{
+	program->ID = Shader::compileShaders(vs_filePath, gs_filePath, fs_filePath);
+	glTransformFeedbackVaryings(program->ID, p_captureVariableCount, p_captureVariables, GL_INTERLEAVED_ATTRIBS);
+	glCheck(glLinkProgram(program->ID));
+
+	GLint linkStatus;
+	glGetProgramiv(program->ID, GL_LINK_STATUS, &linkStatus);
+
+	if (linkStatus != GL_TRUE) { // check for failed transform feedback link
+		GLchar infoLog[512];
+		glGetProgramInfoLog(program->ID, 512, nullptr, infoLog);
+		ERROR_LOG(infoLog);
+	}
+}
+
 Shader& Shader::operator=(const Shader& p_other) {
 	program = p_other.program;
 	return *this;
@@ -270,6 +286,10 @@ void Shader::setBoolUniform(GLint p_loc, bool p_value) const
 	use();
 	glCheck(glUniform1i(p_loc, (int)p_value));
 }
+void Shader::setBoolUniformStatic(GLint p_loc, bool p_value)
+{
+	glCheck(glUniform1i(p_loc, (int)p_value));
+}
 void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 {
 	use();
@@ -287,6 +307,10 @@ void Shader::setIntUniform(const std::string& p_name, GLint p_value) const
 void Shader::setIntUniform(GLint p_loc, GLint p_value) const
 {
 	use();
+	glCheck(glUniform1i(p_loc, p_value));
+}
+void Shader::setIntUniformStatic(GLint p_loc, GLint p_value)
+{
 	glCheck(glUniform1i(p_loc, p_value));
 }
 void Shader::setTexUniform(const std::string& p_name, GLuint p_value)
@@ -310,6 +334,11 @@ void Shader::setTexUniform(GLint p_loc, GLuint p_value)
 	glCheck(glUniform1i(p_loc, p_value));
 }
 
+void Shader::setTexUniformStatic(GLint p_loc, GLuint p_value)
+{
+	glCheck(glUniform1i(p_loc, p_value));
+}
+
 void Shader::setFloatUniform(const std::string& p_name, GLfloat p_value) const
 {
 	use();
@@ -327,6 +356,10 @@ void Shader::setFloatUniform(const std::string& p_name, GLfloat p_value) const
 void Shader::setFloatUniform(GLint p_loc, GLfloat p_value) const
 {
 	use();
+	glCheck(glUniform1f(p_loc, p_value));
+}
+void Shader::setFloatUniformStatic(GLint p_loc, GLfloat p_value)
+{
 	glCheck(glUniform1f(p_loc, p_value));
 }
 void Shader::setMat4Uniform(const std::string& p_name, glm::mat4& p_value)
@@ -347,6 +380,25 @@ void Shader::setMat4Uniform(const std::string& p_name, glm::mat4& p_value)
 void Shader::setMat4Uniform(GLint p_loc, glm::mat4& p_value)
 {
 	use();
+	glCheck(glUniformMatrix4fv(p_loc, 1, GL_FALSE, glm::value_ptr(p_value)));
+}
+
+void Shader::setMat4UniformStaticNamed(const std::string& p_name, glm::mat4& p_value, GLuint p_progID)
+{
+	GLint loc = glGetUniformLocation(p_progID, p_name.c_str());
+#ifdef LOADLOGGING_ENABLEDD // disabled because it runs every frame
+	if (loc != -1) {
+		std::cout << "setMat4Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << "." << std::endl;
+	}
+	else {
+		std::cout << "setMat4Uniform: Uniform location not found for " << p_name << "." << std::endl;
+	}
+#endif
+	glCheck(glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(p_value)));
+}
+
+void Shader::setMat4UniformStatic(GLint p_loc, glm::mat4& p_value)
+{
 	glCheck(glUniformMatrix4fv(p_loc, 1, GL_FALSE, glm::value_ptr(p_value)));
 }
 
@@ -371,6 +423,11 @@ void Shader::setVec2Uniform(GLint p_loc, glm::vec2 p_value) const
 	glCheck(glUniform2f(p_loc, p_value.x, p_value.y));
 }
 
+void Shader::setVec2UniformStatic(GLint p_loc, glm::vec2 p_value)
+{
+	glCheck(glUniform2f(p_loc, p_value.x, p_value.y));
+}
+
 void Shader::setVec3Uniform(const std::string& p_name, glm::vec3 p_value) const
 {
 	use();
@@ -389,5 +446,10 @@ void Shader::setVec3Uniform(const std::string& p_name, glm::vec3 p_value) const
 void Shader::setVec3Uniform(GLint p_loc, glm::vec3 p_value) const
 {
 	use();
+	glCheck(glUniform3f(p_loc, p_value.x, p_value.y, p_value.z));
+}
+
+void Shader::setVec3UniformStatic(GLint p_loc, glm::vec3 p_value)
+{
 	glCheck(glUniform3f(p_loc, p_value.x, p_value.y, p_value.z));
 }

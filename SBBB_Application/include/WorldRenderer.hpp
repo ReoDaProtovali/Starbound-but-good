@@ -11,22 +11,26 @@
 class WorldRenderer {
 
 	FrameBuffer m_tileFBO;
-	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
+	const char* varyingNames[3] = { "TexCoord", "zLevel", "pos" };
+	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl", varyingNames, 3 };
+	Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
+
 	DrawStates m_tileDrawStates;
 
 	Camera* m_viewCam = nullptr;
 	Camera m_tileCam;
 	glm::ivec4 m_chunkFramePrev;
 
+	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 0), Rect(0, 0, 10, 10));
+	float m_pixelsPerTile = 8.f;
     SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 
 	void tidy();
-	int redrawCameraView(const glm::vec4& chunkFrame);
+	int redrawCameraView(const glm::vec4& chunkFrame, DrawSurface& p_surface);
 
 public:
 	WorldRenderer();
-	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 0), Rect(0, 0, 10, 10));
-	float m_pixelsPerTile = 8.f;
+
 	Observer<ChunkUpdate> m_chunkUpdateObserver;
 
 	// If we want to draw the world, we kinda have to know where we are in it

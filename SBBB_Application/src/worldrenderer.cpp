@@ -24,6 +24,10 @@ WorldRenderer::WorldRenderer()
 	m_tileShader.setTexUniform("tileSheet", 0);
 	m_tileShader.setIntUniform(1, tilesheet->height);
 
+	m_tileFeedbackShader.setTexUniform("tileSheet", 0);
+	m_tileFeedbackShader.setIntUniform(1, tilesheet->height);
+
+
 	m_tileDrawStates.attachTexture(res.getTileSheetTexture());
 
 	m_tileDrawStates.attachShader(&m_tileShader);
@@ -66,7 +70,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	while (auto update = m_chunkUpdateObserver.observe()) {
 		if (update.value().type == ChunkUpdateType::DONE_GENERATING || update.value().type == ChunkUpdateType::NEW_VBO_DATA) {
-			drawnChunkCount += redrawCameraView(chunkFrame);
+			drawnChunkCount += redrawCameraView(chunkFrame, p_surface);
 			m_chunkUpdateObserver.clear();
 			break;
 			//ChunkPos pos{ update.value().x, update.value().y };
@@ -132,7 +136,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	m_tileFBO.clear();
 
 
-	drawnChunkCount += redrawCameraView(chunkFrame);
+	drawnChunkCount += redrawCameraView(chunkFrame, p_surface);
 	//m_tileFBO.clearRegion(m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).x, m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).y, pixelsPerTileMin * CHUNKSIZE, pixelsPerTileMin * CHUNKSIZE);
 	//auto test = m_tileCam.tileToPixelCoordinates(0.f, 30.f);
 
@@ -140,7 +144,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	return drawnChunkCount;
 }
 
-int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
+int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame, DrawSurface& p_surface)
 {
 	m_tileFBO.clear();
 	int drawnChunkCount = 0;
@@ -166,6 +170,17 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 				m_tileFBO.clearDepthRegion((GLint)roundf(pixelCoords.x), (GLint)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile));
 
 				m_tileShader.setVec2Uniform(2, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
+
+				if (chunk.feedbackMeshReady) {
+					m_tileDrawStates.attachShader(&m_tileFeedbackShader);
+					m_tileFeedbackShader.use();
+				}
+				else {
+					m_tileDrawStates.attachShader(&m_tileShader);
+					m_tileShader.use();
+				}
+				//p_surface.bind();
+				m_tileFBO.bind();
 				chunk.draw(m_tileFBO, m_tileDrawStates);
 				if (drawChunkBorders) {
 					SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);

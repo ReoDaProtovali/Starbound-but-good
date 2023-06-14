@@ -13,9 +13,9 @@ Lighting::Lighting() :
 
 	m_lightmap.resize(64, 36);
 	m_lightmap.fill(glm::vec4(1.f, 1.f, 1.f, 1.f));
-	m_lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	m_lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	m_lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	//m_lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	//m_lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	//m_lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	
 	m_lightmapTex = Texture(m_lightmap.width, m_lightmap.height, m_lightmap.getData());

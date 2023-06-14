@@ -529,6 +529,7 @@
     <None Include="src\Shaders\FancyFS.glsl">
       <Filter>Shaders\Fragment Shaders</Filter>
     </None>
+    <None Include="src\Shaders\TileFeedbackVS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png">

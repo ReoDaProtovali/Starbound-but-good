@@ -24,7 +24,6 @@ struct DebugStats {
 	int drawnChunkCount = 0;
 	int noisemapTileCount = 0;
 	int drawCalls = 0;
-	std::atomic<int> vertCount = 0;
 	int loadQueueSize = 0;
 	std::atomic<int> chunkGenCounter = 0;
 	bool statUpdate = true;

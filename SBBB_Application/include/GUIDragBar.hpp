@@ -7,7 +7,7 @@
 // todo:: implement word wrap
 class GUIDragBar : public Widget {
 public:
-	GUIDragBar(std::string_view p_ID, Rect p_localBounds) : Widget(p_ID, p_localBounds) {
+	GUIDragBar(std::string_view p_ID) : Widget(p_ID) {
 		m_backgroundSprite.attachShader(&GenericShaders::Get().solidColorShader);
 	};
 

@@ -102,9 +102,9 @@ void ChunkManager::genVBOFromQueueThreaded()
 {
 	while (true) {
 		ChunkPos pos = m_vboQueue.pop();
-		if (!validChunkExistsAt(pos)) continue;
 		// must be done here, because if it terminates, the position from .pop() is invalid 
 		if (m_stopAllThreads) break;
+		if (!validChunkExistsAt(pos)) continue;
 
 		s_chunkMap[pos].generateVBO(*this);
 		s_chunkMap[pos].drawable = true;
@@ -244,8 +244,9 @@ void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worl
 	auto tileInfoOpt = res.getTileInfo(p_tileID);
 	if (!tileInfoOpt.has_value()) throw std::exception("tile ID not found");
 
-	c(localTileX, localTileY, p_worldLayer).m_tileID = tileInfoOpt.value().get().spriteIndex;
-	if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
+	//c(localTileX, localTileY, p_worldLayer).m_tileID = tileInfoOpt.value().get().spriteIndex;
+	c.setChunkTile(glm::ivec3(localTileX, localTileY, p_worldLayer), tileInfoOpt.value().get().spriteIndex);
+		if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 
 	c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
@@ -263,7 +264,8 @@ void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_world
 	int localTileY = utils::modUnsigned(-p_worldY - 1, CHUNKSIZE);
 
 
-	c(localTileX, localTileY, p_worldLayer).m_tileID = p_tileID;
+	//c(localTileX, localTileY, p_worldLayer).m_tileID = p_tileID;
+	c.setChunkTile(glm::ivec3(localTileX, localTileY, p_worldLayer), p_tileID);
 	if (p_tileID != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 

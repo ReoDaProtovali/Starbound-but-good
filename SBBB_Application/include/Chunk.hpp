@@ -80,6 +80,8 @@ struct WorldChunk : public TransformObject
 	void subSingleTileVBOS();
 	uint32_t getVBOSize();
 
+	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
+
 	void flip();
 
 	void remove();
@@ -92,10 +94,17 @@ struct WorldChunk : public TransformObject
 	std::atomic<bool> invalid{ true };
 	std::atomic<bool> isEmpty{ true };
 	std::atomic<bool> colliderValid{ false };
+	std::atomic<bool> feedbackMeshReady = false;
 	Mesh<TileVert> tileMesh{NO_VAO_INIT};
+	struct PostGSVert {
+		glm::vec2 TexCoord;
+		float zLevel;
+		glm::vec4 pos;
+	};
+	Mesh<PostGSVert> feedbackMesh{ (MeshBehavior)(FEEDBACK_MESH | NO_VAO_INIT) };
+
 	SharedQueue<glm::ivec3> tilesToSub;
 
-	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
 	b2World* associatedWorld = nullptr; // so it can delete its own collider
 	std::mutex m_vboMutex;

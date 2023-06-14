@@ -12,7 +12,7 @@ struct GUIEvent {
 class Widget {
 public:
 	Widget();
-	Widget(std::string_view p_ID, Rect p_localBounds);
+	Widget(std::string_view p_ID);
 
 	void setID(std::string_view p_newID);
 

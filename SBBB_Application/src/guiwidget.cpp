@@ -4,8 +4,8 @@ Widget::Widget()
 {
 }
 
-Widget::Widget(std::string_view p_ID, Rect p_localBounds) :
-	m_ID(p_ID), localBounds(p_localBounds)
+Widget::Widget(std::string_view p_ID) :
+	m_ID(p_ID)
 {
 }
 

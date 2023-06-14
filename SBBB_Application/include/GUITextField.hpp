@@ -11,7 +11,7 @@
 // todo:: implement word wrap
 class GUITextField : public Widget {
 public:
-	GUITextField(std::string_view p_ID, Rect p_localBounds) : Widget(p_ID, p_localBounds) {
+	GUITextField(std::string_view p_ID) : Widget(p_ID) {
 		m_backgroundSprite.attachShader(&GenericShaders::Get().solidColorShader);
 	};
 
@@ -23,12 +23,15 @@ public:
 	void enableBackground();
 	void disableRelativeScaling();
 	void enableRelativeScaling();
+	float getPixelLineHeight(float viewportHeight);
 
 	glm::vec3 backgroundColor{ 0.2f };
 	float backgroundOpacity = 1.f;
 	bool centered = true;
-	Text m_fieldText{ DefaultFonts.videotype, "" };
+	bool autoScreenWidth = false;
+	bool autoScreenHeight = false;
 protected:
+	Text m_fieldText{ DefaultFonts.videotype, "" };
 	GenericShaders& gs = GenericShaders::Get();
 	std::string m_textString;
 	Sprite m_backgroundSprite;

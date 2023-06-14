@@ -20,7 +20,7 @@ public:
 	// Detailed generic draw function.
 	// Must be typenamed to T in order to accept any mesh vertex format, but everything that uses the template type is internal to mesh.
 	template<typename T>
-	void draw(Mesh<T>& p_mesh, GLenum p_primitiveType, DrawStates& p_states) {
+	void draw(Mesh<T>& p_mesh, GLenum p_primitiveType, DrawStates& p_states, bool p_selfBindShader = true) {
 #ifdef SBBB_DEBUG
 #endif
 		if (!p_states.checkIfInit()) return;
@@ -29,7 +29,8 @@ public:
 		assert(shader);
 
 		glCheck(glBindVertexArray(p_mesh.VAO->ID));
-		shader->use();
+		if (p_selfBindShader)
+			shader->use();
 
 		// Bind all textures to the correct texture units
 		for (size_t i = 0; i < p_states.m_texturePtrs.size(); i++) {
@@ -47,7 +48,7 @@ public:
 		}
 
 		// We'll assume that every shader uses a transform matrix, because that's pretty much a given.
-		shader->setMat4Uniform("transform", p_states.m_transform);
+		shader->setMat4UniformStaticNamed("transform", p_states.m_transform, shader->program->ID);
 #ifndef DISABLE_DEBUG_STATS
 		globals.debug.drawCalls++;
 #endif
@@ -55,7 +56,20 @@ public:
 			glDrawElements(p_primitiveType, (GLsizei)p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
 		}
 		else {
-			glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getTotalVBOSize());
+			if (p_mesh.isFeedbackMesh) {
+				// these are the only three things a feedback mesh can be
+				if (p_primitiveType == GL_TRIANGLES)
+					glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount() * 3);
+				else if (p_primitiveType == GL_LINES)
+					glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount() * 2);
+				else {
+					glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount());
+				}
+			}
+			else {
+				glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getTotalVBOSize());
+
+			}
 
 		}
 

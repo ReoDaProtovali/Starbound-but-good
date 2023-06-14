@@ -23,5 +23,5 @@ private:
 	// it needs to know the window for certain things like aspect ratio and pixel dimensions, future use.
 	GameWindow* m_window = nullptr;
 	DrawStates GUIDrawStates;
-	Widget m_root{ "root", Rect(0.f, 0.f, 1.f, 1.f) };
+	Widget m_root{ "root" };
 };

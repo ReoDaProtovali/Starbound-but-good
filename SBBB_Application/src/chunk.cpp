@@ -17,10 +17,14 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	tileMesh.addUintAttrib(1); // xyzID, one uint
 	tileMesh.addUintAttrib(1); // adjacencies
 	tileMesh.addUintAttrib(1); // variation count i guess
+	feedbackMesh.addFloatAttrib(2);
+	feedbackMesh.addFloatAttrib(1);
+	feedbackMesh.addFloatAttrib(4);
 }
 
 WorldChunk::WorldChunk(const WorldChunk& other) noexcept :
 	tileMesh(other.tileMesh),
+	feedbackMesh(other.feedbackMesh),
 	m_tiles(other.m_tiles),
 	worldID(other.worldID),
 	worldPos(other.worldPos),
@@ -37,6 +41,7 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 {
 
 	tileMesh = other.tileMesh;
+	feedbackMesh = other.feedbackMesh;
 	m_tiles = other.m_tiles;
 	worldID = other.worldID;
 	worldPos = other.worldPos;
@@ -52,6 +57,7 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 WorldChunk& WorldChunk::operator=(WorldChunk&& other) noexcept
 {
 	tileMesh = std::move(other.tileMesh);
+	feedbackMesh = std::move(other.feedbackMesh);
 	m_tiles = std::move(other.m_tiles);
 	worldID = other.worldID;
 	worldPos = other.worldPos;
@@ -68,6 +74,7 @@ WorldChunk& WorldChunk::operator=(WorldChunk&& other) noexcept
 
 WorldChunk::WorldChunk(WorldChunk&& other) noexcept :
 	tileMesh(std::move(other.tileMesh)),
+	feedbackMesh(std::move(other.feedbackMesh)),
 	m_tiles(std::move(other.m_tiles)),
 	worldID(other.worldID),
 	worldPos(other.worldPos),
@@ -99,6 +106,7 @@ void WorldChunk::fillRandom() {
 void WorldChunk::setTiles(Array3D<Tile>&& p_tiles) {
 	m_tiles = p_tiles;
 	colliderValid = false;
+	feedbackMeshReady = false;
 }
 Tile& WorldChunk::operator()(size_t p_x, size_t p_y, size_t p_depth)
 {
@@ -107,7 +115,6 @@ Tile& WorldChunk::operator()(size_t p_x, size_t p_y, size_t p_depth)
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	if (isEmpty) return;
-	globals.debug.vertCount -= (int)tileMesh.getStoredVertCount();
 	tileMesh.clean();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
 	ResourceManager& res = ResourceManager::Get();
@@ -166,7 +173,6 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 
 				}
 				tileMesh.pushVertex(v);
-				globals.debug.vertCount++;
 			//skip:
 			//	{}
 			}
@@ -521,6 +527,7 @@ void WorldChunk::flip()
 void WorldChunk::setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID) {
 	m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z) = Tile(p_chunkCoordinates, p_tileID);
 	colliderValid = false;
+	feedbackMeshReady = false;
 	return;
 }
 
@@ -585,8 +592,19 @@ void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
 	DrawStates newStates = DrawStates(p_drawStates);
 
+	if (!feedbackMesh.feedbackInitDone) {
+		uint32_t test = tileMesh.getTotalVBOSize() * sizeof(TileVert);
+
+		feedbackMesh.initFeedbackBuffer(45 * CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH, tileMesh.VAO->ID);
+	}
 	newStates.setTransform(p_drawStates.m_transform * m_transform);
-
-	p_target.draw(tileMesh, GL_POINTS, newStates);
-
+	if (feedbackMeshReady) {
+		//newStates.setTransform(p_drawStates.m_transform);
+		p_target.draw(feedbackMesh, GL_TRIANGLES, newStates);
+		return;
+	}
+	feedbackMesh.startFeedback(GL_TRIANGLES);
+	p_target.draw(tileMesh, GL_POINTS, newStates, false);
+	feedbackMesh.endFeedback();
+	feedbackMeshReady = true;
 }

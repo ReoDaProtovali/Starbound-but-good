@@ -154,7 +154,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -348,6 +348,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\noisegenerators\TestHeightmapFS.glsl" />
     <None Include="src\Shaders\TextFS.glsl" />
     <None Include="src\Shaders\TextVS.glsl" />
+    <None Include="src\Shaders\TileFeedbackVS.glsl" />
     <None Include="src\Shaders\TileFS.glsl" />
     <None Include="src\Shaders\TileGS.glsl" />
     <None Include="src\Shaders\TileVS.glsl" />
