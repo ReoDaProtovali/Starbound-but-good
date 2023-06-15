@@ -24,7 +24,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	ResourceManager& res = ResourceManager::Get();
 	res.loadGeneratorShaders();
 
-	Observer<MouseEvent> mouseObserver;
+	Observer<MouseEvent> mouseObserver{ globals.mouseSubject };
 
 	try {
 

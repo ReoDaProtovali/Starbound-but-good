@@ -43,7 +43,7 @@ public:
 	void setPixelHeight(uint16_t p_h);
 	void createAtlas();
 	// Can return nullptr if not successful
-	Texture* getTexture();
+	Texture getTexture();
 
 	void setMaxGlyphCount(uint8_t count);
 

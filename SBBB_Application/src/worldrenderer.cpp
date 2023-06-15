@@ -14,21 +14,21 @@ WorldRenderer::WorldRenderer()
 	m_tileCam.disableAutoFrame();
 
 	m_tileFBO.setDimensions(glm::vec2(10.f, 10.f));
-	m_tileFBO.getColorTex(0)->setFiltering(GL_NEAREST, GL_NEAREST);
+	m_tileFBO.getColorTex(0).setFiltering(GL_NEAREST, GL_NEAREST);
 	m_tileSprite.attachTexture(m_tileFBO.getColorTex(0));
 
 	auto& res = ResourceManager::Get();
 	res.loadAllTileSets();
-	Texture* tilesheet = res.getTileSheetTexture();
+	Texture tilesheet = res.getTileSheetTexture();
 
 	m_tileShader.setTexUniform("tileSheet", 0);
-	m_tileShader.setIntUniform(1, tilesheet->height);
+	m_tileShader.setIntUniform(1, tilesheet.height);
 
 	m_tileFeedbackShader.setTexUniform("tileSheet", 0);
-	m_tileFeedbackShader.setIntUniform(1, tilesheet->height);
+	m_tileFeedbackShader.setIntUniform(1, tilesheet.height);
 
-
-	m_tileDrawStates.attachTexture(res.getTileSheetTexture());
+	Texture tileSheetTexture = res.getTileSheetTexture();
+	m_tileDrawStates.attachTexture(tileSheetTexture);
 
 	m_tileDrawStates.attachShader(&m_tileShader);
 }

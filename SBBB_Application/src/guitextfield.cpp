@@ -48,9 +48,7 @@ void GUITextField::draw(DrawSurface& p_target, DrawStates& p_states)
 	m_fieldText.draw(glm::vec3(1.f), p_target, p_states);
 	float test = m_fieldText.getMaxPixelWidth(m_textHeight);
 
-	for (Widget* w : m_children) {
-		w->draw(p_target, p_states);
-	}
+	Widget::draw(p_target, p_states);
 }
 
 void GUITextField::setText(std::string_view p_text)

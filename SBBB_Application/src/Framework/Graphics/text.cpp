@@ -90,19 +90,19 @@ void Font::createAtlas() {
 	//stbi_write_png("testfont.png", texDims, texDims, 4, out.getData(), texDims * 4);
 }
 
-Texture* Font::getTexture() {
-	if (m_atlasTexture.initialized) return &m_atlasTexture;
+Texture Font::getTexture() {
+	if (m_atlasTexture.initialized) return m_atlasTexture;
 	if (!m_atlasInitialized) {
 		if (!m_sizeSet) {
 			ERROR_LOG("Can't get texture. Font pixel size not set.");
-			return nullptr;
+			return Texture();
 		}
 		createAtlas();
 	}
 	m_atlasTexture.setChannels(GL_RED);
 	m_atlasTexture.fromByteData((uint32_t)m_atlas.width, (uint32_t)m_atlas.height, m_atlas.getData());
 	m_atlasTexture.setFiltering(GL_LINEAR, GL_LINEAR);
-	return &m_atlasTexture;
+	return m_atlasTexture;
 }
 
 void Font::setMaxGlyphCount(uint8_t p_count) {
@@ -249,15 +249,16 @@ void Text::draw(const glm::vec3& p_textColor, DrawSurface& p_target, DrawStates&
 	textShader.setTexUniform(1, 0);
 
 	p_drawStates.setTransform(p_drawStates.m_transform * getObjectTransform());
-	Texture* tex = m_font.getTexture();
-	if (!tex) {
+	Texture tex = m_font.getTexture();
+	if (!tex.initialized) {
 		ERROR_LOG("Unable to draw text. Invalid font state.");
 		return;
 	}
 
 	p_drawStates.attachShader(&textShader);
 	textShader.setVec3Uniform(2, p_textColor);
-	p_drawStates.attachTexture(m_font.getTexture());
+	Texture fontTex = m_font.getTexture();
+	p_drawStates.attachTexture(fontTex);
 	p_target.draw(m_textMesh, GL_TRIANGLES, p_drawStates);
 	// don't corrupt the state
 	p_drawStates.setTransform(p_drawStates.m_transform * glm::inverse(getObjectTransform()));

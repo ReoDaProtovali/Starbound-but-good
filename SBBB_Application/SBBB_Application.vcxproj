@@ -228,6 +228,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\lighting.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pixmap.cpp" />
+    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\playerai.cpp" />
     <ClCompile Include="src\resourcemanager.cpp" />
     <ClCompile Include="src\simulation.cpp" />
     <ClCompile Include="src\spritesheet.cpp" />

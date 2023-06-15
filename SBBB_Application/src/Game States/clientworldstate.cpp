@@ -22,22 +22,28 @@ void ClientWorldState::testDraw()
 		MouseEvent m = opt.value();
 		mousePos.x = m.pixelX;
 		mousePos.y = m.pixelY;
-		lMouseDown = bool(m.mouseState & SDL_BUTTON_LMASK);
-		rMouseDown = bool(m.mouseState & SDL_BUTTON_RMASK);
-
+		if (m.wasClick) {
+			if (m.mouseButton == SDL_BUTTON_LEFT) lMouseDown = true;
+			if (m.mouseButton == SDL_BUTTON_RIGHT) rMouseDown = true;
+		}
+		if (m.wasRelease) {
+			if (m.mouseButton == SDL_BUTTON_LEFT) lMouseDown = false;
+			if (m.mouseButton == SDL_BUTTON_RIGHT) rMouseDown = false;
+		}
 	}
 	if (playerCam) {
 		if (lMouseDown) {
 			int spriteIndex = res.getTileInfo("vanilla:richstone").value().get().spriteIndex;
-			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
+			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
 
 			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
 		}
 
 		if (rMouseDown) {
-			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y) - glm::vec2(1.0f, -0.5f);
+			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
 			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
 		}
+
 	}
 
 	DebugStats& db = globals.debug;
@@ -57,7 +63,7 @@ void ClientWorldState::testDraw()
 #endif // !DISABLE_DEBUG_STATS
 
 		const float INTERP_FACTOR = (float(UPDATE_RATE_FPS) / float(globals.refresh_rate)) / 2.f;
-		playerCam->interpolate(INTERP_FACTOR);
+		if(Globals::shouldInterpolate()) playerCam->interpolate(INTERP_FACTOR);
 		state.setTransform(playerCam->getTransform());
 	}
 
@@ -73,9 +79,10 @@ void ClientWorldState::testDraw()
 			entity->entityCam.updateFrame();
 
 			// stop jitter
-			playerCam->disableInterpolation();
+			if (Globals::shouldInterpolate()) playerCam->disableInterpolation();
 			state.setTransform(playerCam->getTransform());
-			playerCam->enableInterpolation();
+			if (Globals::shouldInterpolate()) playerCam->enableInterpolation();
+			state.cam = playerCam;
 
 		}
 		entity->draw(renderer.screenFBO, state);
@@ -94,7 +101,7 @@ void ClientWorldState::testDraw()
 		bombSprite.setOriginRelative(OriginLoc::CENTER);
 		bombSprite.draw(renderer.screenFBO, state);
 	}
-	static Observer<KeyEvent> keyObserver;
+	static Observer<KeyEvent> keyObserver{ globals.keySubject };
 	while (auto opt = keyObserver.observe()) {
 		switch (opt.value().keyCode) {
 		case SDLK_b:
@@ -158,11 +165,9 @@ void ClientWorldState::testDraw()
 
 void ClientWorldState::loadTextures()
 {
-	res.loadTexID("./res/roetest.png", TextureID::REO_TEST);
-	res.loadTexID("./res/cameraframe.png", TextureID::CAMERA_FRAME_TEXTURE);
-	res.loadTexID("./res/cameraframe2.png", TextureID::CAMERA_FRAME_TEXTURE2);
-	res.loadTexID("./res/me.png", TextureID::ME_TEXTURE);
-	res.loadTexID("./res/bomb.png", TextureID::BOMB_TEXTURE);
+	res.loadTexID("./res/roetest.png", "reotest");
+	res.loadTexID("./res/me.png", "metexture");
+	res.loadTexID("./res/bomb.png", "bombtexture");
 }
 
 void ClientWorldState::resume()
@@ -194,7 +199,7 @@ void ClientWorldState::init()
 
 	loadTextures();
 
-	bombSprite.attachTexture(res.getTexture(TextureID::BOMB_TEXTURE));
+	bombSprite.attachTexture(res.getTexture("bombtexture"));
 	bombSprite.setPosition(glm::vec3(33.f));
 
 	testButtonText.disableBackground();
@@ -231,6 +236,7 @@ void ClientWorldState::init()
 	fpsDragBar.setLocalBounds(Rect(0.f, 0.f, 1.f, 0.1f));
 	fpsDragBar.backgroundColor = glm::vec3(1.f, 1.f, 1.f);
 	fpsDragBar.backgroundOpacity = 0.2f;
+	fpsDragBar.setPixelHeight(20);
 	fpsDragBar.enableBackground();
 	fpsTextField.addChild(&fpsDragBar);
 
@@ -248,6 +254,7 @@ void ClientWorldState::init()
 	debugDragBar.setLocalBounds(Rect(0.f, 0.f, 1.f, 0.1f));
 	debugDragBar.backgroundColor = glm::vec3(1.f, 1.f, 1.f);
 	debugDragBar.backgroundOpacity = 0.2f;
+	debugDragBar.setPixelHeight(20);
 	debugDragBar.enableBackground();
 	debugTextField.addChild(&debugDragBar);
 

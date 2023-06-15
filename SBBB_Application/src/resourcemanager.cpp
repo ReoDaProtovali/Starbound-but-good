@@ -13,55 +13,25 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
-	std::map<TextureID, Texture>::iterator it;
-	for (it = textures.begin(); it != textures.end(); it++) {
-		it->second.remove();
+	for (auto& [str,tex] : textures) {
+		tex.remove();
 	}
 }
-bool ResourceManager::loadTexID(const char* p_filepath, TextureID p_ID) {
-	LOAD_LOG("Loading image resource at " << p_filepath << " with ID " << (uint32_t)p_ID);
 
-	if (textures.find(p_ID) != textures.end()) {
-		std::cout << "Texture with ID " << (uint32_t)p_ID << " already exists." << std::endl;
-		return true;
+Texture ResourceManager::getTexture(const std::string& p_ID, bool& p_success) {
+	if (!textures.contains(p_ID)) {
+		p_success = false;
+		return Texture();
 	};
-	unsigned char* imageData = nullptr;
-	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(false);
-	imageData = stbi_load(p_filepath, &width, &height, &nrChannels, 0);
-
-	if (imageData == nullptr) {
-		std::cout << "Failed to load image" << std::endl;
-		throw std::runtime_error("what");
-		return false;
-	}
-	else {
-		Texture loadedTexture = Texture(p_ID);
-		loadedTexture.fromByteData(width, height, imageData);
-		textures.insert(std::make_pair(p_ID, loadedTexture));
-
-		delete imageData;
-	}
-	return true;
+	return textures[p_ID];
 }
 
-Texture* ResourceManager::getTexture(TextureID p_ID, bool& p_success) {
-	auto it = textures.find(p_ID);
-	if (it != textures.end()) {
-		p_success = true;
-		return &it->second;
-	}
-	p_success = false;
-	return nullptr;
-}
-
-Texture* ResourceManager::getTileSheetTexture() {
+Texture ResourceManager::getTileSheetTexture() {
 	if (!tileSheetTexture.initialized) {
 		tileSheetTexture.setFiltering(GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST);
 		tileSheetTexture.genMipMapsFloat(2, tileSheetPixmap.width, tileSheetPixmap.height, (float*)tileSheetPixmap.getData());
-
 	}
-	return &tileSheetTexture;
+	return tileSheetTexture;
 }
 
 void ResourceManager::loadAllTileSets() {
@@ -191,12 +161,37 @@ TileInfo& ResourceManager::getTileInfo(size_t p_index)
 {
 	return tileInfoCache[p_index];
 }
-Texture* ResourceManager::getTexture(TextureID p_ID) {
-	auto it = textures.find(p_ID);
-	if (it != textures.end()) {
-		return &it->second;
+bool ResourceManager::loadTexID(const char* p_filepath, std::string_view p_assignedID)
+{
+	LOAD_LOG("Loading image resource at " << p_filepath << " with ID " << p_assignedID);
+	std::string idStr(p_assignedID);
+
+	if (textures.contains(idStr)) {
+		std::cout << "Texture with ID " << idStr << " already exists." << std::endl;
+		return true;
+	};
+	unsigned char* imageData = nullptr;
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(false);
+	imageData = stbi_load(p_filepath, &width, &height, &nrChannels, 0);
+
+	if (imageData == nullptr) {
+		std::cout << "Failed to load image" << std::endl;
+		throw std::runtime_error("what");
+		return false;
 	}
-	throw std::invalid_argument("Failed to get image: ID Not found.");
+	else {
+		Texture loadedTexture = Texture(idStr);
+		loadedTexture.fromByteData(width, height, imageData);
+		textures.insert(std::make_pair(idStr, loadedTexture));
+
+		delete imageData;
+	}
+	return true;
+}
+Texture ResourceManager::getTexture(const std::string& p_ID) {
+	if (!textures.contains(p_ID)) throw std::invalid_argument("Failed to get image: ID Not found.");
+	return textures[p_ID];
 }
 
 void ResourceManager::loadGeneratorShaders() {

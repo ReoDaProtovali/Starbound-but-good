@@ -10,7 +10,7 @@ Texture::Texture()
 
 }
 
-Texture::Texture(TextureID p_assignedID) :
+Texture::Texture(std::string_view p_assignedID) :
 	texID(p_assignedID)
 {
 }
@@ -28,7 +28,7 @@ Texture::Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data, GLenum 
 	fromVec4Data(width, height, p_data);
 }
 
-void Texture::setFiltering(GLenum p_min, GLenum p_mag ) {
+void Texture::setFiltering(GLenum p_min, GLenum p_mag) {
 	m_filteringMag = p_mag;
 	m_filteringMin = p_min;
 

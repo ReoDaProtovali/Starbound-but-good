@@ -135,3 +135,45 @@ void SBBBDebugDraw::drawLineImmediate(float px1, float py1, float px2, float py2
 	p_surface.draw(s_Mesh, GL_TRIANGLES, d);
 	firstRun = false;
 }
+
+void SBBBDebugDraw::drawLineImmediate(float px1, float py1, float px2, float py2, glm::vec3 p_col, DrawSurface& p_surface, DrawStates& p_states)
+{
+	static Mesh<float> s_Mesh{ NO_VAO_INIT };
+	static bool firstRun = true;
+	if (!s_Mesh.VAOInitialized) {
+		s_Mesh.setStreamType(GL_STREAM_DRAW);
+		s_Mesh.addFloatAttrib(3);
+	}
+
+	s_Mesh.remove();
+
+	glm::vec2 p1{ px1, py1 };
+	glm::vec2 p2{ px2, py2 };
+
+	glm::vec2 tang = glm::normalize(p2 - p1);
+	glm::vec2 normal = glm::vec2(tang.y, -tang.x);
+
+	const float lw = 0.1f;
+	s_Mesh.pushVertices({
+		px1 + normal.x * lw, py1 + normal.y * lw, 0.f,
+		px1 - normal.x * lw, py1 - normal.y * lw, 0.f,
+		px2 - normal.x * lw, py2 - normal.y * lw, 0.f,
+		px2 - normal.x * lw, py2 - normal.y * lw, 0.f,
+		px2 + normal.x * lw, py2 + normal.y * lw, 0.f,
+		px1 + normal.x * lw, py1 + normal.y * lw, 0.f,
+		});
+	if (firstRun) {
+		s_Mesh.pushVBOToGPU();
+	}
+	else {
+		s_Mesh.subCurrentVBOData();
+	}
+
+	GenericShaders& gs = GenericShaders::Get();
+	p_states.attachShader(&gs.solidColorShader);
+	gs.solidColorShader.setVec3Uniform(1, p_col);
+	//auto currentTransform = glm::mat4(1);
+	//currentTransform = glm::translate(currentTransform, glm::vec3(px1, py1, 0));
+	p_surface.draw(s_Mesh, GL_TRIANGLES, p_states);
+	firstRun = false;
+}

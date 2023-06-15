@@ -42,19 +42,19 @@ public:
 	* @param p_assignedID - The enum TextureID you want the image file to be associated with, for retrieval later.
 	* @returns A boolean representing if the file was found or not.
 	*/
-	bool loadTexID(const char* p_filepath, TextureID p_assignedID);
+	bool loadTexID(const char* p_filepath, std::string_view p_assignedID);
 	/** Get a texture from the resource loader's texture pool. Throws an exception if the TextureID has no associated texture.
 	* @param p_ID - The TextureID associated with the Texture you want to access.
 	*/
-	Texture* getTexture(TextureID p_ID);
+	Texture getTexture(const std::string& p_ID);
 	/** Get a texture from the resource loader's texture pool.
 	* @param p_ID - The TextureID associated with the Texture you want to access.
 	* @param success - a reference to a boolean, sets it to false if the given ID has no associated texture, otherwise sets it to true.
 	* @returns A pointer to the texture, with relevant information. Not owned by the caller.
 	*/
-	Texture* getTexture(TextureID p_ID, bool& p_success); // friendlier, success bool is passed by reference
+	Texture getTexture(const std::string& p_ID, bool& p_success); // friendlier, success bool is passed by reference
 
-	Texture* getTileSheetTexture();
+	Texture getTileSheetTexture();
 
 	Shader& getGeneratorShader(const std::string& p_name);
 
@@ -76,7 +76,7 @@ private:
 	// Deletes all managed textures
 	~ResourceManager();
 	/// A standard library map that stores pairs of textures and their respective IDs.
-	std::map<TextureID, Texture> textures;
+	std::unordered_map<std::string, Texture> textures;
 	std::unordered_map<std::string, size_t> tileInfoIndexDict;
 	std::vector<TileInfo> tileInfoCache;
 

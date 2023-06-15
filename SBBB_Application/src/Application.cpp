@@ -83,6 +83,7 @@ void Application::pollEvents()
 					false,
 					false,
 					true,
+					0,
 					event.motion.state
 				});
 			break;
@@ -96,7 +97,8 @@ void Application::pollEvents()
 					true,
 					false,
 					false,
-					event.motion.state
+					event.button.button,
+					0
 				});
 			break;
 		case SDL_MOUSEBUTTONUP:
@@ -109,7 +111,8 @@ void Application::pollEvents()
 					false,
 					true,
 					false,
-					event.motion.state
+					event.button.button,
+					0
 				});
 			break;
 		}

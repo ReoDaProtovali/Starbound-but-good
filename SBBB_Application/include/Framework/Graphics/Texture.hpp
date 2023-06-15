@@ -15,7 +15,7 @@ public:
 	Texture();
 	//~Texture();
 	//Texture(Texture&& p_other);
-	Texture(TextureID p_assignedID);
+	Texture(std::string_view p_assignedID);
 	Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data);
 	Texture(uint32_t p_width, uint32_t p_height, glm::vec4* p_data, GLenum p_type);
 	// Texture copying is not super recommended
@@ -45,7 +45,7 @@ public:
 	uint32_t height = 0;
 
 	std::shared_ptr<glTexture> glID = std::make_shared<glTexture>();
-	TextureID texID = TextureID::NO_TEXTURE;
+	std::string texID = "nulltexture";
 
 
 	bool initialized = false;

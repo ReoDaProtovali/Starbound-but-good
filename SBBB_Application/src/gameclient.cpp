@@ -24,9 +24,9 @@ void GameClient::stop() {
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get(); // one-way messenger for capturing mouse events
-	Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get(); // for re-transmitting mouse events to client
+	Subject<MouseEvent>& mouseSubject = globals.mouseSubject; // for re-transmitting mouse events to client
 
-	Observer<KeyEvent> keyObserver;
+	Observer<KeyEvent> keyObserver{ globals.keySubject };
 	try {
 
 		auto& res = ResourceManager::Get();
@@ -54,15 +54,17 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				e.mouse.mouseState = 0;
 				e.mouse.wasClick = false;
 				e.mouse.wasRelease = false;
+				e.mouse.wasMove = false;
 			}
 			// compress mouse events, lots of redundancy
 			while (auto opt = mouseMessenger.getMessageFront()) {
 				e.mouse.wasClick |= opt.value().wasClick;
 				e.mouse.wasRelease |= opt.value().wasRelease;
-				if (opt.value().wasClick) e.mouse.mouseState |= opt.value().mouseState;
-				if (opt.value().wasRelease) e.mouse.mouseState &= opt.value().mouseState;
 				if (opt.value().wasMove) e.mouse.mouseState |= opt.value().mouseState;
+				if (opt.value().wasClick) e.mouse.mouseState |= opt.value().mouseState;
 
+				if (opt.value().mouseButton != 0) // so we don't override it whenever a click actually happens
+					e.mouse.mouseButton = opt.value().mouseButton;
 				e.mouse.x = opt.value().x / gw.width;
 				e.mouse.y = opt.value().y / gw.height;
 				e.mouse.pixelX = opt.value().x;
@@ -112,7 +114,7 @@ void GameClient::resizeWindow(uint32_t p_w, uint32_t p_h)
 
 void GameClient::testInput()
 {
-	static Observer<MouseEvent> mouseObserver;
+	static Observer<MouseEvent> mouseObserver{ globals.mouseSubject };
 	Camera& cam = *renderer.cam;
 
 	float camSpeed = 0.02f;
@@ -138,9 +140,9 @@ void GameClient::testInput()
 		cam.updateFrame();
 	}
 
-	if (inp.testKeyDown(SDLK_b)) {
-		stateManager.swap(GameStateEnum::NO_STATE);
-	}
+	//if (inp.testKeyDown(SDLK_b)) {
+	//	stateManager.swap(GameStateEnum::NO_STATE);
+	//}
 
 	//if (inp.testKeyDown(SDLK_3)) {
 	//	renderer.swapCameras();

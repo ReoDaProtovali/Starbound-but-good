@@ -20,6 +20,6 @@ private:
 	std::vector<int> m_keyDowns;
 
 	std::mutex m_inputMutex;
-	Subject<KeyEvent>& m_keySubject = Subject<KeyEvent>::Get();
+	Subject<KeyEvent>& m_keySubject = globals.keySubject;
 };
 

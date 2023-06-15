@@ -3,6 +3,23 @@
 #include "glm/glm.hpp"
 #include "util/Rect.hpp"
 #include <atomic>
+
+struct RayCastOutput {
+	glm::vec2 rayStart = glm::vec2(0.f);
+	glm::vec2 point = glm::vec2(0.f);
+	glm::vec2 normal = glm::vec2(0.f);
+	bool hit = false;
+};
+struct RayCastCallback : public b2RayCastCallback {
+	float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override {
+		out.point = glm::vec2(point.x, point.y);
+		out.normal = glm::vec2(normal.x, normal.y);
+		out.hit = true;
+		return fraction;
+	}
+	RayCastOutput out;
+};
+
 // A collision object is a simple single-fixture object that can be either dynamic or static. 
 class CollisionObject {
 public:
@@ -69,11 +86,14 @@ public:
 	void setRestitution(float p_restitution);
 	void setRestitutionThreshold(float p_restitutionThreshold);
 	void setDensity(float p_density);
+	void teleportColliderRelative(float xOff, float yOff);
 
+	void setVelocity(b2Vec2 p_velocity);
 	void applyForce(b2Vec2 p_force);
 	void applyImpulse(b2Vec2 p_impulse);
 	void applyForce(const glm::vec2& p_force);
 	void applyImpulse(const glm::vec2& p_impulse);
+	void wake();
 
 	void updateValues();
 	// Must be done after proper definitions
@@ -82,7 +102,11 @@ public:
 	void respawnCollider(b2World& p_world);
 
 	b2Transform getCollisionTransform();
+	b2Transform getCollisionTransformMeters();
 	glm::vec2 getVelocity();
+
+	// units are in tiles, not meters.
+	RayCastOutput rayCastRelative(float offX, float offY, float endOffX, float endOffY);
 
 	std::atomic<glm::vec2> bodyVelocity;
 protected:

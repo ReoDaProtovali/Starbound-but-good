@@ -22,7 +22,8 @@ void Simulation::spawnTestEntities()
 {
 #ifdef SBBB_DEBUG
 	for (int i = 0; i < 0; i++) {
-		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
+		m_entities.emplace_front(new TestEntity(float(rand() % 20), float(rand() % 20) + 100.f, 1.f, 1.f, false));
+		//(*m_entities.begin()).m_eptr->wake();
 	}
 #else
 	for (int i = 0; i < 0; i++) {
@@ -36,7 +37,7 @@ void Simulation::spawnTestEntities()
 
 void Simulation::tick()
 {
-	static Observer<KeyEvent> keyObserver;
+	static Observer<KeyEvent> keyObserver{ globals.keySubject };
 	while (auto opt = keyObserver.observe()) {
 		switch (opt.value().keyCode) {
 		case SDLK_b:

@@ -22,7 +22,7 @@ public:
 
 	// Shader must have the appropriate vertex attribute format
 	void attachShader(Shader* p_shader);
-	void attachTexture(Texture* p_texture);
+	void attachTexture(Texture p_texture);
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
@@ -41,7 +41,7 @@ private:
 	Mesh<GLfloat> m_spriteMesh{NO_VAO_INIT};
 	// Optional attachments directly to the sprite, so you don't have to worry about setting your drawStates properly before draw().
 	Shader* m_attachedShader;
-	Texture* m_attachedTexture;
+	Texture m_attachedTexture;
 	bool m_drawReady = false;
 };
 

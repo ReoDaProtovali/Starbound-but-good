@@ -57,7 +57,8 @@ public:
 		p_world.DestroyBody(m_body);
 	}
 	void onUpdate() {
-		//m_AI.update();
+		if (globals.worldDoneGenerating)
+			m_AI.update();
 		auto transform = getCollisionTransform();
 		m_position.x = transform.p.x;
 		m_position.y = transform.p.y;
@@ -67,7 +68,7 @@ public:
 	void draw(DrawSurface& p_target, DrawStates& p_states) {
 		if (m_sprite.bounds.xy.x == 0) { // scuffed init checking
 			m_sprite.setBounds(Rect(0.f, 0.f, m_entityDims.x + 0.03f, m_entityDims.y + 0.03f));
-			m_sprite.attachTexture(ResourceManager::Get().getTexture(TextureID::ME_TEXTURE));
+			m_sprite.attachTexture(ResourceManager::Get().getTexture("metexture"));
 
 		}
 

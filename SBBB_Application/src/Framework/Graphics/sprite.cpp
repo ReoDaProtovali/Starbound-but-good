@@ -4,7 +4,7 @@
 Sprite::Sprite()
 {
 	m_attachedShader = nullptr;
-	m_attachedTexture = nullptr;
+	m_attachedTexture = Texture();
 }
 
 Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
@@ -16,7 +16,7 @@ Sprite::Sprite(glm::vec3 p_position, Rect p_bounds)
 	// Default origin:
 	setOrigin(bounds.getCenter());
 	m_attachedShader = nullptr;
-	m_attachedTexture = nullptr;
+	m_attachedTexture = Texture();
 }
 
 
@@ -57,7 +57,7 @@ void Sprite::attachShader(Shader* p_shader)
 	m_attachedShader = p_shader;
 }
 
-void Sprite::attachTexture(Texture* p_texture)
+void Sprite::attachTexture(Texture p_texture)
 {
 	m_attachedTexture = p_texture;
 }
@@ -77,19 +77,23 @@ void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 	if (m_attachedShader != nullptr) {
 		newStates.attachShader(m_attachedShader);
 	}
-	if (m_attachedTexture != nullptr) {
+	if (m_attachedTexture.initialized) {
 		newStates.attachTexture(m_attachedTexture);
 	}
 
-	m_attachedShader->use();
-	if (opacity != 0.f) { // scuffed check, this is kinda bad
-		m_attachedShader->setFloatUniform(2, opacity);
+	if (m_attachedShader) {
+		m_attachedShader->use();
+		if (opacity != 0.f) { // scuffed check, this is kinda bad
+			m_attachedShader->setFloatUniform(2, opacity);
+		}
 	}
+
 	// Multiply it with the existing state transform, just in case it's relative to another coordinate system. Model space to world space.
 	newStates.setTransform(p_drawStates.m_transform * getObjectTransform());
 
 	p_target.draw(m_spriteMesh, GL_TRIANGLES, newStates);
-	//m_attachedShader->setFloatUniform(2, 0.f); // keep it defaulted for other things using the shader.
+	if (m_attachedShader && opacity != 0.f)
+		m_attachedShader->setFloatUniform(2, 0.f); // keep it defaulted for other things using the shader.
 }
 
 void Sprite::setOriginRelative(OriginLoc p_origin)

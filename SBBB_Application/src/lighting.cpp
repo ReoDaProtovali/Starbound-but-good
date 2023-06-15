@@ -22,7 +22,7 @@ Lighting::Lighting() :
 	m_lightmapTex.setFiltering(GL_LINEAR, GL_LINEAR);
 
 	// There needs to be two textures set for lighting to draw properly, but we only have one for now
-	m_lightingStates.addTexture(&m_lightmapTex);
+	m_lightingStates.addTexture(m_lightmapTex);
 	m_lightingStates.attachShader(&m_lightingShader);
 
 	m_overlayMesh.addFloatAttrib(3); // Position attrib
@@ -61,7 +61,8 @@ void Lighting::draw(FrameBuffer& p_screenFBO)
 {
 	if (!m_screenTexSet) {
 		// Now that we know which FBO we are drawing to, we can set the texture.
-		m_lightingStates.addTexture(p_screenFBO.getColorTex(0));
+		Texture tmp = p_screenFBO.getColorTex(0);
+		m_lightingStates.addTexture(tmp);
 		m_screenTexSet = true;
 	}
 	// something I realize now is that calling .draw on an FBO does not actually bind the FBO, it just draws to the current bound thing.

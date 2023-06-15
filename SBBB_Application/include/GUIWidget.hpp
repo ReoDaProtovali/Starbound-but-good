@@ -16,7 +16,7 @@ public:
 
 	void setID(std::string_view p_newID);
 
-	// default behaviour, recursively draw children
+	// default behaviour, recursively draw children, should be called at the end of overridden draw functions.
 	virtual void draw(DrawSurface& p_target, DrawStates& p_states);
 	// default behaviour, recursively update children, return true to consume click.
 	virtual bool onUpdate(GUIEvent e);
@@ -31,6 +31,8 @@ public:
 	// Used to set a widgets position and size in screen pixels, not normalized.
 	// these two are a bit confusing, but they are just used whenever you want precise pixel positions for gui.
 	void setScreenBounds(Rect p_screenBounds);
+	void setPixelWidth(float p_pixelWidth);
+	void setPixelHeight(float p_pixelHeight);
 	void updateScreenBounds(float p_windowHeight, float p_windowWidth);
 
 	void updateChildBounds();
@@ -49,6 +51,8 @@ public:
 protected:
 	bool m_absolute = false;
 	bool m_usingScreenBounds = false;
+	bool m_usingPixelWidth = false;
+	bool m_usingPixelHeight = false;
 	std::string m_ID;
 	std::vector<Widget*> m_children;
 	Widget* m_parent = nullptr;

@@ -23,7 +23,7 @@ public:
 	void setDimensions(uint32_t p_width, uint32_t p_height);
 	void setDimensions(glm::uvec2 p_dimensions);
 	void setColorAttachments(std::initializer_list<GLenum> p_attachments);
-	Texture* getColorTex(size_t p_index);
+	Texture getColorTex(size_t p_index);
 	// Read the pixels directly from the frame buffer into system memory.
 	void getPixels(size_t p_colorBufferIndex, uint8_t p_channels, Array2D<uint8_t>& o_out);
 	void getPixels(size_t p_colorBufferIndex, uint8_t p_channels, StaticArray2D<uint8_t>& o_out);

@@ -11,7 +11,7 @@ public:
 		m_backgroundSprite.attachShader(&GenericShaders::Get().solidColorShader);
 	};
 
-	void draw(DrawSurface& p_target, DrawStates& p_states) override;
+	void draw(DrawSurface& p_target, DrawStates& p_states);
 	bool onUpdate(GUIEvent e) override;
 
 	void disableBackground();

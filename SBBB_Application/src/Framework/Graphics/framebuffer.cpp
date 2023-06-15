@@ -98,10 +98,10 @@ void FrameBuffer::setColorAttachments(std::initializer_list<GLenum> p_attachment
 }
 
 
-Texture* FrameBuffer::getColorTex(size_t p_index)
+Texture FrameBuffer::getColorTex(size_t p_index)
 {
 	if (p_index > m_colorTextures.size() - 1) throw std::exception("Tried to get frame buffer color attachment outside of range.");
-	return &m_colorTextures[p_index];
+	return m_colorTextures[p_index];
 }
 
 void FrameBuffer::getPixels(size_t p_colorBufferIndex, uint8_t p_channels, Array2D<uint8_t>& o_out)

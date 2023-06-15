@@ -18,10 +18,10 @@ public:
 		}
 	}
 
-	static Subject<T>& Get() {
-		static Subject<T> s_instance;
-		return s_instance;
-	}
+	//static Subject<T>& Get() {
+	//	static Subject<T> s_instance;
+	//	return s_instance;
+	//}
 private:
 	void subscribe(Observer<T>* p_obs) {
 		std::unique_lock lock(m_obsLock);
@@ -50,8 +50,9 @@ template<typename T>
 class Observer {
 	friend class Subject<T>;
 public:
-	Observer() {
-		m_subject.subscribe(this);
+	Observer(Subject<T>& p_subject) :
+	m_subject(p_subject) {
+		p_subject.subscribe(this);
 	};
 	~Observer() {
 		m_subject.unsubscribe(this);
@@ -77,6 +78,6 @@ private:
 	void recieve(const T& p_msg) {
 		m_inbound.push(p_msg);
 	}
-	Subject<T>& m_subject = Subject<T>::Get();
+	Subject<T>& m_subject;
 	SharedQueue<T> m_inbound;
 };

@@ -478,8 +478,8 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &shape;
 				fixtureDef.density = 1.0f;
-				fixtureDef.friction = 0.3f;
-				fixtureDef.restitution = 0.1f;
+				fixtureDef.friction = 0.5f;
+				fixtureDef.restitution = 0.0f;
 				m_collisionBody->CreateFixture(&fixtureDef);
 				verts.clear();
 			}
@@ -594,8 +594,6 @@ void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 	DrawStates newStates = DrawStates(p_drawStates);
 
 	if (!feedbackMesh.feedbackInitDone) {
-		uint32_t test = tileMesh.getTotalVBOSize() * sizeof(TileVert);
-
 		feedbackMesh.initFeedbackBuffer(45 * CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH, tileMesh.VAO->ID);
 	}
 	newStates.setTransform(p_drawStates.m_transform * m_transform);

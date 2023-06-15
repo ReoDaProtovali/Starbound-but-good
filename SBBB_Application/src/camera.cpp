@@ -195,7 +195,8 @@ glm::vec2 Camera::pixelToTileCoordinates(float p_pixelX, float p_pixelY)
 	glm::mat4 transform = glm::inverse(view) * glm::inverse(m_proj);
 
 	out = transform * out;
-	return glm::vec2(out.x, out.y);
+	// i have no idea why this makes it more accurate
+	return glm::vec2(out.x < 0.f? out.x - 1.f : out.x, out.y < 0.f ? out.y - 1.f : out.y);
 }
 
 glm::vec2 Camera::tileToPixelCoordinates(float p_tileX, float p_tileY)

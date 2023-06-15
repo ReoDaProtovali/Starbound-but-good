@@ -20,7 +20,7 @@ public:
 	void loadTextures();
 
 	SharedList<EntityWrapper>& entities = SharedList<EntityWrapper>::Get();
-	Subject<TileUpdateRequest>& m_tileRequester = Subject<TileUpdateRequest>::Get();
+	Subject<TileUpdateRequest>& m_tileRequester = globals.tileUpdateRequestSubject;
 
 	void init() override;
 	void update() override;
@@ -59,7 +59,7 @@ private:
 
 	Camera m_followerCam; // in world space
 
-	Observer<MouseEvent> m_mouseObserver;
+	Observer<MouseEvent> m_mouseObserver{ globals.mouseSubject };
 	GenericShaders& gs = GenericShaders::Get();
 	ResourceManager& res = ResourceManager::Get();
 

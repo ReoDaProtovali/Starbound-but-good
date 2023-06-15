@@ -66,6 +66,16 @@ void CollisionObject::setDensity(float p_density)
 	m_fixtureDef.density = p_density;
 }
 
+void CollisionObject::teleportColliderRelative(float xOff, float yOff)
+{
+	m_body->SetTransform(m_body->GetTransform().p + b2Vec2(xOff, yOff), m_body->GetAngle());
+}
+
+void CollisionObject::setVelocity(b2Vec2 p_velocity)
+{
+	m_body->SetLinearVelocity(p_velocity);
+}
+
 void CollisionObject::applyForce(b2Vec2 p_force)
 {
 	m_body->ApplyForceToCenter(p_force, true);
@@ -84,6 +94,11 @@ void CollisionObject::applyForce(const glm::vec2& p_force)
 void CollisionObject::applyImpulse(const glm::vec2& p_impulse)
 {
 	m_body->ApplyLinearImpulseToCenter(b2Vec2(p_impulse.x, p_impulse.y), true);
+}
+
+void CollisionObject::wake()
+{
+	m_body->SetAwake(true);
 }
 
 void CollisionObject::updateValues()
@@ -126,7 +141,30 @@ b2Transform CollisionObject::getCollisionTransform()
 	return transform;
 }
 
+b2Transform CollisionObject::getCollisionTransformMeters()
+{
+	return m_body->GetTransform();
+}
+
 glm::vec2 CollisionObject::getVelocity()
 {
 	return bodyVelocity.load();
+}
+
+RayCastOutput CollisionObject::rayCastRelative(float offX, float offY, float lenX, float lenY)
+{
+	b2Transform transform = m_body->GetTransform();
+
+	float pX = transform.p.x + offX * TILES_TO_METERS;
+	float pY = transform.p.y + offY * TILES_TO_METERS;
+	b2Vec2 p1 = b2Vec2(pX, pY);
+	b2Vec2 p2 = b2Vec2(pX + lenX * TILES_TO_METERS, pY + lenY * TILES_TO_METERS);
+
+	RayCastCallback cb;
+	m_body->GetWorld()->RayCast(&cb, p1, p2);
+	cb.out.point -= glm::vec2(transform.p.x + offX * TILES_TO_METERS, transform.p.y + offY * TILES_TO_METERS); // make it relative
+	cb.out.point *= METERS_TO_TILES;
+	if (!cb.out.hit) cb.out.point = glm::vec2(lenX, lenY);
+	cb.out.rayStart = glm::vec2(p1.x, p1.y) * METERS_TO_TILES;
+	return cb.out;
 }

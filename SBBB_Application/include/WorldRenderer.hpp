@@ -31,7 +31,7 @@ class WorldRenderer {
 public:
 	WorldRenderer();
 
-	Observer<ChunkUpdate> m_chunkUpdateObserver;
+	Observer<ChunkUpdate> m_chunkUpdateObserver{ globals.chunkUpdateSubject };
 
 	// If we want to draw the world, we kinda have to know where we are in it
 	void setCamera(Camera* p_cam);

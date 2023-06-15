@@ -42,13 +42,15 @@ bool GUIDragBar::onUpdate(GUIEvent e)
 	}
 	if (absoluteBounds.contains(e.mouse.x, e.mouse.y)) {
 		if (e.mouse.wasClick) {
-			dragging = true;
-			consumed = true;
-			if (m_parent->isUsingScreenBounds()) {
-				initOffset = m_parent->screenBounds.xy - glm::vec2(e.mouse.pixelX, e.mouse.pixelY);
-			}
-			else {
-				initOffset = m_parent->absoluteBounds.xy - glm::vec2(e.mouse.x, e.mouse.y);
+			if (e.mouse.mouseButton == SDL_BUTTON_LEFT) {
+				dragging = true;
+				consumed = true;
+				if (m_parent->isUsingScreenBounds()) {
+					initOffset = m_parent->screenBounds.xy - glm::vec2(e.mouse.pixelX, e.mouse.pixelY);
+				}
+				else {
+					initOffset = m_parent->absoluteBounds.xy - glm::vec2(e.mouse.x, e.mouse.y);
+				}
 			}
 		}
 	}

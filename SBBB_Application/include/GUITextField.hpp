@@ -15,7 +15,7 @@ public:
 		m_backgroundSprite.attachShader(&GenericShaders::Get().solidColorShader);
 	};
 
-	void draw(DrawSurface& p_target, DrawStates& p_states) override;
+	void draw(DrawSurface& p_target, DrawStates& p_states);
 	void setText(std::string_view p_text);
 	void appendText(std::string_view p_text);
 	void setTextHeight(float p_height);

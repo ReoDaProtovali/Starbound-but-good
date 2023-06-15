@@ -91,9 +91,9 @@ private:
 
 	SharedQueue<int> m_generatingQueue; // just a list for the generator threads to say "hey, don't delete the noisemap data!"
 
-	Subject<ChunkUpdate>& m_chunkUpdateSubject = Subject<ChunkUpdate>::Get();
-	Observer<ChunkUpdate> m_updateObserver; // not insane, because the main server thread is just as clueless about when this stuff happens
-	Observer<TileUpdateRequest> m_tileRequests;
+	Subject<ChunkUpdate>& m_chunkUpdateSubject = globals.chunkUpdateSubject;
+	Observer<ChunkUpdate> m_updateObserver{ globals.chunkUpdateSubject }; // not insane, because the main server thread is just as clueless about when this stuff happens
+	Observer<TileUpdateRequest> m_tileRequests{ globals.tileUpdateRequestSubject };
 
 	b2World* m_collisionWorldPtr = nullptr;
 };

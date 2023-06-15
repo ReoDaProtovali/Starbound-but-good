@@ -16,6 +16,12 @@ void Widget::setID(std::string_view p_newID)
 
 void Widget::draw(DrawSurface& p_target, DrawStates& p_states)
 {
+	if (m_usingPixelWidth) {
+		absoluteBounds.wh.x = screenBounds.wh.x / p_target.getViewportWidth();
+	}
+	else if (m_usingPixelHeight) {
+		absoluteBounds.wh.y = screenBounds.wh.y / p_target.getViewportHeight();
+	}
 	for (auto child : m_children) {
 		child->draw(p_target, p_states);
 	}
@@ -64,6 +70,8 @@ void Widget::setLocalBounds(Rect p_localBounds)
 	m_usingScreenBounds = false;
 	localBounds = p_localBounds;
 	absoluteBounds = queryAbsoluteRect(localBounds);
+	m_usingPixelHeight = false;
+	m_usingPixelWidth = false;
 	updateChildBounds();
 }
 
@@ -77,6 +85,8 @@ void Widget::setAbsoluteBounds(Rect p_absoluteBounds)
 	m_absolute = true;
 	absoluteBounds = p_absoluteBounds;
 	localBounds = Rect(0.f, 0.f, 1.f, 1.f);
+	m_usingPixelHeight = false;
+	m_usingPixelWidth = false;
 	updateChildBounds();
 }
 
@@ -84,7 +94,22 @@ void Widget::setScreenBounds(Rect p_screenBounds)
 {
 	m_absolute = true;
 	m_usingScreenBounds = true;
+	// unneccesary specification now
+	m_usingPixelHeight = false;
+	m_usingPixelWidth = false;
 	screenBounds = p_screenBounds;
+}
+
+void Widget::setPixelWidth(float p_pixelWidth)
+{
+	m_usingPixelWidth = true;
+	screenBounds.wh.x = p_pixelWidth;
+}
+
+void Widget::setPixelHeight(float p_pixelHeight)
+{
+	m_usingPixelHeight = true;
+	screenBounds.wh.y = p_pixelHeight;
 }
 
 void Widget::updateScreenBounds(float p_windowWidth, float p_windowHeight)
@@ -105,7 +130,10 @@ void Widget::updateChildBounds()
 	for (auto child : m_children) {
 		// only do so for relatively positioned children
 		if (child->isUsingScreenBounds() || child->isAbsolute()) continue;
-		child->absoluteBounds = child->queryAbsoluteRect(child->localBounds);
+		auto absBounds = child->queryAbsoluteRect(child->localBounds);
+		child->absoluteBounds.xy = absBounds.xy;
+		if (!child->m_usingPixelWidth) child->absoluteBounds.wh.x = absBounds.wh.x;
+		if (!child->m_usingPixelHeight) child->absoluteBounds.wh.y = absBounds.wh.y;
 		child->updateChildBounds();
 	}
 }

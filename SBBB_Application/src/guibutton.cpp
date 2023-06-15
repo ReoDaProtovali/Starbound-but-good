@@ -32,9 +32,7 @@ void GUIButton::draw(DrawSurface& p_target, DrawStates& p_states)
 
 	m_sprite.draw(p_target, p_states);
 	GenericShaders::Get().solidColorShader.setFloatUniform(2, 1.f);
-	for (Widget* w : m_children) {
-		w->draw(p_target, p_states);
-	}
+	Widget::draw(p_target, p_states);
 }
 
 bool GUIButton::onUpdate(GUIEvent e)
