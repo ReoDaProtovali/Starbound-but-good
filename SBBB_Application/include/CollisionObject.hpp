@@ -85,6 +85,7 @@ public:
 	void setFriction(float p_friction);
 	void setRestitution(float p_restitution);
 	void setRestitutionThreshold(float p_restitutionThreshold);
+	void setLinearDamping(float p_damping);
 	void setDensity(float p_density);
 	void teleportColliderRelative(float xOff, float yOff);
 

@@ -16,7 +16,7 @@ public:
 
 private:
 	const float jumpStrength = 20.0f; // in newtons
-	const float moveSpeed = 30.0f; // also in newtons lol
+	float moveSpeed = 100.0f; // also in newtons lol
 	Entity* m_host = nullptr;
 	Observer<KeyEvent> m_keyObserver{ globals.keySubject };
 };

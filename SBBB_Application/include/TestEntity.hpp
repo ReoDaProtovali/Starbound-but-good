@@ -17,7 +17,10 @@ public:
 		m_position.z = 5.f;
 		//m_sprite.attachShader(&gs.solidColorShader);
 
-		m_sprite.enableTransformInterpolation();
+		if (Globals::shouldInterpolate())
+			m_sprite.enableTransformInterpolation();
+		else
+			m_sprite.disableTransformInterpolation();
 		setOrigin(Rect(0.f, 0.f, w, h), OriginLoc::CENTER);
 		m_stationary = stationary;
 	}

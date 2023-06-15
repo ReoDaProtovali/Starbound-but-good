@@ -61,6 +61,11 @@ void CollisionObject::setRestitutionThreshold(float p_restitutionThreshold)
 	m_fixtureDef.restitutionThreshold = p_restitutionThreshold;
 }
 
+void CollisionObject::setLinearDamping(float p_damping)
+{
+	m_body->SetLinearDamping(p_damping);
+}
+
 void CollisionObject::setDensity(float p_density)
 {
 	m_fixtureDef.density = p_density;

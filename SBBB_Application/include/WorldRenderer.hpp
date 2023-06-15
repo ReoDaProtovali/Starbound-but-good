@@ -13,6 +13,10 @@ class WorldRenderer {
 	FrameBuffer m_tileFBO;
 	const char* varyingNames[3] = { "TexCoord", "zLevel", "pos" };
 	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl", varyingNames, 3 };
+	GLuint tileSheetHeightUniformLoc = 0;
+	GLuint worldPosUniformLoc = 0;
+	GLuint tileSheetUniformLoc = 0;
+	GLuint generateConnectionsUniformLoc = 0;
 	Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 
 	DrawStates m_tileDrawStates;

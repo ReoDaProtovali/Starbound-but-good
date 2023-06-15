@@ -13,6 +13,7 @@ public:
 	}
 	void update() override {
 		assert(m_host);
+		srand((unsigned int)time(NULL));
 		state[0] -= 0.5f;
 		if (state[0] <= 0) {
 			m_host->applyImpulse(glm::vec2(0.f, jumpStrength));

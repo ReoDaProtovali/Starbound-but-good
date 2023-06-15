@@ -21,11 +21,20 @@ WorldRenderer::WorldRenderer()
 	res.loadAllTileSets();
 	Texture tilesheet = res.getTileSheetTexture();
 
-	m_tileShader.setTexUniform("tileSheet", 0);
-	m_tileShader.setIntUniform(1, tilesheet.height);
+	glm::mat4 tmp = glm::mat4(1.f);
+	m_tileShader.addMat4Uniform("transform", tmp);
+	m_tileShader.addIntUniform("tileSheetHeight", tilesheet.height);
+	m_tileShader.addVec2Uniform("worldPos", glm::vec2(0.f));
+	m_tileShader.addTexUniform("tileSheet", 0);
+	m_tileShader.addBoolUniform("generateConnections", 0);
+	
+	tileSheetHeightUniformLoc = m_tileShader.getUniformLoc("tileSheetHeight");
+	worldPosUniformLoc = m_tileShader.getUniformLoc("worldPos");
+	tileSheetUniformLoc = m_tileShader.getUniformLoc("tileSheet");
+	generateConnectionsUniformLoc = m_tileShader.getUniformLoc("generateConnections");
 
-	m_tileFeedbackShader.setTexUniform("tileSheet", 0);
-	m_tileFeedbackShader.setIntUniform(1, tilesheet.height);
+	m_tileFeedbackShader.addTexUniform("tileSheet", 0);
+	m_tileFeedbackShader.addIntUniform("tileSheetHeight", tilesheet.height);
 
 	Texture tileSheetTexture = res.getTileSheetTexture();
 	m_tileDrawStates.attachTexture(tileSheetTexture);
@@ -48,10 +57,10 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	m_tileSprite.draw(p_surface, p_states);
 
 	if (m_viewCam->tileScale > 500.f) {
-		m_tileShader.setBoolUniform(4, false);
+		m_tileShader.setBoolUniform(generateConnectionsUniformLoc, false);
 	}
 	else {
-		m_tileShader.setBoolUniform(4, true);
+		m_tileShader.setBoolUniform(generateConnectionsUniformLoc, true);
 	}
 
 	auto f = m_viewCam->getFrame();
@@ -142,7 +151,7 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 
 				m_tileFBO.clearDepthRegion((GLint)roundf(pixelCoords.x), (GLint)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile));
 
-				m_tileShader.setVec2Uniform(2, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
+				m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 
 				if (chunk.feedbackMeshReady) {
 					m_tileDrawStates.attachShader(&m_tileFeedbackShader);

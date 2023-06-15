@@ -47,7 +47,7 @@ vec2 IDToTexOffset(uint ID) {
 // uhhhhh texbounds is (x1, y1, x2, y2) while regionbounds is (x1, y1, w, h)
 // warning i think the origin is at the bottom left and that's kinda stupid
 void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
-	uint randp = abs(uint(18729.f * rand(gl_in[0].gl_Position.xy + worldPos * 2.f))) % data_in[0].variationCount;
+	uint randp = uint(abs(uint(18729.f * rand(gl_in[0].gl_Position.xy + worldPos * 2.f)))) % data_in[0].variationCount;
 	vec2 offset =  IDToTexOffset(data_in[0].ID) + vec2(SPRITE_WIDTH * randp, 0);
 	// boo flickering
 	regionBounds += vec4(-0.002f, -0.002f, 0.004f, 0.004f);

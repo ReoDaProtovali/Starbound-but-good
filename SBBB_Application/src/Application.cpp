@@ -76,8 +76,8 @@ void Application::pollEvents()
 		case SDL_MOUSEMOTION:
 			if (event.window.windowID != client.getWindowID()) break;
 			mouseMessenger.sendMessageFront(MouseEvent{
-					(float)event.motion.x,
-					(float)event.motion.y,
+					(float)event.motion.x / client.gw.width,
+					(float)event.motion.y / client.gw.height,
 					(float)event.motion.x,
 					(float)event.motion.y,
 					false,
@@ -90,8 +90,8 @@ void Application::pollEvents()
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.window.windowID != client.getWindowID()) break;
 			mouseMessenger.sendMessageFront(MouseEvent{
-					(float)event.motion.x,
-					(float)event.motion.y,
+					(float)event.motion.x / client.gw.width,
+					(float)event.motion.y / client.gw.height,
 					(float)event.motion.x,
 					(float)event.motion.y,
 					true,
@@ -104,8 +104,8 @@ void Application::pollEvents()
 		case SDL_MOUSEBUTTONUP:
 			if (event.window.windowID != client.getWindowID()) break;
 			mouseMessenger.sendMessageFront(MouseEvent{
-					(float)event.motion.x,
-					(float)event.motion.y,
+					(float)event.motion.x / client.gw.width,
+					(float)event.motion.y / client.gw.height,
 					(float)event.motion.x,
 					(float)event.motion.y,
 					false,

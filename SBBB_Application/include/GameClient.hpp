@@ -18,8 +18,8 @@ class GameClient
 	void processDebugStats();
 	void resizeWindow(uint32_t p_w, uint32_t p_h);
 	// core systems
-	GameWindow gw { "Barstound" };
-	GameRenderer renderer{ gw };
+public: GameWindow gw { "Barstound" };
+private: GameRenderer renderer{ gw };
 
 	GUI& gui = GUI::Get();
 

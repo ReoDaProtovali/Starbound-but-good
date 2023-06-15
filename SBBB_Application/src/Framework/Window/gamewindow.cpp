@@ -92,7 +92,8 @@ void GameWindow::initGL() {
 	auto init_res = glewInit();
 	if (init_res != GLEW_OK)
 	{
-		std::cout << glewGetErrorString(glewInit()) << std::endl;
+		//std::cout << glewGetErrorString(glewInit()) << std::endl;
+		throw std::exception((const char*)glewGetErrorString(glewInit()));
 	}
 
 	glEnable(GL_BLEND);

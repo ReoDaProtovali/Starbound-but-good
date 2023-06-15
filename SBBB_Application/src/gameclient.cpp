@@ -50,36 +50,24 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			bool needsSent = true;
 
 			// reset mouse state if we have a new update, otherwise hold current state.
-			if (mouseMessenger.incomingFront()) {
-				e.mouse.mouseState = 0;
-				e.mouse.wasClick = false;
-				e.mouse.wasRelease = false;
-				e.mouse.wasMove = false;
-			}
+			//if (mouseMessenger.incomingFront()) {
+			//	e.mouse = MouseEvent();
+			//}
 			// compress mouse events, lots of redundancy
-			while (auto opt = mouseMessenger.getMessageFront()) {
-				e.mouse.wasClick |= opt.value().wasClick;
-				e.mouse.wasRelease |= opt.value().wasRelease;
-				if (opt.value().wasMove) e.mouse.mouseState |= opt.value().mouseState;
-				if (opt.value().wasClick) e.mouse.mouseState |= opt.value().mouseState;
 
-				if (opt.value().mouseButton != 0) // so we don't override it whenever a click actually happens
-					e.mouse.mouseButton = opt.value().mouseButton;
-				e.mouse.x = opt.value().x / gw.width;
-				e.mouse.y = opt.value().y / gw.height;
-				e.mouse.pixelX = opt.value().x;
-				e.mouse.pixelY = opt.value().y;
-			}
 			while (auto opt = keyObserver.observe()) {
 				if (opt.value().wasDown) {
 					e.key = opt.value();
 					e.key.valid = true;
-					if (!gui.update(e)) { // this is silly, but it tells you if the click should be eaten or not
-						// this is a bit sad, because it limits mouse polling to client fps. fix later.
-						mouseSubject.notifyAll(e.mouse);
-					};
+					gui.update(e);
 					needsSent = false;
 				}
+			}
+			while (auto opt = mouseMessenger.getMessageFront()) {
+				e.mouse = opt.value();
+				if (!gui.update(e))
+					mouseSubject.notifyAll(e.mouse);
+				needsSent = false;
 			}
 			if (needsSent) {
 				if (!gui.update(e)) { 

@@ -3,7 +3,7 @@
 
 #include "Framework/FrameworkConstants.hpp"
 #include "Globals.hpp"
-#define POLLING_RATE_MS 10
+#define POLLING_RATE_MS 3
 #define UPDATE_RATE_FPS 60
 #define FRAMES_BETWEEN_STAT_UPDATES 60
 #define DISABLE_RUNTIME_CONSOLE false

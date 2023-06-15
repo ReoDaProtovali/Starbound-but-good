@@ -30,21 +30,19 @@ void ClientWorldState::testDraw()
 			if (m.mouseButton == SDL_BUTTON_LEFT) lMouseDown = false;
 			if (m.mouseButton == SDL_BUTTON_RIGHT) rMouseDown = false;
 		}
-	}
-	if (playerCam) {
-		if (lMouseDown) {
+		if (lMouseDown && playerCam) {
 			int spriteIndex = res.getTileInfo("vanilla:richstone").value().get().spriteIndex;
 			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
 
 			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
 		}
 
-		if (rMouseDown) {
+		if (rMouseDown && playerCam) {
 			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
 			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
 		}
-
 	}
+
 
 	DebugStats& db = globals.debug;
 
@@ -155,7 +153,7 @@ void ClientWorldState::testDraw()
 
 	static Text controlsText(DefaultFonts.videotype, "SBBB alpha v0.0002\nControls -  \nMove: WASD\nZoom: Q and E\nFullscreen: 5\nExplode: B");
 	controlsText.setLeftJustification(true);
-	//controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
+	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 
 	//gui.draw(renderer.screenFBO);
 	//testDrawGUI();

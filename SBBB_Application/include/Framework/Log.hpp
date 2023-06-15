@@ -7,7 +7,7 @@
 #define ERROR_LOG(expr) std::cout << "\nERROR: " << expr << "\n\n";
 
 // A bit messy but obvious
-#ifdef SBBB_DEBUG
+#ifdef ERROR_LOG
 
 // handy disableable specifications
 #ifdef LOADLOGGING_ENABLED

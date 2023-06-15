@@ -26,7 +26,7 @@ void Simulation::spawnTestEntities()
 		//(*m_entities.begin()).m_eptr->wake();
 	}
 #else
-	for (int i = 0; i < 0; i++) {
+	for (int i = 0; i < 10; i++) {
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
 #endif
@@ -63,7 +63,7 @@ void Simulation::tick()
 	}
 
 	if (globals.worldDoneGenerating) {
-		m_physicsWorld.SetGravity(b2Vec2(0.f, -20.f));
+		m_physicsWorld.SetGravity(b2Vec2(0.f, -29.f));
 	}
 	m_physicsWorld.Step(1.f / (float)UPDATE_RATE_FPS, 6, 3);
 

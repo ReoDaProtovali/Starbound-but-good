@@ -9,14 +9,15 @@ void Player::onSpawn(b2World& p_world) {
 
 	setColliderShapeAsBox(m_entityDims.x / 2.f, m_entityDims.y - 0.02f);
 	//setColliderShapeAsCircle(1.5f);
-	setFriction(1.0f);
+	setFriction(0.0f); // we will let the movement controller do this
 
 	setRestitution(0.00f);
-
+	
 	m_def.awake = true;
 	m_def.allowSleep = false;
 
 	spawnCollider(p_world);
+	//setLinearDamping(0.f);
 }
 void Player::onUpdate()
 {
@@ -41,6 +42,7 @@ void Player::onUpdate()
 	//if (rc.hit)
 	//	applyForce(glm::vec2(0.f, (20.f + rc.point.y)) * 4.f);
 
+
 	if (m_body->GetLinearVelocity().x < 0 && fabs(getVelocity().x) > 0.1f) {
 		setScale(glm::vec2(-1.f, 1.f));
 	}
@@ -63,7 +65,16 @@ void Player::draw(DrawSurface& p_target, DrawStates& p_states)
 
 	m_sprite.setOriginRelative(OriginLoc::CENTER);
 	m_sprite.draw(p_target, p_states);
+	//auto vel = getVelocity();
+	//float vertdistAhead = std::max(std::abs(vel.y) / 15.f, 0.3f);
 
+	//auto raycast1 = rayCastRelative(-0.745f, -1.4f, 0.f, -vertdistAhead);
+	//auto raycast2 = rayCastRelative(0.f, -1.4f, 0.f, -vertdistAhead);
+	//auto raycast3 = rayCastRelative(0.745f, -1.4f, 0.f, -vertdistAhead);
+
+	//drawRayCast(raycast1, p_target, p_states);
+	//drawRayCast(raycast2, p_target, p_states);
+	//drawRayCast(raycast3, p_target, p_states);
 	m_posMut.unlock_shared();
 }
 
