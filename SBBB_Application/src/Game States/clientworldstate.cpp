@@ -269,7 +269,7 @@ void ClientWorldState::init()
 
 	//win95BoxText.setPixelOffset(3.f, 16.f);
 	//win95BoxText.setLocalBounds(Rect(0.1f, 0.2f, 1.f, 0.2f));
-	win95BoxText.setPixelOffset(3.f, 0.f);
+	win95BoxText.setPixelOffset(6.f, 0.f);
 	win95BoxText.setPixelHeight(16.f);
 	win95BoxText.setPixelWidth(444.f);
 	win95BoxText.textColor = glm::vec3(1.f);

@@ -20,6 +20,7 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	feedbackMesh.addFloatAttrib(2);
 	feedbackMesh.addFloatAttrib(1);
 	feedbackMesh.addFloatAttrib(4);
+	feedbackMesh.setStreamType(GL_DYNAMIC_DRAW);
 }
 
 WorldChunk::WorldChunk(const WorldChunk& other) noexcept :
@@ -593,17 +594,17 @@ void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 {
 	DrawStates newStates = DrawStates(p_drawStates);
 
-	//if (!feedbackMesh.feedbackInitDone) {
-	//	feedbackMesh.initFeedbackBuffer(45 * CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH, tileMesh.VAO->ID);
-	//}
+	if (!feedbackMesh.feedbackInitDone) {
+		feedbackMesh.initFeedbackBuffer(45 * CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH, tileMesh.VAO->ID);
+	}
 	newStates.setTransform(p_drawStates.m_transform * m_transform);
-	//if (feedbackMeshReady) {
-	//	//newStates.setTransform(p_drawStates.m_transform);
-	//	p_target.draw(feedbackMesh, GL_TRIANGLES, newStates);
-	//	return;
-	//}
-	//feedbackMesh.startFeedback(GL_TRIANGLES);
+	if (feedbackMeshReady) {
+		//newStates.setTransform(p_drawStates.m_transform);
+		p_target.draw(feedbackMesh, GL_TRIANGLES, newStates);
+		return;
+	}
+	feedbackMesh.startFeedback(GL_TRIANGLES);
 	p_target.draw(tileMesh, GL_POINTS, newStates, false);
-	//feedbackMesh.endFeedback();
-	//feedbackMeshReady = true;
+	feedbackMesh.endFeedback();
+	feedbackMeshReady = true;
 }

@@ -19,18 +19,18 @@ WorldRenderer::WorldRenderer()
 
 	auto& res = ResourceManager::Get();
 	res.loadAllTileSets();
-	Texture tilesheet = res.getTileSheetTexture();
+	tilesheet = res.getTileSheetTexture();
 
 	glm::mat4 tmp = glm::mat4(1.f);
-	auto test1 = m_tileShader.addMat4Uniform("transform", tmp);
+	m_tileShader.addMat4Uniform("transform", tmp);
 	tileSheetHeightUniformLoc = m_tileShader.addIntUniform("tileSheetHeight", tilesheet.height);
 	worldPosUniformLoc = m_tileShader.addVec2Uniform("worldPos", glm::vec2(0.f));
 	tileSheetUniformLoc = m_tileShader.addTexUniform("tileSheet", 0);
 	generateConnectionsUniformLoc = m_tileShader.addBoolUniform("generateConnections", 0);
 
-	auto test2 = m_tileFeedbackShader.addMat4Uniform("transform", tmp);
-	m_tileFeedbackShader.addTexUniform("tileSheet", 0);
-	m_tileFeedbackShader.addIntUniform("tileSheetHeight", tilesheet.height);
+	m_tileFeedbackShader.addMat4Uniform("transform", tmp);
+	feedback_tileSheetUniformLoc = m_tileFeedbackShader.addTexUniform("tileSheet", 0);
+	feedback_tileSheetHeightUniformLoc = m_tileFeedbackShader.addIntUniform("tileSheetHeight", tilesheet.height);
 
 	Texture tileSheetTexture = res.getTileSheetTexture();
 	m_tileDrawStates.attachTexture(tileSheetTexture);
@@ -147,16 +147,18 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 
 				m_tileFBO.clearDepthRegion((GLint)roundf(pixelCoords.x), (GLint)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile));
 
-				m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 
-				//if (chunk.feedbackMeshReady) {
-				//	m_tileDrawStates.attachShader(&m_tileFeedbackShader);
-				//	m_tileFeedbackShader.use();
-				//}
-				//else {
+				if (chunk.feedbackMeshReady) {
+					m_tileDrawStates.attachShader(&m_tileFeedbackShader);
+					m_tileFeedbackShader.setIntUniform(feedback_tileSheetHeightUniformLoc, tilesheet.height);
+					m_tileFeedbackShader.setTexUniform(feedback_tileSheetUniformLoc, 0);
+					m_tileFeedbackShader.use();
+				}
+				else {
 					m_tileDrawStates.attachShader(&m_tileShader);
+					m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 					m_tileShader.use();
-				//}
+				}
 				//p_surface.bind();
 				m_tileFBO.bind();
 				chunk.draw(m_tileFBO, m_tileDrawStates);

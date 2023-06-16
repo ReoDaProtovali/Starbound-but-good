@@ -17,8 +17,13 @@ class WorldRenderer {
 	GLuint worldPosUniformLoc = 0;
 	GLuint tileSheetUniformLoc = 0;
 	GLuint generateConnectionsUniformLoc = 0;
-	Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 
+	Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
+	// different shaders need different uniforms
+	GLuint feedback_tileSheetUniformLoc = 0;
+	GLuint feedback_tileSheetHeightUniformLoc = 0;
+
+	Texture tilesheet;
 	DrawStates m_tileDrawStates;
 
 	Camera* m_viewCam = nullptr;

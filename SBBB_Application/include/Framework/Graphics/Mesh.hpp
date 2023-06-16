@@ -269,7 +269,7 @@ public:
 		glDeleteQueries(1, &primitiveQuery);
 
 		glCheck(glEndTransformFeedback());
-		//glCheck(glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0));
+		glCheck(glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0));
 		//glCheck(glDisable(GL_RASTERIZER_DISCARD));
 	}
 	bool hasData() { return (bool)m_verts.size(); };
