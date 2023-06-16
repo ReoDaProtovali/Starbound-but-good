@@ -1,14 +1,13 @@
 #version 330
-#extension GL_ARB_explicit_uniform_location : enable
 
-layout(location = 3) uniform int Seed;
+uniform int Seed;
 
 float map(float value, float min1, float max1, float min2, float max2) {
   return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
 
 layout(location = 0) out vec4 fragColor;
-layout(location = 2) uniform vec2 WorldPos;
+uniform vec2 WorldPos;
 
 void main()
 {

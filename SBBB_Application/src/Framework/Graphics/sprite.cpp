@@ -62,6 +62,11 @@ void Sprite::attachTexture(Texture p_texture)
 	m_attachedTexture = p_texture;
 }
 
+Texture& Sprite::getTexture()
+{
+	return m_attachedTexture;
+}
+
 
 
 void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
@@ -84,7 +89,7 @@ void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 	if (m_attachedShader) {
 		m_attachedShader->use();
 		if (opacity != 0.f) { // scuffed check, this is kinda bad
-			m_attachedShader->setFloatUniform(2, opacity);
+			m_attachedShader->setFloatUniform(m_attachedShader->getUniformLoc("opacity"), opacity);
 		}
 	}
 
@@ -93,7 +98,7 @@ void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 
 	p_target.draw(m_spriteMesh, GL_TRIANGLES, newStates);
 	if (m_attachedShader && opacity != 0.f)
-		m_attachedShader->setFloatUniform(2, 0.f); // keep it defaulted for other things using the shader.
+		m_attachedShader->setFloatUniform(m_attachedShader->getUniformLoc("opacity"), 0.f); // keep it defaulted for other things using the shader.
 }
 
 void Sprite::setOriginRelative(OriginLoc p_origin)

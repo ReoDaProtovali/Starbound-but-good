@@ -14,7 +14,7 @@ void GameServer::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 }
 
 void GameServer::stop() {
-	m_stopping = true;
+	stopping = true;
 	serverThread.join();
 }
 void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
@@ -44,7 +44,8 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			}
 			// prevent it from overworking
 			std::this_thread::sleep_for(std::chrono::microseconds(1000000 / (UPDATE_RATE_FPS * 2)));
-			if (m_stopping) break;
+			if (stateManager.maybeStopServer()) stopping = true;
+			if (stopping) break;
 		}
 		stateManager.close();
 		serverWindow.cleanUp();

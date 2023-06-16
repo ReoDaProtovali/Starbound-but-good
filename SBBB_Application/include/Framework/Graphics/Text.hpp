@@ -8,7 +8,7 @@
 #include "Framework/Graphics/DrawStates.hpp"
 #include "Framework/Graphics/DrawSurface.hpp"
 #include "Framework/Graphics/TransformObject.hpp"
-
+#include "Framework/Graphics/GenericShaders.hpp"
 #include <string>
 #include <map>
 #include <string_view>
@@ -87,5 +87,6 @@ private:
 	float m_normalizedWidth = 0.f;
 	float m_normalizedHeight = 0.f;
 	float m_normalizedLineHeight = 0.f;
+	GenericShaders& gs = GenericShaders::Get();
 	//static Shader textShader;
 };

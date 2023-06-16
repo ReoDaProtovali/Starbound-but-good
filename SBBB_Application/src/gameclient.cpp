@@ -19,7 +19,7 @@ void GameClient::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 }
 
 void GameClient::stop() {
-	m_stopping = true;
+	stopping = true;
 	clientThread.join();
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
@@ -80,7 +80,8 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 			gw.displayNewFrame();
 
-			if (m_stopping) break;
+			if (stateManager.maybeStopClient()) stopping = true;
+			if (stopping) break;
 		}
 		gw.cleanUp();
 	} catch (std::exception& ex) {

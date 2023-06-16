@@ -33,7 +33,6 @@ private: GameRenderer renderer{ gw };
 
 	// thread management
 	std::thread clientThread;
-	std::atomic_bool m_stopping = false;
 	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
 
 
@@ -50,6 +49,7 @@ public:
 	InputHandler inp;
 	std::mutex inputReadWriteMutex;
 	std::atomic<bool> flagResize = false;
+	std::atomic_bool stopping = false;
 
 };
 

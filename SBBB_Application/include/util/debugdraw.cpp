@@ -84,7 +84,7 @@ void SBBBDebugDraw::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h,
 	GenericShaders& gs = GenericShaders::Get();
 	DrawStates d;
 	d.attachShader(&gs.solidColorShader);
-	gs.solidColorShader.setVec3Uniform(1, p_col);
+	gs.solidColorShader.setVec3Uniform(gs.solidColor_colorUniformLoc, p_col);
 	auto currentTransform = glm::mat4(1);
 	currentTransform = glm::translate(currentTransform, glm::vec3(p_x, p_y, 0));
 	d.setTransform(p_camera.getTransform() * currentTransform);
@@ -128,7 +128,7 @@ void SBBBDebugDraw::drawLineImmediate(float px1, float py1, float px2, float py2
 	GenericShaders& gs = GenericShaders::Get();
 	DrawStates d;
 	d.attachShader(&gs.solidColorShader);
-	gs.solidColorShader.setVec3Uniform(1, p_col);
+	gs.solidColorShader.setVec3Uniform(gs.solidColor_colorUniformLoc, p_col);
 	//auto currentTransform = glm::mat4(1);
 	//currentTransform = glm::translate(currentTransform, glm::vec3(px1, py1, 0));
 	d.setTransform(p_camera.getTransform());
@@ -171,7 +171,7 @@ void SBBBDebugDraw::drawLineImmediate(float px1, float py1, float px2, float py2
 
 	GenericShaders& gs = GenericShaders::Get();
 	p_states.attachShader(&gs.solidColorShader);
-	gs.solidColorShader.setVec3Uniform(1, p_col);
+	gs.solidColorShader.setVec3Uniform(gs.solidColor_colorUniformLoc, p_col);
 	//auto currentTransform = glm::mat4(1);
 	//currentTransform = glm::translate(currentTransform, glm::vec3(px1, py1, 0));
 	p_surface.draw(s_Mesh, GL_TRIANGLES, p_states);

@@ -55,37 +55,37 @@ public:
 	/// Bind the shader for use with subsequent OpenGL draw calls.
 	void use() const;
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a boolean.
-	void addBoolUniform(std::string_view p_name, bool p_value);
+	GLint addBoolUniform(std::string_view p_name, bool p_value);
 	void setBoolUniform(GLint p_loc, bool p_value) const;
 	static void setBoolUniformStatic(GLint p_loc, bool p_value);
 
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, an integer.
-	void addIntUniform(std::string_view p_name, GLint p_value);
+	GLint addIntUniform(std::string_view p_name, GLint p_value);
 	void setIntUniform(GLint p_loc, GLint p_value) const;
 	static void setIntUniformStatic(GLint p_loc, GLint p_value);
 
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a float.
-	void addFloatUniform(std::string_view p_name, GLfloat p_value);
+	GLint addFloatUniform(std::string_view p_name, GLfloat p_value);
 	void setFloatUniform(GLint p_loc, GLfloat p_value) const;
 	static void setFloatUniformStatic(GLint p_loc, GLfloat p_value);
 
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, an OpenGL texture.
-	void addTexUniform(std::string_view p_name, GLuint p_value);
+	GLint addTexUniform(std::string_view p_name, GLuint p_value);
 	void setTexUniform(GLint p_loc, GLuint p_value);
 	static void setTexUniformStatic(GLint p_loc, GLuint p_value);
 
 	/// A function that handles assigning a value to a uniform within the shader's program. In this case, a 4x4 matrix.
-	void addMat4Uniform(std::string_view p_name, glm::mat4& p_value);
+	GLint addMat4Uniform(std::string_view p_name, glm::mat4& p_value);
 	void setMat4Uniform(GLint p_loc, glm::mat4& p_value);
 	static void setMat4UniformStaticNamed(std::string_view p_name, glm::mat4& p_value, GLuint p_progID);
 	static void setMat4UniformStatic(GLint p_loc, glm::mat4& p_value);
 
-	void addVec2Uniform(std::string_view p_name, glm::vec2 p_value);
+	GLint addVec2Uniform(std::string_view p_name, glm::vec2 p_value);
 	void setVec2Uniform(GLint p_loc, glm::vec2 p_value) const;
 	static void setVec2UniformStatic(GLint p_loc, glm::vec2 p_value);
 
 
-	void addVec3Uniform(std::string_view p_name, glm::vec3 p_value);
+	GLint addVec3Uniform(std::string_view p_name, glm::vec3 p_value);
 	void setVec3Uniform(GLint p_loc, glm::vec3 p_value) const;
 	static void setVec3UniformStatic(GLint p_loc, glm::vec3 p_value);
 	// Used to set a list of uniforms using uniform objects.

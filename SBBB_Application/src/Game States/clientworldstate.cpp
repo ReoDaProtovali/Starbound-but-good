@@ -104,8 +104,12 @@ void ClientWorldState::testDraw()
 		switch (opt.value().keyCode) {
 		case SDLK_b:
 			bombCounter--;
-			if (playerCam)
-				bombSprite.setPosition(glm::vec3(playerCam->apparentPos.x, playerCam->apparentPos.y, 2.f));
+			if (playerCam) {
+				if (Globals::shouldInterpolate())
+					bombSprite.setPosition(glm::vec3(playerCam->apparentPos.x, playerCam->apparentPos.y, 2.f));
+				else
+				 bombSprite.setPosition(glm::vec3(playerCam->pos.x, playerCam->pos.y, 2.f));
+			}
 			break;
 		}
 	}
@@ -166,6 +170,8 @@ void ClientWorldState::loadTextures()
 	res.loadTexID("./res/roetest.png", "reotest");
 	res.loadTexID("./res/me.png", "metexture");
 	res.loadTexID("./res/bomb.png", "bombtexture");
+	res.loadTexID("./res/navmenu.png", "navmenu");
+
 }
 
 void ClientWorldState::resume()
@@ -178,6 +184,7 @@ void ClientWorldState::close()
 	gui.removeElement("testbutton");
 	gui.removeElement("fpstext");
 	gui.removeElement("debugtext");
+	gui.removeElement("win95box");
 }
 
 void ClientWorldState::init()
@@ -238,6 +245,52 @@ void ClientWorldState::init()
 	fpsDragBar.enableBackground();
 	fpsTextField.addChild(&fpsDragBar);
 
+	win95Box.setScreenBounds(Rect(100.f, 500.f, 450.f, 300.f));
+	win95Box.useWin95Background();
+
+
+	Texture navTex = res.getTexture("navmenu");
+
+	navBarImage.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
+	navBarImage.setPixelWidth(444.f);
+	navBarImage.setPixelHeight(14.f);
+	navBarImage.setPixelOffset(3.f, 5.f);
+	navBarImage.setImage(navTex);
+	navBarImage.setImageJustification(Corner::TOP_RIGHT);
+
+	//navDragBar.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
+	navDragBar.setPixelOffset(3.f, 3.f);
+	navDragBar.setPixelWidth(444.f);
+	navDragBar.setPixelHeight(16.f);
+	navDragBar.enableBackground();
+	navDragBar.backgroundColor = glm::vec3(0.f, 0.f, 0.67f);
+	win95Box.addChild(&navDragBar);
+	win95Box.addChild(&navBarImage);
+
+	//win95BoxText.setPixelOffset(3.f, 16.f);
+	//win95BoxText.setLocalBounds(Rect(0.1f, 0.2f, 1.f, 0.2f));
+	win95BoxText.setPixelOffset(3.f, 0.f);
+	win95BoxText.setPixelHeight(16.f);
+	win95BoxText.setPixelWidth(444.f);
+	win95BoxText.textColor = glm::vec3(1.f);
+	win95BoxText.setText("button that crashes the game");
+	win95BoxText.setTextHeight(15.f);
+	win95BoxText.centered = false;
+	win95Box.addChild(&win95BoxText);
+
+	funnyButtonContainer.setLocalBounds(Rect(0.25, 0.375, 0.5, 0.25));
+	funnyButtonContainer.useWin95Background();
+
+	funnyButton.disableBackground();
+	funnyButton.onClick([&]() {
+			GameStateManager::Get().close();
+		});
+	funnyButtonContainer.addChild(&funnyButton);
+	win95Box.addChild(&funnyButtonContainer);
+
+
+
+
 
 	debugTextField.enableBackground();
 	debugTextField.backgroundOpacity = 0.5f;
@@ -258,6 +311,7 @@ void ClientWorldState::init()
 
 	gui.addElement(&fpsTextField);
 	gui.addElement(&debugTextField);
+	gui.addElement(&win95Box);
 
 	LOAD_LOG("Creating lighting subsystem...");
 

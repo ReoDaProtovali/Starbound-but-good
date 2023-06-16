@@ -1,5 +1,5 @@
 #version 330 core
-#extension GL_ARB_explicit_uniform_location : enable
+
 out vec4 FragColor;
 
 in vec2 TexCoord;
@@ -8,8 +8,8 @@ in vec4 pos;
 //in float out_ID; // for testing
 //in float greyscale; // for testing
 
-layout(location = 1) uniform int tileSheetHeight;
-layout(location = 3) uniform sampler2D tileSheet;
+uniform int tileSheetHeight;
+uniform sampler2D tileSheet;
 
 const int TILESHEET_WIDTH = 96;
 

@@ -15,7 +15,6 @@ void Application::run()
 	while (true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(POLLING_RATE_MS));
 		pollEvents();
-
 		// handle thread exceptions
 		if (auto exp = m_exceptionQueue.tryPop()) {
 			try {
@@ -28,6 +27,7 @@ void Application::run()
 			}
 			break;
 		}
+		if (client.stopping || localServer.stopping) break;
 
 		if (!gameActive) break;
 	}

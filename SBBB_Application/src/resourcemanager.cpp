@@ -220,6 +220,9 @@ void ResourceManager::loadGeneratorShaders() {
 			fs::path vertexShaderPath = generatorsJSONPath.parent_path() / "PassThroughVS.glsl";
 			fs::path fragmentShaderPath = generatorsJSONPath.parent_path() / e["file"];
 			m_generatorShaders[e["name"]] = Shader(vertexShaderPath.string().c_str(), fragmentShaderPath.string().c_str());
+			m_generatorShaders[e["name"]].addIntUniform("Seed", 0);
+			m_generatorShaders[e["name"]].addVec2Uniform("WorldPos", glm::vec2(0));
+
 		}
 	}
 	catch (json::type_error e) {

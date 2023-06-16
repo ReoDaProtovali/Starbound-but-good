@@ -48,7 +48,7 @@ public:
 		}
 
 		// We'll assume that every shader uses a transform matrix, because that's pretty much a given.
-		shader->setMat4UniformStaticNamed("transform", p_states.m_transform, shader->program->ID);
+		shader->setMat4Uniform(shader->getUniformLoc("transform"), p_states.m_transform);
 #ifndef DISABLE_DEBUG_STATS
 		globals.debug.drawCalls++;
 #endif

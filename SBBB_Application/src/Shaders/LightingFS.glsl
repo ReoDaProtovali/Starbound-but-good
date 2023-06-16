@@ -1,10 +1,9 @@
 #version 330 core
-#extension GL_ARB_explicit_uniform_location : enable
 out vec4 FragColor;
 in vec2 TexCoord;
 
-layout(location = 1) uniform sampler2D lightingTexture;
-layout(location = 2) uniform sampler2D screenTexture;
+uniform sampler2D lightingTexture;
+uniform sampler2D screenTexture;
 
 
 

@@ -22,17 +22,13 @@ WorldRenderer::WorldRenderer()
 	Texture tilesheet = res.getTileSheetTexture();
 
 	glm::mat4 tmp = glm::mat4(1.f);
-	m_tileShader.addMat4Uniform("transform", tmp);
-	m_tileShader.addIntUniform("tileSheetHeight", tilesheet.height);
-	m_tileShader.addVec2Uniform("worldPos", glm::vec2(0.f));
-	m_tileShader.addTexUniform("tileSheet", 0);
-	m_tileShader.addBoolUniform("generateConnections", 0);
-	
-	tileSheetHeightUniformLoc = m_tileShader.getUniformLoc("tileSheetHeight");
-	worldPosUniformLoc = m_tileShader.getUniformLoc("worldPos");
-	tileSheetUniformLoc = m_tileShader.getUniformLoc("tileSheet");
-	generateConnectionsUniformLoc = m_tileShader.getUniformLoc("generateConnections");
+	auto test1 = m_tileShader.addMat4Uniform("transform", tmp);
+	tileSheetHeightUniformLoc = m_tileShader.addIntUniform("tileSheetHeight", tilesheet.height);
+	worldPosUniformLoc = m_tileShader.addVec2Uniform("worldPos", glm::vec2(0.f));
+	tileSheetUniformLoc = m_tileShader.addTexUniform("tileSheet", 0);
+	generateConnectionsUniformLoc = m_tileShader.addBoolUniform("generateConnections", 0);
 
+	auto test2 = m_tileFeedbackShader.addMat4Uniform("transform", tmp);
 	m_tileFeedbackShader.addTexUniform("tileSheet", 0);
 	m_tileFeedbackShader.addIntUniform("tileSheetHeight", tilesheet.height);
 
@@ -81,16 +77,16 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 		if (update.value().type == ChunkUpdateType::DONE_GENERATING || update.value().type == ChunkUpdateType::NEW_VBO_DATA) {
 			ChunkPos pos{ update.value().x, update.value().y };
 			// workaround to fix chunk border bug
-			for (int i = -1; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					if (i == 0 && j == 0) continue;
-					auto neighborPos = ChunkPos(pos.x + i, pos.y + j);
-					if (!s_chunkMap.contains(neighborPos)) continue;
-					WorldChunk& c = s_chunkMap[neighborPos];
-					if (c.invalid) continue;
-					c.feedbackMeshReady = false;
-				}
-			}
+			//for (int i = -1; i <= 1; i++) {
+			//	for (int j = -1; j <= 1; j++) {
+			//		if (i == 0 && j == 0) continue;
+			//		auto neighborPos = ChunkPos(pos.x + i, pos.y + j);
+			//		if (!s_chunkMap.contains(neighborPos)) continue;
+			//		WorldChunk& c = s_chunkMap[neighborPos];
+			//		if (c.invalid) continue;
+			//		c.feedbackMeshReady = false;
+			//	}
+			//}
 			drawnChunkCount += redrawCameraView(chunkFrame);
 			m_chunkUpdateObserver.clear();
 			break;
@@ -153,14 +149,14 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 
 				m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 
-				if (chunk.feedbackMeshReady) {
-					m_tileDrawStates.attachShader(&m_tileFeedbackShader);
-					m_tileFeedbackShader.use();
-				}
-				else {
+				//if (chunk.feedbackMeshReady) {
+				//	m_tileDrawStates.attachShader(&m_tileFeedbackShader);
+				//	m_tileFeedbackShader.use();
+				//}
+				//else {
 					m_tileDrawStates.attachShader(&m_tileShader);
 					m_tileShader.use();
-				}
+				//}
 				//p_surface.bind();
 				m_tileFBO.bind();
 				chunk.draw(m_tileFBO, m_tileDrawStates);

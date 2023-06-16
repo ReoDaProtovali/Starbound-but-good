@@ -198,6 +198,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\guicontainer.cpp" />
     <ClCompile Include="src\guidragbar.cpp" />
     <ClCompile Include="src\Game States\clientworldstate.cpp" />
     <ClCompile Include="src\defaultfonts.cpp" />
@@ -247,6 +248,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\GUI.hpp" />
     <ClInclude Include="include\DefaultFonts.hpp" />
     <ClInclude Include="include\GUIButton.hpp" />
+    <ClInclude Include="include\GUIContainer.hpp" />
     <ClInclude Include="include\GUIDragBar.hpp" />
     <ClInclude Include="include\GUITextField.hpp" />
     <ClInclude Include="include\GUIWidget.hpp" />
@@ -354,6 +356,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\TileFS.glsl" />
     <None Include="src\Shaders\TileGS.glsl" />
     <None Include="src\Shaders\TileVS.glsl" />
+    <None Include="src\Shaders\Win95BgFS.glsl" />
+    <None Include="src\Shaders\Win95BgVS.glsl" />
     <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>

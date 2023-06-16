@@ -23,7 +23,7 @@ public:
 	// Shader must have the appropriate vertex attribute format
 	void attachShader(Shader* p_shader);
 	void attachTexture(Texture p_texture);
-
+	Texture& getTexture();
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
 
 	// We don't want to override the setorigin class of the inherited class, so we name it something different

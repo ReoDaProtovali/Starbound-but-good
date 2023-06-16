@@ -92,7 +92,5 @@ void PlayerAI::update()
 		m_host->teleportColliderRelative(0.05f * 0.8f, newY * TILES_TO_METERS);
 		m_host->setVelocity(b2Vec2(vel.x, vel.y));
 	}
-	//}
-
 
 }

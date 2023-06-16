@@ -256,7 +256,7 @@ void Shader::use() const {
 //		}
 //	}
 //}
-void Shader::addBoolUniform(std::string_view p_name, bool p_value)
+GLint Shader::addBoolUniform(std::string_view p_name, bool p_value)
 {
 	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.data());
@@ -265,13 +265,14 @@ void Shader::addBoolUniform(std::string_view p_name, bool p_value)
 		LOAD_LOG("addBoolUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		LOAD_LOG("addBoolUniform: Uniform location not found for " << p_name << ".");
+		ERROR_LOG("addBoolUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	Uniform u = Uniform{ p_name, UniformTypes::BOOL, p_value };
 	u.loc = loc;
 	m_uniforms.push_back(u);
 	glCheck(glUniform1i(loc, (int)p_value));
+	return loc;
 }
 void Shader::setBoolUniform(GLint p_loc, bool p_value) const
 {
@@ -282,7 +283,7 @@ void Shader::setBoolUniformStatic(GLint p_loc, bool p_value)
 {
 	glCheck(glUniform1i(p_loc, (int)p_value));
 }
-void Shader::addIntUniform(std::string_view p_name, GLint p_value)
+GLint Shader::addIntUniform(std::string_view p_name, GLint p_value)
 {
 	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.data());
@@ -291,13 +292,14 @@ void Shader::addIntUniform(std::string_view p_name, GLint p_value)
 		LOAD_LOG("addIntUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		LOAD_LOG("addIntUniform: Uniform location not found for " << p_name << ".");
+		ERROR_LOG("addIntUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	Uniform u = Uniform{ p_name, UniformTypes::INT, p_value };
 	u.loc = loc;
 	m_uniforms.push_back(u);
 	glCheck(glUniform1i(loc, p_value));
+	return loc;
 }
 void Shader::setIntUniform(GLint p_loc, GLint p_value) const
 {
@@ -308,7 +310,7 @@ void Shader::setIntUniformStatic(GLint p_loc, GLint p_value)
 {
 	glCheck(glUniform1i(p_loc, p_value));
 }
-void Shader::addTexUniform(std::string_view p_name, GLuint p_value)
+GLint Shader::addTexUniform(std::string_view p_name, GLuint p_value)
 {
 	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.data());
@@ -317,13 +319,14 @@ void Shader::addTexUniform(std::string_view p_name, GLuint p_value)
 		LOAD_LOG("addTexUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		LOAD_LOG("addTexUniform: Uniform location not found for " << p_name << ".");
+		ERROR_LOG("addTexUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	Uniform u = Uniform{ p_name, UniformTypes::TEX, p_value };
 	u.loc = loc;
 	m_uniforms.push_back(u);
 	glCheck(glUniform1i(loc, p_value));
+	return loc;
 }
 
 void Shader::setTexUniform(GLint p_loc, GLuint p_value)
@@ -337,7 +340,7 @@ void Shader::setTexUniformStatic(GLint p_loc, GLuint p_value)
 	glCheck(glUniform1i(p_loc, p_value));
 }
 
-void Shader::addFloatUniform(std::string_view p_name, GLfloat p_value)
+GLint Shader::addFloatUniform(std::string_view p_name, GLfloat p_value)
 {
 	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.data());
@@ -346,13 +349,14 @@ void Shader::addFloatUniform(std::string_view p_name, GLfloat p_value)
 		LOAD_LOG("addFloatUniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		LOAD_LOG("addFloatUniform: Uniform location not found for " << p_name << ".");
+		ERROR_LOG("addFloatUniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	Uniform u = Uniform{ p_name, UniformTypes::FLOAT, p_value };
 	u.loc = loc;
 	m_uniforms.push_back(u);
 	glCheck(glUniform1f(loc, p_value));
+	return loc;
 }
 void Shader::setFloatUniform(GLint p_loc, GLfloat p_value) const
 {
@@ -363,7 +367,7 @@ void Shader::setFloatUniformStatic(GLint p_loc, GLfloat p_value)
 {
 	glCheck(glUniform1f(p_loc, p_value));
 }
-void Shader::addMat4Uniform(std::string_view p_name, glm::mat4& p_value)
+GLint Shader::addMat4Uniform(std::string_view p_name, glm::mat4& p_value)
 {
 	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.data());
@@ -379,6 +383,7 @@ void Shader::addMat4Uniform(std::string_view p_name, glm::mat4& p_value)
 	u.loc = loc;
 	m_uniforms.push_back(u);
 	glCheck(glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(p_value)));
+	return loc;
 	}
 
 void Shader::setMat4Uniform(GLint p_loc, glm::mat4& p_value)
@@ -395,7 +400,7 @@ void Shader::setMat4UniformStaticNamed(std::string_view p_name, glm::mat4& p_val
 		std::cout << "addMat4Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << "." << std::endl;
 	}
 	else {
-		std::cout << "addMat4Uniform: Uniform location not found for " << p_name << "." << std::endl;
+		ERROR_LOG("addMat4Uniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	glCheck(glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(p_value)));
@@ -406,7 +411,7 @@ void Shader::setMat4UniformStatic(GLint p_loc, glm::mat4& p_value)
 	glCheck(glUniformMatrix4fv(p_loc, 1, GL_FALSE, glm::value_ptr(p_value)));
 }
 
-void Shader::addVec2Uniform(std::string_view p_name, glm::vec2 p_value)
+GLint Shader::addVec2Uniform(std::string_view p_name, glm::vec2 p_value)
 {
 	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.data());
@@ -415,13 +420,14 @@ void Shader::addVec2Uniform(std::string_view p_name, glm::vec2 p_value)
 		LOAD_LOG("addVec2Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		LOAD_LOG("addVec2Uniform: Uniform location not found for " << p_name << ".");
+		ERROR_LOG("addVec2Uniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	Uniform u = Uniform{ p_name, UniformTypes::VEC2, p_value };
 	u.loc = loc;
 	m_uniforms.push_back(u);
 	glCheck(glUniform2f(loc, p_value.x, p_value.y));
+	return loc;
 }
 
 void Shader::setVec2Uniform(GLint p_loc, glm::vec2 p_value) const
@@ -435,7 +441,7 @@ void Shader::setVec2UniformStatic(GLint p_loc, glm::vec2 p_value)
 	glCheck(glUniform2f(p_loc, p_value.x, p_value.y));
 }
 
-void Shader::addVec3Uniform(std::string_view p_name, glm::vec3 p_value)
+GLint Shader::addVec3Uniform(std::string_view p_name, glm::vec3 p_value)
 {
 	use();
 	GLint loc = glGetUniformLocation(program->ID, p_name.data());
@@ -444,13 +450,14 @@ void Shader::addVec3Uniform(std::string_view p_name, glm::vec3 p_value)
 		LOAD_LOG("addVec2Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
 	}
 	else {
-		LOAD_LOG("addVec2Uniform: Uniform location not found for " << p_name << ".");
+		ERROR_LOG("addVec2Uniform: Uniform location not found for " << p_name << ".");
 	}
 #endif
 	Uniform u = Uniform{ p_name, UniformTypes::VEC3, p_value };
 	u.loc = loc;
 	m_uniforms.push_back(u);
 	glCheck(glUniform3f(loc, p_value.x, p_value.y, p_value.z));
+	return loc;
 }
 
 void Shader::setVec3Uniform(GLint p_loc, glm::vec3 p_value) const
@@ -470,8 +477,9 @@ GLuint Shader::getUniformLoc(std::string_view shaderName)
 	for (auto& u : m_uniforms) {
 		if (u.name == shaderName) loc = u.loc;
 	}
-	if (loc == -1) {
+	if (loc == -1 && shaderName != "transform") {
 		ERROR_LOG("Could not find uniform location for " << shaderName << ".");
 	}
+	// wha
 	return loc;
 }

@@ -1,15 +1,15 @@
 #version 330 core
-#extension GL_ARB_explicit_uniform_location : enable
+
 
 layout (points) in;
 // max_verts was determined experimentally
 layout (triangle_strip, max_vertices = 45) out;
 
-layout(location = 0) uniform mat4 transform;
-layout(location = 1) uniform int tileSheetHeight;
-layout(location = 2) uniform vec2 worldPos;
-// layout(location = 3) uniform sampler2D tileSheet;
-layout(location = 4) uniform bool generateConnections;
+uniform mat4 transform;
+uniform int tileSheetHeight;
+uniform vec2 worldPos;
+// uniform sampler2D tileSheet;
+uniform bool generateConnections;
 
 out vec2 TexCoord;
 out float zLevel;

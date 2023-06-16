@@ -24,7 +24,6 @@ class GameServer
 
 	// thread management
 	std::thread serverThread;
-	std::atomic_bool m_stopping = false;
 
 	// offscreen rendering on server thread
 	GameWindow serverWindow;
@@ -32,5 +31,6 @@ public:
 	GameServer();
 	void start(SharedQueue<std::exception_ptr>& p_exceptionQueue);
 	void stop();
+	std::atomic_bool stopping = false;
 };
 

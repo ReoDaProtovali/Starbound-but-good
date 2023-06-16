@@ -33,6 +33,7 @@ public:
 	void setScreenBounds(Rect p_screenBounds);
 	void setPixelWidth(float p_pixelWidth);
 	void setPixelHeight(float p_pixelHeight);
+	void setPixelOffset(float p_pixelX, float p_pixelY);
 	void updateScreenBounds(float p_windowHeight, float p_windowWidth);
 
 	void updateChildBounds();
@@ -48,11 +49,13 @@ public:
 	Rect absoluteBounds;
 	Rect screenBounds;
 
+	glm::vec2 absOffset; // fixes a bug
 protected:
 	bool m_absolute = false;
 	bool m_usingScreenBounds = false;
 	bool m_usingPixelWidth = false;
 	bool m_usingPixelHeight = false;
+	bool m_usingPixelOffset = false;
 	std::string m_ID;
 	std::vector<Widget*> m_children;
 	Widget* m_parent = nullptr;

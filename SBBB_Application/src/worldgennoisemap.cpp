@@ -79,8 +79,8 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 	d.attachShader(&generatorShader);
 
 	// Location 2 is the world position uniform
-	generatorShader.setVec2Uniform(2, glm::vec2(p_mapX, p_mapY));
-	generatorShader.setIntUniform(3, p_seed);
+	generatorShader.setVec2Uniform(generatorShader.getUniformLoc("WorldPos"), glm::vec2(p_mapX, p_mapY));
+	generatorShader.setIntUniform(generatorShader.getUniformLoc("Seed"), p_seed);
 	m_FBO.bind();
 	m_FBO.draw(m_square, GL_TRIANGLES, d);
 

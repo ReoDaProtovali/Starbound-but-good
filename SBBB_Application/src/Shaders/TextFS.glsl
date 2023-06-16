@@ -1,9 +1,9 @@
 #version 330 core
-#extension GL_ARB_explicit_uniform_location : enable
+
 layout(location = 0) out vec4 FragColor;
 
-layout(location = 1) uniform sampler2D fontAtlas;
-layout(location = 2) uniform vec3 textCol;
+uniform sampler2D fontAtlas;
+uniform vec3 textCol;
 
 in vec2 TexCoord;
 

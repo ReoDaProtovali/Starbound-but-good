@@ -213,6 +213,9 @@
     <ClCompile Include="src\playerai.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\guicontainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\LightingSolver.hpp">
@@ -440,6 +443,9 @@
     <ClInclude Include="include\GUIDragBar.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\GUIContainer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\TODO.txt" />
@@ -536,6 +542,8 @@
       <Filter>Shaders\Fragment Shaders</Filter>
     </None>
     <None Include="src\Shaders\TileFeedbackVS.glsl" />
+    <None Include="src\Shaders\Win95BgVS.glsl" />
+    <None Include="src\Shaders\Win95BgFS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png">

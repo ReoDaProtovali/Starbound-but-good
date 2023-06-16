@@ -11,10 +11,10 @@ void GUITextField::draw(DrawSurface& p_target, DrawStates& p_states)
 	if (m_backgroundEnabled) {
 		m_backgroundSprite.setBounds(Rect(0.f, 0.f, absoluteBounds.wh.x, absoluteBounds.wh.y));
 		m_backgroundSprite.setPosition(glm::vec3(absoluteBounds.xy.x, absoluteBounds.xy.y, 1.f));
-		gs.solidColorShader.setVec3Uniform(1, backgroundColor);
-		gs.solidColorShader.setFloatUniform(2, backgroundOpacity);
+		gs.solidColorShader.setVec3Uniform(gs.solidColor_colorUniformLoc, backgroundColor);
+		gs.solidColorShader.setFloatUniform(gs.solidColor_opacityUniformLoc, backgroundOpacity);
 		m_backgroundSprite.draw(p_target, p_states);
-		gs.solidColorShader.setFloatUniform(2, 1.f);
+		gs.solidColorShader.setFloatUniform(gs.solidColor_opacityUniformLoc, 1.f);
 	}
 
 	if (!m_useRelativeScaling) {
@@ -45,7 +45,7 @@ void GUITextField::draw(DrawSurface& p_target, DrawStates& p_states)
 	else {
 		m_fieldText.setPosition(glm::vec3(absoluteBounds.xy.x, absoluteBounds.xy.y + absoluteBounds.wh.y, 0.f));
 	}
-	m_fieldText.draw(glm::vec3(1.f), p_target, p_states);
+	m_fieldText.draw(textColor, p_target, p_states);
 	float test = m_fieldText.getMaxPixelWidth(m_textHeight);
 
 	Widget::draw(p_target, p_states);
@@ -77,6 +77,8 @@ void GUITextField::enableBackground()
 {
 	m_backgroundEnabled = true;
 }
+
+
 
 void GUITextField::disableRelativeScaling()
 {

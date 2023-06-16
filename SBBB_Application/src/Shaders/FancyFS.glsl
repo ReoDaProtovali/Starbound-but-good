@@ -1,8 +1,7 @@
 #version 330
-#extension GL_ARB_explicit_uniform_location : enable
 
 in vec2 TexCoord;
-layout(location = 1) uniform float iTime;
+uniform float iTime;
 layout(location = 0) out vec4 FragColor;
 
 vec2 rotateUV(vec2 uv, float rotation)

@@ -6,7 +6,7 @@
 #include "GUI.hpp"
 #include "GUITextField.hpp"
 #include "GUIDragBar.hpp"
-
+#include "GUIContainer.hpp"
 #define BOMB_COUNTER_MAX 50
 
 class Lighting;
@@ -49,6 +49,12 @@ public:
 	GUITextField debugTextField{ "debugtext" };
 	GUIDragBar debugDragBar{ "debugdragbar" };
 
+	GUIContainer win95Box{ "win95box" };
+	GUITextField win95BoxText{ "win95Boxtext" };
+	GUIContainer navBarImage{ "imagetest" };
+	GUIContainer funnyButtonContainer { "funnybuttonc" };
+	GUIButton funnyButton{ "funnybutton", 0.f, 0.f, 1.f, 1.f };
+	GUIDragBar navDragBar{ "navdragbar" };
 	// ----------------------------------------------------------------------
 
 private:

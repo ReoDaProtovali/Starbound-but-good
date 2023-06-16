@@ -7,10 +7,9 @@ Lighting::Lighting() :
 	m_frameDim(0.f, 0.f),
 	m_lightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl")
 {
-
-	m_lightingShader.setTexUniform(1, 0);
-	m_lightingShader.setTexUniform(2, 1);
-
+	m_lightingTextureUniformLoc = m_lightingShader.addTexUniform("lightingTexture", 0);
+	m_screenTextureUniformLoc = m_lightingShader.addTexUniform("screenTexture", 1);
+	
 	m_lightmap.resize(64, 36);
 	m_lightmap.fill(glm::vec4(1.f, 1.f, 1.f, 1.f));
 	//m_lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));

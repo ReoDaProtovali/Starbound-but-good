@@ -26,6 +26,7 @@ public:
 	float getPixelLineHeight(float viewportHeight);
 
 	glm::vec3 backgroundColor{ 0.2f };
+	glm::vec3 textColor{ 1.0f };
 	float backgroundOpacity = 1.f;
 	bool centered = true;
 	bool autoScreenWidth = false;

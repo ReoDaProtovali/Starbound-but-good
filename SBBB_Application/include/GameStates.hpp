@@ -110,8 +110,28 @@ public:
 	};
 	void close() {
 		std::unique_lock<std::shared_mutex> lock(m_stateLock);
-		if (!m_activeState) return;
-		m_activeState->close();
+		if (!m_activeState || !m_activeState->ready()) return;
+		stateStopping = true;
+	}
+	bool maybeStopClient() {
+		std::unique_lock<std::shared_mutex> lock(m_stateLock);
+		if (!m_activeState->clientState) return false;
+		if (stateStopping) {
+			m_activeState->clientState->close();
+			m_activeState->clientState = nullptr;
+			return true;
+		}
+		return false;
+	}
+	bool maybeStopServer() {
+		std::unique_lock<std::shared_mutex> lock(m_stateLock);
+		if (!m_activeState->serverState) return false;
+		if (stateStopping && !m_activeState->clientState) {
+			m_activeState->serverState->close();
+			m_activeState->serverState = nullptr;
+			return true;
+		}
+		return false;
 	}
 	static GameStateManager& Get() {
 		static GameStateManager instance;
@@ -135,5 +155,6 @@ public:
 private:
 	std::vector<GameStatePair> m_allStates;
 	GameStatePair* m_activeState = nullptr;
+	bool stateStopping = false;
 	std::shared_mutex m_stateLock;
 };

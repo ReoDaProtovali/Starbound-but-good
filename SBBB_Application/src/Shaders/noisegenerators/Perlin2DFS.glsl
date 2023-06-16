@@ -1,6 +1,6 @@
 #version 330
-#extension GL_ARB_explicit_uniform_location : enable
-layout(location = 3) uniform int Seed;
+
+uniform int Seed;
 
 // Credit goes to Inigo Quilez
 vec2 grad( ivec2 z )  // replace this anything that returns a random vector
@@ -43,11 +43,9 @@ float noise( in vec2 p )
                      dot( grad( i+ivec2(1,1) ), f-vec2(1.0,1.0) ), u.x), u.y)) / 2.0f;
 }
 
-#extension GL_ARB_explicit_uniform_location : enable
-
 layout(location = 0) out vec4 fragColor;
 
-layout(location = 2) uniform vec2 WorldPos;
+uniform vec2 WorldPos;
 
 in vec2 TexCoord;
 

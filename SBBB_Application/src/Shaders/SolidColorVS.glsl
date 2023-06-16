@@ -1,13 +1,12 @@
 #version 330 core
-#extension GL_ARB_explicit_uniform_location : enable
 
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec2 aTexCoord;
 out vec2 TexCoord;
 
-layout(location = 0) uniform mat4 transform;
-layout(location = 1) uniform vec3 col;
-layout(location = 2) uniform float opacity;
+uniform mat4 transform;
+uniform vec3 col;
+uniform float opacity;
 
 void main()
 {

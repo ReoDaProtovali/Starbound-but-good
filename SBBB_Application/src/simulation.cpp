@@ -26,7 +26,7 @@ void Simulation::spawnTestEntities()
 		//(*m_entities.begin()).m_eptr->wake();
 	}
 #else
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 0; i++) {
 		m_entities.emplace_front(new TestEntity((rand() % 20), (rand() % 20) + 100.f, 1.f, 1.f, false));
 	}
 #endif

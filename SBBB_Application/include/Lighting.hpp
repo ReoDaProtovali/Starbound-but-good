@@ -29,6 +29,8 @@ private:
 	DrawStates m_lightingStates;
 	// It needs to be a pointer to be able to go down the chain
 	Shader m_lightingShader;
+	GLint m_lightingTextureUniformLoc = 0;
+	GLint m_screenTextureUniformLoc = 0;
 	Pixmap m_lightmap;
 
 	Texture m_lightmapTex;
