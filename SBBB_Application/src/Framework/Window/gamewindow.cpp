@@ -112,7 +112,7 @@ void GameWindow::initGL() {
 void GameWindow::cleanUp() {
 	DELETE_LOG("GL context deleted and window destroyed.");
 	SDL_GL_DeleteContext(m_glContext);
-	//SDL_DestroyWindow(m_window);
+	SDL_DestroyWindow(m_window);
 }
 void GameWindow::setVSync(bool p_enabled)
 {

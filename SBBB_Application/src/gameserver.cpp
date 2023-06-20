@@ -14,7 +14,7 @@ void GameServer::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 }
 
 void GameServer::stop() {
-	stopping = true;
+	serverStopping = true;
 	serverThread.join();
 }
 void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
@@ -44,15 +44,14 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			}
 			// prevent it from overworking
 			std::this_thread::sleep_for(std::chrono::microseconds(1000000 / (UPDATE_RATE_FPS * 2)));
-			if (stateManager.maybeStopServer()) stopping = true;
-			if (stopping) break;
+			if (stateManager.maybeStopServer()) serverStopping = true;
+
+			if (serverStopping) break;
 		}
-		stateManager.close();
 		serverWindow.cleanUp();
 	}
 	catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
-		stateManager.close();
 		serverWindow.cleanUp();
 		p_exceptionQueue.push(std::current_exception());
 	}

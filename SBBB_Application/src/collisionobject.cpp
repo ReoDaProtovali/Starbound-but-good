@@ -125,7 +125,9 @@ void CollisionObject::spawnCollider(b2World& p_world)
 
 void CollisionObject::respawnCollider(b2World& p_world)
 {
+	m_body->DestroyFixture(m_body->GetFixtureList()); // WARNING: THIS IS A BOLD ASSUMPTION, DO BETTER LATER
 	p_world.DestroyBody(m_body);
+
 	m_body = p_world.CreateBody(&m_def);
 	if (isCircle) {
 		m_fixtureDef.shape = &m_circleShape;

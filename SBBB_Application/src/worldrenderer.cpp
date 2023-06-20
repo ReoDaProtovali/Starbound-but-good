@@ -38,6 +38,56 @@ WorldRenderer::WorldRenderer()
 	m_tileDrawStates.attachShader(&m_tileShader);
 }
 
+int WorldRenderer::redrawCameraView()
+{
+	m_tileFBO.clear();
+	int drawnChunkCount = 0;
+	for (int y = (int)m_chunkFramePrev.y; y <= (int)m_chunkFramePrev.w; y++) {
+		for (int x = (int)m_chunkFramePrev.x; x <= (int)m_chunkFramePrev.z; x++) {
+			if (s_chunkMap.contains(ChunkPos(x, y))) {
+
+				WorldChunk& chunk = s_chunkMap[ChunkPos(x, y)];
+				if (!chunk.drawable) {
+					continue;
+				}
+				if (chunk.isEmpty) {
+					continue;
+				};
+				if (!chunk.vboIsPushed) {
+					chunk.pushVBO();
+				}
+				if (!chunk.tilesToSub.empty()) {
+					chunk.subSingleTileVBOS();
+				}
+				auto pixelCoords = m_tileCam.tileToPixelCoordinates(x * (float)CHUNKSIZE, y * (float)CHUNKSIZE - (float)CHUNKSIZE);
+
+				m_tileFBO.clearDepthRegion((GLint)roundf(pixelCoords.x), (GLint)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile));
+
+
+				if (chunk.feedbackMeshReady) {
+					m_tileDrawStates.attachShader(&m_tileFeedbackShader);
+					m_tileFeedbackShader.setIntUniform(feedback_tileSheetHeightUniformLoc, tilesheet.height);
+					m_tileFeedbackShader.setTexUniform(feedback_tileSheetUniformLoc, 0);
+					m_tileFeedbackShader.use();
+				}
+				else {
+					m_tileDrawStates.attachShader(&m_tileShader);
+					m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
+					m_tileShader.use();
+				}
+				//p_surface.bind();
+				m_tileFBO.bind();
+				chunk.draw(m_tileFBO, m_tileDrawStates);
+				if (drawChunkBorders) {
+					SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
+				}
+				drawnChunkCount++;
+			}
+		}
+	}
+	return drawnChunkCount;
+}
+
 void WorldRenderer::setCamera(Camera* p_cam)
 {
 	m_viewCam = p_cam;

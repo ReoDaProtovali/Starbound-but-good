@@ -266,7 +266,11 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 	associatedWorld = &p_world;
 	//if (colliderValid) return;
 	if (isEmpty) return;
-	if (m_collisionBody) p_world.DestroyBody(m_collisionBody);
+	if (m_collisionBody) {
+		m_collisionBody->DestroyFixture(m_collisionBody->GetFixtureList());
+		p_world.DestroyBody(m_collisionBody);
+
+	}
 	float worldMetersX = float(worldPos.x * CHUNKSIZE) * TILES_TO_METERS;
 	float worldMetersY = float(worldPos.y * CHUNKSIZE) * TILES_TO_METERS;
 	constexpr float chunkSizeMeters = float(CHUNKSIZE) * TILES_TO_METERS;

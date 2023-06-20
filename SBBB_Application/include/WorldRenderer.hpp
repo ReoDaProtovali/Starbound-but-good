@@ -39,6 +39,7 @@ class WorldRenderer {
 
 public:
 	WorldRenderer();
+	int redrawCameraView();
 
 	Observer<ChunkUpdate> m_chunkUpdateObserver{ globals.chunkUpdateSubject };
 

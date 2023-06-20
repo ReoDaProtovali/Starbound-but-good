@@ -16,6 +16,8 @@ ResourceManager::~ResourceManager()
 	for (auto& [str,tex] : textures) {
 		tex.remove();
 	}
+	m_generatorShaders.clear();
+	tileInfoIndexDict.clear();
 }
 
 Texture ResourceManager::getTexture(const std::string& p_ID, bool& p_success) {

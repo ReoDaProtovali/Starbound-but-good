@@ -29,6 +29,8 @@ void ServerWorldState::resume()
 void ServerWorldState::close() 
 {
 	world->stopThreads();
+	//world->~ChunkManager();
 	delete world;
+	//sim->~Simulation();
 	delete sim;
 }

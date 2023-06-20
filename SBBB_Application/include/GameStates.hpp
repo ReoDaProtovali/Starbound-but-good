@@ -2,7 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <shared_mutex>
-
+#include <Framework/Log.hpp>
 enum class GameStateEnum {
 	NO_STATE,
 	MENU,
@@ -40,7 +40,7 @@ struct GameStatePair {
 
 class GameStateManager { // todo: un-gunch it by putting stuff in the cpp file
 public:
-	GameStateManager() {};
+	GameStateManager() { ERROR_LOG("constructed"); };
 
 	void clientUpdate() {
 		std::shared_lock<std::shared_mutex> lock(m_stateLock); // ensure state is not changing
@@ -114,7 +114,7 @@ public:
 		stateStopping = true;
 	}
 	bool maybeStopClient() {
-		std::unique_lock<std::shared_mutex> lock(m_stateLock);
+		//std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (!m_activeState->clientState) return false;
 		if (stateStopping) {
 			m_activeState->clientState->close();
@@ -124,7 +124,7 @@ public:
 		return false;
 	}
 	bool maybeStopServer() {
-		std::unique_lock<std::shared_mutex> lock(m_stateLock);
+		//std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (!m_activeState->serverState) return false;
 		if (stateStopping && !m_activeState->clientState) {
 			m_activeState->serverState->close();

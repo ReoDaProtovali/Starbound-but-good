@@ -134,7 +134,7 @@ void Widget::updateScreenBounds(float p_windowWidth, float p_windowHeight)
 	float absoluteW = screenBounds.wh.x / p_windowWidth;
 	float absoluteH = screenBounds.wh.y / p_windowHeight;
 	Rect newRect = Rect(absoluteX, absoluteY, absoluteW, absoluteH);
-	if (newRect == absoluteBounds) return;
+	if (newRect.xy == absoluteBounds.xy && newRect.wh == absoluteBounds.wh) return;
 	absoluteBounds = newRect;
 	updateChildBounds();
 }

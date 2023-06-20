@@ -18,7 +18,6 @@ class GameServer
 	
 	fpsGauge tickGauge;
 
-	GameStateManager& stateManager = GameStateManager::Get();
 	ServerWorldState State_ServerWorld;
 	TemplateState State_None;
 
@@ -28,9 +27,10 @@ class GameServer
 	// offscreen rendering on server thread
 	GameWindow serverWindow;
 public:
+	GameStateManager& stateManager = GameStateManager::Get();
 	GameServer();
 	void start(SharedQueue<std::exception_ptr>& p_exceptionQueue);
 	void stop();
-	std::atomic_bool stopping = false;
+	std::atomic_bool serverStopping = false;
 };
 

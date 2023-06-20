@@ -23,16 +23,18 @@ void Application::run()
 			}
 			catch (std::exception& e) {
 				ERROR_LOG("Main thread caught exception " << e.what());
+				localServer.stateManager.close();
 				client.stop();
 				localServer.stop();
 			}
 			break;
 		}
-		if (client.stopping || localServer.stopping) break;
+		if (client.clientStopping || localServer.serverStopping) break;
 
 		if (!gameActive) break;
 	}
 
+	localServer.stateManager.close();
     client.stop();
 
 	localServer.stop();

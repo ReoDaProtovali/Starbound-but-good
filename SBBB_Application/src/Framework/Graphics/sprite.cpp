@@ -108,7 +108,7 @@ void Sprite::setOriginRelative(OriginLoc p_origin)
 
 void Sprite::setBounds(Rect p_bounds)
 {
-	if (bounds == p_bounds) return;
+	if (bounds.xy == p_bounds.xy && bounds.wh == p_bounds.wh) return;
 	bounds = p_bounds;
 	glm::vec2 tl = bounds.getTL();
 	glm::vec2 tr = bounds.getTR();

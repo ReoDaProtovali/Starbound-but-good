@@ -85,6 +85,7 @@ void SBBBDebugDraw::drawBoxImmediate(float p_x, float p_y, float p_w, float p_h,
 	DrawStates d;
 	d.attachShader(&gs.solidColorShader);
 	gs.solidColorShader.setVec3Uniform(gs.solidColor_colorUniformLoc, p_col);
+	gs.solidColorShader.use();
 	auto currentTransform = glm::mat4(1);
 	currentTransform = glm::translate(currentTransform, glm::vec3(p_x, p_y, 0));
 	d.setTransform(p_camera.getTransform() * currentTransform);

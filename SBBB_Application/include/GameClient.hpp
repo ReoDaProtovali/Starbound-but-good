@@ -50,7 +50,7 @@ public:
 	ImGuiContext* imctx = nullptr;
 	std::mutex inputReadWriteMutex;
 	std::atomic<bool> flagResize = false;
-	std::atomic_bool stopping = false;
+	std::atomic_bool clientStopping = false;
 
 };
 

@@ -43,7 +43,18 @@ void ClientWorldState::testDraw()
 		}
 	}
 
-
+	ImGui::Begin("Toggles");
+	if (ImGui::Button("Chunk Borders")) {
+		worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
+		worldRenderer.redrawCameraView();
+	}
+	static bool vsyncOn = true;
+	ImGui::Checkbox("Vsync", &vsyncOn);
+	
+	SDL_GL_SetSwapInterval(vsyncOn);
+	
+	ImGui::End();
+	renderer.screenFBO.bind();
 	DebugStats& db = globals.debug;
 
 	if (!playerCam) {
@@ -116,10 +127,11 @@ void ClientWorldState::testDraw()
 
 	static Text fpsText(DefaultFonts.videotype, "");
 	static std::stringstream fpsString("");
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 	if (testFrame % 20 == 0) {
 		fpsString.str("");
-		fpsString << "Current draw FPS - " << globals.drawFPS << '\n'
+		fpsString << "Current draw FPS - " << io.Framerate << '\n'
 			<< "Current update FPS - " << globals.updateFPS << '\n';
 		fpsTextField.setText(fpsString.str());
 	}
@@ -134,7 +146,7 @@ void ClientWorldState::testDraw()
 	if (db.statUpdate) {
 		updateTimer.stopStopwatch();
 		infoString.str("");
-		infoString
+		infoString << fpsString.str()
 			<< "Camera Position - X: " << std::setprecision(5) << db.camX << " Y: " << db.camY << '\n'
 			<< "Camera Frame - \nLeft: " << db.camFX1 << " Right: " << db.camFX2 << "\n" << "Top: " << db.camFY2 << " Bottom : " << db.camFY1 << '\n'
 			<< "Screen Dimensions - " << db.screenW << "x" << db.screenH << '\n'
@@ -150,8 +162,10 @@ void ClientWorldState::testDraw()
 		db.chunkGenCounter = 0;
 		updateTimer.startStopwatch();
 	}
-
-	debugTextField.setText(infoString.str());
+	ImGui::Begin("Debug Info");
+	ImGui::Text(infoString.str().c_str());
+	ImGui::End();
+	//debugTextField.setText(infoString.str());
 	//debugText.draw(glm::vec2(-0.98f, 0.80f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 #endif
 
@@ -311,8 +325,8 @@ void ClientWorldState::init()
 	debugDragBar.enableBackground();
 	debugTextField.addChild(&debugDragBar);
 
-	gui.addElement(&fpsTextField);
-	gui.addElement(&debugTextField);
+	//gui.addElement(&fpsTextField);
+	//gui.addElement(&debugTextField);
 	gui.addElement(&win95Box);
 
 	LOAD_LOG("Creating lighting subsystem...");

@@ -20,7 +20,8 @@ void GameClient::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 }
 
 void GameClient::stop() {
-	stopping = true;
+	//clientStopping = true;
+	//SDL_DestroyWindow(gw.m_window);
 	clientThread.join();
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
@@ -77,8 +78,8 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			ImGui::NewFrame();
 
 
-			static bool open = true;
-			ImGui::ShowDemoWindow(&open);
+			//static bool open = true;
+			//ImGui::ShowDemoWindow(&open);
 
 			static Messenger<SDL_Event, int>& SDLEventMessenger = Messenger<SDL_Event, int>::Get();
 			while (auto e = SDLEventMessenger.getMessageFront()) {
@@ -98,7 +99,9 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			//}
 			// compress mouse events, lots of redundancy
 
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			while (auto opt = keyObserver.observe()) {
+				if (io.WantCaptureKeyboard) break;
 				if (opt.value().wasDown) {
 					e.key = opt.value();
 					e.key.valid = true;
@@ -108,19 +111,18 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			}
 			while (auto opt = mouseMessenger.getMessageFront()) {
 				e.mouse = opt.value();
-				if (!gui.update(e))
+				if (!gui.update(e) && !io.WantCaptureMouse)
 					mouseSubject.notifyAll(e.mouse);
 				needsSent = false;
 			}
 			if (needsSent) {
-				if (!gui.update(e)) { 
+				if (!gui.update(e) && !io.WantCaptureMouse) {
 					mouseSubject.notifyAll(e.mouse);
 				};
 			}
 			gw.clear();
 			stateManager.clientUpdate();
 			gui.draw(gw);
-			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 			ImGui::Render();
 
@@ -137,23 +139,22 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 			gw.displayNewFrame();
 
-			if (stateManager.maybeStopClient()) stopping = true;
-			if (stopping) break;
+			if (stateManager.maybeStopClient()) clientStopping = true;
+			if (clientStopping) break;
 		}
 
-	} catch (std::exception& ex) {
+	}
+	catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
 		p_exceptionQueue.push(std::current_exception());
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
 		ImGui::DestroyContext(imctx);
-		gw.cleanUp();
 		return;
 	}
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext(imctx);
-	gw.cleanUp();
 }
 
 
@@ -221,7 +222,7 @@ void GameClient::processDebugStats()
 #ifndef DISABLE_DEBUG_STATS
 	static uint32_t debugUpdateCounter = 0;
 	debugUpdateCounter++;
-	if (debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) { 
+	if (debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) {
 		debugUpdateCounter = 0;
 		DebugStats& db = globals.debug;
 		//db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
