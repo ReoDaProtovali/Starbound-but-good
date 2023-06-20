@@ -1,6 +1,7 @@
 #include "Application.hpp"
 #include <thread>
-
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
 Application::Application()
 {
 }
@@ -52,8 +53,11 @@ void Application::pollEvents()
 	static SDL_Event event;
 	//static Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get();
 	static Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get();
-
+	// workaround
+	static Messenger<SDL_Event, int>& SDLEventMessenger = Messenger<SDL_Event, int>::Get();
 	while (SDL_PollEvent(&event)) {
+		SDLEventMessenger.sendMessageFront((SDL_Event)event);
+
 		switch (event.type) {
 		case SDL_WINDOWEVENT:
 			if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;

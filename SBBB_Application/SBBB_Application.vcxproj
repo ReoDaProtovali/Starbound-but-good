@@ -136,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SBBB_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;$(ProjectDir)include\util\ext;$(ProjectDir)include\util\ext\FreeType;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;$(ProjectDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <DisableSpecificWarnings>6386;6268;26451;26800</DisableSpecificWarnings>
@@ -157,7 +157,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;$(ProjectDir)include\util\ext;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib;C:\dev\libnoise\include;C:\dev\glew-2.2.0\include;C:\dev\SDL2\include;$(ProjectDir)include;$(ProjectDir)src;C:\dev\vcpkg\packages\box2d_x64-windows\include\box2d;$(ProjectDir)include\util\ext;$(ProjectDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <ModuleOutputFile>$(IntDir)</ModuleOutputFile>
       <ModuleDependenciesFile>$(IntDir)</ModuleDependenciesFile>
@@ -197,6 +197,13 @@ Xcopy /E /I res $(OutDir)res</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\guicontainer.cpp" />
     <ClCompile Include="src\guidragbar.cpp" />
     <ClCompile Include="src\Game States\clientworldstate.cpp" />
@@ -242,6 +249,15 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="src\guiwidget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui\imgui_impl_sdl2.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="include\Game States\TemplateState.hpp" />
     <ClInclude Include="include\GameStates.hpp" />
     <ClInclude Include="include\GUI.hpp" />
@@ -322,6 +338,7 @@ Xcopy /E /I res $(OutDir)res</Command>
   <ItemGroup>
     <Text Include="docs\randomthings.txt" />
     <Text Include="docs\TODO.txt" />
+    <Text Include="imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

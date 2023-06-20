@@ -190,7 +190,6 @@ void ClientWorldState::close()
 void ClientWorldState::init()
 {
 	// important, opengl NEEDS this
-	renderer.window.bindToThisThread();
 #ifndef DISABLE_DEBUG_STATS
 	globals.debug.drawThread = std::this_thread::get_id();
 #endif // DISABLE_DEBUG_STATS
@@ -245,14 +244,16 @@ void ClientWorldState::init()
 	fpsDragBar.enableBackground();
 	fpsTextField.addChild(&fpsDragBar);
 
-	win95Box.setScreenBounds(Rect(100.f, 500.f, 450.f, 300.f));
+	const float winboxwidth = 200.f;
+	win95Box.setScreenBounds(Rect(100.f, 500.f, winboxwidth, 140.f));
 	win95Box.useWin95Background();
+	win95Box.backgroundOpacity = 0.8f;
 
 
 	Texture navTex = res.getTexture("navmenu");
 
 	navBarImage.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
-	navBarImage.setPixelWidth(444.f);
+	navBarImage.setPixelWidth(winboxwidth - 6.f);
 	navBarImage.setPixelHeight(14.f);
 	navBarImage.setPixelOffset(3.f, 5.f);
 	navBarImage.setImage(navTex);
@@ -260,7 +261,7 @@ void ClientWorldState::init()
 
 	//navDragBar.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
 	navDragBar.setPixelOffset(3.f, 3.f);
-	navDragBar.setPixelWidth(444.f);
+	navDragBar.setPixelWidth(winboxwidth - 6.f);
 	navDragBar.setPixelHeight(16.f);
 	navDragBar.enableBackground();
 	navDragBar.backgroundColor = glm::vec3(0.f, 0.f, 0.67f);
@@ -271,15 +272,16 @@ void ClientWorldState::init()
 	//win95BoxText.setLocalBounds(Rect(0.1f, 0.2f, 1.f, 0.2f));
 	win95BoxText.setPixelOffset(6.f, 0.f);
 	win95BoxText.setPixelHeight(16.f);
-	win95BoxText.setPixelWidth(444.f);
+	win95BoxText.setPixelWidth(winboxwidth - 6.f);
 	win95BoxText.textColor = glm::vec3(1.f);
-	win95BoxText.setText("button that crashes the game");
+	win95BoxText.setText("button that cra...");
 	win95BoxText.setTextHeight(15.f);
 	win95BoxText.centered = false;
 	win95Box.addChild(&win95BoxText);
 
-	funnyButtonContainer.setLocalBounds(Rect(0.25, 0.375, 0.5, 0.25));
+	funnyButtonContainer.setLocalBounds(Rect(0.1, 0.2, 0.8, 0.7));
 	funnyButtonContainer.useWin95Background();
+	funnyButtonContainer.backgroundOpacity = 0.8f;
 
 	funnyButton.disableBackground();
 	funnyButton.onClick([&]() {
@@ -304,7 +306,7 @@ void ClientWorldState::init()
 
 	debugDragBar.setLocalBounds(Rect(0.f, 0.f, 1.f, 0.1f));
 	debugDragBar.backgroundColor = glm::vec3(1.f, 1.f, 1.f);
-	debugDragBar.backgroundOpacity = 0.2f;
+	debugDragBar.backgroundOpacity = 0.3f;
 	debugDragBar.setPixelHeight(20);
 	debugDragBar.enableBackground();
 	debugTextField.addChild(&debugDragBar);

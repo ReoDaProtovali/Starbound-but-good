@@ -13,7 +13,7 @@ GameWindow::GameWindow(const char* p_title, uint32_t p_w, uint32_t p_h)
 	height(p_h)
 {
 
-	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	m_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 	if (m_window == NULL) {
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
@@ -72,8 +72,7 @@ void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h, int p_f
 }
 
 void GameWindow::initGL() {
-	m_glContext = SDL_GL_CreateContext(m_window);
-	SDL_GL_MakeCurrent(m_window, m_glContext); // Attach OpenGL context to the window
+
 
 	LOAD_LOG("Initializing OpenGL 3.3...");
 
@@ -83,10 +82,14 @@ void GameWindow::initGL() {
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // OpenGL 3.3
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // OpenGL 3.3
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
+	m_glContext = SDL_GL_CreateContext(m_window);
+	SDL_GL_MakeCurrent(m_window, m_glContext); // Attach OpenGL context to the window
+	SDL_GL_SetSwapInterval(1);
 
 	glewExperimental = GL_TRUE;
 	auto init_res = glewInit();
@@ -103,6 +106,7 @@ void GameWindow::initGL() {
 	// init inherited class's variables
 	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
 	setViewport(0, 0, width, height);
+
 }
 
 void GameWindow::cleanUp() {

@@ -7,6 +7,7 @@ GameClient::GameClient() {
 	stateManager.bindClientState(GameStateEnum::IN_WORLD, (GameState*)&State_ClientWorld);
 	stateManager.setState(GameStateEnum::IN_WORLD);
 	gw.setVSync(true);
+	imctx = ImGui::CreateContext();
 }
 GameClient::~GameClient() {
 	gw.cleanUp();
@@ -27,6 +28,35 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	Subject<MouseEvent>& mouseSubject = globals.mouseSubject; // for re-transmitting mouse events to client
 
 	Observer<KeyEvent> keyObserver{ globals.keySubject };
+	gw.bindToThisThread();
+
+	ImGui::SetCurrentContext(imctx);
+	IMGUI_CHECKVERSION();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	//io.ConfigViewportsNoAutoMerge = true;
+	//io.ConfigViewportsNoTaskBarIcon = true;
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsLight();
+
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplSDL2_InitForOpenGL(gw.m_window, gw.m_glContext);
+	const char* glsl_version = "#version 130";
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
 	try {
 
 		auto& res = ResourceManager::Get();
@@ -40,6 +70,19 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			if (flagResize) {
 				flagResize = false;
 				resizeWindow(newWidth, newHeight);
+			}
+
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
+
+
+			static bool open = true;
+			ImGui::ShowDemoWindow(&open);
+
+			static Messenger<SDL_Event, int>& SDLEventMessenger = Messenger<SDL_Event, int>::Get();
+			while (auto e = SDLEventMessenger.getMessageFront()) {
+				ImGui_ImplSDL2_ProcessEvent(&e.value());
 			}
 
 			renderFPSGauge.update(0.5f);
@@ -77,19 +120,40 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			gw.clear();
 			stateManager.clientUpdate();
 			gui.draw(gw);
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+			ImGui::Render();
+
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+				SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+				SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+			}
+
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			gw.displayNewFrame();
 
 			if (stateManager.maybeStopClient()) stopping = true;
 			if (stopping) break;
 		}
-		gw.cleanUp();
+
 	} catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
 		p_exceptionQueue.push(std::current_exception());
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext(imctx);
 		gw.cleanUp();
 		return;
 	}
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext(imctx);
+	gw.cleanUp();
 }
 
 

@@ -47,6 +47,7 @@ public:
 	uint32_t newWidth = 0;
 	uint32_t newHeight = 0;
 	InputHandler inp;
+	ImGuiContext* imctx = nullptr;
 	std::mutex inputReadWriteMutex;
 	std::atomic<bool> flagResize = false;
 	std::atomic_bool stopping = false;
