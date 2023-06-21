@@ -60,6 +60,7 @@ struct BlendMode {
 		AlphaEquation(p_AlphaEquation)
 	{}
 	void disable() { disabled = true; };
+	void enable() { disabled = false; };
 	GLenum srcRGB;
 	GLenum dstRGB;
 	GLenum srcAlpha;

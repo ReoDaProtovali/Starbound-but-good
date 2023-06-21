@@ -360,6 +360,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\ImageVS.glsl" />
     <None Include="src\Shaders\LightingCombineFS.glsl" />
     <None Include="src\Shaders\LightingCombineVS.glsl" />
+    <None Include="src\Shaders\LightingFS.glsl" />
+    <None Include="src\Shaders\LightingVS.glsl" />
     <None Include="src\Shaders\noisegenerators\CavernFS.glsl" />
     <None Include="src\Shaders\noisegenerators\generators.json" />
     <None Include="src\Shaders\noisegenerators\GradFS.glsl" />
@@ -384,7 +386,6 @@ Xcopy /E /I res $(OutDir)res</Command>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png" />
     <Image Include="res\tilesets\vanilla\images\stone.png" />
-    <Image Include="src\Shaders\LightingInfoFS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

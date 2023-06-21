@@ -26,7 +26,7 @@ class WorldRenderer {
 
 	Texture tilesheet;
 	DrawStates m_tileDrawStates;
-
+	DrawStates m_firstPassDrawStates;
 	Camera* m_viewCam = nullptr;
 	Camera m_tileCam;
 	glm::ivec4 m_chunkFramePrev;

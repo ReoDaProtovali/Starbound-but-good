@@ -16,9 +16,12 @@ WorldRenderer::WorldRenderer()
 	m_tileFBO.setColorAttachments({ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 });
 	m_tileFBO.addColorAttachment();
 	m_tileFBO.setDimensions(glm::vec2(10.f, 10.f));
-	Texture fboTex = m_tileFBO.getColorTex(1);
+	Texture fboTex = m_tileFBO.getColorTex(0);
 	fboTex.setFiltering(GL_NEAREST, GL_NEAREST);
 	m_tileSprite.attachTexture(fboTex);
+
+	Texture infoTex = m_tileFBO.getColorTex(1);
+	lighting.setTileInfoTex(infoTex);
 
 	auto& res = ResourceManager::Get();
 	res.loadAllTileSets();
@@ -40,6 +43,9 @@ WorldRenderer::WorldRenderer()
 
 	m_tileDrawStates.attachShader(&m_tileShader);
 	lighting.setDims(5, 5);
+
+	m_firstPassDrawStates = m_tileDrawStates;
+	m_firstPassDrawStates.m_blendMode.disable();
 
 }
 
@@ -178,6 +184,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 					}
 					m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(c.worldPos.x, c.worldPos.y));
 					m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
+					m_tileDrawStates.m_blendMode.disable();
 					c.draw(m_tileFBO, m_tileDrawStates);
 				}
 			}
@@ -190,6 +197,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 					if (!c.drawable) continue;
 					m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(c.worldPos.x, c.worldPos.y));
 					m_tileShader.setBoolUniform(drawAsBordersUniformLoc, true);
+					m_tileDrawStates.m_blendMode.enable();
 					c.draw(m_tileFBO, m_tileDrawStates);
 				}
 			}
@@ -227,8 +235,10 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 
 	m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
+	m_tileDrawStates.m_blendMode.disable();
 	drawnChunkCount += redrawCameraView(chunkFrame);
 	m_tileShader.setBoolUniform(drawAsBordersUniformLoc, true);
+	m_tileDrawStates.m_blendMode.enable();
 	drawnChunkCount += redrawCameraView(chunkFrame);
 	//m_tileFBO.clearRegion(m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).x, m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).y, pixelsPerTileMin * CHUNKSIZE, pixelsPerTileMin * CHUNKSIZE);
 	//auto test = m_tileCam.tileToPixelCoordinates(0.f, 30.f);

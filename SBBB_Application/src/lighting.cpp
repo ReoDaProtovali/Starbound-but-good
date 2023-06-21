@@ -9,21 +9,16 @@ Lighting::Lighting() :
 {
 	m_lightingTextureUniformLoc = m_lightingCombineShader.addTexUniform("lightingTexture", 0);
 	m_screenTextureUniformLoc = m_lightingCombineShader.addTexUniform("screenTexture", 1);
-	
-	m_lightmap.resize(64, 36);
-	//m_lightmap.fill(glm::vec4(1.f, 1.f, 1.f, 1.f));
-	//m_lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	//m_lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	//m_lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	
 	//m_lightmapTex = Texture(m_lightmap.width, m_lightmap.height, m_lightmap.getData());
-	m_lightingFBO.setDimensions(glm::vec2(64, 36));
-	m_lightmapTex = m_lightingFBO.getColorTex(0);
-	m_lightmapTex.setFiltering(GL_NEAREST, GL_NEAREST);
+	//m_lightingFBO.setDimensions(glm::vec2(64, 36));
+	//m_lightmapTex = m_lightingFBO.getColorTex(0);
+	//m_lightmapTex.setFiltering(GL_NEAREST, GL_NEAREST);
 
 	// There needs to be two textures set for lighting to draw properly, but we only have one for now
-	m_lightingStates.addTexture(m_lightmapTex);
+	Texture tmp;
+	m_lightingStates.addTexture(tmp);
 	m_lightingStates.attachShader(&m_lightingCombineShader);
 
 	m_overlayMesh.addFloatAttrib(3); // Position attrib
@@ -48,6 +43,11 @@ Lighting::~Lighting()
 
 }
 
+void Lighting::setTileInfoTex(Texture p_infoTex)
+{
+	m_lightmapTex = p_infoTex;
+}
+
 void Lighting::setDims(uint16_t p_width, uint16_t p_height)
 {
 	//if (p_width == m_lightmap.width && p_height == m_lightmap.height)
@@ -56,13 +56,10 @@ void Lighting::setDims(uint16_t p_width, uint16_t p_height)
 	//m_lightmap.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
-void Lighting::updateLightmapTex() {
-	m_lightmapTex.subVec4Data(m_lightmap.getData());
-}
-
 void Lighting::draw(FrameBuffer& p_screenFBO)
 {
 	if (!m_screenTexSet) {
+		m_lightingStates.setTexture(0, m_lightmapTex);
 		// Now that we know which FBO we are drawing to, we can set the texture.
 		Texture tmp = p_screenFBO.getColorTex(0);
 		m_lightingStates.addTexture(tmp);

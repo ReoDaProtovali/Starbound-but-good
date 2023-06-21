@@ -15,9 +15,8 @@ public:
 	Lighting();
 	~Lighting();
 
-
+	void setTileInfoTex(Texture p_infoTex);
 	void setDims(uint16_t p_width, uint16_t p_height);
-	void updateLightmapTex();
 	void draw(FrameBuffer& p_screenFBO);
 
 //private:
@@ -31,7 +30,6 @@ public:
 	Shader m_lightingCombineShader;
 	GLint m_lightingTextureUniformLoc = 0;
 	GLint m_screenTextureUniformLoc = 0;
-	Pixmap m_lightmap;
 
 	FrameBuffer m_lightingFBO;
 	Texture m_lightmapTex;
