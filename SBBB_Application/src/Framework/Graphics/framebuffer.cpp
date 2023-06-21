@@ -14,12 +14,12 @@ void FrameBuffer::setDimensions(uint32_t p_width, uint32_t p_height)
 	if (!m_initialized) {
 		init();
 	}
+	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 	for (int i = 0; i < m_colorTextures.size(); i++) {
 		// By default, every color texture will be the same size as the entire frame
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
-		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
+		//glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 	}
 
 	if (m_useDepth) {
@@ -42,11 +42,11 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 	if (!m_initialized) {
 		init();
 	}
+	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 	for (int i = 0; i < m_colorTextures.size(); i++) {
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
-		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer->ID));
 		// only supports 2d color attachments for now. logical assumption.
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
+		//glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 	}
 
 	if (m_useDepth) {
@@ -58,6 +58,11 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 		throw std::exception("Frame buffer is not okie dokie");
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	useViewport();
+}
+
+void FrameBuffer::addColorAttachment()
+{
+	m_colorTextures.emplace_back();
 }
 
 void FrameBuffer::init() {

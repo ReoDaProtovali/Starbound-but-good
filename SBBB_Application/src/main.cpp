@@ -1,6 +1,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#include "Application.hpp"
+// BEGIN EPIC SPAGHETTI CODE
+#include "Application.hpp" 
 
 int main(int argc, char* argv[]) {
 
@@ -17,3 +18,4 @@ int main(int argc, char* argv[]) {
 
 	return 0;
 }
+// END EPIC SPAGHETTI CODE

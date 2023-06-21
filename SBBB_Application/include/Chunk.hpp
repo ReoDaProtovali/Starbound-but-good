@@ -96,12 +96,12 @@ struct WorldChunk : public TransformObject
 	std::atomic<bool> colliderValid{ false };
 	std::atomic<bool> feedbackMeshReady = false;
 	Mesh<TileVert> tileMesh{NO_VAO_INIT};
-	struct PostGSVert {
-		glm::vec2 TexCoord;
-		float zLevel;
-		glm::vec4 pos;
-	};
-	Mesh<PostGSVert> feedbackMesh{ (MeshBehavior)(FEEDBACK_MESH | NO_VAO_INIT) };
+	//struct PostGSVert {
+	//	glm::vec2 TexCoord;
+	//	float zLevel;
+	//	glm::vec4 pos;
+	//};
+	//Mesh<PostGSVert> feedbackMesh{ (MeshBehavior)(FEEDBACK_MESH | NO_VAO_INIT) };
 
 	SharedQueue<glm::ivec3> tilesToSub;
 

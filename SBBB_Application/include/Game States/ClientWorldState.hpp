@@ -40,8 +40,6 @@ public:
 
 	uint64_t testFrame = 0;
 	void testDraw();
-	GUIButton testButton{"testbutton", 0.2f, 0.2f, 0.2f, 0.1f};
-	GUITextField testButtonText{ "buttontext" };
 
 	GUITextField fpsTextField{ "fpstext" };
 	GUIDragBar fpsDragBar{ "fpsdragbar" };
@@ -55,13 +53,14 @@ public:
 	GUIContainer funnyButtonContainer { "funnybuttonc" };
 	GUIButton funnyButton{ "funnybutton", 0.f, 0.f, 1.f, 1.f };
 	GUIDragBar navDragBar{ "navdragbar" };
+
+	GUIContainer tileSheetContainer{ "tsc" };
 	// ----------------------------------------------------------------------
 
 private:
 
 	WorldRenderer worldRenderer;
 	GameRenderer& renderer;
-	Lighting m_lighting;
 
 	Camera m_followerCam; // in world space
 

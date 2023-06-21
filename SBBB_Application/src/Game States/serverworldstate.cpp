@@ -14,6 +14,9 @@ void ServerWorldState::init()
 
 void ServerWorldState::update()
 {
+	while (auto k = keyObserver.observe()) {
+		if (k.value().keyCode == SDLK_4) world->regenVBOs();
+	}
 	world->processRequests();
 	world->tidyNoisemapIfDone();
 	world->generateColliders();
@@ -28,6 +31,7 @@ void ServerWorldState::resume()
 }
 void ServerWorldState::close() 
 {
+	keyObserver.unsubscribe();
 	world->stopThreads();
 	//world->~ChunkManager();
 	delete world;

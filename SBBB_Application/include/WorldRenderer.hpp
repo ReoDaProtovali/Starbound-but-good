@@ -4,6 +4,7 @@
 #include "Camera.hpp"
 #include "Framework/Graphics/FrameBuffer.hpp"
 #include "Framework/Graphics/Sprite.hpp"
+#include "Lighting.hpp"
 #include "util/Messenger.hpp"
 #include "util/DebugDraw.hpp"
 #include "util/SharedQueue.hpp"
@@ -16,7 +17,7 @@ class WorldRenderer {
 	GLuint tileSheetHeightUniformLoc = 0;
 	GLuint worldPosUniformLoc = 0;
 	GLuint tileSheetUniformLoc = 0;
-	GLuint generateConnectionsUniformLoc = 0;
+	GLuint drawAsBordersUniformLoc = 0;
 
 	Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 	// different shaders need different uniforms
@@ -40,6 +41,7 @@ class WorldRenderer {
 public:
 	WorldRenderer();
 	int redrawCameraView();
+	Lighting lighting;
 
 	Observer<ChunkUpdate> m_chunkUpdateObserver{ globals.chunkUpdateSubject };
 

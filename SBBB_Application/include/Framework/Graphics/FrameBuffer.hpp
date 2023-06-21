@@ -22,6 +22,7 @@ public:
 	// Affects the size of all color attachments
 	void setDimensions(uint32_t p_width, uint32_t p_height);
 	void setDimensions(glm::uvec2 p_dimensions);
+	void addColorAttachment();
 	void setColorAttachments(std::initializer_list<GLenum> p_attachments);
 	Texture getColorTex(size_t p_index);
 	// Read the pixels directly from the frame buffer into system memory.

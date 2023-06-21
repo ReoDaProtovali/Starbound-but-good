@@ -510,7 +510,7 @@
     <None Include="src\Shaders\ImageFS.glsl">
       <Filter>Shaders\Fragment Shaders</Filter>
     </None>
-    <None Include="src\Shaders\LightingFS.glsl">
+    <None Include="src\Shaders\LightingCombineFS.glsl">
       <Filter>Shaders\Fragment Shaders</Filter>
     </None>
     <None Include="src\Shaders\TileFS.glsl">
@@ -522,7 +522,7 @@
     <None Include="src\Shaders\ImageVS.glsl">
       <Filter>Shaders\Vertex Shaders</Filter>
     </None>
-    <None Include="src\Shaders\LightingVS.glsl">
+    <None Include="src\Shaders\LightingCombineVS.glsl">
       <Filter>Shaders\Vertex Shaders</Filter>
     </None>
     <None Include="README.md" />
@@ -599,12 +599,17 @@
     <None Include="src\Shaders\TileFeedbackVS.glsl" />
     <None Include="src\Shaders\Win95BgVS.glsl" />
     <None Include="src\Shaders\Win95BgFS.glsl" />
+    <None Include="res\tilesets\vanilla\tiledata\Copeite.TileProperties" />
+    <None Include="res\tilesets\vanilla\tiledata\BlueGem.TileProperties" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\tilesets\vanilla\images\stone.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Shaders\LightingInfoFS.glsl">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

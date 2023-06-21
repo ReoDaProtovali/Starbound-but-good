@@ -9,11 +9,12 @@ uniform mat4 transform;
 uniform int tileSheetHeight;
 uniform vec2 worldPos;
 // uniform sampler2D tileSheet;
-uniform bool generateConnections;
+uniform bool drawAsBorders;
 
 out vec2 TexCoord;
 out float zLevel;
 out vec4 pos;
+out float tileSheetRow;
 // out float out_ID; // for testing
 // out float greyscale; // for testing
 
@@ -55,6 +56,7 @@ void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
 	pos = gl_in[0].gl_Position + vec4(regionBounds.x, regionBounds.y, z, 0);
 	TexCoord = vec2(texBounds.xw + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	tileSheetRow = offset.y;
 	//out_ID = float(data_in[0].ID);
 	//greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
@@ -63,6 +65,7 @@ void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
 	pos = gl_in[0].gl_Position + vec4(regionBounds.x + regionBounds.z, regionBounds.y, z, 0);
 	TexCoord = vec2(texBounds.zw + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	tileSheetRow = offset.y;
 	//out_ID = float(data_in[0].ID);
 	//greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
@@ -71,6 +74,7 @@ void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
 	pos = gl_in[0].gl_Position + vec4(regionBounds.x, regionBounds.y + regionBounds.w, z, 0);
 	TexCoord = vec2(texBounds.xy + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	tileSheetRow = offset.y;
 	//out_ID = float(data_in[0].ID);
 	//greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
@@ -79,6 +83,7 @@ void pushRegion(vec4 texBounds, vec4 regionBounds, float z) {
 	pos = gl_in[0].gl_Position + vec4(regionBounds.x + regionBounds.z, regionBounds.y + regionBounds.w, z, 0);
 	TexCoord = vec2(texBounds.zy + offset);
 	zLevel = gl_in[0].gl_Position.z;
+	tileSheetRow = offset.y;
 	//out_ID = float(data_in[0].ID);
 	//greyscale = float(data_in[0].adjacent) / 255.f;
 	EmitVertex();
@@ -100,16 +105,15 @@ void main() {
 	// height goes bottom to top (oops)
 	bool adj[8] = uintToBoolArr(data_in[0].adjacent);
 
-	if (data_in[0].adjacent == 255u) {
-		pushRegion(vec4(0, 8, 16, 24), vec4(-0.5, -1.5, 2, 2), 0.00);
-		return;
-	}
+	if (!drawAsBorders) {
+	//if (data_in[0].adjacent == 255u) {
+	//	pushRegion(vec4(0, 8, 16, 24), vec4(-0.5, -1.5, 2, 2), 0.00);
+	//	return;
+	//}
 
 	pushRegion(vec4(4, 12, 12, 20), vec4(0, -1, 1, 1), 0.00);
 
-	if (!generateConnections) return;
-
-	if (data_in[0].adjacent == 0u) return;
+	} else {
 	// Inner Corners ---------------------------------------------------
 
 	if (adj[4] && !adj[7]) {
@@ -132,22 +136,22 @@ void main() {
 
 	// If there are no tiles above, right, and top right
 	if (adj[6] && adj[5] && adj[3]) {
-		pushRegion(vec4(12, 8, 16, 12), vec4(1.0, 0.0, 0.5, 0.5), -0.005);
+		pushRegion(vec4(12, 8, 16, 12), vec4(1.0, 0.0, 0.5, 0.5), 0.000);
 	}
 
     // If there are no tiles above, left, and top left
 	if (adj[6] && adj[4] && adj[7]) {
-		pushRegion(vec4(0, 8, 4, 12), vec4(-0.5, 0.0, 0.5, 0.5), -0.005);
+		pushRegion(vec4(0, 8, 4, 12), vec4(-0.5, 0.0, 0.5, 0.5), 0.000);
 	}
 
 	// If there are no tiles below, left, and bottom left
 	if (adj[1] && adj[4] && adj[2]) {
-		pushRegion(vec4(0, 20, 4, 24), vec4(-0.5, -1.5, 0.5, 0.5), -0.005);
+		pushRegion(vec4(0, 20, 4, 24), vec4(-0.5, -1.5, 0.5, 0.5), 0.000);
 	}
 
     // If there are no tiles below, right, and bottom right
 	if (adj[1] && adj[3] && adj[0]) {
-		pushRegion(vec4(12, 20, 16, 24), vec4(1.0, -1.5, 0.5, 0.5), -0.005);
+		pushRegion(vec4(12, 20, 16, 24), vec4(1.0, -1.5, 0.5, 0.5), 0.000);
 	}
 
 	// If there are no tiles above
@@ -166,5 +170,5 @@ void main() {
 	if (adj[3]) {
 		pushRegion(vec4(12, 12, 16, 20), vec4(1.0, -1.0, 0.5, 1.0), -0.004);
 	}
-
+	}
 }

@@ -17,4 +17,5 @@ public:
 private:
 	ChunkManager* world;
 	Simulation* sim;
+	Observer<KeyEvent> keyObserver{globals.keySubject};
 };

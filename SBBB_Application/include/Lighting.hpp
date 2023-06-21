@@ -20,7 +20,7 @@ public:
 	void updateLightmapTex();
 	void draw(FrameBuffer& p_screenFBO);
 
-private:
+//private:
 
 	glm::vec2 m_framePos;
 	glm::vec2 m_frameDim;
@@ -28,11 +28,12 @@ private:
 	Mesh<GLfloat> m_overlayMesh;
 	DrawStates m_lightingStates;
 	// It needs to be a pointer to be able to go down the chain
-	Shader m_lightingShader;
+	Shader m_lightingCombineShader;
 	GLint m_lightingTextureUniformLoc = 0;
 	GLint m_screenTextureUniformLoc = 0;
 	Pixmap m_lightmap;
 
+	FrameBuffer m_lightingFBO;
 	Texture m_lightmapTex;
 	// Just so we don't have to reset it every frame
 	bool m_screenTexSet = false;

@@ -199,6 +199,7 @@ void ClientWorldState::close()
 	gui.removeElement("fpstext");
 	gui.removeElement("debugtext");
 	gui.removeElement("win95box");
+	gui.removeElement("tsc");
 }
 
 void ClientWorldState::init()
@@ -219,27 +220,6 @@ void ClientWorldState::init()
 
 	bombSprite.attachTexture(res.getTexture("bombtexture"));
 	bombSprite.setPosition(glm::vec3(33.f));
-
-	testButtonText.disableBackground();
-	//testButtonText.enableRelativeScaling();
-	testButtonText.setTextHeight(30.f);
-	testButtonText.setText("bnnuton");
-	testButton.setLocalBounds(Rect(0.2f, 0.2f, 0.5f, 0.7f));
-	testButton.addChild(&testButtonText);
-
-	testButton.onClick(
-		[&](void) {
-			//testButton.testColor = glm::vec3(0.3f, 0.f, 0.f);
-			//testButton.disabled = false;
-			//testButtonText.appendText('\n' + std::to_string(testButtonText.m_fieldText.getMaxPixelHeight(30.f)));
-		});
-	testButton.onHover(
-		[&](bool hovering) {
-			if (hovering)
-				testButton.testColor = glm::vec3(0.f, 0.4f, 0.f);
-			else
-				testButton.testColor = glm::vec3(0.f, 0.0f, 0.f);
-		});
 
 	fpsTextField.enableBackground();
 	fpsTextField.backgroundOpacity = 0.5f;
@@ -304,34 +284,23 @@ void ClientWorldState::init()
 	funnyButtonContainer.addChild(&funnyButton);
 	win95Box.addChild(&funnyButtonContainer);
 
+	tileSheetContainer.setAbsoluteBounds(Rect(0.0f, 0.0f, 0.2f, 0.2f));
+	tileSheetContainer.enableBackground();
+	tileSheetContainer.backgroundColor = glm::vec3(1.f);
+	tileSheetContainer.backgroundOpacity = 1.f;
+	Texture tileSheetTexture = res.getTileSheetTexture();
+	tileSheetContainer.setImage(tileSheetTexture);
 
+	//gui.addElement(&tileSheetContainer);
 
-
-
-	debugTextField.enableBackground();
-	debugTextField.backgroundOpacity = 0.5f;
-	debugTextField.setTextHeight(18);
-	debugTextField.disableRelativeScaling();
-	debugTextField.setText("No Debug Info");
-	debugTextField.setScreenBounds(Rect(10.f, 80.f, 500.f, 280.f));
-	debugTextField.centered = true;
-	debugTextField.autoScreenWidth = true;
-	debugTextField.autoScreenHeight = true;
-
-	debugDragBar.setLocalBounds(Rect(0.f, 0.f, 1.f, 0.1f));
-	debugDragBar.backgroundColor = glm::vec3(1.f, 1.f, 1.f);
-	debugDragBar.backgroundOpacity = 0.3f;
-	debugDragBar.setPixelHeight(20);
-	debugDragBar.enableBackground();
-	debugTextField.addChild(&debugDragBar);
 
 	//gui.addElement(&fpsTextField);
-	//gui.addElement(&debugTextField);
 	gui.addElement(&win95Box);
 
-	LOAD_LOG("Creating lighting subsystem...");
 
-	m_lighting.setDims(5, 5);
+
+	//LOAD_LOG("Creating lighting subsystem...");
+
 
 	renderer.screenFBO.setDimensions(renderer.window.width, renderer.window.height); // Initializes
 }
@@ -353,7 +322,7 @@ void ClientWorldState::update()
 	renderer.window.clear();
 	renderer.window.bind();
 	glDisable(GL_DEPTH_TEST);
-	m_lighting.draw(renderer.screenFBO);
+	worldRenderer.lighting.draw(renderer.screenFBO);
 }
 
 void ClientWorldState::suspend()

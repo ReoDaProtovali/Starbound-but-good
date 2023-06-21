@@ -138,8 +138,18 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 			ERROR_LOG("Failed to load image");
 			return;
 		}
+		// assume rgba
 
 		tileSheetPixmap.appendImage(imageData, width * height * nrChannels);
+		tileSheetPixmap.setPixel(
+			tileSheetPixmap.width - 1,
+			tileSheetPixmap.height - 1,
+			glm::vec4(tileInfo.lightingColor[0], tileInfo.lightingColor[1], tileInfo.lightingColor[2], tileInfo.lightAbsorption));
+		//size_t pixelIndex = width * height * nrChannels - 1;
+		//imageData[9 * 4 + 0] = tileInfo.lightingColor[0];
+		//imageData[9 * 4 + 1] = tileInfo.lightingColor[1];
+		//imageData[9 * 4 + 2] = tileInfo.lightingColor[2];
+		//imageData[9 * 4 + 3] = tileInfo.lightAbsorption;
 		delete imageData;
 
 		static size_t imgIndex = 0;

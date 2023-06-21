@@ -5,24 +5,26 @@
 Lighting::Lighting() :
 	m_framePos(0.f, 0.f),
 	m_frameDim(0.f, 0.f),
-	m_lightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl")
+	m_lightingCombineShader("./src/Shaders/LightingCombineVS.glsl", "./src/Shaders/LightingCombineFS.glsl")
 {
-	m_lightingTextureUniformLoc = m_lightingShader.addTexUniform("lightingTexture", 0);
-	m_screenTextureUniformLoc = m_lightingShader.addTexUniform("screenTexture", 1);
+	m_lightingTextureUniformLoc = m_lightingCombineShader.addTexUniform("lightingTexture", 0);
+	m_screenTextureUniformLoc = m_lightingCombineShader.addTexUniform("screenTexture", 1);
 	
 	m_lightmap.resize(64, 36);
-	m_lightmap.fill(glm::vec4(1.f, 1.f, 1.f, 1.f));
+	//m_lightmap.fill(glm::vec4(1.f, 1.f, 1.f, 1.f));
 	//m_lightmap.setPixel(3, 3, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 	//m_lightmap.setPixel(4, 3, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	//m_lightmap.setPixel(5, 3, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	
-	m_lightmapTex = Texture(m_lightmap.width, m_lightmap.height, m_lightmap.getData());
-	m_lightmapTex.setFiltering(GL_LINEAR, GL_LINEAR);
+	//m_lightmapTex = Texture(m_lightmap.width, m_lightmap.height, m_lightmap.getData());
+	m_lightingFBO.setDimensions(glm::vec2(64, 36));
+	m_lightmapTex = m_lightingFBO.getColorTex(0);
+	m_lightmapTex.setFiltering(GL_NEAREST, GL_NEAREST);
 
 	// There needs to be two textures set for lighting to draw properly, but we only have one for now
 	m_lightingStates.addTexture(m_lightmapTex);
-	m_lightingStates.attachShader(&m_lightingShader);
+	m_lightingStates.attachShader(&m_lightingCombineShader);
 
 	m_overlayMesh.addFloatAttrib(3); // Position attrib
 	m_overlayMesh.addFloatAttrib(2); // Tex Coord attrib
@@ -48,8 +50,10 @@ Lighting::~Lighting()
 
 void Lighting::setDims(uint16_t p_width, uint16_t p_height)
 {
-	m_lightmap.resize(p_width, p_height);
-	m_lightmap.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	//if (p_width == m_lightmap.width && p_height == m_lightmap.height)
+	m_lightingFBO.setDimensions(p_width, p_height);
+	//m_lightmap.resize(p_width, p_height);
+	//m_lightmap.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
 void Lighting::updateLightmapTex() {
