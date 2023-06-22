@@ -56,6 +56,7 @@ void Camera::lookForwards()
 
 void Camera::setDimensions(uint32_t p_windowWidth, uint32_t p_windowHeight)
 {
+	if (m_pixelDimensions.x == (float)p_windowHeight && m_pixelDimensions.y == (float)p_windowWidth) return;
 	Camera::m_dimensions.x = 1.0f;
 	Camera::m_dimensions.y = float(p_windowHeight) / float(p_windowWidth);
 	m_pixelDimensions.x = (float)p_windowWidth;

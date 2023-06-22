@@ -38,6 +38,9 @@ public:
 	Sprite bombSprite = Sprite(glm::vec3(9999.f, 9999.f, 2.f), Rect(0.f, 0.f, 1.f, 1.f));
 	int bombCounter = BOMB_COUNTER_MAX;
 
+	glm::vec2 mousePos;
+	DrawStates state;
+	DrawStates worldDrawnState;
 	uint64_t testFrame = 0;
 	void testDraw();
 
@@ -62,7 +65,7 @@ private:
 	WorldRenderer worldRenderer;
 	GameRenderer& renderer;
 
-	Camera m_followerCam; // in world space
+	Camera m_worldCam; // in world space
 
 	Observer<MouseEvent> m_mouseObserver{ globals.mouseSubject };
 	GenericShaders& gs = GenericShaders::Get();

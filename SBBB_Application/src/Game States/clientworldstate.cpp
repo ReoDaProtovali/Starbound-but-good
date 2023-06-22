@@ -12,10 +12,10 @@ void ClientWorldState::testDraw()
 	renderer.screenFBO.bind();
 	// DrawStates just contains everything opengl needs to know in order to draw.
 	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
-	DrawStates state;
+	//DrawStates state;
 
 
-	static glm::vec2 mousePos = glm::vec2(0.f);
+	mousePos = glm::vec2(0.f);
 	static bool lMouseDown = false;
 	static bool rMouseDown = false;
 	while (auto opt = m_mouseObserver.observe()) {
@@ -173,10 +173,13 @@ void ClientWorldState::testDraw()
 	controlsText.setLeftJustification(true);
 	controlsText.draw(glm::vec2(0.98f, 0.93f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 
+	//m_worldCam.setDimensions(renderer.window.width, renderer.window.height);
+	//SBBBDebugDraw::drawBoxImmediate(playerCam->getFrame().x, playerCam->getFrame().y, playerCam->getFrameDimensions().x, playerCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f), renderer.screenFBO, m_worldCam);
+	//SBBBDebugDraw::drawBoxImmediate(worldRenderer.m_tileCam.getFrame().x, worldRenderer.m_tileCam.getFrame().y, worldRenderer.m_tileCam.getFrameDimensions().x, worldRenderer.m_tileCam.getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f), renderer.screenFBO, m_worldCam);
 	//gui.draw(renderer.screenFBO);
 	//testDrawGUI();
-	//SBBBDebugDraw::drawBoxImmediate(cam->getFrame().x, cam->getFrame().y, cam->getFrameDimensions().x, cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
-	//drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
+	//SBBBDebugDraw::drawBoxImmediate(renderer.cam->getFrame().x, renderer.cam->getFrame().y, renderer.cam->getFrameDimensions().x, renderer.cam->getFrameDimensions().y, glm::vec3(1.f, 0.f, 0.f), m_screenFBO, *currentCamera.lock());
+	//SBBBDebugDraw::drawBoxImmediate(tileCam->getFrame().x, tileCam->getFrame().y, tileCam->getFrameDimensions().x, tileCam->getFrameDimensions().y, glm::vec3(0.f, 1.f, 0.f));
 }
 
 void ClientWorldState::loadTextures()
@@ -218,6 +221,8 @@ void ClientWorldState::init()
 
 	loadTextures();
 
+	m_worldCam.setDimensions(renderer.window.width, renderer.window.height);
+	m_worldCam.setTileScale(500.f);
 	bombSprite.attachTexture(res.getTexture("bombtexture"));
 	bombSprite.setPosition(glm::vec3(33.f));
 
@@ -322,7 +327,9 @@ void ClientWorldState::update()
 	renderer.window.clear();
 	renderer.window.bind();
 	glDisable(GL_DEPTH_TEST);
-	worldRenderer.lighting.draw(renderer.screenFBO);
+
+	if (playerCam)
+		worldRenderer.lighting.draw(renderer.screenFBO, renderer.window, worldDrawnState, mousePos);
 }
 
 void ClientWorldState::suspend()
@@ -331,13 +338,15 @@ void ClientWorldState::suspend()
 
 int ClientWorldState::drawWorld()
 {
-	DrawStates state;
 	if (playerCam) {
 		worldRenderer.setCamera(playerCam);
-		state.setTransform(playerCam->getTransform());
+		worldDrawnState.setTransform(playerCam->getTransform());
+		worldDrawnState.cam = playerCam;
 	}
-	else 
-	state.setTransform(renderer.cam->getTransform());
+	else {
+		worldDrawnState.setTransform(renderer.cam->getTransform());
+		worldDrawnState.cam = renderer.cam;
+	}
 	
-	return worldRenderer.draw(renderer.screenFBO, state, renderer.window.width);
+	return worldRenderer.draw(renderer.screenFBO, worldDrawnState, renderer.window.width);
 }

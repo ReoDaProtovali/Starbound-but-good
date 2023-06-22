@@ -56,7 +56,20 @@ void Texture::setType(GLenum p_type)
 
 void Texture::setChannels(GLenum p_channels)
 {
+	if (!initialized) glGenTextures(1, &glID->ID);
+	glBindTexture(type, glID->ID); // into the main texture buffer
 	channels = p_channels;
+	glTexImage2D( // actually put the image data into the texture buffer
+		type,
+		0,
+		channels,
+		width,
+		height,
+		0,
+		channels,
+		GL_UNSIGNED_BYTE,
+		nullptr);
+	glBindTexture(type, 0);
 }
 
 void Texture::fromByteData(uint32_t p_width, uint32_t p_height, unsigned char* p_data)

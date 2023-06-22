@@ -28,7 +28,6 @@ class WorldRenderer {
 	DrawStates m_tileDrawStates;
 	DrawStates m_firstPassDrawStates;
 	Camera* m_viewCam = nullptr;
-	Camera m_tileCam;
 	glm::ivec4 m_chunkFramePrev;
 
 	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 0), Rect(0, 0, 10, 10));
@@ -39,6 +38,7 @@ class WorldRenderer {
 	int redrawCameraView(const glm::vec4& chunkFrame);
 
 public:
+	Camera m_tileCam;
 	WorldRenderer();
 	int redrawCameraView();
 	Lighting lighting;

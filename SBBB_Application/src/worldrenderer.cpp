@@ -20,7 +20,8 @@ WorldRenderer::WorldRenderer()
 	fboTex.setFiltering(GL_NEAREST, GL_NEAREST);
 	m_tileSprite.attachTexture(fboTex);
 
-	Texture infoTex = m_tileFBO.getColorTex(1);
+	Texture& infoTex = m_tileFBO.getColorTexRef(1);
+	//infoTex.setChannels(GL_RGB);
 	lighting.setTileInfoTex(infoTex);
 
 	auto& res = ResourceManager::Get();
@@ -42,7 +43,7 @@ WorldRenderer::WorldRenderer()
 	m_tileDrawStates.attachTexture(tileSheetTexture);
 
 	m_tileDrawStates.attachShader(&m_tileShader);
-	lighting.setDims(5, 5);
+	lighting.setDims(16, 16);
 
 	m_firstPassDrawStates = m_tileDrawStates;
 	m_firstPassDrawStates.m_blendMode.disable();
@@ -109,25 +110,13 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 {
 	if (!m_viewCam) return 0;
 	glEnable(GL_DEPTH_TEST);
-	//p_surface.clear();
-	//m_tileSprite.attachTexture(m_tileFBO.getColorTex(1));
-
-	//
-	//if (m_viewCam->tileScale > 500.f) {
-	//	m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
-	//}
-	//else {
-	//	m_tileShader.setBoolUniform(drawAsBordersUniformLoc, true);
-	//}
-
+	m_tileFBO.setClearColor(glm::vec4(0.f));
 	auto f = m_viewCam->getFrame();
 	// magic numbers
-	f.y -= CHUNKSIZE * 4;
-	f.w += CHUNKSIZE;
-	f.z += CHUNKSIZE * 2;
-	f.x -= CHUNKSIZE * 2;
+	f.y -= CHUNKSIZE;
+	f.w -= CHUNKSIZE;
 
-	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f / 2.f) * 2;
+	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f);
 
 	int drawnChunkCount = 0;
 
@@ -209,15 +198,30 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	}
 
 	seenPositions.clear();
-	p_surface.bind();
+
+	p_surface.bind(); // renderer fbo
 	m_tileSprite.setOrigin(glm::vec2(0.f));
+	lighting.lightingSprite.setOrigin(glm::vec2(0.f));
+
+	// testing purposes, display lighting fbo data
+	//m_tileSprite.attachTexture(lighting.lightingInfoFBO.getColorTex(0));
 	m_tileSprite.draw(p_surface, p_states);
+
+	// update lighting info
+	m_tileFBO.setClearColor(glm::vec4(1.f));
+	lighting.lightingInfoFBO.bind();
+	lighting.lightingInfoFBO.clear();
+	lighting.lightingSprite.attachTexture(m_tileFBO.getColorTex(1));
+	m_tileDrawStates.m_blendMode.disable();
+	lighting.lightingSprite.draw(lighting.lightingInfoFBO, m_tileDrawStates);
+	m_tileFBO.setClearColor(glm::vec4(0.f));
+
 	if (chunkFrame == m_chunkFramePrev) return 0;
 	m_tileFBO.bind();
 
 	m_pixelsPerTile = std::fminf((float)p_windowWidth / (float)m_viewCam->tileScale, 8.f);
 
-	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f / 2.f) * CHUNKSIZE * 2;
+	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f) * CHUNKSIZE;
 	// breaks the frame, must be set manually
 	m_tileCam.setDimensions(int(m_pixelsPerTile * float(chunkFrameTiles.z - chunkFrameTiles.x)), int(m_pixelsPerTile * float(chunkFrameTiles.w - chunkFrameTiles.y)));
 	m_tileCam.setFrame(
@@ -226,13 +230,14 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	m_tileSprite.setBounds(Rect(0, 0, m_tileCam.getFrameDimensions().x, m_tileCam.getFrameDimensions().y));
 	m_tileSprite.setPosition(glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 0));
-
+	lighting.lightingSprite.setBounds(Rect(0, 0, m_tileCam.getFrameDimensions().x, m_tileCam.getFrameDimensions().y));
+	lighting.lightingSprite.setPosition(glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 1));
 
 	m_tileFBO.setDimensions(glm::vec2(m_pixelsPerTile * (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y)));
-	//lighting.setDims(m_tileFBO.getViewportWidth() / 8, m_tileFBO.getViewportHeight() / 8);
+	lighting.setDims(m_tileFBO.getViewportWidth(), m_tileFBO.getViewportHeight()); // update lighting buffer sizes
+
 	m_tileDrawStates.setTransform(m_tileCam.getTransform());
 	m_tileFBO.clear();
-
 
 	m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
 	m_tileDrawStates.m_blendMode.disable();
@@ -242,6 +247,14 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	drawnChunkCount += redrawCameraView(chunkFrame);
 	//m_tileFBO.clearRegion(m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).x, m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).y, pixelsPerTileMin * CHUNKSIZE, pixelsPerTileMin * CHUNKSIZE);
 	//auto test = m_tileCam.tileToPixelCoordinates(0.f, 30.f);
+
+	m_tileFBO.setClearColor(glm::vec4(1.f));
+	lighting.lightingInfoFBO.bind();
+	lighting.lightingInfoFBO.clear();
+	lighting.lightingSprite.attachTexture(m_tileFBO.getColorTex(1));
+	m_tileDrawStates.m_blendMode.disable();
+	lighting.lightingSprite.draw(lighting.lightingInfoFBO, m_tileDrawStates);
+	m_tileFBO.setClearColor(glm::vec4(0.f));
 
 	m_chunkFramePrev = chunkFrame;
 	return drawnChunkCount;

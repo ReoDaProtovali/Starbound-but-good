@@ -120,6 +120,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 					mouseSubject.notifyAll(e.mouse);
 				};
 			}
+
 			gw.clear();
 			stateManager.clientUpdate();
 			gui.draw(gw);

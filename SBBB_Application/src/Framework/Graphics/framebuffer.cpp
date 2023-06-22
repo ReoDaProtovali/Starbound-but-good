@@ -25,7 +25,7 @@ void FrameBuffer::setDimensions(uint32_t p_width, uint32_t p_height)
 	if (m_useDepth) {
 		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
 		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_dimensions.x, m_dimensions.y)); // rescale depth buffer
-		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
+		glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
 	}
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -52,7 +52,7 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 	if (m_useDepth) {
 		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
 		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_dimensions.x, m_dimensions.y)); // rescale depth buffer
-		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
+		glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
 	}
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::exception("Frame buffer is not okie dokie");
@@ -63,6 +63,11 @@ void FrameBuffer::setDimensions(glm::uvec2 p_dimensions)
 void FrameBuffer::addColorAttachment()
 {
 	m_colorTextures.emplace_back();
+}
+
+void FrameBuffer::addColorAttachment(Texture& tex)
+{
+	m_colorTextures.emplace_back(tex);
 }
 
 void FrameBuffer::init() {
@@ -79,14 +84,14 @@ void FrameBuffer::init() {
 		m_colorTextures[i].changeDimensions(m_dimensions.x, m_dimensions.y);
 		// constant for now
 		m_colorTextures[i].setFiltering(GL_LINEAR, GL_NEAREST);
-		glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
+		glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_colorTextures[i].glID->ID, 0));
 
 	}
 
 	if (m_useDepth) {
 		glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
 		glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_dimensions.x, m_dimensions.y));
-		glCheck(glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
+		glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer));
 	}
 
 	glCheck(glDrawBuffers((GLsizei)m_DrawBuffers.size(), m_DrawBuffers.data()));
@@ -104,6 +109,11 @@ void FrameBuffer::setColorAttachments(std::initializer_list<GLenum> p_attachment
 
 
 Texture FrameBuffer::getColorTex(size_t p_index)
+{
+	if (p_index > m_colorTextures.size() - 1) throw std::exception("Tried to get frame buffer color attachment outside of range.");
+	return m_colorTextures[p_index];
+}
+Texture& FrameBuffer::getColorTexRef(size_t p_index)
 {
 	if (p_index > m_colorTextures.size() - 1) throw std::exception("Tried to get frame buffer color attachment outside of range.");
 	return m_colorTextures[p_index];

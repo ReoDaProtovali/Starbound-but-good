@@ -19,7 +19,11 @@ void main()
 //    float screenColB = texture(screenTexture, TexCoord + bOff).b;
     vec4 lightingCol = texture(lightingTexture, TexCoord);
     vec4 screenCol = texture(screenTexture, TexCoord);
-    FragColor = vec4(1.f - lightingCol.aaa, 1.0f); //* vec4(1.0f, 2.0f, 1.0f, 1.0f);
+    FragColor = vec4(screenCol.rgb * lightingCol.r, 1.f); //* vec4(1.0f, 2.0f, 1.0f, 1.0f);
+   
     //FragColor = vec4(screenColR, screenColG, screenColB, 1.f) * lightingCol;
-    //FragColor = lightingCol;
+    //vec3 col = lightingCol.rgb;
+
+    //FragColor = vec4(lightingCol.rgb, 1.f);
+    //FragColor.a = 1.f;
 }
