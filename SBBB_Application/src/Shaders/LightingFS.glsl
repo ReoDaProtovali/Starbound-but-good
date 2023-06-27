@@ -1,25 +1,32 @@
-#version 330 core
+#version 330
 
-layout(location = 0) out vec4 FragColor;
+in vec2 TexCoord;
+out vec4 FragColor;
 
 uniform sampler2D lightingInfoTex;
-uniform vec2 inputResolution; // lighting info resolution
 uniform vec2 topLeftTileCoord;
 uniform vec2 tileDims;
 uniform vec2 mousePos;
-
-in vec2 TexCoord;
-
-#define PI 3.14159265f
-#define TAU 6.28318530718
+uniform float time;
+uniform vec4 testLightInfo;
 
 #define ATTENUATION_OFFSET 0.0f
+#define PI 3.141592653589
 struct Light {
     vec2 pos;
     vec3 col;
     float angle;
     float spread;
 };
+
+float hash( float x1 ) {
+    int x = int (x1 * 8325.f);
+    int n = x ^ 890235893;
+    n = (n<<13)^n;
+    n = (n*(n*n*15731+789221)+1376312589)>>16;
+    return float(n%1000)/1000.f;
+}
+
 
 struct Ray {
     vec2 pos;
@@ -31,7 +38,10 @@ float dist2(in float x0, in float y0, in float x1, in float y1) {
 
 void stepRay(inout Ray r) {
     float slopeYX = r.dir.y / r.dir.x;
+    slopeYX = clamp(slopeYX, -16384.f, 16384.f);
     float slopeXY = r.dir.x / r.dir.y;
+    slopeXY = clamp(slopeXY, -16384.f, 16384.f);
+    
     float sgnX = sign(r.dir.x);
     float sgnY = sign(r.dir.y);
     
@@ -48,8 +58,12 @@ void stepRay(inout Ray r) {
     float distH = dist2(r.pos.x, r.pos.y, hxInt, hyInt);
     float distV = dist2(r.pos.x, r.pos.y, vxInt, vyInt);
     float cond = float(distH < distV);
-    r.pos.x = vxInt + (hxInt - vxInt) * cond + sgnX / 128.f;
-    r.pos.y = vyInt + (hyInt - vyInt) * cond + sgnY / 128.f;
+    r.pos.x = vxInt + (hxInt - vxInt) * cond + sgnX / 1024.f;
+    r.pos.y = vyInt + (hyInt - vyInt) * cond + sgnY / 1024.f;
+}
+void stepRaySimple(inout Ray r) {
+    r.pos.x += r.dir.x;
+    r.pos.y += r.dir.y;
 }
 
 vec2 toShaderCoords(in vec2 p_tileCoords) {
@@ -57,96 +71,109 @@ vec2 toShaderCoords(in vec2 p_tileCoords) {
     return (-bottomRightTileCoord + p_tileCoords) / tileDims;
 }
 
-float lightInfoSample(vec2 tileCoord) {
+float lightAbsorbanceSample(in vec2 tileCoord) {
     vec4 pixel = texture(lightingInfoTex, toShaderCoords(tileCoord));
-    if (pixel.r == 1.f) return 1.f;
-    return 1.f-pixel.r;
+    if (pixel.a == 0.f) return 1.f;
+    return pixel.a;
 }
+vec4 lightInfoSample(in vec2 tileCoord) {
+    vec4 pixel = texture(lightingInfoTex, toShaderCoords(tileCoord));
+    if (pixel.a == 0.f) pixel.a = 1.f;
+    return pixel;
+}
+
 void main()
 {
     vec2 bottomRightTileCoord = vec2(topLeftTileCoord.x, topLeftTileCoord.y - tileDims.y);
     vec2 tileCoord;
     tileCoord.x = bottomRightTileCoord.x + tileDims.x * TexCoord.x;
     tileCoord.y = bottomRightTileCoord.y + tileDims.y * TexCoord.y;
+//    FragColor = vec4(vec3(TexCoord.x, TexCoord.y, 1.f), 1.f);
+//    return;
 
-    Light testLight = Light(mousePos, vec3(2.f, 1.0f, 0.5f), 1.f, 1.f);
+    vec4 outCol = vec4(0.f, 0.f, 0.f, 1.f);
+    vec3 tinting;
 
-    vec4 outCol;
+    int lightCount = 1; 
+    for (int j = 0; j < lightCount; j++) {
+    tinting = vec3(0.f);
+    float progress = float(j + 1.f) / lightCount;
+    float radius = 0.f;
+    const float timeSpeed = 0.5f;
 
-    //vec2 normalizedLightPos = vec2(mouseLight.pos.x * aspect, mouseLight.pos.y) / inputResolution;
+    vec3 rainbow = (0.5 + 0.5*cos(time * timeSpeed * 2.f + vec3(0,2,4) + (PI * 2.f) / progress)) / 4.f;
+    vec2 lightPos = mousePos + vec2(sin(time * timeSpeed + PI * 2.f * progress), cos(time * timeSpeed + PI * 2.f * progress)) * radius;
+    Light testLight = Light(lightPos, testLightInfo.rgb * testLightInfo.a, 0.5f, 1.f);
+    float longestLightVal = max(testLight.col.r, max(testLight.col.g, testLight.col.b));
+    float penAdvantage = clamp(longestLightVal - 0.25, 0.f, 0.75) / 0.75;
 
-    float lightDistance = length(testLight.pos - tileCoord) / 200.f;
+    float lightDistance = clamp((distance(testLight.pos, tileCoord)) / 50.f - 0.2, 0.f, 1.f);
 
-    float rayAngle = atan(testLight.pos.y - tileCoord.y, testLight.pos.x - tileCoord.x);
+    vec2 rayAngle = normalize(testLight.pos - tileCoord);
 
-    Ray ray = Ray(tileCoord, vec2(cos(rayAngle), sin(rayAngle)));
+    Ray ray = Ray(tileCoord, rayAngle);
 
-    vec2 prevRayPos = ray.pos;
-    vec2 hitPoint = ray.pos;
+    vec2 lightAngleVec = vec2(cos(testLight.angle), sin(testLight.angle));
 
-    float prevAbsorbance = lightInfoSample(ray.pos);
+    vec2 rayAngleInv = -rayAngle;
+        
+    // a mess
+    float angleFactor = (dot(
+                            lightAngleVec, 
+                            mix(
+                                rayAngleInv, lightAngleVec, 
+                                -1.f / ((testLight.spread) * (testLight.spread)) + 2.f
+                                )
+                             ) + 1.f
+                         ) / 2.f;
+    
+    vec3 lightFactor = testLight.col * ((1.f - lightDistance)) * angleFactor;
+
+    const float lightCutoff = 0.05f;
+    if (lightFactor.r < lightCutoff && lightFactor.g < lightCutoff && lightFactor.b < lightCutoff) {
+        FragColor = vec4(0.f, 0.f, 0.f, 1.f);
+        continue;
+    };
+
+
+    vec2 prevRayPos = tileCoord;
+    vec2 hitPoint = tileCoord;
+
+    float prevAbsorbance = lightAbsorbanceSample(tileCoord);
     float absorbanceFactor = 1.f;
-
+    vec3 tintingFactor = vec3(1.f);
     //FragColor = vec4(vec3(prevAbsorbance), 1.f);
     //return;
-    float count = 0;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 70; i++) {
+        if (absorbanceFactor < 0.01) {
+            absorbanceFactor = 0.f;
+            break;
+        };
         // handle the case whenever the ray surpasses the light
         if (distance(tileCoord, ray.pos) > distance(tileCoord, testLight.pos)) {
-            absorbanceFactor *= pow(mix(prevAbsorbance, 1.0f, ATTENUATION_OFFSET), distance(hitPoint, testLight.pos));
+            absorbanceFactor *= pow(prevAbsorbance, distance(hitPoint, testLight.pos));
             break;
         }
         
         stepRay(ray);
 
         vec2 midPoint = (prevRayPos + ray.pos) / 2.f;
-        float shrample = lightInfoSample(midPoint);
+        vec4 shrample = lightInfoSample(midPoint);
         if (shrample != prevAbsorbance) {
-            absorbanceFactor *= pow(mix(prevAbsorbance, 1.f, ATTENUATION_OFFSET), distance(hitPoint, prevRayPos));
-            prevAbsorbance = shrample;
-            count += 1.f;
+            absorbanceFactor *= pow(prevAbsorbance, distance(hitPoint, prevRayPos) * (1.f - penAdvantage * 0.5));
+            tintingFactor *= shrample.rgb;
+            prevAbsorbance = shrample.a;
             hitPoint = prevRayPos;
         }
         prevRayPos = ray.pos;
     }
 
-    // Fade rays nearing the end so there's not a sharp transition
-    float normalizedDist = clamp(1.f - lightDistance, 0.f, 1.f);
-    
-    vec2 lightAngleVec = vec2(cos(testLight.angle), sin(testLight.angle));
-    // aspect code is weird
-    vec2 rayAngleVec = -vec2(ray.dir.x, ray.dir.y);
-        
-    // a mess
-    float angleFactor = (dot(
-                            lightAngleVec, 
-                            mix(
-                                rayAngleVec, lightAngleVec, 
-                                -1.f / ((testLight.spread) * (testLight.spread)) + 2.f
-                                )
-                             ) + 1.f
-                         ) / 2.f;   
-    
-    vec3 lightFactor = testLight.col * normalizedDist * angleFactor;
-    outCol.rgb = lightFactor * absorbanceFactor;
-    outCol.a = 1.f;
-//    float prevAbsorbance = 1.f-texture(lightingInfoTex, toShaderCoords(ray.pos)).r;
-//    float absorbanceFactor = 1.f;
-//
-//    float count = 0.f;
-//    for (int i = 0; i < 200; i++) {
-//        if (distance(tileCoord, ray.pos) > distance(tileCoord, testLight.pos)) {
-//            count += 1.f;
-//            break;
-//        }
-//        stepRay(ray);
-//
-//        vec2 midPoint = (prevRayPos + vec2(cos(ray.dir.x), sin(ray.dir.y)) * 0.01f);
-//        float shrample = texture(lightingInfoTex, toShaderCoords(prevRayPos)).r;
-//        count += shrample;
-//        prevRayPos = ray.pos;
-//    }
-    //FragColor = vec4(vec3(absorbanceFactor), 1.f);
-    //outCol.rgb = 1.f-vec3(count / 10.f);
+    //lightFactor = tinting * length(lightFactor);
+    //lightFactor +=;
+        // bandaid solution
+        if (tintingFactor == vec3(0.f)) tintingFactor = vec3(1.f);
+        outCol.rgb = max(lightFactor * vec3(absorbanceFactor) * tintingFactor, outCol.rgb);
+    }
+
     FragColor = clamp(outCol, 0.f, 999.f);
 }

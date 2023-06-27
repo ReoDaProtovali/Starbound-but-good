@@ -21,6 +21,7 @@ WorldRenderer::WorldRenderer()
 	m_tileSprite.attachTexture(fboTex);
 
 	Texture& infoTex = m_tileFBO.getColorTexRef(1);
+	fboTex.setFiltering(GL_NEAREST, GL_NEAREST);
 	//infoTex.setChannels(GL_RGB);
 	lighting.setTileInfoTex(infoTex);
 
@@ -53,6 +54,7 @@ WorldRenderer::WorldRenderer()
 int WorldRenderer::redrawCameraView()
 {
 	//m_tileFBO.clear();
+	m_tileFBO.setClearColor(glm::vec4(1.f, 1.f, 1.f, 0.f));
 	glEnable(GL_DEPTH_TEST);
 	int drawnChunkCount = 0;
 	for (int y = (int)m_chunkFramePrev.y; y <= (int)m_chunkFramePrev.w; y++) {
@@ -110,17 +112,20 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 {
 	if (!m_viewCam) return 0;
 	glEnable(GL_DEPTH_TEST);
-	m_tileFBO.setClearColor(glm::vec4(0.f));
 	auto f = m_viewCam->getFrame();
 	// magic numbers
-	f.y -= CHUNKSIZE;
-	f.w -= CHUNKSIZE;
+	f.y -= CHUNKSIZE * 3.f;
+	f.w += CHUNKSIZE;
+	f.x -= CHUNKSIZE * 2;
+	f.z += CHUNKSIZE;
+
 
 	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f);
 
 	int drawnChunkCount = 0;
 
 	m_tileFBO.bind();
+	m_tileFBO.setClearColor(glm::vec4(1.f, 1.f, 1.f, 0.f));
 	// prevent overdrawing
 	static std::set<ChunkPos> seenPositions;
 	ChunkPos pos;
@@ -135,8 +140,9 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 		// has to be shifted one chunk down on the y for reasons
 		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE - CHUNKSIZE, pos.y * CHUNKSIZE - CHUNKSIZE * 2);
-		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f);
-		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, 1);
+		GLfloat clearCol[] = { 1.f, 1.f, 1.f, 0.f };
+		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, clearCol);
+		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, clearCol, 1);
 		m_tileFBO.clearDepthRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f);
 
 		if (s_chunkMap.contains(pos)) {
@@ -208,16 +214,16 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	m_tileSprite.draw(p_surface, p_states);
 
 	// update lighting info
-	m_tileFBO.setClearColor(glm::vec4(1.f));
+	lighting.lightingInfoFBO.setClearColor(glm::vec4(1.f, 1.f, 1.f, 0.f));
 	lighting.lightingInfoFBO.bind();
 	lighting.lightingInfoFBO.clear();
 	lighting.lightingSprite.attachTexture(m_tileFBO.getColorTex(1));
 	m_tileDrawStates.m_blendMode.disable();
+	lighting.lightingSprite.attachShader(&gs.imageShader);
 	lighting.lightingSprite.draw(lighting.lightingInfoFBO, m_tileDrawStates);
-	m_tileFBO.setClearColor(glm::vec4(0.f));
+	m_tileFBO.bind();
 
 	if (chunkFrame == m_chunkFramePrev) return 0;
-	m_tileFBO.bind();
 
 	m_pixelsPerTile = std::fminf((float)p_windowWidth / (float)m_viewCam->tileScale, 8.f);
 
@@ -234,6 +240,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	lighting.lightingSprite.setPosition(glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 1));
 
 	m_tileFBO.setDimensions(glm::vec2(m_pixelsPerTile * (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y)));
+	//lighting.dynamicLightingFBO.setDimensions(glm::vec2(m_pixelsPerTile* (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y)));
 	lighting.setDims(m_tileFBO.getViewportWidth(), m_tileFBO.getViewportHeight()); // update lighting buffer sizes
 
 	m_tileDrawStates.setTransform(m_tileCam.getTransform());
@@ -248,13 +255,16 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	//m_tileFBO.clearRegion(m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).x, m_tileCam.tileToPixelCoordinates(0.f, -CHUNKSIZE).y, pixelsPerTileMin * CHUNKSIZE, pixelsPerTileMin * CHUNKSIZE);
 	//auto test = m_tileCam.tileToPixelCoordinates(0.f, 30.f);
 
-	m_tileFBO.setClearColor(glm::vec4(1.f));
+	// update lighting info
+	m_tileSprite.setOrigin(glm::vec2(0.f));
+	lighting.lightingInfoFBO.setClearColor(glm::vec4(1.f, 1.f, 1.f, 0.f));
 	lighting.lightingInfoFBO.bind();
 	lighting.lightingInfoFBO.clear();
 	lighting.lightingSprite.attachTexture(m_tileFBO.getColorTex(1));
 	m_tileDrawStates.m_blendMode.disable();
+	lighting.lightingSprite.attachShader(&gs.imageShader);
 	lighting.lightingSprite.draw(lighting.lightingInfoFBO, m_tileDrawStates);
-	m_tileFBO.setClearColor(glm::vec4(0.f));
+	m_tileFBO.bind();
 
 	m_chunkFramePrev = chunkFrame;
 	return drawnChunkCount;
@@ -262,6 +272,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 {
+	m_tileFBO.setClearColor(glm::vec4(1.f, 1.f, 1.f, 0.f));
 	int drawnChunkCount = 0;
 	for (int y = (int)chunkFrame.y; y <= (int)chunkFrame.w; y++) {
 		for (int x = (int)chunkFrame.z; x >= (int)chunkFrame.x; x--) {

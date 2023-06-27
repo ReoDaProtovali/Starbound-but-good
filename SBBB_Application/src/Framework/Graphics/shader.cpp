@@ -471,6 +471,36 @@ void Shader::setVec3UniformStatic(GLint p_loc, glm::vec3 p_value)
 	glCheck(glUniform3f(p_loc, p_value.x, p_value.y, p_value.z));
 }
 
+GLint Shader::addVec4Uniform(std::string_view p_name, glm::vec4 p_value)
+{
+	use();
+	GLint loc = glGetUniformLocation(program->ID, p_name.data());
+#ifdef LOADLOGGING_ENABLED
+	if (loc != -1) {
+		LOAD_LOG("addVec2Uniform: glGetUniformLocation returned \"" << loc << "\" for " << p_name << ".");
+	}
+	else {
+		ERROR_LOG("addVec2Uniform: Uniform location not found for " << p_name << ".");
+	}
+#endif
+	Uniform u = Uniform{ p_name, UniformTypes::VEC4, p_value };
+	u.loc = loc;
+	m_uniforms.push_back(u);
+	glCheck(glUniform4f(loc, p_value.x, p_value.y, p_value.z, p_value.w));
+	return loc;
+}
+
+void Shader::setVec4Uniform(GLint p_loc, glm::vec4 p_value) const
+{
+	use();
+	glCheck(glUniform4f(p_loc, p_value.x, p_value.y, p_value.z, p_value.w));
+}
+
+void Shader::setVec4UniformStatic(GLint p_loc, glm::vec4 p_value)
+{
+	glCheck(glUniform4f(p_loc, p_value.x, p_value.y, p_value.z, p_value.w));
+}
+
 GLuint Shader::getUniformLoc(std::string_view shaderName)
 {
 	GLint loc = -1;

@@ -33,7 +33,7 @@ class WorldRenderer {
 	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 0), Rect(0, 0, 10, 10));
 	float m_pixelsPerTile = 8.f;
     SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
-
+	GenericShaders& gs = GenericShaders::Get();
 	void tidy();
 	int redrawCameraView(const glm::vec4& chunkFrame);
 

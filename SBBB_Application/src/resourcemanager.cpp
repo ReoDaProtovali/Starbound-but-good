@@ -144,7 +144,7 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 		tileSheetPixmap.setPixel(
 			tileSheetPixmap.width - 1,
 			tileSheetPixmap.height - 1,
-			glm::vec4(tileInfo.lightingColor[0], tileInfo.lightingColor[1], tileInfo.lightingColor[2], tileInfo.lightAbsorption));
+			glm::vec4(tileInfo.lightingColor[0], tileInfo.lightingColor[1], tileInfo.lightingColor[2], 1.0 - tileInfo.lightAbsorption));
 		//size_t pixelIndex = width * height * nrChannels - 1;
 		//imageData[9 * 4 + 0] = tileInfo.lightingColor[0];
 		//imageData[9 * 4 + 1] = tileInfo.lightingColor[1];

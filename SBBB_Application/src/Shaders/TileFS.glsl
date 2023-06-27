@@ -22,21 +22,28 @@ void main()
     tuv.x = 1.f - tuv.x;
     vec4 col4 = texture(tileSheet, tuv);
     vec4 lightingInfoCol = texture(tileSheet, lightingPixelUV);
-    lightingInfoCol.a *= pow((zLevel + 1) / 4, 3);
+    // scuffed lol
+    switch (int(zLevel)) {
+        case 3:
+        break;
+        case 2:
+            lightingInfoCol.a += 0.5;
+        break;
+        case 1:
+            lightingInfoCol.a += 0.6;
+        break;
+        case 0:
+            lightingInfoCol.a += 0.8;
+        break;
+
+    }
 
     vec4 outCol = vec4(col4.xyz * (zLevel + 1) / 4 , col4.a);
 
-    //if (out_ID == 32767.f) {
-    //    FragColor = vec4(vec3(greyscale), 1.f);
-    //    return;
-    //}
-    gl_FragData[0] = outCol;
-    gl_FragData[1] = vec4(0.f);
+    gl_FragData[1] = vec4(0.f, 0.f, 0.f, 0.f);
     if (!drawAsBorders) {
-            lightingInfoCol.r = lightingInfoCol.w; // at some point it gets alpha blended and i have no idea where, have to do this
-            //lightingInfoCol.gb = vec2(0.0);
-            //lightingInfoCol.w = 1.f;
             gl_FragData[1] = lightingInfoCol;
         }
-    //FragColor = vec4(0, 0, 0, 1);
+    if (col4.a == 0.f) discard; // workaround, a way to get around using blending 
+    gl_FragData[0] = outCol;
 }

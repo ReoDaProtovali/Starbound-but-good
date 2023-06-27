@@ -136,7 +136,7 @@ void Texture::useMipmaps(int p_count)
 	glCheck(glBindTexture(type, glID->ID)); // into the main texture buffer
 	glCheck(glGenerateMipmap(type));
 	glCheck(glTexParameteri(type, GL_TEXTURE_MAX_LEVEL, p_count));
-	glCheck(glBindTexture(type, glID->ID)); // into the main texture buffer
+	glCheck(glBindTexture(type, 0));
 
 }
 
@@ -199,11 +199,6 @@ void Texture::genMipMapsFloat(uint8_t p_level, uint32_t p_width, uint32_t p_heig
 		int n = (int)std::pow(2.0, (double)i);
 
 		uint8_t* newDat = utils::divideRes(n, width, height, fullImage);
-		//stbir_resize_uint8(pngdat, width, height, width * 4, newDat, newW, newH, newW * 4, 4);
-
-		//char txt[] = "Filex.png";
-		//txt[4] = '0' + i;
-		//stbi_write_png(txt, width / n, height / n, 4, newDat, (width * 4) / n);
 		glCheck(glTexImage2D(type, i, channels, width / n, height / n, 0, channels, GL_UNSIGNED_BYTE, newDat));
 
 		free(newDat);

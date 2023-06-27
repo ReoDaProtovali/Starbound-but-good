@@ -13,7 +13,10 @@ void ClientWorldState::testDraw()
 	// DrawStates just contains everything opengl needs to know in order to draw.
 	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
 	//DrawStates state;
-
+	ImGui::Begin("Tile Interaction");
+	static char tileIDInput[128] = "vanilla:richstone";
+	ImGui::InputText("Tile ID:", tileIDInput, 128);
+	ImGui::End();
 
 	mousePos = glm::vec2(0.f);
 	static bool lMouseDown = false;
@@ -31,14 +34,16 @@ void ClientWorldState::testDraw()
 			if (m.mouseButton == SDL_BUTTON_RIGHT) rMouseDown = false;
 		}
 		if (lMouseDown && playerCam) {
-			int spriteIndex = res.getTileInfo("vanilla:richstone").value().get().spriteIndex;
+			int spriteIndex = res.getTileInfo(tileIDInput).value().get().spriteIndex;
 			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
-
+			// not really any idea why i gotta do this, probably the chunk manager code
+			tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
 			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
 		}
 
 		if (rMouseDown && playerCam) {
 			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
+			tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
 			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
 		}
 	}

@@ -9,7 +9,7 @@
 	"isAnimated": false,
 	"variationCount": 1,
 	"transparent": true,
-	"lightAbsorption": 0.1,
+	"lightAbsorption": 0.0,
 	"emissive": true,
-	"lightingColor": [ 0, 0, 0 ]
+	"lightingColor": [ 0.0, 0.0, 0.0 ]
 }

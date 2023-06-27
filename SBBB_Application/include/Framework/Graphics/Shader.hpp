@@ -88,6 +88,11 @@ public:
 	GLint addVec3Uniform(std::string_view p_name, glm::vec3 p_value);
 	void setVec3Uniform(GLint p_loc, glm::vec3 p_value) const;
 	static void setVec3UniformStatic(GLint p_loc, glm::vec3 p_value);
+
+	GLint addVec4Uniform(std::string_view p_name, glm::vec4 p_value);
+	void setVec4Uniform(GLint p_loc, glm::vec4 p_value) const;
+	static void setVec4UniformStatic(GLint p_loc, glm::vec4 p_value);
+
 	// Used to set a list of uniforms using uniform objects.
 	// Only works with strings, no locations.
 	//void setUniforms(std::vector<Uniform> p_uniforms);
