@@ -8,6 +8,7 @@ GameRenderer::GameRenderer(GameWindow& p_window) :
 
 	LOAD_LOG("GameRenderer instantiated...");
 	cam = &defaultCam;
+	screenFBO.getColorTexRef(0).setWrapping(GL_CLAMP_TO_EDGE);
 }
 
 

@@ -55,9 +55,7 @@ void stepRay(inout Ray r) {
     float hxInt = r.pos.x + hxIntOrigin * sgnY;
     float hyInt = r.pos.y + hyDiffOrigin * sgnY;
     
-    float distH = dist2(r.pos.x, r.pos.y, hxInt, hyInt);
-    float distV = dist2(r.pos.x, r.pos.y, vxInt, vyInt);
-    float cond = float(distH < distV);
+    float cond = float(dist2(r.pos.x, r.pos.y, hxInt, hyInt) < dist2(r.pos.x, r.pos.y, vxInt, vyInt));
     r.pos.x = vxInt + (hxInt - vxInt) * cond + sgnX / 1024.f;
     r.pos.y = vyInt + (hyInt - vyInt) * cond + sgnY / 1024.f;
 }
@@ -145,13 +143,13 @@ void main()
     //FragColor = vec4(vec3(prevAbsorbance), 1.f);
     //return;
     for (int i = 0; i < 70; i++) {
-        if (absorbanceFactor < 0.01) {
+        if (absorbanceFactor < 0.003) {
             absorbanceFactor = 0.f;
             break;
         };
         // handle the case whenever the ray surpasses the light
         if (distance(tileCoord, ray.pos) > distance(tileCoord, testLight.pos)) {
-            absorbanceFactor *= pow(prevAbsorbance, distance(hitPoint, testLight.pos));
+            absorbanceFactor *= pow(prevAbsorbance, distance(hitPoint, testLight.pos) * (1.f - penAdvantage * 0.5));
             break;
         }
         

@@ -9,5 +9,6 @@ in vec2 TexCoord;
 
 void main()
 {
-     FragColor = vec4(col, opacity);
+     gl_FragData[0] = vec4(col, opacity);
+     gl_FragData[1] = vec4(0.f); // workaround 
 }

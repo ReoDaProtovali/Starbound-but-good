@@ -190,7 +190,7 @@ struct fpsGauge {
 	}
 	/** Adds a new frametime to the gauge's buffer, removes any old ones.
 	* 
-	* @param maxBufferLength - The maximum length of the buffer before it starts removing old values
+	* @param persistence 0 to 1, higher values means it takes longer for a change in fps to matter.
 	*/
 	void update(float persistence) {
 		stopStopwatch();

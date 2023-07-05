@@ -70,6 +70,7 @@ void GUIContainer::setImage(Texture& p_image, bool stretchToFit)
 	m_imageSprite.attachShader(&gs.imageShader);
 	if (stretchToFit) {
 		m_imageSprite.setBounds(Rect(0.f, 0.f, absoluteBounds.wh.x, absoluteBounds.wh.y));
+		m_stretchImage = true;
 	}
 	else {
 		m_stretchImage = false;

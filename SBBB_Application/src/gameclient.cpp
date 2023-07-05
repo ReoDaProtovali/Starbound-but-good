@@ -26,7 +26,10 @@ void GameClient::stop() {
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get(); // one-way messenger for capturing mouse events
+	Messenger<KeyEvent, int>& keyMessenger = Messenger<KeyEvent, int>::Get(); // one-way messenger for capturing mouse events
+
 	Subject<MouseEvent>& mouseSubject = globals.mouseSubject; // for re-transmitting mouse events to client
+	Subject<KeyEvent>& keySubject = globals.keySubject; // for re-transmitting key events to client
 
 	Observer<KeyEvent> keyObserver{ globals.keySubject };
 	gw.bindToThisThread();
@@ -86,40 +89,37 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				ImGui_ImplSDL2_ProcessEvent(&e.value());
 			}
 
-			renderFPSGauge.update(0.5f);
+			renderFPSGauge.update(0.99f);
 			testInput();
 			processDebugStats();
 
 			static GUIEvent e; // static so it keeps mouse pos between updates
-			bool needsSent = true;
-
-			// reset mouse state if we have a new update, otherwise hold current state.
-			//if (mouseMessenger.incomingFront()) {
-			//	e.mouse = MouseEvent();
-			//}
-			// compress mouse events, lots of redundancy
 
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
-			while (auto opt = keyObserver.observe()) {
-				if (io.WantCaptureKeyboard) break;
-				if (opt.value().wasDown) {
-					e.key = opt.value();
-					e.key.valid = true;
-					gui.update(e);
-					needsSent = false;
+			e.key.valid = false;
+			while (auto opt = keyMessenger.getMessageFront()) {
+				if (io.WantCaptureKeyboard) {
+					break;
 				}
+				e.key.valid = true;
+				keySubject.notifyAll(opt.value());
+				if (opt.value().wasDown) {
+					inp.processKeyDown(opt.value().keyCode);
+				}
+				else {
+					inp.processKeyUp(opt.value().keyCode);
+				}
+				e.key = opt.value();
+				gui.update(e);
 			}
+
 			while (auto opt = mouseMessenger.getMessageFront()) {
 				e.mouse = opt.value();
-				if (!gui.update(e) && !io.WantCaptureMouse)
-					mouseSubject.notifyAll(e.mouse);
-				needsSent = false;
-			}
-			if (needsSent) {
-				if (!gui.update(e) && !io.WantCaptureMouse) {
+				if (!io.WantCaptureMouse && !gui.update(e)) {
 					mouseSubject.notifyAll(e.mouse);
 				};
 			}
+
 
 			gw.clear();
 			stateManager.clientUpdate();

@@ -111,7 +111,6 @@ void WorldRenderer::setCamera(Camera* p_cam)
 int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p_windowWidth)
 {
 	if (!m_viewCam) return 0;
-	glEnable(GL_DEPTH_TEST);
 	auto f = m_viewCam->getFrame();
 	// magic numbers
 	f.y -= CHUNKSIZE * 3.f;
@@ -164,6 +163,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 			m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
 			//chunk.draw(m_tileFBO, m_tileDrawStates);
 			// workaround to fix chunk border bug
+			glEnable(GL_DEPTH_TEST);
 			for (int i = -1; i <= 1; i++) {
 				for (int j = -1; j <= 1; j++) {
 					//if (i == 0 && j == 0) continue;
@@ -193,12 +193,15 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 					m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(c.worldPos.x, c.worldPos.y));
 					m_tileShader.setBoolUniform(drawAsBordersUniformLoc, true);
 					m_tileDrawStates.m_blendMode.enable();
+					glEnable(GL_DEPTH_TEST);
 					c.draw(m_tileFBO, m_tileDrawStates);
+					glDisable(GL_DEPTH_TEST);
+					if (drawChunkBorders) {
+						SBBBDebugDraw::drawBoxImmediate(c.getPosition().x, c.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
+					}
 				}
 			}
-			if (drawChunkBorders) {
-				SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
-			}
+
 			drawnChunkCount++;
 		}
 	}
@@ -276,6 +279,7 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 	int drawnChunkCount = 0;
 	for (int y = (int)chunkFrame.y; y <= (int)chunkFrame.w; y++) {
 		for (int x = (int)chunkFrame.z; x >= (int)chunkFrame.x; x--) {
+			glEnable(GL_DEPTH_TEST);
 			if (s_chunkMap.contains(ChunkPos(x, y))) {
 
 				WorldChunk& chunk = s_chunkMap[ChunkPos(x, y)];
@@ -298,6 +302,7 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 
 				m_tileFBO.bind();
 				chunk.draw(m_tileFBO, m_tileDrawStates);
+				glDisable(GL_DEPTH_TEST);
 				if (drawChunkBorders) {
 					SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
 				}

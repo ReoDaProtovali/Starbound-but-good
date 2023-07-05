@@ -39,6 +39,8 @@ public:
 	Shader m_lightingCombineShader;
 	GLint m_lightingTextureUniformLoc = 0;
 	GLint m_screenTextureUniformLoc = 0;
+	GLint m_screenResUniformLoc = 0;
+	GLint m_lightingResUniformLoc = 0;
 
 	Shader m_lightingShader;
 	GLint m_lightingInfoTexUniformLoc = 0;

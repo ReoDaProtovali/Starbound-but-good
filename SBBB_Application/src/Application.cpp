@@ -55,6 +55,7 @@ void Application::pollEvents()
 	static SDL_Event event;
 	//static Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get();
 	static Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get();
+	static Messenger<KeyEvent, int>& keyMessenger = Messenger<KeyEvent, int>::Get();
 	// workaround
 	static Messenger<SDL_Event, int>& SDLEventMessenger = Messenger<SDL_Event, int>::Get();
 	while (SDL_PollEvent(&event)) {
@@ -73,10 +74,12 @@ void Application::pollEvents()
 			gameActive = false;
 			break;
 		case SDL_KEYDOWN:
-			client.inp.processKeyDown(event.key.keysym.sym);
+			//client.inp.processKeyDown(event.key.keysym.sym); // i'll leave this to rot for now
+			keyMessenger.sendMessageFront(KeyEvent(true, event.key.keysym.sym, true));
 			break;
 		case SDL_KEYUP:
-			client.inp.processKeyUp(event.key.keysym.sym);
+			//client.inp.processKeyUp(event.key.keysym.sym);
+			keyMessenger.sendMessageFront(KeyEvent(false, event.key.keysym.sym, true));
 			if (event.key.keysym.sym == SDLK_ESCAPE) gameActive = false;
 			break;
 		case SDL_MOUSEMOTION:

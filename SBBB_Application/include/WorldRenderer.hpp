@@ -10,6 +10,7 @@
 #include "util/SharedQueue.hpp"
 #include "util/SubjectObserver.hpp"
 class WorldRenderer {
+public:
 
 	FrameBuffer m_tileFBO;
 	const char* varyingNames[3] = { "TexCoord", "zLevel", "pos" };
@@ -37,7 +38,6 @@ class WorldRenderer {
 	void tidy();
 	int redrawCameraView(const glm::vec4& chunkFrame);
 
-public:
 	Camera m_tileCam;
 	WorldRenderer();
 	int redrawCameraView();

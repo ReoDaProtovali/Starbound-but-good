@@ -5,6 +5,8 @@ layout(location = 1) in vec2 aTexCoord;
 
 uniform sampler2D lightingTexture;
 uniform sampler2D screenTexture;
+uniform vec2 screenRes;
+uniform vec2 lightingRes;
 
 out vec2 TexCoord;
 

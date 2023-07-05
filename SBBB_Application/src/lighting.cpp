@@ -15,10 +15,13 @@ Lighting::Lighting() :
 	dynamicLightingFBO.getColorTexRef(0).setFiltering(GL_LINEAR, GL_LINEAR);
 
 	lightingInfoFBO.setClearColor(glm::vec4(0.f));
+	glm::mat4 tmpmat4 = glm::mat4(1.f);
+	//m_lightingCombineShader.addMat4Uniform("transform", tmpmat4);
 	m_lightingTextureUniformLoc = m_lightingCombineShader.addTexUniform("lightingTexture", 0);
 	m_screenTextureUniformLoc = m_lightingCombineShader.addTexUniform("screenTexture", 1);
+	m_screenResUniformLoc = m_lightingCombineShader.addVec2Uniform("screenRes", glm::vec2(1.f));
+	m_lightingResUniformLoc = m_lightingCombineShader.addVec2Uniform("lightingRes", glm::vec2(1.f));
 
-	glm::mat4 tmpmat4 = glm::mat4(1.f);
 	m_lightingShader.addMat4Uniform("transform", tmpmat4);
 	m_lightingInfoTexUniformLoc = m_lightingShader.addTexUniform("lightingInfoTex", 0);
 	m_topLeftTileCoordUniformLoc = m_lightingShader.addVec2Uniform("topLeftTileCoord", glm::vec2(0.f));
@@ -42,6 +45,8 @@ Lighting::Lighting() :
 	lightingInfoFBO.getColorTexRef(0).setWrapping(GL_CLAMP_TO_EDGE);
 	m_overlayMesh.addFloatAttrib(3); // Position attrib
 	m_overlayMesh.addFloatAttrib(2); // Tex Coord attrib
+
+	dynamicLightingFBO.getColorTexRef(0).setWrapping(GL_CLAMP_TO_EDGE);
 
 	m_overlayMesh.pushVertices({ // pushing the whole quad vertex array in one swoop
 	-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, // vertex 1
@@ -122,6 +127,8 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 	else
 		dynamicLightingFBO.clear();
 	m_lightingCombineStates.setTexture(0, dynamicLightingFBO.getColorTexRef(0));
+	m_lightingCombineShader.setVec2Uniform(m_screenResUniformLoc, glm::vec2(p_gameWindow.getViewportWidth(), p_gameWindow.getViewportHeight()));
+	m_lightingCombineShader.setVec2Uniform(m_lightingResUniformLoc, glm::vec2(dynamicLightingFBO.getViewportWidth(), dynamicLightingFBO.getViewportHeight()));
 	p_gameWindow.bind();
 	// something I realize now is that calling .draw on an FBO does not actually bind the FBO, it just draws to the current bound thing.
 	p_gameWindow.draw(m_overlayMesh, GL_TRIANGLES, m_lightingCombineStates);

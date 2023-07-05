@@ -18,13 +18,14 @@ void ClientWorldState::testDraw()
 	ImGui::InputText("Tile ID:", tileIDInput, 128);
 	ImGui::End();
 
-	mousePos = glm::vec2(0.f);
 	static bool lMouseDown = false;
 	static bool rMouseDown = false;
 	while (auto opt = m_mouseObserver.observe()) {
 		MouseEvent m = opt.value();
-		mousePos.x = m.pixelX;
-		mousePos.y = m.pixelY;
+		if (m.wasMove) {
+			mousePos.x = m.pixelX;
+			mousePos.y = m.pixelY;
+		}
 		if (m.wasClick) {
 			if (m.mouseButton == SDL_BUTTON_LEFT) lMouseDown = true;
 			if (m.mouseButton == SDL_BUTTON_RIGHT) rMouseDown = true;
@@ -33,21 +34,24 @@ void ClientWorldState::testDraw()
 			if (m.mouseButton == SDL_BUTTON_LEFT) lMouseDown = false;
 			if (m.mouseButton == SDL_BUTTON_RIGHT) rMouseDown = false;
 		}
-		if (lMouseDown && playerCam) {
-			int spriteIndex = res.getTileInfo(tileIDInput).value().get().spriteIndex;
-			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
-			// not really any idea why i gotta do this, probably the chunk manager code
-			tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
-			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
-		}
-
-		if (rMouseDown && playerCam) {
-			glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
-			tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
-			m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
-		}
+	}
+	if (lMouseDown && playerCam) {
+		if (!res.getTileInfo(tileIDInput).has_value()) goto skip;
+		int spriteIndex = res.getTileInfo(tileIDInput).value().get().spriteIndex;
+		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
+		// not really any idea why i gotta do this, probably the chunk manager code
+		tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, spriteIndex });
 	}
 
+	if (rMouseDown && playerCam) {
+		if (!res.getTileInfo(tileIDInput).has_value()) goto skip;
+		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
+		tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
+	}
+
+	skip:
 	ImGui::Begin("Toggles");
 	if (ImGui::Button("Chunk Borders")) {
 		worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
@@ -134,9 +138,12 @@ void ClientWorldState::testDraw()
 	static std::stringstream fpsString("");
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+	static float framerateAverage = 1.f;
+	constexpr float persistence = 0.999f;
+	framerateAverage = framerateAverage * persistence + io.Framerate * (1.f - persistence);
 	if (testFrame % 20 == 0) {
 		fpsString.str("");
-		fpsString << "Current draw FPS - " << io.Framerate << '\n'
+		fpsString << "Current draw FPS - " << framerateAverage << '\n'
 			<< "Current update FPS - " << globals.updateFPS << '\n';
 		fpsTextField.setText(fpsString.str());
 	}
@@ -231,80 +238,68 @@ void ClientWorldState::init()
 	bombSprite.attachTexture(res.getTexture("bombtexture"));
 	bombSprite.setPosition(glm::vec3(33.f));
 
-	fpsTextField.enableBackground();
-	fpsTextField.backgroundOpacity = 0.5f;
-	fpsTextField.setTextHeight(18);
-	fpsTextField.disableRelativeScaling();
-	fpsTextField.setText("No FPS Data");
-	fpsTextField.setScreenBounds(Rect(10.f, 10.f, 350.f, 60.f));
-	fpsTextField.centered = true;
-	fpsTextField.autoScreenWidth = true;
-	fpsTextField.autoScreenHeight = true;
-
-	fpsDragBar.setLocalBounds(Rect(0.f, 0.f, 1.f, 0.1f));
-	fpsDragBar.backgroundColor = glm::vec3(1.f, 1.f, 1.f);
-	fpsDragBar.backgroundOpacity = 0.2f;
-	fpsDragBar.setPixelHeight(20);
-	fpsDragBar.enableBackground();
-	fpsTextField.addChild(&fpsDragBar);
-
-	const float winboxwidth = 200.f;
-	win95Box.setScreenBounds(Rect(100.f, 500.f, winboxwidth, 140.f));
-	win95Box.useWin95Background();
-	win95Box.backgroundOpacity = 0.8f;
+	//const float winboxwidth = 200.f;
+	//win95Box.setScreenBounds(Rect(100.f, 500.f, winboxwidth, 140.f));
+	//win95Box.useWin95Background();
+	//win95Box.backgroundOpacity = 0.8f;
 
 
-	Texture navTex = res.getTexture("navmenu");
+	//Texture navTex = res.getTexture("navmenu");
 
-	navBarImage.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
-	navBarImage.setPixelWidth(winboxwidth - 6.f);
-	navBarImage.setPixelHeight(14.f);
-	navBarImage.setPixelOffset(3.f, 5.f);
-	navBarImage.setImage(navTex);
-	navBarImage.setImageJustification(Corner::TOP_RIGHT);
+	//navBarImage.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
+	//navBarImage.setPixelWidth(winboxwidth - 6.f);
+	//navBarImage.setPixelHeight(14.f);
+	//navBarImage.setPixelOffset(3.f, 5.f);
+	//navBarImage.setImage(navTex);
+	//navBarImage.setImageJustification(Corner::TOP_RIGHT);
 
-	//navDragBar.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
-	navDragBar.setPixelOffset(3.f, 3.f);
-	navDragBar.setPixelWidth(winboxwidth - 6.f);
-	navDragBar.setPixelHeight(16.f);
-	navDragBar.enableBackground();
-	navDragBar.backgroundColor = glm::vec3(0.f, 0.f, 0.67f);
-	win95Box.addChild(&navDragBar);
-	win95Box.addChild(&navBarImage);
+	////navDragBar.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
+	//navDragBar.setPixelOffset(3.f, 3.f);
+	//navDragBar.setPixelWidth(winboxwidth - 6.f);
+	//navDragBar.setPixelHeight(16.f);
+	//navDragBar.enableBackground();
+	//navDragBar.backgroundColor = glm::vec3(0.f, 0.f, 0.67f);
+	//win95Box.addChild(&navDragBar);
+	//win95Box.addChild(&navBarImage);
 
-	//win95BoxText.setPixelOffset(3.f, 16.f);
-	//win95BoxText.setLocalBounds(Rect(0.1f, 0.2f, 1.f, 0.2f));
-	win95BoxText.setPixelOffset(6.f, 0.f);
-	win95BoxText.setPixelHeight(16.f);
-	win95BoxText.setPixelWidth(winboxwidth - 6.f);
-	win95BoxText.textColor = glm::vec3(1.f);
-	win95BoxText.setText("button that cra...");
-	win95BoxText.setTextHeight(15.f);
-	win95BoxText.centered = false;
-	win95Box.addChild(&win95BoxText);
+	////win95BoxText.setPixelOffset(3.f, 16.f);
+	////win95BoxText.setLocalBounds(Rect(0.1f, 0.2f, 1.f, 0.2f));
+	//win95BoxText.setPixelOffset(6.f, 0.f);
+	//win95BoxText.setPixelHeight(16.f);
+	//win95BoxText.setPixelWidth(winboxwidth - 6.f);
+	//win95BoxText.textColor = glm::vec3(1.f);
+	//win95BoxText.setText("button that cra...");
+	//win95BoxText.setTextHeight(15.f);
+	//win95BoxText.centered = false;
+	//win95Box.addChild(&win95BoxText);
 
-	funnyButtonContainer.setLocalBounds(Rect(0.1, 0.2, 0.8, 0.7));
-	funnyButtonContainer.useWin95Background();
-	funnyButtonContainer.backgroundOpacity = 0.8f;
+	//funnyButtonContainer.setLocalBounds(Rect(0.1, 0.2, 0.8, 0.7));
+	//funnyButtonContainer.useWin95Background();
+	//funnyButtonContainer.backgroundOpacity = 0.8f;
 
-	funnyButton.disableBackground();
-	funnyButton.onClick([&]() {
-			GameStateManager::Get().close();
-		});
-	funnyButtonContainer.addChild(&funnyButton);
-	win95Box.addChild(&funnyButtonContainer);
-
-	tileSheetContainer.setAbsoluteBounds(Rect(0.0f, 0.0f, 0.2f, 0.2f));
-	tileSheetContainer.enableBackground();
-	tileSheetContainer.backgroundColor = glm::vec3(1.f);
-	tileSheetContainer.backgroundOpacity = 1.f;
-	Texture tileSheetTexture = res.getTileSheetTexture();
-	tileSheetContainer.setImage(tileSheetTexture);
-
-	//gui.addElement(&tileSheetContainer);
+	//funnyButton.disableBackground();
+	//funnyButton.onClick([&]() {
+	//		GameStateManager::Get().close();
+	//	});
+	//funnyButtonContainer.addChild(&funnyButton);
+	//win95Box.addChild(&funnyButtonContainer);
 
 
-	//gui.addElement(&fpsTextField);
+	//DynFBOTexContainer.setAbsoluteBounds(Rect(0.f, 0.f, 0.5, 0.5));
+	//DynFBOTexContainer.enableBackground();
+	//DynFBOTexContainer.backgroundColor = glm::vec3(1.f);
+	//gui.addElement(&DynFBOTexContainer);
+
+	//InfoFBOTexContainer.setAbsoluteBounds(Rect(0.5f, 0.f, 0.5, 0.5));
+	//InfoFBOTexContainer.enableBackground();
+	//InfoFBOTexContainer.backgroundColor = glm::vec3(0.f);
+	//gui.addElement(&InfoFBOTexContainer);
+
+	//TileFBOTexContainer.setAbsoluteBounds(Rect(0.f, 0.5f, 0.5, 0.5));
+	//TileFBOTexContainer.enableBackground();
+	//TileFBOTexContainer.backgroundColor = glm::vec3(1.f);
+	//gui.addElement(&TileFBOTexContainer);
+
 	gui.addElement(&win95Box);
 
 
@@ -317,6 +312,11 @@ void ClientWorldState::init()
 
 void ClientWorldState::update()
 {
+	//DynFBOTexContainer.setImage(worldRenderer.lighting.dynamicLightingFBO.getColorTexRef(0), true);
+	//TileFBOTexContainer.setImage(worldRenderer.m_tileFBO.getColorTexRef(0), true);
+	//InfoFBOTexContainer.setImage(worldRenderer.lighting.m_lightingInfoTex, true);
+
+	//DynFBOTexContainer.setImage(worldRenderer.lighting.dynamicLightingFBO.getColorTexRef(0), true);
 	renderer.screenFBO.bind();
 	renderer.setClearColor(glm::vec4(0.2f, 0.2f, 0.3f, 0.0f));
 	renderer.clearScreen();

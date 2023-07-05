@@ -57,7 +57,9 @@ public:
 	GUIButton funnyButton{ "funnybutton", 0.f, 0.f, 1.f, 1.f };
 	GUIDragBar navDragBar{ "navdragbar" };
 
-	GUIContainer tileSheetContainer{ "tsc" };
+	GUIContainer DynFBOTexContainer{ "fbod" };
+	GUIContainer TileFBOTexContainer{ "fbot" };
+	GUIContainer InfoFBOTexContainer{ "fboi" };
 	// ----------------------------------------------------------------------
 
 private:
