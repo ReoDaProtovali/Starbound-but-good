@@ -12,6 +12,8 @@ int main(int argc, char* argv[]) {
 	_CrtSetDbgFlag(flag);
 #endif
 
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+
 	Application sbbb = Application();
 
 	sbbb.run();

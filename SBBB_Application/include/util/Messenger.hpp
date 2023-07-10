@@ -8,12 +8,12 @@
 #include <string>
 
 template<typename TFront, typename TBack>
-// The messenger class handles thread synnchronization in a non-blocking way, allowing the sharing of resources
+// The messenger class handles thread synchronization in a non-blocking way, allowing the sharing of resources
 // The front and back in this context refer to forward and reverse directions of messaging, allowing two way communication.
 // Warning: Used as a singleton, this class can only exists with one instance of any given type template.
-class Messenger {
+class BidirectionalMessenger {
 public:
-    Messenger() {}
+    BidirectionalMessenger() {}
 
     // Non-blocking
     std::optional<TFront> getMessageFront() {
@@ -61,8 +61,8 @@ public:
         m_backQueue.push(p_message);
     }
 
-    static Messenger<TFront, TBack>& Get() {
-        static Messenger<TFront, TBack> instance;
+    static BidirectionalMessenger<TFront, TBack>& Get() {
+        static BidirectionalMessenger<TFront, TBack> instance;
         return instance;
     }
 

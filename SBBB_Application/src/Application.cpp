@@ -54,13 +54,12 @@ void Application::pollEvents()
 {
 	static SDL_Event event;
 	//static Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get();
-	static Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get();
-	static Messenger<KeyEvent, int>& keyMessenger = Messenger<KeyEvent, int>::Get();
+	static SharedQueue<MouseEvent>& s_mouseQueue = SharedQueue<MouseEvent>::Get();
+	static SharedQueue<KeyEvent>& s_keyMessenger = SharedQueue<KeyEvent>::Get();
 	// workaround
-	static Messenger<SDL_Event, int>& SDLEventMessenger = Messenger<SDL_Event, int>::Get();
+	static SharedQueue<SDL_Event>& s_SDLEventMessenger = SharedQueue<SDL_Event>::Get();
 	while (SDL_PollEvent(&event)) {
-		SDLEventMessenger.sendMessageFront((SDL_Event)event);
-
+		s_SDLEventMessenger.push((SDL_Event)event);
 		switch (event.type) {
 		case SDL_WINDOWEVENT:
 			if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;
@@ -75,16 +74,16 @@ void Application::pollEvents()
 			break;
 		case SDL_KEYDOWN:
 			//client.inp.processKeyDown(event.key.keysym.sym); // i'll leave this to rot for now
-			keyMessenger.sendMessageFront(KeyEvent(true, event.key.keysym.sym, true));
+			s_keyMessenger.push(KeyEvent(true, event.key.keysym.sym, true));
 			break;
 		case SDL_KEYUP:
 			//client.inp.processKeyUp(event.key.keysym.sym);
-			keyMessenger.sendMessageFront(KeyEvent(false, event.key.keysym.sym, true));
+			s_keyMessenger.push(KeyEvent(false, event.key.keysym.sym, true));
 			if (event.key.keysym.sym == SDLK_ESCAPE) gameActive = false;
 			break;
 		case SDL_MOUSEMOTION:
 			if (event.window.windowID != client.getWindowID()) break;
-			mouseMessenger.sendMessageFront(MouseEvent{
+			s_mouseQueue.push(MouseEvent{
 					(float)event.motion.x / client.gw.width,
 					(float)event.motion.y / client.gw.height,
 					(float)event.motion.x,
@@ -98,7 +97,7 @@ void Application::pollEvents()
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.window.windowID != client.getWindowID()) break;
-			mouseMessenger.sendMessageFront(MouseEvent{
+			s_mouseQueue.push(MouseEvent{
 					(float)event.motion.x / client.gw.width,
 					(float)event.motion.y / client.gw.height,
 					(float)event.motion.x,
@@ -112,7 +111,7 @@ void Application::pollEvents()
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (event.window.windowID != client.getWindowID()) break;
-			mouseMessenger.sendMessageFront(MouseEvent{
+			s_mouseQueue.push(MouseEvent{
 					(float)event.motion.x / client.gw.width,
 					(float)event.motion.y / client.gw.height,
 					(float)event.motion.x,

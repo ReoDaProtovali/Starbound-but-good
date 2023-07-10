@@ -2,6 +2,7 @@
 #include "Framework/Graphics/Sprite.hpp"
 #include "ResourceManager.hpp"
 
+
 GameClient::GameClient() {
 	stateManager.bindClientState(GameStateEnum::NO_STATE, (GameState*)&State_None);
 	stateManager.bindClientState(GameStateEnum::IN_WORLD, (GameState*)&State_ClientWorld);
@@ -20,18 +21,17 @@ void GameClient::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 }
 
 void GameClient::stop() {
-	//clientStopping = true;
-	//SDL_DestroyWindow(gw.m_window);
+	clientStopping = true;
 	clientThread.join();
 }
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
-	Messenger<MouseEvent, int>& mouseMessenger = Messenger<MouseEvent, int>::Get(); // one-way messenger for capturing mouse events
-	Messenger<KeyEvent, int>& keyMessenger = Messenger<KeyEvent, int>::Get(); // one-way messenger for capturing mouse events
+	SharedQueue<MouseEvent>& s_mouseQueue = SharedQueue<MouseEvent>::Get(); // one-way messenger for capturing mouse events
+	SharedQueue<KeyEvent>& s_keyQueue = SharedQueue<KeyEvent>::Get(); // one-way messenger for capturing mouse events
+	SharedQueue<SDL_Event>& s_SDLEventMessenger = SharedQueue<SDL_Event>::Get();
 
 	Subject<MouseEvent>& mouseSubject = globals.mouseSubject; // for re-transmitting mouse events to client
 	Subject<KeyEvent>& keySubject = globals.keySubject; // for re-transmitting key events to client
 
-	Observer<KeyEvent> keyObserver{ globals.keySubject };
 	gw.bindToThisThread();
 
 	ImGui::SetCurrentContext(imctx);
@@ -40,13 +40,12 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
 
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -84,8 +83,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			//static bool open = true;
 			//ImGui::ShowDemoWindow(&open);
 
-			static Messenger<SDL_Event, int>& SDLEventMessenger = Messenger<SDL_Event, int>::Get();
-			while (auto e = SDLEventMessenger.getMessageFront()) {
+			while (auto e = s_SDLEventMessenger.tryPop()) {
 				ImGui_ImplSDL2_ProcessEvent(&e.value());
 			}
 
@@ -97,7 +95,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 			ImGuiIO& io = ImGui::GetIO(); (void)io;
 			e.key.valid = false;
-			while (auto opt = keyMessenger.getMessageFront()) {
+			while (auto opt = s_keyQueue.tryPop()) {
 				if (io.WantCaptureKeyboard) {
 					break;
 				}
@@ -113,7 +111,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 				gui.update(e);
 			}
 
-			while (auto opt = mouseMessenger.getMessageFront()) {
+			while (auto opt = s_mouseQueue.tryPop()) {
 				e.mouse = opt.value();
 				if (!io.WantCaptureMouse && !gui.update(e)) {
 					mouseSubject.notifyAll(e.mouse);
@@ -129,11 +127,11 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 			{
-				SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-				SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+				//SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+				//SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
 				ImGui::UpdatePlatformWindows();
 				ImGui::RenderPlatformWindowsDefault();
-				SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+				//SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 			}
 
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -148,16 +146,19 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	catch (std::exception& ex) {
 		ERROR_LOG("Exception in " << __FILE__ << " at " << __LINE__ << ": " << ex.what());
 		p_exceptionQueue.push(std::current_exception());
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
-		ImGui::DestroyContext(imctx);
+		cleanUp();
 		return;
 	}
+	cleanUp();
+}
+
+void GameClient::cleanUp()
+{
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext(imctx);
 }
-
 
 void GameClient::resizeWindow(uint32_t p_w, uint32_t p_h)
 {

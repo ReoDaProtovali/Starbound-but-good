@@ -33,8 +33,9 @@ private: GameRenderer renderer{ gw };
 
 	// thread management
 	std::thread clientThread;
-	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
+	BidirectionalMessenger<ChunkPos, int>& s_generationRequest = BidirectionalMessenger<ChunkPos, int>::Get();
 
+	void cleanUp();
 
 public:
 	GameClient();

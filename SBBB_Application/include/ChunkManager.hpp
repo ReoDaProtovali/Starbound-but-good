@@ -84,7 +84,7 @@ private:
 	std::mutex m_chunkVBOMutex;
 	std::atomic<bool> m_stopAllThreads = false;
 	
-	Messenger<ChunkPos, int>& s_generationRequest = Messenger<ChunkPos, int>::Get();
+	BidirectionalMessenger<ChunkPos, int>& s_generationRequest = BidirectionalMessenger<ChunkPos, int>::Get();
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 	SharedQueue<ChunkPos> m_loadQueue;
 	SharedQueue<ChunkPos> m_vboQueue;
