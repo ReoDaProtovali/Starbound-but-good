@@ -75,6 +75,7 @@ public:
 	float getMaxPixelHeight(float p_pixelHeight);
 	// width in terms of height
 	float getMaxNormalizedWidth();
+	// i forgot what this one was in terms of lol
 	float getMaxNormalizedHeight();
 	float getNormalizedLineHeight();
 private:

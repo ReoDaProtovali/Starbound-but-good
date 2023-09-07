@@ -7,6 +7,7 @@
 
 template <typename T, size_t MAX_BLOCK_COUNT = 2048>
 // same as the other one but threadsafe and a singleton
+// depreciated due to issues
 // long name lol
 class SharedDynArray {
 public:

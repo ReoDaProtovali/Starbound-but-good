@@ -53,9 +53,9 @@ void Application::startServer()
 void Application::pollEvents()
 {
 	static SDL_Event event;
-	//static Subject<MouseEvent>& mouseSubject = Subject<MouseEvent>::Get();
 	static SharedQueue<MouseEvent>& s_mouseQueue = SharedQueue<MouseEvent>::Get();
 	static SharedQueue<KeyEvent>& s_keyMessenger = SharedQueue<KeyEvent>::Get();
+
 	// workaround
 	static SharedQueue<SDL_Event>& s_SDLEventMessenger = SharedQueue<SDL_Event>::Get();
 	while (SDL_PollEvent(&event)) {
@@ -63,7 +63,7 @@ void Application::pollEvents()
 		switch (event.type) {
 		case SDL_WINDOWEVENT:
 			if (!(event.window.event == SDL_WINDOWEVENT_RESIZED)) break;
-			printf("Window %u resized to %dx%d\n", event.window.windowID, event.window.data1, event.window.data2);
+			LOG("Window " << event.window.windowID << " resized to " << event.window.data1 << "x" << event.window.data2);
 			if (event.window.windowID != client.getWindowID()) break;
 			client.newWidth = event.window.data1;
 			client.newHeight = event.window.data2;

@@ -14,6 +14,7 @@ template <typename T, size_t MAX_BLOCK_COUNT = 2048>
 // It exists because it doesn't do the same copying a vector does, marks data as invalidated out of bounds, and should be safer multithreaded.
 // For example, it's ok to read past the end of the array, as long as it's lower than the maximum block count. 
 // That should be impossible to do, unless an outside reader keeps around a begin iterator for too long. 
+// depreciated due to issues
 class DynArray {
 public:
     DynArray() {

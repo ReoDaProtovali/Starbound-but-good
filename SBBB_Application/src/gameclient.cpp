@@ -40,7 +40,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	//dio.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
 
@@ -127,11 +127,11 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 			{
-				//SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-				//SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+				SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+				SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
 				ImGui::UpdatePlatformWindows();
 				ImGui::RenderPlatformWindowsDefault();
-				//SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+				SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 			}
 
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

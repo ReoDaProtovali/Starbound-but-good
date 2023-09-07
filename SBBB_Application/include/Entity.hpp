@@ -34,7 +34,7 @@ public:
 	Camera entityCam;
 };
 
-
+// workaround, probably highly illegal and/or useless
 struct EntityWrapper {
 	EntityWrapper(Entity* e) : m_eptr(e) {};
 	~EntityWrapper() {

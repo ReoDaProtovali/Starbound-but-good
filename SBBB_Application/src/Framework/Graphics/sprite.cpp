@@ -69,11 +69,8 @@ Texture& Sprite::getTexture()
 
 
 
-void Sprite::draw(DrawSurface& p_target, DrawStates& p_drawStates)
+void Sprite::draw(DrawSurface& p_target, const DrawStates& p_drawStates)
 {
-#ifdef SBBB_DEBUG
-	if (std::this_thread::get_id() != globals.debug.drawThread) throw std::exception();
-#endif
 	if (!m_drawReady) initForDraw();
 	if (!m_spriteMesh.VBOInitialized) {
 		m_spriteMesh.pushVBOToGPU();

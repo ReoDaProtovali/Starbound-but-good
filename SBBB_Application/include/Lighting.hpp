@@ -20,14 +20,14 @@ public:
 	void setDims(uint16_t p_width, uint16_t p_height);
 	void draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::vec2 mousePos);
 
+	float dynamicResDivisor = 4.f;
+
+	friend class WorldRenderer;
+private:
+
 	Sprite lightingSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
 	FrameBuffer lightingInfoFBO;
 	FrameBuffer dynamicLightingFBO;
-
-	float dynamicResDivisor = 4.f;
-
-	//private:
-
 	glm::vec2 m_framePos;
 	glm::vec2 m_frameDim;
 
