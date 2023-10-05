@@ -1,11 +1,18 @@
-#version 330 core
+#version 420
 out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform sampler2D lightingTexture;
 uniform sampler2D screenTexture;
 
-uniform vec2 screenRes;
+layout(std140, binding = 0) uniform GlobalsBlock {
+    vec4 mouse;
+    vec2 screenDim;
+    vec2 windowDim;
+    float time_seconds;
+    uint time_ticks;
+} g;
+
 uniform vec2 lightingRes;
 
 vec4 cubic(float v) {

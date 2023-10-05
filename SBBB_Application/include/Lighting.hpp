@@ -9,6 +9,28 @@
 #include "Framework/Graphics/DrawStates.hpp"
 #include "Framework/Graphics/Pixmap.hpp"
 #include "Framework/Graphics/Sprite.hpp"
+#include "Framework/Graphics/UniformArray.hpp"
+#include "Framework/Graphics/UniformBlock.hpp"
+
+struct Light {
+	Light(glm::vec2 p_pos, glm::vec3 p_col, float p_angle, float p_spread) :
+		pos(p_pos), col(p_col), angle(p_angle), spread(p_spread) {}
+	glm::vec3 col;
+	uint8_t padding1[4] = { 0 }; // 16 byte aligned 
+	glm::vec2 pos; // 8 byte aligned
+	float angle; // 4 byte aligned 
+	float spread; // 4 byte aligned
+	int type;
+	uint8_t padding2[12] = { 0 }; // 16 byte aligned 
+};
+
+struct DynamicLightingInfo {
+	glm::vec2 topLeftTileCoord{0};
+	glm::vec2 tileDims{0};
+	glm::vec4 testLightInfo{0};
+	GLuint lightCount = 0;
+	float padding[3];
+};
 
 class Lighting
 {
@@ -35,21 +57,18 @@ private:
 	DrawStates m_lightingCombineStates;
 	DrawStates m_lightingStates;
 
-	// It needs to be a pointer to be able to go down the chain
 	Shader m_lightingCombineShader;
 	GLint m_lightingTextureUniformLoc = 0;
 	GLint m_screenTextureUniformLoc = 0;
-	GLint m_screenResUniformLoc = 0;
 	GLint m_lightingResUniformLoc = 0;
 
-	Shader m_lightingShader;
-	GLint m_lightingInfoTexUniformLoc = 0;
-	GLint m_topLeftTileCoordUniformLoc = 0;
-	GLint m_tileDimsUniformLoc = 0;
-	GLint m_mousePosUniformLoc = 0;
-	GLint m_timeUniformLoc = 0;
-	GLint m_testLightInfoUniformLoc = 0;
+	UniformArray<Light> m_lights{1, 64};
 
+	Shader m_lightingShader;
+	DynamicLightingInfo dynamicUniforms;
+	UniformBlock<DynamicLightingInfo> dynamicUniformBlock{2};
+
+	GLint m_lightingInfoTexUniformLoc = 0;
 
 	Texture m_lightingInfoTex;
 	// Just so we don't have to reset it every frame

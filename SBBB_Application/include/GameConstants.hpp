@@ -30,7 +30,6 @@ enum class Corner {
 	BOTTOM_RIGHT
 };
 
-
 //enum class ChunkPacketStatus {
 //	VALID,
 //	GENERATING,

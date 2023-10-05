@@ -182,7 +182,7 @@ void ChunkManager::generateColliders()
 			WorldChunk& c = s_chunkMap[ChunkPos(opt.value().x, opt.value().y)];
 			if (c.invalid || c.isEmpty) continue;
 			seenPositions.insert(ChunkPos(opt.value().x, opt.value().y));
-			break;
+			//break;
 		}
 	}
 	for (ChunkPos pos : seenPositions) {

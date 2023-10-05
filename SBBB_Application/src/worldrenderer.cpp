@@ -138,11 +138,11 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 		float pixelsPerTile = (float)p_windowWidth / (float)m_viewCam->tileScale;
 
 		// has to be shifted one chunk down on the y for reasons
-		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE - CHUNKSIZE, pos.y * CHUNKSIZE - CHUNKSIZE * 2);
+		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE - CHUNKSIZE, pos.y * float(CHUNKSIZE) - float(CHUNKSIZE * 2));
 		GLfloat clearCol[] = { 1.f, 1.f, 1.f, 0.f };
-		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, clearCol);
-		m_tileFBO.clearRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, clearCol, 1);
-		m_tileFBO.clearDepthRegion(roundf(pixelCoords.x), roundf(pixelCoords.y), roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f);
+		m_tileFBO.clearRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, clearCol);
+		m_tileFBO.clearRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile) * 3.f, clearCol, 1);
+		m_tileFBO.clearDepthRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile) * 3, (GLsizei)roundf(CHUNKSIZE * m_pixelsPerTile) * 3);
 
 		if (s_chunkMap.contains(pos)) {
 
@@ -244,7 +244,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	m_tileFBO.setDimensions(glm::vec2(m_pixelsPerTile * (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y)));
 	//lighting.dynamicLightingFBO.setDimensions(glm::vec2(m_pixelsPerTile* (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y)));
-	lighting.setDims(m_tileFBO.getViewportWidth(), m_tileFBO.getViewportHeight()); // update lighting buffer sizes
+	lighting.setDims((uint16_t)m_tileFBO.getViewportWidth(), (uint16_t)m_tileFBO.getViewportHeight()); // update lighting buffer sizes
 
 	m_tileDrawStates.setTransform(m_tileCam.getTransform());
 	m_tileFBO.clear();

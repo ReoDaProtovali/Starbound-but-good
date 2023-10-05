@@ -97,7 +97,8 @@ public:
 	// Only works with strings, no locations.
 	//void setUniforms(std::vector<Uniform> p_uniforms);
 
-	GLuint getUniformLoc(std::string_view shaderName);
+	GLuint getUniformLoc(std::string_view uniformName);
+	GLuint getUniformBlockIndex(std::string_view uniformBlockName);
 	std::shared_ptr<glProgram> program = std::make_shared<glProgram>();
 private:
 	std::vector<Uniform> m_uniforms;
