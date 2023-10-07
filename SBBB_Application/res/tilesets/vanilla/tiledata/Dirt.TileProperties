@@ -8,7 +8,7 @@
 	"isAnimated": false,
 	"emissive": false,
 	"transparent": false,
-	"lightingColor": [ 1.0, 1.0, 1.0 ],
+	"lightingColor": [ 0, 0, 1 ],
 	"maxHP": 30,
 	"variationCount": 4,
 	"lightAbsorption": 0.2

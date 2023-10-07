@@ -28,11 +28,19 @@ public:
 	// Appends given data to the bottom of the pixmap
 	// Warning: ensure that the data you pass in has the same width as the pixmap.
 	void appendImage(unsigned char* p_data, size_t p_size);
+
+	void appendEmpty(size_t rows);
+	void prependEmpty(size_t rows);
+
 	/// Changes the top and bottom of the array because opengl is stinky
 	void reverse();
+
+	void toPNG(const std::string& name);
 	/// Sets a pixel at a given x and y based on the provided RGBA vec4.
 	/// Attempting to set a pixel outside of the image's dimensions does nothing.
 	void setPixel(uint32_t p_x, uint32_t p_y, glm::vec4 p_color);
+	// UNSAFE, susceptable to buffer overruns if pixmap is missized
+	void setData(glm::vec4* p_data);
 	/// Sets the color of every pixel to opaque black.
 	void clear();
 	/// Fills the image with the supplied color.

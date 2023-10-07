@@ -110,6 +110,8 @@ void main()
     vec2 tileCoord;
     tileCoord.x = bottomRightTileCoord.x + tileDims.x * TexCoord.x;
     tileCoord.y = bottomRightTileCoord.y + tileDims.y * TexCoord.y;
+    //FragColor =  texture(lightingInfoTex, toShaderCoords(tileCoord));
+    //return;
 
     vec4 outCol = vec4(0.f, 0.f, 0.f, 1.f);
 
@@ -118,7 +120,7 @@ void main()
         const float timeSpeed = 0.5f;
 
         vec3 lightCol = LIGHT_IN.lights[j].col;
-        lightCol = testLightInfo.rgb * testLightInfo.a;
+        //lightCol = testLightInfo.rgb * testLightInfo.a;
         float longestLightVal = max(lightCol.r, max(lightCol.g, lightCol.b));
         float penAdvantage = clamp(longestLightVal - 0.25, 0.f, 0.75) / 0.75;
 
@@ -148,14 +150,11 @@ void main()
             continue;
         };
 
-        vec3 tinting = vec3(0.f);
-
         vec2 prevRayPos = tileCoord;
         vec2 hitPoint = tileCoord;
     
         float prevAbsorbance = lightAbsorbanceSample(tileCoord);
         float absorbanceFactor = 1.f;
-        vec3 tintingFactor = vec3(1.f);
 
         for (;;) {
             if (absorbanceFactor < 0.003) {
@@ -174,7 +173,6 @@ void main()
             vec4 shrample = lightInfoSample(midPoint);
             if (shrample.a != prevAbsorbance) {
                 absorbanceFactor *= pow(prevAbsorbance, distance(hitPoint, prevRayPos) * (1.f - penAdvantage * 0.5));
-                tintingFactor *= shrample.rgb;
                 prevAbsorbance = shrample.a;
                 hitPoint = prevRayPos;
             }
@@ -182,8 +180,7 @@ void main()
         }
 
         // bandaid solution
-        if (tintingFactor == vec3(0.f)) tintingFactor = vec3(1.f);
-        outCol.rgb = max(lightFactor * vec3(absorbanceFactor) * tintingFactor, outCol.rgb);
+        outCol.rgb = max(lightFactor * vec3(absorbanceFactor), outCol.rgb);
     }
 
     FragColor = clamp(outCol, 0.f, 999.f);

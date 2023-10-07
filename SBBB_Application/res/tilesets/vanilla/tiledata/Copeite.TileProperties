@@ -11,5 +11,5 @@
 	"variationCount": 4,
 	"lightAbsorption": 0.6,
 	"emissive": false,
-	"lightingColor": [ 1.0, 1.0, 1.0 ]
+	"lightingColor": [ 0, 1, 0 ]
 }

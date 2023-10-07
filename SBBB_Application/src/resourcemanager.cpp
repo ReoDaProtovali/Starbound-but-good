@@ -13,7 +13,7 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
-	for (auto& [str,tex] : textures) {
+	for (auto& [str, tex] : textures) {
 		tex.remove();
 	}
 	m_generatorShaders.clear();
@@ -30,8 +30,9 @@ Texture ResourceManager::getTexture(const std::string& p_ID, bool& p_success) {
 
 Texture ResourceManager::getTileSheetTexture() {
 	if (!tileSheetTexture.initialized) {
-		tileSheetTexture.setFiltering(GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST);
-		tileSheetTexture.genMipMapsFloat(2, tileSheetPixmap.width, tileSheetPixmap.height, (float*)tileSheetPixmap.getData());
+		tileSheetTexture.setFiltering(GL_NEAREST, GL_NEAREST);
+		tileSheetTexture.fromVec4Data(tileSheetPixmap.width, tileSheetPixmap.height, tileSheetPixmap.getData());
+		//tileSheetTexture.genMipMapsFloat(0, tileSheetPixmap.width, tileSheetPixmap.height, (float*)tileSheetPixmap.getData());
 	}
 	return tileSheetTexture;
 }
@@ -138,19 +139,15 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 			ERROR_LOG("Failed to load image");
 			return;
 		}
-		// assume rgba
-
 		tileSheetPixmap.appendImage(imageData, width * height * nrChannels);
+		delete imageData;
+		// assume rgba
+		glm::vec4 lightingCol = glm::vec4(tileInfo.lightingColor[0], tileInfo.lightingColor[1], tileInfo.lightingColor[2], 1.0 - tileInfo.lightAbsorption);
 		tileSheetPixmap.setPixel(
 			tileSheetPixmap.width - 1,
 			tileSheetPixmap.height - 1,
-			glm::vec4(tileInfo.lightingColor[0], tileInfo.lightingColor[1], tileInfo.lightingColor[2], 1.0 - tileInfo.lightAbsorption));
-		//size_t pixelIndex = width * height * nrChannels - 1;
-		//imageData[9 * 4 + 0] = tileInfo.lightingColor[0];
-		//imageData[9 * 4 + 1] = tileInfo.lightingColor[1];
-		//imageData[9 * 4 + 2] = tileInfo.lightingColor[2];
-		//imageData[9 * 4 + 3] = tileInfo.lightAbsorption;
-		delete imageData;
+			lightingCol);
+
 
 		static size_t imgIndex = 0;
 		tileInfoCache.back().spriteIndex = (uint32_t)++imgIndex;
@@ -160,6 +157,18 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 		LOG("Loaded tile " << tileInfo.id << " and successfully stitched image!");
 	}
 	tileSheetPixmap.reverse();
+
+	uint32_t paddedSize = 96;
+	while (paddedSize < tileSheetPixmap.height) {
+		paddedSize *= 2;
+	}
+
+	if (tileSheetPixmap.height % paddedSize != 0) {
+		uint32_t diff = paddedSize - tileSheetPixmap.height % paddedSize;
+		tileSheetPixmap.prependEmpty(diff);
+	}
+
+	tileSheetPixmap.toPNG("testpixmap.png");
 }
 std::optional<std::reference_wrapper<TileInfo>> ResourceManager::getTileInfo(const std::string& p_key)
 {

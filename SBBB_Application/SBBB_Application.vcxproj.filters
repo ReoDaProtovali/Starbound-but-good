@@ -609,6 +609,7 @@
     <None Include="res\tilesets\vanilla\tiledata\BlueGem.TileProperties" />
     <None Include="src\Shaders\LightingVS.glsl" />
     <None Include="src\Shaders\LightingFS.glsl" />
+    <None Include="res\tilesets\vanilla\tiledata\Gedstone.TileProperties" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png">

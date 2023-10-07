@@ -40,7 +40,10 @@ public:
 
 	void setTileInfoTex(Texture p_infoTex);
 	void setDims(uint16_t p_width, uint16_t p_height);
-	void draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::vec2 mousePos);
+
+	void calculateAmbient();
+	void calculateDynamic(FrameBuffer& p_screenFBO);
+	void draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states);
 
 	float dynamicResDivisor = 4.f;
 
@@ -64,9 +67,12 @@ private:
 
 	UniformArray<Light> m_lights{1, 64};
 
-	Shader m_lightingShader;
+	Shader m_dynamicLightingShader;
 	DynamicLightingInfo dynamicUniforms;
 	UniformBlock<DynamicLightingInfo> dynamicUniformBlock{2};
+
+	Pixmap ambientMap{ 20, 20 };
+	Texture ambientTex{};
 
 	GLint m_lightingInfoTexUniformLoc = 0;
 

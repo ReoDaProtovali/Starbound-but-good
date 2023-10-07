@@ -1,4 +1,6 @@
 #include "Framework/Graphics/Pixmap.hpp"
+#include "stb_image.h"
+#include "stb_image_write.h"
 
 Pixmap::Pixmap()
 {
@@ -49,8 +51,43 @@ void Pixmap::appendImage(unsigned char* p_data, size_t p_size)
 	height = (uint32_t)m_pixels.height;
 	free(tmp);
 }
+void Pixmap::appendEmpty(size_t rows)
+{
+	unsigned char* buf = (unsigned char*)calloc(rows, width * sizeof(float) * 4);
+	m_pixels.append((glm::vec4*)buf, width * rows);
+	free(buf);
+	height += rows;
+}
+void Pixmap::prependEmpty(size_t rows)
+{
+	unsigned char* buf = (unsigned char*)calloc(rows, width * sizeof(float) * 4);
+	m_pixels.prepend((glm::vec4*)buf, width * rows);
+	free(buf);
+	height += rows;
+}
 void Pixmap::reverse() {
 	m_pixels.reverse();
+}
+void Pixmap::toPNG(const std::string& name)
+{
+	char* buf = (char*)malloc(width * height * 4);
+	if (buf == nullptr) {
+		ERROR_LOG("Unable to write PNG! could not allocate heap memory");
+		return;
+	}
+	for (uint32_t y = 0; y < height; y++) {
+		for (uint32_t x = 0; x < width; x++) {
+			auto pix = getPixel(x, y);
+			int ind = (y * width + x) * 4;
+			buf[ind + 0] = char(pix.r * 255.f);
+			buf[ind + 1] = char(pix.g * 255.f);
+			buf[ind + 2] = char(pix.b * 255.f);
+			buf[ind + 3] = char(pix.a * 255.f);
+		}
+	}
+
+	stbi_write_png(name.c_str(), width, height, 4, buf, width * 4);
+	free(buf);
 }
 void Pixmap::setPixel(uint32_t p_x, uint32_t p_y, glm::vec4 p_color)
 {
@@ -58,6 +95,10 @@ void Pixmap::setPixel(uint32_t p_x, uint32_t p_y, glm::vec4 p_color)
 		return;
 	}
 	m_pixels(p_x, p_y) = p_color;
+}
+void Pixmap::setData(glm::vec4* p_data)
+{
+	m_pixels.setData(p_data);
 }
 void Pixmap::clear() {
 	m_pixels.fill(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));

@@ -346,6 +346,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include=".gitignore" />
     <None Include="res\tilesets\vanilla\tiledata\BlueGem.TileProperties" />
     <None Include="res\tilesets\vanilla\tiledata\Copeite.TileProperties" />
+    <None Include="res\tilesets\vanilla\tiledata\Gedstone.TileProperties" />
     <None Include="src\Shaders\FancyFS.glsl" />
     <None Include="freetype.dll" />
     <None Include="glew32.dll" />

@@ -7,11 +7,12 @@ Lighting::Lighting() :
 	m_framePos(0.f, 0.f),
 	m_frameDim(0.f, 0.f),
 	m_lightingCombineShader("./src/Shaders/LightingCombineVS.glsl", "./src/Shaders/LightingCombineFS.glsl"),
-	m_lightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl")
+	m_dynamicLightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl")
 {
 	dynamicLightingFBO.setDimensions(glm::vec2(64, 36));
 	dynamicLightingFBO.getColorTexRef(0).setFiltering(GL_LINEAR, GL_LINEAR);
 
+	ambientTex.setFiltering(GL_NEAREST, GL_NEAREST);
 
 	lightingInfoFBO.setClearColor(glm::vec4(0.f));
 	m_lightingTextureUniformLoc = m_lightingCombineShader.addTexUniform("lightingTexture", 0);
@@ -19,11 +20,11 @@ Lighting::Lighting() :
 	m_lightingResUniformLoc = m_lightingCombineShader.addVec2Uniform("lightingRes", glm::vec2(1.f));
 
 	glm::mat4 tmpmat4 = glm::mat4(1.f);
-	m_lightingShader.addMat4Uniform("transform", tmpmat4);
-	m_lightingInfoTexUniformLoc = m_lightingShader.addTexUniform("lightingInfoTex", 0);
+	m_dynamicLightingShader.addMat4Uniform("transform", tmpmat4);
+	m_lightingInfoTexUniformLoc = m_dynamicLightingShader.addTexUniform("lightingInfoTex", 0);
 
-	lightingSprite.attachShader(&m_lightingShader);
-	
+	lightingSprite.attachShader(&m_dynamicLightingShader);
+
 	// There needs to be two textures set for lighting to draw properly, but we only have one for now
 	Texture tmp;
 	m_lightingCombineStates.addTexture(tmp);
@@ -72,7 +73,39 @@ void Lighting::setDims(uint16_t p_width, uint16_t p_height)
 
 }
 
-void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::vec2 p_mousePos)
+void Lighting::calculateAmbient()
+{
+	glm::vec2 dims{std::abs(lightingSprite.bounds.wh.x), std::abs(lightingSprite.bounds.wh.y)};
+	ambientMap.resize(dims.x, dims.y);
+	glm::vec4* readDat = (glm::vec4*)malloc(dims.x * dims.y * sizeof(glm::vec4));
+
+	lightingInfoFBO.bind();
+	glReadPixels(0, 0, std::abs(lightingSprite.bounds.wh.x), std::abs(lightingSprite.bounds.wh.y), GL_RGBA, GL_FLOAT, static_cast<void*>(readDat));
+	ambientMap.setData(readDat);
+
+	free(readDat);
+	
+	ambientTex.fromVec4Data(dims.x, dims.y, ambientMap.getData());
+
+
+}
+
+void Lighting::calculateDynamic(FrameBuffer& p_screenFBO)
+{
+	dynamicUniforms.topLeftTileCoord = { lightingSprite.getPosition().x, lightingSprite.getPosition().y };
+	dynamicUniforms.tileDims = { std::abs(lightingSprite.bounds.wh.x), std::abs(lightingSprite.bounds.wh.y) };
+	m_lights.setAt(0, { {0.f, 70.f}, {1.f, 0.25f, 0.25f}, SDL_GetTicks() / 200.f, 0.4f });
+	m_lights.setAt(1, { {-5.f, 70.f}, {0.25f, 0.25f, 1.f}, SDL_GetTicks() / 200.f + 3.1415f, 0.4f});
+	dynamicUniforms.lightCount = 2;
+	dynamicUniformBlock.setData(&dynamicUniforms);
+
+	dynamicLightingFBO.setDimensions(uint32_t(p_screenFBO.getViewportWidth() / dynamicResDivisor), uint32_t(p_screenFBO.getViewportHeight() / dynamicResDivisor));
+	dynamicLightingFBO.setClearColor(glm::vec4(0));
+	dynamicLightingFBO.clear();
+
+}
+
+void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states)
 {
 	DrawStates newStates(p_states);
 	newStates.m_blendMode.enable();
@@ -88,39 +121,28 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 	Texture& infoTex = lightingInfoFBO.getColorTexRef(0);
 
 	lightingSprite.attachTexture(infoTex);
-	m_lightingShader.setTexUniform(m_lightingInfoTexUniformLoc, 0);
+	m_dynamicLightingShader.setTexUniform(m_lightingInfoTexUniformLoc, 0);
 
 	ImGui::Begin("Lighting");
 	ImGui::SliderFloat("Resolution Divisor", &dynamicResDivisor, 1.f, 64.f);
-	static bool fullbright = false;
+	static bool fullbright = true;
 	ImGui::Checkbox("Fullbright", &fullbright);
 	ImGui::ColorPicker4("Light Color", glm::value_ptr(dynamicUniforms.testLightInfo));
 	ImGui::End();
 
-	//for (int i = 0; i < 8; i++) {
-	//	float theta = i / 8.f * M_PI * 2.f + SDL_GetTicks() / 2000.f;
-	//	float r = (cos(theta * 2) + 1.f) * 20.f;
-	//	m_lights.setAt(i, { glm::vec2(cos(theta) * r, 30.f + sin(theta) * r), glm::vec3(i / 256.f, 0.13f, 0.25f), 0.f, 1.f });
-	//}
+	calculateAmbient();
 
-	m_lights.setAt(0, { {0.f, 70.f}, {1.f, 1.f, 1.f}, 0.f, 1.f });
+	calculateDynamic(p_screenFBO);
 
-	dynamicUniforms.topLeftTileCoord = { lightingSprite.getPosition().x, lightingSprite.getPosition().y };
-	dynamicUniforms.tileDims = { std::abs(lightingSprite.bounds.wh.x), std::abs(lightingSprite.bounds.wh.y) };
-	dynamicUniforms.lightCount = 1;
+	m_dynamicLightingShader.use();
 
-	dynamicLightingFBO.setDimensions(uint32_t(p_screenFBO.getViewportWidth() / dynamicResDivisor), uint32_t(p_screenFBO.getViewportHeight() / dynamicResDivisor));
-	dynamicLightingFBO.setClearColor(glm::vec4(0.25f, 0.25f, 0.25f, 1.f));
-	dynamicLightingFBO.clear();
-
-	dynamicUniformBlock.setData(&dynamicUniforms);
-	m_lightingShader.use();
-
-	lightingSprite.attachShader(&m_lightingShader);
+	lightingSprite.attachShader(&m_dynamicLightingShader);
 	if (!fullbright)
 		lightingSprite.draw(dynamicLightingFBO, newStates);
-	else
+	else {
+		dynamicLightingFBO.setClearColor({ 0.25f, 0.25f, 0.25f, 1.f });
 		dynamicLightingFBO.clear();
+	}
 	m_lightingCombineStates.setTexture(0, dynamicLightingFBO.getColorTexRef(0));
 	m_lightingCombineShader.setVec2Uniform(m_lightingResUniformLoc, glm::vec2(dynamicLightingFBO.getViewportWidth(), dynamicLightingFBO.getViewportHeight()));
 	p_gameWindow.bind();

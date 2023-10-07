@@ -80,11 +80,12 @@ void main()
 
     vec3 lightOverflow = clamp((lightingCol * LIGHT_GAIN).xyz - 2.f, 0.f, 999.f);
     float avgLightOverflow = length(lightOverflow);
-    screenCol = vec4(abberationSample(screenTexture, TexCoord, avgLightOverflow / 800.f), 1.f);
+    //screenCol = vec4(abberationSample(screenTexture, TexCoord, avgLightOverflow / 800.f), 1.f);
 
     col = (lightingCol * LIGHT_GAIN) * screenCol;
 
     FragColor.rgb = col.rgb + (avgOverflow * avgOverflow) * 0.25;
 
+   // FragColor = lightingCol;
     FragColor.a = 1.f;
 }

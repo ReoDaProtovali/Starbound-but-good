@@ -347,7 +347,7 @@ void ClientWorldState::update()
 	glDisable(GL_DEPTH_TEST);
 
 	if (playerCam)
-		worldRenderer.lighting.draw(renderer.screenFBO, renderer.window, worldDrawnState, mousePos);
+		worldRenderer.lighting.draw(renderer.screenFBO, renderer.window, worldDrawnState);
 }
 
 void ClientWorldState::suspend()

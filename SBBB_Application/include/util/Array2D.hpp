@@ -48,6 +48,12 @@ public:
 		return data;
 	}
 
+	// a somewhat unsafe operation
+	// scratch that, super unsafe lol
+	void setData(T* p_data) {
+		data.assign(p_data, p_data + width * height);
+	}
+
 	bool bounded(int x, int y) {
 		if (x >= 0 && x < width && y >= 0 && y < height) return true;
 		return false;
@@ -67,6 +73,16 @@ public:
 		}
 		data.reserve(width * height);
 		std::copy(&p_data[0], &p_data[p_size], std::back_inserter(data));
+		height += p_size / width;
+	}
+	void prepend(T* p_data, size_t p_size) {
+		if (p_size == 0) return;
+		if (p_size % width != 0) {
+			ERROR_LOG("Tried to prepend data of invalid size to existing 2d array. Make sure the width of what you're prepending matches the destination.");
+			return;
+		}
+		data.reserve(width * height);
+		data.insert(data.begin(), &p_data[0], &p_data[p_size]);
 		height += p_size / width;
 	}
 
