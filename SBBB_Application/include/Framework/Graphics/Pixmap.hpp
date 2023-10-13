@@ -23,7 +23,7 @@ public:
 
 	void resize(uint32_t p_width, uint32_t p_height);
 	/// Returns an RGBA vec4 based on a given x and y position.
-	/// Attempting to get a pixel outside of the image's dimensions returns an uninitialized vec4.
+	/// Attempting to get a pixel outside of the image's dimensions returns the out of bounds color (default: black and transparent).
 	glm::vec4 getPixel(uint32_t p_x, uint32_t p_y);
 	// Appends given data to the bottom of the pixmap
 	// Warning: ensure that the data you pass in has the same width as the pixmap.
@@ -50,6 +50,7 @@ public:
 	/// A function for testing purposes, prints every row and column of the pixel data to the console. Can lag.
 	void logPixmap();
 
+	glm::vec4 outOfBoundsColor = glm::vec4(0);
 private:
 	/// An array of pixels, where each pixel is an RGBA vec4, and every value is between 0 and 1.
 	Array2D<glm::vec4> m_pixels;

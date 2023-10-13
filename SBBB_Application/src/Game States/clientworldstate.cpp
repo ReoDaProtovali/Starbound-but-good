@@ -55,6 +55,9 @@ void ClientWorldState::testDraw()
 		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
 		tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
 		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 2, 0 });
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 1, 0 });
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 0, 0 });
 	}
 
 	uniforms.mouse.x = mousePos.x;

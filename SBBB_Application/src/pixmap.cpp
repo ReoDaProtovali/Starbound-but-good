@@ -23,7 +23,7 @@ void Pixmap::resize(uint32_t p_width, uint32_t p_height)
 glm::vec4 Pixmap::getPixel(uint32_t p_x, uint32_t p_y)
 {
 	if ((p_x < 0) || (p_x > width - 1) || (p_y < 0) || (p_y > height - 1)) {
-		return glm::vec4();
+		return outOfBoundsColor;
 	}
 	return m_pixels(p_x, p_y);
 }

@@ -86,6 +86,6 @@ void main()
 
     FragColor.rgb = col.rgb + (avgOverflow * avgOverflow) * 0.25;
 
-   // FragColor = lightingCol;
+    //FragColor = lightingCol;
     FragColor.a = 1.f;
 }

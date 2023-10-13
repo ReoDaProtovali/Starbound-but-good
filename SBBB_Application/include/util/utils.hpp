@@ -69,6 +69,14 @@ namespace utils {
 		}
 		std::cout << "\n";
 	}
+	inline glm::vec4 vec4Max(glm::vec4 v1, glm::vec4 v2) {
+		return {
+			std::max(v1.r, v2.r),
+			std::max(v1.g, v2.g),
+			std::max(v1.b, v2.b),
+			std::max(v1.a, v2.a)
+		};
+	}
 	template <typename T>
 	T clamp(T v, T p_min, T p_max) {  // make sure whatever you're passing in has a > operator
 		return std::min(std::max(v, p_min), p_max);

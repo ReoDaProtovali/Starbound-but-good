@@ -25,19 +25,21 @@ void main()
     //vec4 lightingInfoCol = texelFetch(tileSheet, ivec2(tileSheetRow * 24, 0), 0);
      vec4 lightingInfoCol = texture(tileSheet, lightingPixelUV);
     // scuffed lol
+    if (lightingInfoCol.a != 0.f) {
     switch (int(zLevel)) {
-        case 3:
-        break;
-        case 2:
-            lightingInfoCol.a += 0.5;
-        break;
-        case 1:
-            lightingInfoCol.a += 0.6;
-        break;
-        case 0:
-            lightingInfoCol.a += 0.8;
-        break;
+            case 3:
+            break;
+            case 2:
+                lightingInfoCol.a += 0.5;
+            break;
+            case 1:
+                lightingInfoCol.a += 0.6;
+            break;
+            case 0:
+                lightingInfoCol.a += 0.8;
+            break;
 
+        }
     }
 
     vec4 outCol = vec4(col4.xyz * (zLevel + 1) / 4 , col4.a);

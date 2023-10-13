@@ -50,6 +50,7 @@ public:
 	friend class WorldRenderer;
 private:
 
+	void floodAmbient(Pixmap& lightCanvas, Pixmap& infoCanvas);
 	Sprite lightingSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
 	FrameBuffer lightingInfoFBO;
 	FrameBuffer dynamicLightingFBO;
@@ -62,6 +63,7 @@ private:
 
 	Shader m_lightingCombineShader;
 	GLint m_lightingTextureUniformLoc = 0;
+	GLint m_ambientLightingTextureUniformLoc = 0;
 	GLint m_screenTextureUniformLoc = 0;
 	GLint m_lightingResUniformLoc = 0;
 
