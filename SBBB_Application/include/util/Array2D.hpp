@@ -39,6 +39,15 @@ public:
 		return data[((y * width) + x)];
 	}
 
+	T operator()(int x, int y) const {
+#ifdef SBBB_DEBUG
+		if (!bounded(x, y)) {
+			throw std::out_of_range("2D Array index out of bounds.");
+		}
+#endif
+		return data[((y * width) + x)];
+	}
+
 	void fill(T p_fillValue) {
 		for (size_t i = 0; i < width * height; i++) {
 			data[i] = p_fillValue;
@@ -54,7 +63,7 @@ public:
 		data.assign(p_data, p_data + width * height);
 	}
 
-	bool bounded(int x, int y) {
+	bool bounded(int x, int y) const {
 		if (x >= 0 && x < width && y >= 0 && y < height) return true;
 		return false;
 	}

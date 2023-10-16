@@ -10,3 +10,7 @@
 #include "Framework/Graphics/Shader.hpp"
 #include "Framework/Graphics/Sprite.hpp"
 #include "Framework/Graphics/Text.hpp"
+#include "Framework/Graphics/UniformArray.hpp"
+#include "Framework/Graphics/UniformBlock.hpp"
+#include "Framework/Graphics/GenericMeshes.hpp"
+#include "Framework/Graphics/GenericShaders.hpp"

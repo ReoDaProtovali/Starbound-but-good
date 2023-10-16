@@ -111,8 +111,6 @@ void main()
     vec2 tileCoord;
     tileCoord.x = bottomRightTileCoord.x + tileDims.x * TexCoord.x;
     tileCoord.y = bottomRightTileCoord.y + tileDims.y * TexCoord.y;
-    //FragColor = texture(lightingInfoTex, toShaderCoords(tileCoord));
-    //return;
 
     vec4 outCol = vec4(0.f, 0.f, 0.f, 1.f);
 

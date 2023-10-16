@@ -1,16 +1,8 @@
 #pragma once
 #include <util/ext/glm/glm.hpp>
 #include <GL/glew.h>
-#include "Framework/Graphics/Shader.hpp"
-#include "Framework/Graphics/Mesh.hpp"
-#include "Framework/Graphics/Texture.hpp"
-#include "Framework/Graphics/FrameBuffer.hpp"
-#include "Framework/Graphics/DrawSurface.hpp"
-#include "Framework/Graphics/DrawStates.hpp"
-#include "Framework/Graphics/Pixmap.hpp"
-#include "Framework/Graphics/Sprite.hpp"
-#include "Framework/Graphics/UniformArray.hpp"
-#include "Framework/Graphics/UniformBlock.hpp"
+#include "Framework/FrameworkDraw.hpp"
+#include "util/Threadpool.hpp"
 
 struct Light {
 	Light(glm::vec2 p_pos, glm::vec3 p_col, float p_angle, float p_spread) :
@@ -50,7 +42,10 @@ public:
 	friend class WorldRenderer;
 private:
 
-	void floodAmbient(Pixmap& lightCanvas, Pixmap& infoCanvas);
+	ThreadPool ambientThreadPool{ 4 };
+
+	void processAmbientQuadrant(uint32_t sx, uint32_t sy, uint32_t dimx, uint32_t dimy, std::shared_ptr<Pixmap> infoMap);
+	void floodAmbient(uint32_t lx, uint32_t ly, Pixmap& lightCanvas, Pixmap& infoCanvas);
 	Sprite lightingSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
 	FrameBuffer lightingInfoFBO;
 	FrameBuffer dynamicLightingFBO;
@@ -74,6 +69,8 @@ private:
 	UniformBlock<DynamicLightingInfo> dynamicUniformBlock{2};
 
 	Pixmap ambientMap{ 20, 20 };
+	std::shared_mutex ambientAccessMut;
+
 	Texture ambientTex{};
 
 	GLint m_lightingInfoTexUniformLoc = 0;
