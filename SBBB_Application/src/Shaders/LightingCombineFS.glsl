@@ -3,6 +3,7 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform sampler2D lightingTexture;
+uniform sampler2D ambientTexture;
 uniform sampler2D screenTexture;
 
 layout(std140, binding = 0) uniform GlobalsBlock {
@@ -82,10 +83,10 @@ void main()
     float avgLightOverflow = length(lightOverflow);
     //screenCol = vec4(abberationSample(screenTexture, TexCoord, avgLightOverflow / 800.f), 1.f);
 
-    col = (lightingCol * LIGHT_GAIN) * screenCol;
+    col =  max(texture(ambientTexture, TexCoord), (lightingCol)) * LIGHT_GAIN * screenCol;
 
     FragColor.rgb = col.rgb + (avgOverflow * avgOverflow) * 0.25;
 
-    //FragColor = lightingCol;
+    //FragColor = max(texture(ambientTexture, TexCoord), (lightingCol * LIGHT_GAIN));
     FragColor.a = 1.f;
 }

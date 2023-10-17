@@ -27,13 +27,13 @@ public:
 
 	Texture tilesheet;
 	DrawStates m_tileDrawStates;
-	DrawStates m_firstPassDrawStates;
 	Camera* m_viewCam = nullptr;
 	glm::ivec4 m_chunkFramePrev;
+	glm::ivec4 currentTileFrame{0.f, 0.f, 1.f, 1.f};
 
 	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 0), Rect(0, 0, 10, 10));
 	float m_pixelsPerTile = 8.f;
-    SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
+	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 	GenericShaders& gs = GenericShaders::Get();
 	void tidy();
 	int redrawCameraView(const glm::vec4& chunkFrame);

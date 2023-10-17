@@ -6,10 +6,9 @@
 #include <stack>
 
 Lighting::Lighting() :
-	m_framePos(0.f, 0.f),
-	m_frameDim(0.f, 0.f),
 	m_lightingCombineShader("./src/Shaders/LightingCombineVS.glsl", "./src/Shaders/LightingCombineFS.glsl"),
-	m_dynamicLightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl")
+	m_dynamicLightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/LightingFS.glsl"),
+	m_ambientLightingShader("./src/Shaders/LightingVS.glsl", "./src/Shaders/AmbientLightingFS.glsl")
 {
 	dynamicLightingFBO.setDimensions(glm::vec2(64, 36));
 	dynamicLightingFBO.getColorTexRef(0).setFiltering(GL_LINEAR, GL_LINEAR);
@@ -19,21 +18,39 @@ Lighting::Lighting() :
 
 	lightingInfoFBO.setClearColor(glm::vec4(0.f));
 	m_lightingTextureUniformLoc = m_lightingCombineShader.addTexUniform("lightingTexture", 0);
-	m_screenTextureUniformLoc = m_lightingCombineShader.addTexUniform("screenTexture", 1);
+	m_combine_ambientTextureUniformLoc = m_lightingCombineShader.addTexUniform("ambientTexture", 1);
+	m_screenTextureUniformLoc = m_lightingCombineShader.addTexUniform("screenTexture", 2);
 	m_lightingResUniformLoc = m_lightingCombineShader.addVec2Uniform("lightingRes", glm::vec2(1.f));
 
 	glm::mat4 tmpmat4 = glm::mat4(1.f);
 	m_dynamicLightingShader.addMat4Uniform("transform", tmpmat4);
+	m_ambientLightingShader.addMat4Uniform("transform", tmpmat4);
 	m_lightingInfoTexUniformLoc = m_dynamicLightingShader.addTexUniform("lightingInfoTex", 0);
-	m_ambientLightingTextureUniformLoc = m_dynamicLightingShader.addTexUniform("ambientLightingTex", 1);
+
+	m_ambient_ambientTextureUniformLoc = m_ambientLightingShader.addTexUniform("ambientLightingTex", 0);
 
 	lightingSprite.attachShader(&m_dynamicLightingShader);
+	ambientSprite.attachShader(&m_ambientLightingShader);
+	ambientSprite.attachTexture(ambientTex);
+
+	// needed
+	lightingSprite.setBounds({ 0, 0, 10, 10 });
+	ambientSprite.setBounds({ 0, 0, 10, 10 });
+	ambientSprite.setPosition({ 1.f, 1.f, 1.f });
+	ambientSprite.setOriginRelative(OriginLoc::TOP_LEFT);
+	ambientSprite.setScale({ 1.f, -1.f });
+
 
 	// There needs to be two textures set for lighting to draw properly, but we only have one for now
 	Texture tmp;
 	m_lightingCombineStates.addTexture(tmp);
+	m_lightingCombineStates.addTexture(tmp);
 	m_lightingCombineStates.attachShader(&m_lightingCombineShader);
 	//m_lightingStates.addTexture(tmp)
+
+	ambientLightingFBO.useDepth(false);
+	ambientLightingFBO.setDimensions(128, 64);
+
 	lightingInfoFBO.useDepth(false);
 	lightingInfoFBO.setDimensions(128, 64);
 	lightingInfoFBO.getColorTexRef(0).setFiltering(GL_NEAREST, GL_NEAREST);
@@ -85,7 +102,7 @@ void Lighting::processAmbientQuadrant(uint32_t sx, uint32_t sy, uint32_t dimx, u
 			glm::vec4 infoPx = infoMap->getPixel(x, y);
 			if (infoPx.a == 0.f) { // ambient lights are denoted by 100% alpha pixels
 				if (infoPx.x == 0.f && infoPx.y == 0.f && infoPx.z == 0) {
-					infoPx = { 0.25f, 0.25f, 0.25f, 0.f };
+					infoPx = { 0.25f, 0.25f, 0.29f, 0.f };
 				}
 				// check if surrounded by other ambient lights, if so, skip
 				bool surrounded = infoMap->getPixel(x, y + 1).a == 0.f &&
@@ -93,7 +110,7 @@ void Lighting::processAmbientQuadrant(uint32_t sx, uint32_t sy, uint32_t dimx, u
 					infoMap->getPixel(x, y - 1).a == 0.f &&
 					infoMap->getPixel(x + 1, y).a == 0.f;
 				if (surrounded) {
-					ambientMap.setPixel(x, y, glm::vec4(infoPx.r, infoPx.g, infoPx.b, 1.f));
+					ambientMap.setPixel(x, y, utils::vec4Max(glm::vec4(infoPx.r, infoPx.g, infoPx.b, 1.f), ambientMap.getPixel(x, y)));
 					continue;
 				}
 				// reaching this section means that there's an ambient light that matters here
@@ -147,7 +164,7 @@ void Lighting::floodAmbient(uint32_t lx, uint32_t ly, Pixmap& lightCanvas, Pixma
 				if (nx == pos.x && ny == pos.y) continue;
 				int neighborLayer = std::max(std::abs(nx - center.x), std::abs(ny - center.y));
 				if (neighborLayer < maxLightDistance && neighborLayer == layer + 1) {
-					float absorbance = infoCanvas.getPixel(nx, ny).a;
+					float absorbance = 1.f - std::pow(1.f - infoCanvas.getPixel(nx, ny).a, 1.5);
 					float centerDist = 1.f - std::powf(std::sqrtf(std::pow(nx - center.x, 2) + std::pow(ny - center.y, 2)) / (maxLightDistance), 2.f);
 
 					if ((nx != pos.x) && (ny != pos.y)) {
@@ -186,60 +203,64 @@ void Lighting::floodAmbient(uint32_t lx, uint32_t ly, Pixmap& lightCanvas, Pixma
 }
 
 
-void Lighting::calculateAmbient()
+void Lighting::calculateAmbient(glm::ivec4 tileFrame)
 {
 	static Observer<ChunkUpdate> tileUpdates(globals.chunkUpdateSubject);
-	static glm::uvec2 dims{(uint32_t)std::abs(lightingSprite.bounds.wh.x), (uint32_t)std::abs(lightingSprite.bounds.wh.y)};
+	static glm::ivec4 lastFrame = tileFrame;
+	static Rect nextBounds{0, 0, 10, 10};
 
-	glm::uvec2 newDims = glm::uvec2((uint32_t)std::abs(lightingSprite.bounds.wh.x), (uint32_t)std::abs(lightingSprite.bounds.wh.y));
 
 	// tons of guards 
 	static bool ambientTexUpdated = true;
 	if (ambientThreadPool.waitingCount != 4) {
 		return;
 	}
-	else if (!ambientTexUpdated) {
+	else if (!ambientTexUpdated) { // this executes once the texture is ready to display
 		ambientTexUpdated = true;
 		std::unique_lock<std::shared_mutex> lock(ambientAccessMut);
-		ambientTex.fromVec4Data(dims.x, dims.y, ambientMap.getData()); // keep it up to date
+		ambientSprite.setBounds(nextBounds);
+		ambientSprite.setOriginRelative(OriginLoc::BOTTOM_LEFT);
+		ambientSprite.setPosition(glm::vec3(m_lightingTileFrame.x, m_lightingTileFrame.w, 1.f));
+		ambientTex.fromVec4Data((uint32_t)std::abs(ambientSprite.bounds.wh.x), (uint32_t)std::abs(ambientSprite.bounds.wh.y), ambientMap.getData()); // keep it up to date
+		ambientUniforms.tileDims = ambientSprite.bounds.wh;
+		ambientUniforms.topLeftTileCoord = ambientSprite.getPosition();
+		ambientUniformBlock.setData(&ambientUniforms);
+		return;
+
 	}
 	bool needsRecalc = false;
 
-	if (dims != newDims) {
+
+	if (lastFrame != tileFrame) {
 		needsRecalc = true;
-		dims = newDims;
+		lastFrame = tileFrame;
 	}
 
 	if (tileUpdates.observe()) needsRecalc = true;
-	tileUpdates.clear();
 
 	if (!needsRecalc) return;
+	m_lightingTileFrame = tileFrame;
+	nextBounds = Rect(0, 0, std::abs(m_lightingTileFrame.z - m_lightingTileFrame.x), std::abs(m_lightingTileFrame.y - m_lightingTileFrame.w));
 	ambientTexUpdated = false;
 	{
 		std::unique_lock<std::shared_mutex> lock(ambientAccessMut);
-		ambientMap.resize(dims.x, dims.y);
+		ambientMap.resize((uint32_t)std::abs(nextBounds.wh.x), (uint32_t)std::abs(nextBounds.wh.y));
 		ambientMap.clear();
 	}
-	std::shared_ptr<Pixmap> infoMap = std::make_shared<Pixmap>(dims.x, dims.y);
-	glm::vec4* readDat = (glm::vec4*)malloc(dims.x * dims.y * sizeof(glm::vec4));
+	std::shared_ptr<Pixmap> infoMap = std::make_shared<Pixmap>((uint32_t)std::abs(nextBounds.wh.x), (uint32_t)std::abs(nextBounds.wh.y));
+	glm::vec4* readDat = (glm::vec4*)malloc(std::abs(nextBounds.wh.x) * std::abs(nextBounds.wh.y) * sizeof(glm::vec4));
 
 	lightingInfoFBO.bind();
-	glReadPixels(0, 0, std::abs(lightingSprite.bounds.wh.x), std::abs(lightingSprite.bounds.wh.y), GL_RGBA, GL_FLOAT, static_cast<void*>(readDat));
+	glReadPixels(0, 0, std::abs(nextBounds.wh.x), std::abs(nextBounds.wh.y), GL_RGBA, GL_FLOAT, static_cast<void*>(readDat));
 	infoMap->setData(readDat);
 
 	free(readDat);
 
+	glm::uvec2 dims = glm::uvec2(std::abs(nextBounds.wh.x), std::abs(nextBounds.wh.y));
 	ambientThreadPool.assign(&Lighting::processAmbientQuadrant, this, 0, 0, dims.x / 2, dims.y / 2, infoMap);
 	ambientThreadPool.assign(&Lighting::processAmbientQuadrant, this, dims.x / 2, 0, dims.x / 2, dims.y / 2, infoMap);
 	ambientThreadPool.assign(&Lighting::processAmbientQuadrant, this, 0, dims.y / 2, dims.x / 2, dims.y / 2, infoMap);
 	ambientThreadPool.assign(&Lighting::processAmbientQuadrant, this, dims.x / 2, dims.y / 2, dims.x / 2, dims.y / 2, infoMap);
-
-	//processAmbientQuadrant(0, 0,                   dims.x / 2, dims.y / 2, infoMap);
-	//processAmbientQuadrant(dims.x / 2, 0,          dims.x / 2, dims.y / 2, infoMap);
-	//processAmbientQuadrant(0, dims.y / 2,          dims.x / 2, dims.y / 2, infoMap);
-	//processAmbientQuadrant(dims.x / 2, dims.y / 2, dims.x / 2, dims.y / 2, infoMap);
-	//processAmbientQuadrant(0, 0, dims.x, dims.y, infoMap);
-
 }
 
 void Lighting::calculateDynamic(FrameBuffer& p_screenFBO)
@@ -257,7 +278,7 @@ void Lighting::calculateDynamic(FrameBuffer& p_screenFBO)
 
 }
 
-void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states)
+void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::ivec4 p_currentTileFrame)
 {
 	DrawStates newStates(p_states);
 	newStates.m_blendMode.enable();
@@ -265,19 +286,19 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 	if (!m_screenTexSet) {
 
 		m_lightingCombineStates.setTexture(0, dynamicLightingFBO.getColorTexRef(0));
+		m_lightingCombineStates.setTexture(1, ambientLightingFBO.getColorTexRef(0));
 		// Now that we know which FBO we are drawing to, we can set the texture.
 		m_lightingCombineStates.addTexture(p_screenFBO.getColorTexRef(0));
 		m_screenTexSet = true;
 	}
 
 	Texture& infoTex = lightingInfoFBO.getColorTexRef(0);
+	ambientLightingFBO.setDimensions(p_screenFBO.getViewportWidth(), p_screenFBO.getViewportHeight());
 
 	DrawStates dynamicLightingStates(p_states);
 	dynamicLightingStates.addTexture(infoTex);
-	dynamicLightingStates.addTexture(ambientTex);
 
 	m_dynamicLightingShader.setTexUniform(m_lightingInfoTexUniformLoc, 0);
-	m_dynamicLightingShader.setTexUniform(m_ambientLightingTextureUniformLoc, 1);
 
 	ImGui::Begin("Lighting");
 	ImGui::SliderFloat("Resolution Divisor", &dynamicResDivisor, 1.f, 64.f);
@@ -287,7 +308,7 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 	ImGui::End();
 
 	if (!fullbright)
-		calculateAmbient();
+		calculateAmbient(p_currentTileFrame);
 
 	calculateDynamic(p_screenFBO);
 
@@ -295,16 +316,26 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 
 	lightingSprite.attachShader(&m_dynamicLightingShader);
 	if (!fullbright) {
+		dynamicLightingFBO.bind();
 		dynamicLightingStates.setTexture(0, infoTex);
-		dynamicLightingStates.setTexture(1, ambientTex);
 		lightingSprite.draw(dynamicLightingFBO, dynamicLightingStates);
+		ambientLightingFBO.bind();
+		ambientLightingFBO.setClearColor({ 0.f, 0.f, 0.f, 0.f });
+		ambientLightingFBO.clear();
+		m_ambientLightingShader.use();
+		ambientSprite.attachTexture(ambientTex);
+		ambientSprite.draw(ambientLightingFBO, p_states);
 	}
 	else {
 		dynamicLightingFBO.setClearColor({ 0.25f, 0.25f, 0.25f, 1.f });
 		dynamicLightingFBO.clear();
+		ambientLightingFBO.setClearColor({ 0.25f, 0.25f, 0.25f, 1.f });
+		ambientLightingFBO.clear();
 	}
+	
 	//m_lightingCombineStates.setTexture(0, ambientTex);
-	m_lightingCombineStates.setTexture(0, dynamicLightingFBO.getColorTexRef(0));
+	//m_lightingCombineStates.setTexture(0, dynamicLightingFBO.getColorTexRef(0));
+	//m_lightingCombineStates.setTexture(1, ambientLightingFBO.getColorTexRef(0));
 	m_lightingCombineShader.setVec2Uniform(m_lightingResUniformLoc, glm::vec2(dynamicLightingFBO.getViewportWidth(), dynamicLightingFBO.getViewportHeight()));
 	p_gameWindow.bind();
 	// something I realize now is that calling .draw on an FBO does not actually bind the FBO, it just draws to the current bound thing.

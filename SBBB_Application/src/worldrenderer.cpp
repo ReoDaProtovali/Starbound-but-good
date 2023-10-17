@@ -45,8 +45,6 @@ WorldRenderer::WorldRenderer()
 	m_tileDrawStates.attachShader(&m_tileShader);
 	lighting.setDims(16, 16);
 
-	m_firstPassDrawStates = m_tileDrawStates;
-	m_firstPassDrawStates.m_blendMode.disable();
 
 }
 
@@ -226,19 +224,23 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	m_pixelsPerTile = std::fminf((float)p_windowWidth / (float)m_viewCam->tileScale, 8.f);
 
-	glm::ivec4 chunkFrameTiles = utils::frameToChunkCoords(f) * CHUNKSIZE;
+	currentTileFrame = utils::frameToChunkCoords(f) * CHUNKSIZE;
 	// breaks the frame, must be set manually
-	m_tileCam.setDimensions(int(m_pixelsPerTile * float(chunkFrameTiles.z - chunkFrameTiles.x)), int(m_pixelsPerTile * float(chunkFrameTiles.w - chunkFrameTiles.y)));
+	m_tileCam.setDimensions(int(m_pixelsPerTile * float(currentTileFrame.z - currentTileFrame.x)), int(m_pixelsPerTile * float(currentTileFrame.w - currentTileFrame.y)));
 	m_tileCam.setFrame(
-		(float)chunkFrameTiles.x, (float)chunkFrameTiles.y, float(chunkFrameTiles.z - chunkFrameTiles.x), float(chunkFrameTiles.w - chunkFrameTiles.y)
+		(float)currentTileFrame.x, (float)currentTileFrame.y, float(currentTileFrame.z - currentTileFrame.x), float(currentTileFrame.w - currentTileFrame.y)
 	);
 
 	m_tileSprite.setBounds(Rect(0, 0, m_tileCam.getFrameDimensions().x, m_tileCam.getFrameDimensions().y));
 	m_tileSprite.setPosition(glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 0));
-	lighting.lightingSprite.setBounds(Rect(0, 0, m_tileCam.getFrameDimensions().x, m_tileCam.getFrameDimensions().y));
-	lighting.lightingSprite.setPosition(glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 1));
 
-	m_tileFBO.setDimensions(glm::vec2(m_pixelsPerTile * (chunkFrameTiles.z - chunkFrameTiles.x), m_pixelsPerTile * (chunkFrameTiles.w - chunkFrameTiles.y)));
+	lighting.lightingSprite.setBounds(Rect(0, 0, m_tileCam.getFrameDimensions().x, m_tileCam.getFrameDimensions().y));
+	lighting.lightingSprite.setPosition(glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 0));
+
+	//auto t1 = Rect(0, 0, m_tileCam.getFrameDimensions().x, m_tileCam.getFrameDimensions().y);
+	//auto t2 = glm::vec3(m_tileCam.getFrame().x, m_tileCam.getFrame().w, 0);
+
+	m_tileFBO.setDimensions(glm::vec2(m_pixelsPerTile * (currentTileFrame.z - currentTileFrame.x), m_pixelsPerTile * (currentTileFrame.w - currentTileFrame.y)));
 
 	lighting.setDims((uint16_t)m_tileFBO.getViewportWidth(), (uint16_t)m_tileFBO.getViewportHeight()); // update lighting buffer sizes
 

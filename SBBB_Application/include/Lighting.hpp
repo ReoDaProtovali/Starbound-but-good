@@ -24,6 +24,11 @@ struct DynamicLightingInfo {
 	float padding[3];
 };
 
+struct AmbientLightingInfo { // fundamentally different from the other one because it updates slower
+	glm::vec2 topLeftTileCoord{0}; 
+	glm::vec2 tileDims{0};
+};
+
 class Lighting
 {
 public:
@@ -33,9 +38,9 @@ public:
 	void setTileInfoTex(Texture p_infoTex);
 	void setDims(uint16_t p_width, uint16_t p_height);
 
-	void calculateAmbient();
+	void calculateAmbient(glm::ivec4 tileFrame);
 	void calculateDynamic(FrameBuffer& p_screenFBO);
-	void draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states);
+	void draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::ivec4 p_currentTileFrame);
 
 	float dynamicResDivisor = 4.f;
 
@@ -47,10 +52,12 @@ private:
 	void processAmbientQuadrant(uint32_t sx, uint32_t sy, uint32_t dimx, uint32_t dimy, std::shared_ptr<Pixmap> infoMap);
 	void floodAmbient(uint32_t lx, uint32_t ly, Pixmap& lightCanvas, Pixmap& infoCanvas);
 	Sprite lightingSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
+	Sprite ambientSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
 	FrameBuffer lightingInfoFBO;
 	FrameBuffer dynamicLightingFBO;
-	glm::vec2 m_framePos;
-	glm::vec2 m_frameDim;
+	FrameBuffer ambientLightingFBO;
+
+	glm::vec4 m_lightingTileFrame{-192, -192, 192, 192};
 
 	Mesh<GLfloat> m_overlayMesh;
 	DrawStates m_lightingCombineStates;
@@ -58,15 +65,19 @@ private:
 
 	Shader m_lightingCombineShader;
 	GLint m_lightingTextureUniformLoc = 0;
-	GLint m_ambientLightingTextureUniformLoc = 0;
+	GLint m_combine_ambientTextureUniformLoc = 0;
 	GLint m_screenTextureUniformLoc = 0;
 	GLint m_lightingResUniformLoc = 0;
 
-	UniformArray<Light> m_lights{1, 64};
-
 	Shader m_dynamicLightingShader;
+	UniformArray<Light> m_lights{1, 64};
 	DynamicLightingInfo dynamicUniforms;
 	UniformBlock<DynamicLightingInfo> dynamicUniformBlock{2};
+
+	Shader m_ambientLightingShader;
+	GLint m_ambient_ambientTextureUniformLoc = 0;
+	AmbientLightingInfo ambientUniforms;
+	UniformBlock<AmbientLightingInfo> ambientUniformBlock{3};
 
 	Pixmap ambientMap{ 20, 20 };
 	std::shared_mutex ambientAccessMut;

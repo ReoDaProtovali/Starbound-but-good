@@ -25,7 +25,6 @@ struct Light {
 
 // uniforms
 uniform sampler2D lightingInfoTex;
-uniform sampler2D ambientLightingTex;
 
 layout(std140, binding = 0) uniform GlobalsBlock {
     vec4 mouse;
@@ -182,5 +181,5 @@ void main()
         outCol.rgb = max(lightFactor * vec3(absorbanceFactor), outCol.rgb);
     }
 
-    FragColor = max(clamp(outCol, 0.f, 1.f), texture(ambientLightingTex, toShaderCoords(tileCoord)));
+    FragColor = clamp(outCol, 0.f, 1.f);
 }
