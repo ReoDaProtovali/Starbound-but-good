@@ -70,6 +70,6 @@ void main()
     tileCoord.x = bottomRightTileCoord.x + tileDims.x * TexCoord.x;
     tileCoord.y = bottomRightTileCoord.y + tileDims.y * TexCoord.y;
 
-    //FragColor = texture_bicubic(ambientLightingTex, toShaderCoords(tileCoord) * tileDims - vec2(0.5f), 1.f / tileDims);
-    FragColor = texture(ambientLightingTex, toShaderCoords(tileCoord));
+    FragColor = texture_bicubic(ambientLightingTex, toShaderCoords(tileCoord) * tileDims - vec2(0.5f), 1.f / tileDims);
+    //FragColor = texture(ambientLightingTex, toShaderCoords(tileCoord));
 }

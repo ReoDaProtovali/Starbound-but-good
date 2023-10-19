@@ -29,12 +29,12 @@ Lighting::Lighting() :
 
 	m_ambient_ambientTextureUniformLoc = m_ambientLightingShader.addTexUniform("ambientLightingTex", 0);
 
-	lightingSprite.attachShader(&m_dynamicLightingShader);
+	dynamicLightingSprite.attachShader(&m_dynamicLightingShader);
 	ambientSprite.attachShader(&m_ambientLightingShader);
 	ambientSprite.attachTexture(ambientTex);
 
 	// needed
-	lightingSprite.setBounds({ 0, 0, 10, 10 });
+	dynamicLightingSprite.setBounds({ 0, 0, 10, 10 });
 	ambientSprite.setBounds({ 0, 0, 10, 10 });
 	ambientSprite.setPosition({ 1.f, 1.f, 1.f });
 	ambientSprite.setOriginRelative(OriginLoc::TOP_LEFT);
@@ -91,6 +91,8 @@ void Lighting::setDims(uint16_t p_width, uint16_t p_height)
 		return;
 	}
 	lightingInfoFBO.setDimensions(p_width / 8, p_height / 8);
+	ambientLightingFBO.setDimensions(p_width, p_height);
+	dynamicLightingFBO.setDimensions(uint32_t(p_width / m_dynamicResDivisor), uint32_t(p_height / m_dynamicResDivisor));
 
 }
 void Lighting::processAmbientQuadrant(uint32_t sx, uint32_t sy, uint32_t dimx, uint32_t dimy, std::shared_ptr<Pixmap> infoMap)
@@ -203,13 +205,12 @@ void Lighting::floodAmbient(uint32_t lx, uint32_t ly, Pixmap& lightCanvas, Pixma
 }
 
 
-void Lighting::calculateAmbient(glm::ivec4 tileFrame)
+void Lighting::calculateAmbient(glm::ivec4 tileFrame, float p_pixelsPerTile)
 {
 	static Observer<ChunkUpdate> tileUpdates(globals.chunkUpdateSubject);
 	static glm::ivec4 lastFrame = tileFrame;
-	static Rect nextBounds{0, 0, 10, 10};
 
-
+	if (p_pixelsPerTile < 8.f) return;
 	// tons of guards 
 	static bool ambientTexUpdated = true;
 	if (ambientThreadPool.waitingCount != 4) {
@@ -218,13 +219,8 @@ void Lighting::calculateAmbient(glm::ivec4 tileFrame)
 	else if (!ambientTexUpdated) { // this executes once the texture is ready to display
 		ambientTexUpdated = true;
 		std::unique_lock<std::shared_mutex> lock(ambientAccessMut);
-		ambientSprite.setBounds(nextBounds);
-		ambientSprite.setOriginRelative(OriginLoc::BOTTOM_LEFT);
-		ambientSprite.setPosition(glm::vec3(m_lightingTileFrame.x, m_lightingTileFrame.w, 1.f));
+		updateAmbientLightingSprite();
 		ambientTex.fromVec4Data((uint32_t)std::abs(ambientSprite.bounds.wh.x), (uint32_t)std::abs(ambientSprite.bounds.wh.y), ambientMap.getData()); // keep it up to date
-		ambientUniforms.tileDims = ambientSprite.bounds.wh;
-		ambientUniforms.topLeftTileCoord = ambientSprite.getPosition();
-		ambientUniformBlock.setData(&ambientUniforms);
 		return;
 
 	}
@@ -239,24 +235,24 @@ void Lighting::calculateAmbient(glm::ivec4 tileFrame)
 	if (tileUpdates.observe()) needsRecalc = true;
 
 	if (!needsRecalc) return;
-	m_lightingTileFrame = tileFrame;
-	nextBounds = Rect(0, 0, std::abs(m_lightingTileFrame.z - m_lightingTileFrame.x), std::abs(m_lightingTileFrame.y - m_lightingTileFrame.w));
+	m_nextAmbientTileFrame = tileFrame;
+	m_nextAmbientBounds = Rect(0, 0, std::abs(m_nextAmbientTileFrame.z - m_nextAmbientTileFrame.x), std::abs(m_nextAmbientTileFrame.y - m_nextAmbientTileFrame.w));
 	ambientTexUpdated = false;
 	{
 		std::unique_lock<std::shared_mutex> lock(ambientAccessMut);
-		ambientMap.resize((uint32_t)std::abs(nextBounds.wh.x), (uint32_t)std::abs(nextBounds.wh.y));
+		ambientMap.resize((uint32_t)std::abs(m_nextAmbientBounds.wh.x), (uint32_t)std::abs(m_nextAmbientBounds.wh.y));
 		ambientMap.clear();
 	}
-	std::shared_ptr<Pixmap> infoMap = std::make_shared<Pixmap>((uint32_t)std::abs(nextBounds.wh.x), (uint32_t)std::abs(nextBounds.wh.y));
-	glm::vec4* readDat = (glm::vec4*)malloc(std::abs(nextBounds.wh.x) * std::abs(nextBounds.wh.y) * sizeof(glm::vec4));
+	std::shared_ptr<Pixmap> infoMap = std::make_shared<Pixmap>((uint32_t)std::abs(m_nextAmbientBounds.wh.x), (uint32_t)std::abs(m_nextAmbientBounds.wh.y));
+	glm::vec4* readDat = (glm::vec4*)malloc(std::abs(m_nextAmbientBounds.wh.x) * std::abs(m_nextAmbientBounds.wh.y) * sizeof(glm::vec4));
 
 	lightingInfoFBO.bind();
-	glReadPixels(0, 0, std::abs(nextBounds.wh.x), std::abs(nextBounds.wh.y), GL_RGBA, GL_FLOAT, static_cast<void*>(readDat));
+	glReadPixels(0, 0, std::abs(m_nextAmbientBounds.wh.x), std::abs(m_nextAmbientBounds.wh.y), GL_RGBA, GL_FLOAT, static_cast<void*>(readDat));
 	infoMap->setData(readDat);
 
 	free(readDat);
 
-	glm::uvec2 dims = glm::uvec2(std::abs(nextBounds.wh.x), std::abs(nextBounds.wh.y));
+	glm::uvec2 dims = glm::uvec2(std::abs(m_nextAmbientBounds.wh.x), std::abs(m_nextAmbientBounds.wh.y));
 	ambientThreadPool.assign(&Lighting::processAmbientQuadrant, this, 0, 0, dims.x / 2, dims.y / 2, infoMap);
 	ambientThreadPool.assign(&Lighting::processAmbientQuadrant, this, dims.x / 2, 0, dims.x / 2, dims.y / 2, infoMap);
 	ambientThreadPool.assign(&Lighting::processAmbientQuadrant, this, 0, dims.y / 2, dims.x / 2, dims.y / 2, infoMap);
@@ -265,20 +261,47 @@ void Lighting::calculateAmbient(glm::ivec4 tileFrame)
 
 void Lighting::calculateDynamic(FrameBuffer& p_screenFBO)
 {
-	dynamicUniforms.topLeftTileCoord = { lightingSprite.getPosition().x, lightingSprite.getPosition().y };
-	dynamicUniforms.tileDims = { std::abs(lightingSprite.bounds.wh.x), std::abs(lightingSprite.bounds.wh.y) };
 	m_lights.setAt(0, { {0.5f, 70.5f}, {1.f, 0.25f, 0.25f}, SDL_GetTicks() / 1000.f, 0.4f });
 	m_lights.setAt(1, { {-5.5f, 70.5f}, {0.25f, 0.25f, 1.f}, SDL_GetTicks() / 1000.f + 3.1415f, 0.4f });
 	dynamicUniforms.lightCount = 2;
 	dynamicUniformBlock.setData(&dynamicUniforms);
 
-	dynamicLightingFBO.setDimensions(uint32_t(p_screenFBO.getViewportWidth() / dynamicResDivisor), uint32_t(p_screenFBO.getViewportHeight() / dynamicResDivisor));
 	dynamicLightingFBO.setClearColor(glm::vec4(0));
 	dynamicLightingFBO.clear();
 
 }
 
-void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::ivec4 p_currentTileFrame)
+void Lighting::updateDynamicLightingSprite(const Camera& p_tileCam)
+{
+	dynamicLightingSprite.setOrigin(glm::vec2(0.f));
+	dynamicLightingSprite.setBounds(Rect(0, 0, p_tileCam.getFrameDimensions().x, p_tileCam.getFrameDimensions().y));
+    dynamicLightingSprite.setPosition(glm::vec3(p_tileCam.getFrame().x, p_tileCam.getFrame().w, 0));
+	dynamicUniforms.topLeftTileCoord = { dynamicLightingSprite.getPosition().x, dynamicLightingSprite.getPosition().y };
+	dynamicUniforms.tileDims = { std::abs(dynamicLightingSprite.bounds.wh.x), std::abs(dynamicLightingSprite.bounds.wh.y) };
+}
+
+void Lighting::updateAmbientLightingSprite()
+{
+	ambientSprite.setBounds(m_nextAmbientBounds);
+	ambientSprite.setOriginRelative(OriginLoc::BOTTOM_LEFT);
+	ambientSprite.setPosition(glm::vec3(m_nextAmbientTileFrame.x, m_nextAmbientTileFrame.w, 1.f));
+	ambientUniforms.tileDims = ambientSprite.bounds.wh;
+	ambientUniforms.topLeftTileCoord = ambientSprite.getPosition();
+	ambientUniformBlock.setData(&ambientUniforms);
+}
+
+void Lighting::updateInfoFBO(const Texture& p_infoTex, DrawStates& p_tileStates)
+{
+	lightingInfoFBO.setClearColor(glm::vec4(0.f, 0.f, 0.f, 0.f));
+    lightingInfoFBO.bind();
+	lightingInfoFBO.clear();
+	dynamicLightingSprite.attachTexture(p_infoTex);
+	p_tileStates.m_blendMode.disable();
+	dynamicLightingSprite.attachShader(&gs.imageShader); // temporarily hijacking this sprite to update the info FBO
+	dynamicLightingSprite.draw(lightingInfoFBO, p_tileStates);
+}
+
+void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::ivec4 p_currentTileFrame, float p_pixelsPerTile)
 {
 	DrawStates newStates(p_states);
 	newStates.m_blendMode.enable();
@@ -293,7 +316,6 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 	}
 
 	Texture& infoTex = lightingInfoFBO.getColorTexRef(0);
-	ambientLightingFBO.setDimensions(p_screenFBO.getViewportWidth(), p_screenFBO.getViewportHeight());
 
 	DrawStates dynamicLightingStates(p_states);
 	dynamicLightingStates.addTexture(infoTex);
@@ -301,24 +323,24 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 	m_dynamicLightingShader.setTexUniform(m_lightingInfoTexUniformLoc, 0);
 
 	ImGui::Begin("Lighting");
-	ImGui::SliderFloat("Resolution Divisor", &dynamicResDivisor, 1.f, 64.f);
+	ImGui::SliderFloat("Resolution Divisor", &m_dynamicResDivisor, 1.f, 64.f);
 	static bool fullbright = false;
 	ImGui::Checkbox("Fullbright", &fullbright);
 	ImGui::ColorPicker4("Light Color", glm::value_ptr(dynamicUniforms.testLightInfo));
 	ImGui::End();
 
 	if (!fullbright)
-		calculateAmbient(p_currentTileFrame);
+		calculateAmbient(p_currentTileFrame, p_pixelsPerTile);
 
 	calculateDynamic(p_screenFBO);
 
 	m_dynamicLightingShader.use();
 
-	lightingSprite.attachShader(&m_dynamicLightingShader);
+	dynamicLightingSprite.attachShader(&m_dynamicLightingShader);
 	if (!fullbright) {
 		dynamicLightingFBO.bind();
 		dynamicLightingStates.setTexture(0, infoTex);
-		lightingSprite.draw(dynamicLightingFBO, dynamicLightingStates);
+		dynamicLightingSprite.draw(dynamicLightingFBO, dynamicLightingStates);
 		ambientLightingFBO.bind();
 		ambientLightingFBO.setClearColor({ 0.f, 0.f, 0.f, 0.f });
 		ambientLightingFBO.clear();

@@ -12,6 +12,27 @@
 class WorldRenderer {
 public:
 
+	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
+	void tidy();
+	int redrawCameraView(const glm::vec4& chunkFrame);
+
+	WorldRenderer();
+	int redrawCameraView();
+	int drawChunk(ChunkPos pos, uint32_t p_windowWidth);
+
+
+	// If we want to draw the world, we kinda have to know where we are in it
+	void setCamera(Camera* p_cam);
+
+	Lighting lighting;
+	glm::ivec4 currentTileFrame{0.f, 0.f, 1.f, 1.f};
+
+	bool drawChunkBorders = false;
+	int draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p_windowWidth);
+	float pixelsPerTile = 8.f;
+
+private:
+
 	FrameBuffer m_tileFBO;
 	const char* varyingNames[3] = { "TexCoord", "zLevel", "pos" };
 	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl", varyingNames, 3 };
@@ -19,34 +40,20 @@ public:
 	GLuint worldPosUniformLoc = 0;
 	GLuint tileSheetUniformLoc = 0;
 	GLuint drawAsBordersUniformLoc = 0;
+	Texture m_tileSheetTexture;
 
 	Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 	// different shaders need different uniforms
 	GLuint feedback_tileSheetUniformLoc = 0;
 	GLuint feedback_tileSheetHeightUniformLoc = 0;
 
-	Texture tilesheet;
 	DrawStates m_tileDrawStates;
+	Camera m_tileCam;
 	Camera* m_viewCam = nullptr;
 	glm::ivec4 m_chunkFramePrev;
-	glm::ivec4 currentTileFrame{0.f, 0.f, 1.f, 1.f};
-
 	Sprite m_tileSprite = Sprite(glm::vec3(-1, -1, 0), Rect(0, 0, 10, 10));
-	float m_pixelsPerTile = 8.f;
-	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
-	GenericShaders& gs = GenericShaders::Get();
-	void tidy();
-	int redrawCameraView(const glm::vec4& chunkFrame);
-
-	Camera m_tileCam;
-	WorldRenderer();
-	int redrawCameraView();
-	Lighting lighting;
 
 	Observer<ChunkUpdate> m_chunkUpdateObserver{ globals.chunkUpdateSubject };
+	GenericShaders& gs = GenericShaders::Get();
 
-	// If we want to draw the world, we kinda have to know where we are in it
-	void setCamera(Camera* p_cam);
-	bool drawChunkBorders = false;
-	int draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p_windowWidth);
 };

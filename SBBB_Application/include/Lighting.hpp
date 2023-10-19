@@ -38,11 +38,14 @@ public:
 	void setTileInfoTex(Texture p_infoTex);
 	void setDims(uint16_t p_width, uint16_t p_height);
 
-	void calculateAmbient(glm::ivec4 tileFrame);
+	void calculateAmbient(glm::ivec4 tileFrame, float p_pixelsPerTile);
 	void calculateDynamic(FrameBuffer& p_screenFBO);
-	void draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::ivec4 p_currentTileFrame);
+	void updateDynamicLightingSprite(const Camera& p_tileCam);
+	void updateAmbientLightingSprite();
+	void updateInfoFBO(const Texture& p_infoTex, DrawStates& p_tileStates);
+	void draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawStates& p_states, glm::ivec4 p_currentTileFrame, float p_pixelsPerTile);
 
-	float dynamicResDivisor = 4.f;
+	float m_dynamicResDivisor = 4.f;
 
 	friend class WorldRenderer;
 private:
@@ -51,13 +54,14 @@ private:
 
 	void processAmbientQuadrant(uint32_t sx, uint32_t sy, uint32_t dimx, uint32_t dimy, std::shared_ptr<Pixmap> infoMap);
 	void floodAmbient(uint32_t lx, uint32_t ly, Pixmap& lightCanvas, Pixmap& infoCanvas);
-	Sprite lightingSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
+	Sprite dynamicLightingSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
 	Sprite ambientSprite{ glm::vec3(0.f, 0.f, -2.f), Rect(0.f, 0.f, 1.f, 1.f) };
 	FrameBuffer lightingInfoFBO;
 	FrameBuffer dynamicLightingFBO;
 	FrameBuffer ambientLightingFBO;
 
-	glm::vec4 m_lightingTileFrame{-192, -192, 192, 192};
+	glm::vec4 m_nextAmbientTileFrame{-192, -192, 192, 192};
+	Rect m_nextAmbientBounds{ 0, 0, 10, 10 };
 
 	Mesh<GLfloat> m_overlayMesh;
 	DrawStates m_lightingCombineStates;
@@ -78,6 +82,8 @@ private:
 	GLint m_ambient_ambientTextureUniformLoc = 0;
 	AmbientLightingInfo ambientUniforms;
 	UniformBlock<AmbientLightingInfo> ambientUniformBlock{3};
+
+	GenericShaders& gs = GenericShaders::Get();
 
 	Pixmap ambientMap{ 20, 20 };
 	std::shared_mutex ambientAccessMut;
