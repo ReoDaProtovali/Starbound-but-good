@@ -1,0 +1,15 @@
+{
+	"id": "gedstone",
+	"name": "Gedstone",
+	"genericDescription": "Looks like it could crumble at any minute.",
+	"categories": [ "hard", "stonelike", "natural", "bad" ],
+	"rarity": "rare",
+	"imageFile": "gedstone.png",
+	"maxHP": 80,
+	"isAnimated": false,
+	"transparent": false,
+	"variationCount": 4,
+	"lightAbsorption": 0.6,
+	"emissive": false,
+	"lightingColor": [ 1.0, 1.0, 1.0 ]
+}

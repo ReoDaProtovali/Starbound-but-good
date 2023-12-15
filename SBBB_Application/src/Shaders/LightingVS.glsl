@@ -1,4 +1,4 @@
-#version 330 core
+#version 420
 
 in vec3 aPos;
 in vec2 aTexCoord;

@@ -36,7 +36,7 @@ struct ChunkPos {
 		return false;
 	}
 	size_t operator()(const ChunkPos& p_key) const {
-		return (p_key.y << 16) ^ p_key.x;
+		return ((size_t)p_key.y << 32) ^ (size_t)p_key.x;
 	}
 	int32_t x;
 	int32_t y;

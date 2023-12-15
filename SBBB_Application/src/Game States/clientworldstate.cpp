@@ -9,6 +9,12 @@ void ClientWorldState::testDraw()
 	glEnable(GL_BLEND);
 	testFrame++;
 
+	GlobalUniforms uniforms;
+	uniforms.time_ticks = (uint32_t)testFrame;
+	uniforms.time_seconds = SDL_GetTicks() / 1000.f;
+	uniforms.screenDim = { renderer.window.screenWidth, renderer.window.screenHeight };
+	uniforms.windowDim = { renderer.window.width, renderer.window.height };
+
 	renderer.screenFBO.bind();
 	// DrawStates just contains everything opengl needs to know in order to draw.
 	// No need to set a texture or shader, they have both attached to the testReoSprite object beforehand
@@ -49,7 +55,17 @@ void ClientWorldState::testDraw()
 		glm::vec2 tilePos = playerCam->pixelToTileCoordinates(mousePos.x, mousePos.y);
 		tilePos = glm::vec2(tilePos.x < 0.f ? tilePos.x - 1.f : tilePos.x, tilePos.y < 0 ? tilePos.y - 1.f : tilePos.y);
 		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 3, 0 });
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 2, 0 });
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 1, 0 });
+		m_tileRequester.notifyAll(TileUpdateRequest{ (int)tilePos.x, (int)tilePos.y, 0, 0 });
 	}
+
+	uniforms.mouse.x = mousePos.x;
+	uniforms.mouse.y = mousePos.y;
+	uniforms.mouse.z = (float)lMouseDown;
+	uniforms.mouse.w = (float)rMouseDown;
+
+	globalUniforms.setData(&uniforms);
 
 	skip:
 	ImGui::Begin("Toggles");
@@ -334,7 +350,7 @@ void ClientWorldState::update()
 	glDisable(GL_DEPTH_TEST);
 
 	if (playerCam)
-		worldRenderer.lighting.draw(renderer.screenFBO, renderer.window, worldDrawnState, mousePos);
+		worldRenderer.lighting.draw(renderer.screenFBO, renderer.window, worldDrawnState, worldRenderer.currentTileFrame, worldRenderer.pixelsPerTile);
 }
 
 void ClientWorldState::suspend()

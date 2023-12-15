@@ -11,5 +11,5 @@
 	"lightingColor": [ 0.63, 0.98, 0.96 ],
 	"maxHP": 30,
 	"variationCount": 1,
-	"lightAbsorption": 0.0
+	"lightAbsorption": 0.001
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "Framework/Window/GameWindow.hpp"
+#include "Framework/Graphics/UniformBlock.hpp"
 #include "GameRenderer.hpp"
 #include "WorldRenderer.hpp"
 #include "GameStates.hpp"
@@ -7,7 +8,18 @@
 #include "GUITextField.hpp"
 #include "GUIDragBar.hpp"
 #include "GUIContainer.hpp"
+
 #define BOMB_COUNTER_MAX 50
+
+struct GlobalUniforms {
+	glm::vec4 mouse;     // byte offset + 0
+	glm::vec2 screenDim; // byte offset + 16
+	glm::vec2 windowDim; // byte offset + 24
+	float time_seconds;  // byte offset + 32
+	uint32_t time_ticks; // byte offset + 36
+	uint8_t padding[8];
+};
+
 
 class Lighting;
 class ClientWorldState : public GameState {
@@ -64,6 +76,7 @@ public:
 
 private:
 
+	UniformBlock<GlobalUniforms> globalUniforms{ 0 };
 	WorldRenderer worldRenderer;
 	GameRenderer& renderer;
 

@@ -501,15 +501,24 @@ void Shader::setVec4UniformStatic(GLint p_loc, glm::vec4 p_value)
 	glCheck(glUniform4f(p_loc, p_value.x, p_value.y, p_value.z, p_value.w));
 }
 
-GLuint Shader::getUniformLoc(std::string_view shaderName)
+GLuint Shader::getUniformLoc(std::string_view uniformName)
 {
 	GLint loc = -1;
 	for (auto& u : m_uniforms) {
-		if (u.name == shaderName) loc = u.loc;
+		if (u.name == uniformName) loc = u.loc;
 	}
-	if (loc == -1 && shaderName != "transform") {
-		ERROR_LOG("Could not find uniform location for " << shaderName << ".");
+	if (loc == -1 && uniformName != "transform") {
+		ERROR_LOG("Could not find uniform location for " << uniformName << ".");
 	}
 	// wha
+	return loc;
+}
+
+GLuint Shader::getUniformBlockIndex(std::string_view uniformBlockName)
+{
+	GLuint loc = glGetUniformBlockIndex(program->ID, uniformBlockName.data());
+	if (loc == GL_INVALID_INDEX) {
+		ERROR_LOG("Uniform block not found.");
+	}
 	return loc;
 }

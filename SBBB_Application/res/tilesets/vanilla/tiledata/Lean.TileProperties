@@ -1,0 +1,15 @@
+{
+	"id": "lean",
+	"name": "lean",
+	"genericDescription": "lean.",
+	"categories": [ "lean", "exotic" ],
+	"rarity": "rare",
+	"imageFile": "lean.png",
+	"maxHP": 80,
+	"isAnimated": false,
+	"transparent": false,
+	"variationCount": 4,
+	"lightAbsorption": 0.7,
+	"emissive": false,
+	"lightingColor": [ 1, 1, 1 ]
+}

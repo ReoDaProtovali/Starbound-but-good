@@ -1,11 +1,19 @@
-#version 330 core
+#version 420
 out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform sampler2D lightingTexture;
+uniform sampler2D ambientTexture;
 uniform sampler2D screenTexture;
 
-uniform vec2 screenRes;
+layout(std140, binding = 0) uniform GlobalsBlock {
+    vec4 mouse;
+    vec2 screenDim;
+    vec2 windowDim;
+    float time_seconds;
+    uint time_ticks;
+} g;
+
 uniform vec2 lightingRes;
 
 vec4 cubic(float v) {
@@ -73,11 +81,12 @@ void main()
 
     vec3 lightOverflow = clamp((lightingCol * LIGHT_GAIN).xyz - 2.f, 0.f, 999.f);
     float avgLightOverflow = length(lightOverflow);
-    screenCol = vec4(abberationSample(screenTexture, TexCoord, avgLightOverflow / 800.f), 1.f);
+    //screenCol = vec4(abberationSample(screenTexture, TexCoord, avgLightOverflow / 800.f), 1.f);
 
-    col = (lightingCol * LIGHT_GAIN) * screenCol;
+    col =  max(texture(ambientTexture, TexCoord), (lightingCol)) * LIGHT_GAIN * screenCol;
 
     FragColor.rgb = col.rgb + (avgOverflow * avgOverflow) * 0.25;
 
+    //FragColor = max(texture(ambientTexture, TexCoord), (lightingCol * LIGHT_GAIN));
     FragColor.a = 1.f;
 }

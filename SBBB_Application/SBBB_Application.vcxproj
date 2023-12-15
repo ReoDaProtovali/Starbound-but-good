@@ -258,6 +258,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="include\Framework\Graphics\UniformArray.hpp" />
+    <ClInclude Include="include\Framework\Graphics\UniformBlock.hpp" />
     <ClInclude Include="include\Game States\TemplateState.hpp" />
     <ClInclude Include="include\GameStates.hpp" />
     <ClInclude Include="include\GUI.hpp" />
@@ -325,6 +327,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="include\util\SharedMap.hpp" />
     <ClInclude Include="include\util\StaticArray2D.hpp" />
     <ClInclude Include="include\util\StaticArray3D.hpp" />
+    <ClInclude Include="include\util\Threadpool.hpp" />
     <ClInclude Include="include\util\utils.hpp" />
     <ClInclude Include="include\Framework\FrameworkConstants.hpp" />
     <ClInclude Include="include\Framework\FrameworkDraw.hpp" />
@@ -344,6 +347,8 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include=".gitignore" />
     <None Include="res\tilesets\vanilla\tiledata\BlueGem.TileProperties" />
     <None Include="res\tilesets\vanilla\tiledata\Copeite.TileProperties" />
+    <None Include="res\tilesets\vanilla\tiledata\Gedstone.TileProperties" />
+    <None Include="src\Shaders\AmbientLightingFS.glsl" />
     <None Include="src\Shaders\FancyFS.glsl" />
     <None Include="freetype.dll" />
     <None Include="glew32.dll" />
