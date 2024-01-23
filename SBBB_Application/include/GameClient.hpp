@@ -9,6 +9,7 @@
 #include "GameStates.hpp"
 
 #include "Game States/ClientWorldState.hpp"
+#include "Game States/MenuState.hpp"
 #include "Game States/TemplateState.hpp"
 
 class GameClient
@@ -25,6 +26,7 @@ private: GameRenderer renderer{ gw };
 
 	GameStateManager& stateManager = GameStateManager::Get();
 	ClientWorldState State_ClientWorld{ gw, renderer };
+	MenuState State_Menu{};
 	TemplateState State_None;
 
 	// utility/testing

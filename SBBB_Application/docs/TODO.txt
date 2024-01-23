@@ -2,7 +2,6 @@
 
 Add sound using OpenAL
 
-Implement tile lighting, test using it within the shader
 Add a getTile method to the world class
 
 Add seamless tile connections, tile decor
@@ -55,3 +54,4 @@ Organized tile properties, json definable, figure out better ways to get propert
 Maybe encapsulate framebuffer creation and management to its own class
 Begin on entities, discuss how physics will work, convince reo that making a physics engine by hand will be a pain
 Add a player, work on block placing, breaking
+Implement tile lighting, test using it within the shader
