@@ -27,10 +27,12 @@ struct GameStatePair {
 		if (serverState) {
 			serverState->close();
 			serverState->initialized = false;
+			LOG("A Server State is Closing");
 		}
 		if (clientState) {
 			clientState->close();
 			clientState->initialized = false;
+			LOG("A Client State is Closing");
 		}
 	}
 
@@ -40,7 +42,7 @@ struct GameStatePair {
 
 class GameStateManager { // todo: un-gunch it by putting stuff in the cpp file
 public:
-	GameStateManager() { ERROR_LOG("constructed"); };
+	GameStateManager() { };
 
 	void clientUpdate() {
 		std::shared_lock<std::shared_mutex> lock(m_stateLock); // ensure state is not changing
@@ -72,6 +74,7 @@ public:
 		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			getState(p_ID)->clientState = p_clientState;
+			return;
 		}
 		m_allStates.push_back(GameStatePair());
 		auto& lastState = m_allStates[m_allStates.size() - 1];
@@ -83,6 +86,7 @@ public:
 		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			getState(p_ID)->serverState = p_serverState;
+			return;
 		}
 		m_allStates.push_back(GameStatePair());
 		auto& lastState = m_allStates[m_allStates.size() - 1];
@@ -109,7 +113,7 @@ public:
 		//m_activeState->init();
 	};
 	void close() {
-		std::unique_lock<std::shared_mutex> lock(m_stateLock);
+		std::shared_lock<std::shared_mutex> lock(m_stateLock);
 		if (!m_activeState || !m_activeState->ready()) return;
 		stateStopping = true;
 	}

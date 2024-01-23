@@ -261,8 +261,8 @@ void Lighting::calculateAmbient(glm::ivec4 tileFrame, float p_pixelsPerTile)
 
 void Lighting::calculateDynamic(FrameBuffer& p_screenFBO)
 {
-	m_lights.setAt(0, { {0.5f, 70.5f}, {1.f, 0.25f, 0.25f}, SDL_GetTicks() / 1000.f, 0.4f });
-	m_lights.setAt(1, { {-5.5f, 70.5f}, {0.25f, 0.25f, 1.f}, SDL_GetTicks() / 1000.f + 3.1415f, 0.4f });
+	m_lights.setAt(0, { {0.5f, 70.5f}, dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f, 0.4f });
+	m_lights.setAt(1, { {-5.5f, 70.5f}, 1.f - dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f + 3.1415f, 0.4f });
 	dynamicUniforms.lightCount = 2;
 	dynamicUniformBlock.setData(&dynamicUniforms);
 
@@ -275,7 +275,7 @@ void Lighting::updateDynamicLightingSprite(const Camera& p_tileCam)
 {
 	dynamicLightingSprite.setOrigin(glm::vec2(0.f));
 	dynamicLightingSprite.setBounds(Rect(0, 0, p_tileCam.getFrameDimensions().x, p_tileCam.getFrameDimensions().y));
-    dynamicLightingSprite.setPosition(glm::vec3(p_tileCam.getFrame().x, p_tileCam.getFrame().w, 0));
+	dynamicLightingSprite.setPosition(glm::vec3(p_tileCam.getFrame().x, p_tileCam.getFrame().w, 0));
 	dynamicUniforms.topLeftTileCoord = { dynamicLightingSprite.getPosition().x, dynamicLightingSprite.getPosition().y };
 	dynamicUniforms.tileDims = { std::abs(dynamicLightingSprite.bounds.wh.x), std::abs(dynamicLightingSprite.bounds.wh.y) };
 }
@@ -293,7 +293,7 @@ void Lighting::updateAmbientLightingSprite()
 void Lighting::updateInfoFBO(const Texture& p_infoTex, DrawStates& p_tileStates)
 {
 	lightingInfoFBO.setClearColor(glm::vec4(0.f, 0.f, 0.f, 0.f));
-    lightingInfoFBO.bind();
+	lightingInfoFBO.bind();
 	lightingInfoFBO.clear();
 	dynamicLightingSprite.attachTexture(p_infoTex);
 	p_tileStates.m_blendMode.disable();
@@ -324,37 +324,49 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 
 	ImGui::Begin("Lighting");
 	ImGui::SliderFloat("Resolution Divisor", &m_dynamicResDivisor, 1.f, 64.f);
-	static bool fullbright = false;
-	ImGui::Checkbox("Fullbright", &fullbright);
+	static bool ambient = true;
+	static bool dynamic = true;
+	ImGui::Checkbox("Ambient", &ambient);
+	ImGui::Checkbox("Dynamic", &dynamic);
 	ImGui::ColorPicker4("Light Color", glm::value_ptr(dynamicUniforms.testLightInfo));
 	ImGui::End();
 
-	if (!fullbright)
+	if (ambient)
 		calculateAmbient(p_currentTileFrame, p_pixelsPerTile);
+	if (dynamic)
+		calculateDynamic(p_screenFBO);
 
-	calculateDynamic(p_screenFBO);
-
-	m_dynamicLightingShader.use();
-
-	dynamicLightingSprite.attachShader(&m_dynamicLightingShader);
-	if (!fullbright) {
+	if (dynamic) {
+		m_dynamicLightingShader.use();
+		dynamicLightingSprite.attachShader(&m_dynamicLightingShader);
 		dynamicLightingFBO.bind();
-		dynamicLightingStates.setTexture(0, infoTex);
+		dynamicLightingSprite.attachTexture(infoTex);
 		dynamicLightingSprite.draw(dynamicLightingFBO, dynamicLightingStates);
+	}
+	else if (ambient) {
+		dynamicLightingFBO.setClearColor({ 0.0f, 0.0f, 0.0f, 1.f });
+		dynamicLightingFBO.clear();
+	}
+
+	if (ambient) {
+		m_ambientLightingShader.use();
 		ambientLightingFBO.bind();
 		ambientLightingFBO.setClearColor({ 0.f, 0.f, 0.f, 0.f });
 		ambientLightingFBO.clear();
-		m_ambientLightingShader.use();
 		ambientSprite.attachTexture(ambientTex);
 		ambientSprite.draw(ambientLightingFBO, p_states);
 	}
-	else {
-		dynamicLightingFBO.setClearColor({ 0.25f, 0.25f, 0.25f, 1.f });
-		dynamicLightingFBO.clear();
-		ambientLightingFBO.setClearColor({ 0.25f, 0.25f, 0.25f, 1.f });
+	else if (dynamic) {
+		ambientLightingFBO.setClearColor({ 0.0f, 0.0f, 0.0f, 1.f });
 		ambientLightingFBO.clear();
 	}
-	
+
+	if (!ambient && !dynamic) {
+		ambientLightingFBO.setClearColor({ 0.25f, 0.25f, 0.25f, 1.f });
+		ambientLightingFBO.clear();
+		dynamicLightingFBO.setClearColor({ 0.25f, 0.25f, 0.25f, 1.f });
+		dynamicLightingFBO.clear();
+	}
 	//m_lightingCombineStates.setTexture(0, ambientTex);
 	//m_lightingCombineStates.setTexture(0, dynamicLightingFBO.getColorTexRef(0));
 	//m_lightingCombineStates.setTexture(1, ambientLightingFBO.getColorTexRef(0));

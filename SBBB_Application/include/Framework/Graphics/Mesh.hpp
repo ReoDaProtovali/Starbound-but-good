@@ -160,7 +160,7 @@ public:
 		m_attribList.emplace_back(p_size, GL_UNSIGNED_INT);
 	};
 
-	/// Size specifies number of bytes required for the attribute.
+	/// Size specifies COUNT of bytes required for the attribute. as if it's an array
 	void addUbyteAttrib(GLubyte p_size) {
 		// I don't think things can be smaller than 4 bytes, so the size of a ubyte is actually 4 on the gpu
 		m_singleVertexSize += sizeof(GLuint) * p_size;

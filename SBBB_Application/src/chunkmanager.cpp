@@ -78,6 +78,7 @@ void ChunkManager::stopThreads()
 	for (auto& t : m_vboThreads) {
 		t.join();
 	}
+	LOAD_LOG("ChunkManager generation threads stopped.");
 }
 void ChunkManager::genFromQueueThreaded()
 {

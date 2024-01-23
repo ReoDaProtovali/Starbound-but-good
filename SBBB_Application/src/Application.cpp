@@ -29,7 +29,6 @@ void Application::run()
 			}
 			break;
 		}
-		if (client.clientStopping || localServer.serverStopping) break;
 
 		if (!gameActive) break;
 	}

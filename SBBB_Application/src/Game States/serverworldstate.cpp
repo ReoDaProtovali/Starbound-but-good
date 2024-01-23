@@ -31,6 +31,7 @@ void ServerWorldState::resume()
 }
 void ServerWorldState::close() 
 {
+	LOG("Server world state closing.");
 	keyObserver.unsubscribe();
 	world->stopThreads();
 	//world->~ChunkManager();

@@ -147,6 +147,10 @@ void ClientWorldState::testDraw()
 				 bombSprite.setPosition(glm::vec3(playerCam->pos.x, playerCam->pos.y, 2.f));
 			}
 			break;
+		case SDLK_6:
+			GameStateManager& gsm = GameStateManager::Get();
+			gsm.close();
+			break;
 		}
 	}
 
@@ -231,6 +235,8 @@ void ClientWorldState::close()
 	gui.removeElement("debugtext");
 	gui.removeElement("win95box");
 	gui.removeElement("tsc");
+	LOG("Client world state closing.");
+
 }
 
 void ClientWorldState::init()
@@ -254,51 +260,53 @@ void ClientWorldState::init()
 	bombSprite.attachTexture(res.getTexture("bombtexture"));
 	bombSprite.setPosition(glm::vec3(33.f));
 
-	//const float winboxwidth = 200.f;
-	//win95Box.setScreenBounds(Rect(100.f, 500.f, winboxwidth, 140.f));
-	//win95Box.useWin95Background();
-	//win95Box.backgroundOpacity = 0.8f;
+	const float winboxwidth = 200.f;
+	win95Box.setScreenBounds(Rect(100.f, 500.f, winboxwidth, 140.f));
+	win95Box.useWin95Background();
+	win95Box.backgroundOpacity = 0.8f;
 
 
-	//Texture navTex = res.getTexture("navmenu");
+	Texture navTex = res.getTexture("navmenu");
 
-	//navBarImage.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
-	//navBarImage.setPixelWidth(winboxwidth - 6.f);
-	//navBarImage.setPixelHeight(14.f);
-	//navBarImage.setPixelOffset(3.f, 5.f);
-	//navBarImage.setImage(navTex);
-	//navBarImage.setImageJustification(Corner::TOP_RIGHT);
+	navBarImage.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
+	navBarImage.setPixelWidth(winboxwidth - 6.f);
+	navBarImage.setPixelHeight(14.f);
+	navBarImage.setPixelOffset(3.f, 5.f);
+	navBarImage.setImage(navTex);
+	navBarImage.setImageJustification(Corner::TOP_RIGHT);
 
-	////navDragBar.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
-	//navDragBar.setPixelOffset(3.f, 3.f);
-	//navDragBar.setPixelWidth(winboxwidth - 6.f);
-	//navDragBar.setPixelHeight(16.f);
-	//navDragBar.enableBackground();
-	//navDragBar.backgroundColor = glm::vec3(0.f, 0.f, 0.67f);
-	//win95Box.addChild(&navDragBar);
-	//win95Box.addChild(&navBarImage);
+	//navDragBar.setLocalBounds(Rect(0.0f, 0.0f, 1.f, 0.2f)); // might not be needed
+	navDragBar.setPixelOffset(3.f, 3.f);
+	navDragBar.setPixelWidth(winboxwidth - 6.f);
+	navDragBar.setPixelHeight(16.f);
+	navDragBar.enableBackground();
+	navDragBar.backgroundColor = glm::vec3(0.f, 0.f, 0.67f);
+	win95Box.addChild(&navDragBar);
+	win95Box.addChild(&navBarImage);
 
-	////win95BoxText.setPixelOffset(3.f, 16.f);
-	////win95BoxText.setLocalBounds(Rect(0.1f, 0.2f, 1.f, 0.2f));
-	//win95BoxText.setPixelOffset(6.f, 0.f);
-	//win95BoxText.setPixelHeight(16.f);
-	//win95BoxText.setPixelWidth(winboxwidth - 6.f);
-	//win95BoxText.textColor = glm::vec3(1.f);
-	//win95BoxText.setText("button that cra...");
-	//win95BoxText.setTextHeight(15.f);
-	//win95BoxText.centered = false;
-	//win95Box.addChild(&win95BoxText);
+	//win95BoxText.setPixelOffset(3.f, 16.f);
+	//win95BoxText.setLocalBounds(Rect(0.1f, 0.2f, 1.f, 0.2f));
+	win95BoxText.setPixelOffset(6.f, 0.f);
+	win95BoxText.setPixelHeight(16.f);
+	win95BoxText.setPixelWidth(winboxwidth - 6.f);
+	win95BoxText.textColor = glm::vec3(1.f);
+	win95BoxText.setText("button that cra...");
+	win95BoxText.setTextHeight(15.f);
+	win95BoxText.centered = false;
+	win95Box.addChild(&win95BoxText);
 
-	//funnyButtonContainer.setLocalBounds(Rect(0.1, 0.2, 0.8, 0.7));
-	//funnyButtonContainer.useWin95Background();
-	//funnyButtonContainer.backgroundOpacity = 0.8f;
+	funnyButtonContainer.setLocalBounds(Rect(0.1, 0.2, 0.8, 0.7));
+	funnyButtonContainer.useWin95Background();
+	funnyButtonContainer.backgroundOpacity = 0.8f;
 
-	//funnyButton.disableBackground();
-	//funnyButton.onClick([&]() {
-	//		GameStateManager::Get().close();
-	//	});
-	//funnyButtonContainer.addChild(&funnyButton);
-	//win95Box.addChild(&funnyButtonContainer);
+	funnyButton.disableBackground();
+	funnyButton.onClick([&]() {
+			GameStateManager::Get().close();
+		});
+	funnyButtonContainer.addChild(&funnyButton);
+	win95Box.addChild(&funnyButtonContainer);
+
+	gui.addElement(&win95Box);
 
 
 	//DynFBOTexContainer.setAbsoluteBounds(Rect(0.f, 0.f, 0.5, 0.5));
@@ -316,7 +324,6 @@ void ClientWorldState::init()
 	//TileFBOTexContainer.backgroundColor = glm::vec3(1.f);
 	//gui.addElement(&TileFBOTexContainer);
 
-	gui.addElement(&win95Box);
 
 
 

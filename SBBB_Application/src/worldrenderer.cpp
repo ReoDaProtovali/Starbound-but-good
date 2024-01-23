@@ -100,8 +100,7 @@ int WorldRenderer::redrawCameraView()
 int WorldRenderer::drawChunk(ChunkPos pos, uint32_t p_windowWidth)
 {
 	int drawnChunkCount = 0;
-	pixelsPerTile = (float)p_windowWidth / (float)m_viewCam->tileScale;
-	m_tileCam.setDimensions(int(pixelsPerTile * float(currentTileFrame.z - currentTileFrame.x)), int(pixelsPerTile * float(currentTileFrame.w - currentTileFrame.y)));
+	//pixelsPerTile = (float)p_windowWidth / (float)m_viewCam->tileScale;
 
 	// has to be shifted one chunk down on the y for reasons
 	auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE - CHUNKSIZE, pos.y * float(CHUNKSIZE) - float(CHUNKSIZE * 2));
@@ -216,7 +215,6 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	m_tileSprite.setOrigin(glm::vec2(0.f));
 
 	m_tileSprite.draw(p_surface, p_states);
-
 	
 	lighting.updateInfoFBO(m_tileFBO.getColorTexRef(1), m_tileDrawStates);
 	m_tileFBO.bind();

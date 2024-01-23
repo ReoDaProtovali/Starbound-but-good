@@ -142,7 +142,7 @@ void main()
         
         vec3 lightFactor = lightCol * ((1.f - lightDistance)) * angleFactor;
     
-        const float lightCutoff = 0.05f;
+        const float lightCutoff = 0.01f;
         if (lightFactor.r < lightCutoff && lightFactor.g < lightCutoff && lightFactor.b < lightCutoff) {
             FragColor = vec4(0.f, 0.f, 0.f, 1.f);
             continue;
