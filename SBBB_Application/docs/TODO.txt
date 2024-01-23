@@ -1,17 +1,15 @@
 #TODO::
 
+Add sound using OpenAL
 
-Implement tile lighting, test using it within the shader
-	- Add a getTile method to the world class
-	- experiment with threading
+Add a getTile method to the world class
 
 Add seamless tile connections, tile decor
-MAKE MORE TILES
 
 World chunk serialization, saving to disk
 
-Begin on entities, discuss how physics will work, convince reo that making a physics engine by hand will be a pain
-Add a player, work on block placing, breaking, basic item mechanics.
+basic item mechanics
+
 perhaps meddle with particles, maybe
 
 Figure out how multi-tile objects placed within the world will work, accounting for chunk borders
@@ -22,12 +20,16 @@ Liquid physics
 Full menu, game states, options, save data, races, planets, the like
 Space exploration
 Ship building system
-Complementary dynamic light system, things like bloom, volumetrics, color multiplication for glow
+
 get more people hyped to learn c++ and opengl
 solid, defined modding engine, helpful for development also
 All basic game things should be able to be done using a coherent system, a layer of abstraction that allows easy expansion
 
 ONGOING::
+
+MAKE MORE TILES
+
+Complementary dynamic light system, things like bloom, volumetrics, color multiplication for glow
 
 Sort out the #pragma once's and include guards, pick one or the other and not both lol
 
@@ -39,6 +41,7 @@ Find a way to handle textures better, not on a class-by-class basis
 
 optimize, optimize, optimize
 
+experiment with threading
 
 COMPLETED::
 
@@ -49,3 +52,6 @@ Make resourceloader use std::map instead of a vector
 Add more tile properties
 Organized tile properties, json definable, figure out better ways to get properties of a specific tile
 Maybe encapsulate framebuffer creation and management to its own class
+Begin on entities, discuss how physics will work, convince reo that making a physics engine by hand will be a pain
+Add a player, work on block placing, breaking
+Implement tile lighting, test using it within the shader

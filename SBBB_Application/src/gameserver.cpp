@@ -6,7 +6,8 @@ GameServer::GameServer()
 {
 	stateManager.bindServerState(GameStateEnum::NO_STATE, (GameState*)&State_None);
 	stateManager.bindServerState(GameStateEnum::IN_WORLD, (GameState*)&State_ServerWorld);
-	stateManager.setState(GameStateEnum::IN_WORLD);
+	stateManager.bindServerState(GameStateEnum::MENU, (GameState*)&State_None);
+	stateManager.setState(GameStateEnum::MENU);
 }
 
 void GameServer::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {

@@ -204,6 +204,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClCompile Include="imgui\imgui_impl_sdl2.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Game States\menustate.cpp" />
     <ClCompile Include="src\guicontainer.cpp" />
     <ClCompile Include="src\guidragbar.cpp" />
     <ClCompile Include="src\Game States\clientworldstate.cpp" />
@@ -260,6 +261,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="include\Framework\Graphics\UniformArray.hpp" />
     <ClInclude Include="include\Framework\Graphics\UniformBlock.hpp" />
+    <ClInclude Include="include\Game States\MenuState.hpp" />
     <ClInclude Include="include\Game States\TemplateState.hpp" />
     <ClInclude Include="include\GameStates.hpp" />
     <ClInclude Include="include\GUI.hpp" />
