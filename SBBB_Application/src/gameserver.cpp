@@ -7,7 +7,7 @@ GameServer::GameServer()
 	stateManager.bindServerState(GameStateEnum::NO_STATE, (GameState*)&State_None);
 	stateManager.bindServerState(GameStateEnum::IN_WORLD, (GameState*)&State_ServerWorld);
 	stateManager.bindServerState(GameStateEnum::MENU, (GameState*)&State_None);
-	stateManager.setState(GameStateEnum::MENU);
+	stateManager.setStateByForce(GameStateEnum::MENU);
 }
 
 void GameServer::start(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
@@ -45,6 +45,7 @@ void GameServer::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			}
 			// prevent it from overworking
 			std::this_thread::sleep_for(std::chrono::microseconds(1000000 / (UPDATE_RATE_FPS * 2)));
+			;
 			if (stateManager.maybeStopServer()) serverStopping = true;
 
 			if (serverStopping) break;

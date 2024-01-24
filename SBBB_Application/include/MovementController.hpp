@@ -15,8 +15,8 @@ enum {
 class MovementController {
 public:
 	// input any of the 4 cardinal directions, using the enum.
-	virtual void dpadControl(CardinalDirection dir, bool setState = ON) {
-		if (setState)
+	virtual void dpadControl(CardinalDirection dir, bool setStateByForce = ON) {
+		if (setStateByForce)
 			m_dpadState |= dir;
 		else
 			m_dpadState &= ~dir;

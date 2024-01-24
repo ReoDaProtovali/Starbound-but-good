@@ -7,7 +7,7 @@ GameClient::GameClient() {
 	stateManager.bindClientState(GameStateEnum::NO_STATE, (GameState*)&State_None);
 	stateManager.bindClientState(GameStateEnum::IN_WORLD, (GameState*)&State_ClientWorld);
 	stateManager.bindClientState(GameStateEnum::MENU, (GameState*)&State_Menu);
-	stateManager.setState(GameStateEnum::MENU);
+	stateManager.setStateByForce(GameStateEnum::MENU);
 	gw.setVSync(true);
 	imctx = ImGui::CreateContext();
 }

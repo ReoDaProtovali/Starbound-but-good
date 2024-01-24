@@ -86,7 +86,7 @@ public:
 		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			getState(p_ID)->serverState = p_serverState;
-			return;
+			LOG("Unique unlock!");
 		}
 		m_allStates.push_back(GameStatePair());
 		auto& lastState = m_allStates[m_allStates.size() - 1];
@@ -94,14 +94,14 @@ public:
 		lastState.ID = p_ID;
 	}
 
-	void setState(GameStateEnum p_ID) { // only to be used for setting the very first state, really. It's a forceful set.
+	void setStateByForce(GameStateEnum p_ID) { // only to be used for setting the very first state, really. It's a forceful set.
 		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			m_activeState = getState(p_ID);
 		}
+		LOG("Unique unlock!");
 	}
 	void swap(GameStateEnum newState) {
-		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (m_activeState->ID == newState) return;
 		if (!m_activeState->ready()) throw std::exception("GameState has not been set up! Cannot swap existing state.");
 
@@ -118,9 +118,9 @@ public:
 		stateStopping = true;
 	}
 	bool maybeStopClient() {
-		//std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (!m_activeState->clientState) return false;
 		if (stateStopping) {
+			std::unique_lock<std::shared_mutex> lock(m_stateLock);
 			m_activeState->clientState->close();
 			m_activeState->clientState = nullptr;
 			return true;
@@ -128,9 +128,9 @@ public:
 		return false;
 	}
 	bool maybeStopServer() {
-		//std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (!m_activeState->serverState) return false;
 		if (stateStopping && !m_activeState->clientState) {
+			std::unique_lock<std::shared_mutex> lock(m_stateLock);
 			m_activeState->serverState->close();
 			m_activeState->serverState = nullptr;
 			return true;
@@ -159,6 +159,6 @@ public:
 private:
 	std::vector<GameStatePair> m_allStates;
 	GameStatePair* m_activeState = nullptr;
-	bool stateStopping = false;
+	volatile bool stateStopping = false;
 	std::shared_mutex m_stateLock;
 };
