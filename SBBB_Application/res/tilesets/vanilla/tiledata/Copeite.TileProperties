@@ -1,6 +1,6 @@
 {
 	"id": "copeite",
-	"name": "Copite Ore",
+	"name": "Copeite Ore",
 	"genericDescription": "An exotic ore, perhaps placed here by the gods themselves.",
 	"categories": [ "hard", "stonelike", "natural", "ore", "exotic" ],
 	"rarity": "rare",

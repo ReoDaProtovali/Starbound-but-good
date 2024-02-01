@@ -4,7 +4,7 @@
 #include <iostream>
 
 // always should be exposed
-#define ERROR_LOG(expr) std::cout << "\nERROR: " << expr << "\n\n";
+#define ERROR_LOG(expr) std::cout << "\n[ERROR]:   " << expr << "\n\n";
 
 // A bit messy but obvious
 #ifdef ERROR_LOG
@@ -29,9 +29,9 @@
 #endif
 
 // general log macro without a toggle
-#define LOG(expr) std::cout << expr << std::endl
+#define LOG(expr) std::cout << "[INFO]: " << expr << std::endl
 #define CONDITIONAL_LOG(cond, expr) if (cond) std::cout << expr << '\n'
-#define WARNING_LOG(expr) std::cout << "WARNING: " << expr << '\n';
+#define WARNING_LOG(expr) std::cout << "[WARNING]:   " << expr << '\n';
 
 
 #else

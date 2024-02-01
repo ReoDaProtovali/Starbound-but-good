@@ -18,6 +18,7 @@ public:
 				while (true) {
 					std::function<void()> task;
 					waitingCount++;
+					cv.notify_one();
 					task = std::move(m_tasks.pop());
 					waitingCount--;
 					if (m_stopping) return;
@@ -53,11 +54,17 @@ public:
 		return result;
 	}
 
+	void waitUntilIdle() {
+		std::unique_lock lk(m);
+		cv.wait(lk, [this] { return waitingCount == m_workers.size(); });
+	}
 	std::atomic<uint32_t> waitingCount{0};
 private:
 	SharedQueue<std::function<void()>> m_tasks;
 	bool m_stopping = false;
 
+	std::condition_variable cv;
+	std::mutex m;
 	std::vector<std::thread> m_workers;
 	std::vector<bool> m_idleFlags;
 };

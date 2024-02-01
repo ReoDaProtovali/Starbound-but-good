@@ -4,6 +4,9 @@
 #include "Framework/FrameworkDraw.hpp"
 #include "util/Threadpool.hpp"
 
+// no point in changing for now, divided into quadrants
+#define AMBIENT_THREAD_COUNT = 4;
+
 struct Light {
 	Light(glm::vec2 p_pos, glm::vec3 p_col, float p_angle, float p_spread) :
 		pos(p_pos), col(p_col), angle(p_angle), spread(p_spread) {}

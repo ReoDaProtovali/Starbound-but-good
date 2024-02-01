@@ -76,7 +76,7 @@ Lighting::Lighting() :
 
 Lighting::~Lighting()
 {
-
+	ambientThreadPool.waitUntilIdle();	
 }
 
 void Lighting::setTileInfoTex(Texture p_infoTex)

@@ -86,7 +86,6 @@ public:
 		std::unique_lock<std::shared_mutex> lock(m_stateLock);
 		if (stateExists(p_ID)) {
 			getState(p_ID)->serverState = p_serverState;
-			LOG("Unique unlock!");
 		}
 		m_allStates.push_back(GameStatePair());
 		auto& lastState = m_allStates[m_allStates.size() - 1];
@@ -99,14 +98,13 @@ public:
 		if (stateExists(p_ID)) {
 			m_activeState = getState(p_ID);
 		}
-		LOG("Unique unlock!");
 	}
 	void swap(GameStateEnum newState) {
 		if (m_activeState->ID == newState) return;
 		if (!m_activeState->ready()) throw std::exception("GameState has not been set up! Cannot swap existing state.");
 
 		m_activeState->close();
-
+		LOG("New game state has been swapped in.");
 		m_activeState = getState(newState);
 		if (!m_activeState->ready()) throw std::exception("An adequate server-client state pair has not been made for swapped state.");
 		// init is handled by update function to ensure correct thread

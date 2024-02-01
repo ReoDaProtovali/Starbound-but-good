@@ -93,10 +93,10 @@ void WorldChunk::fillRandom() {
 		for (int y = 0; y < CHUNKSIZE; y++) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
 				if (rand() % 10 > 5) {
-					m_tiles(x, y, z) = Tile(glm::ivec2(x, y), 1);
+					m_tiles(x, y, z) = Tile(1);
 				}
 				else {
-					m_tiles(x, y, z) = Tile(glm::ivec2(x, y), 2);
+					m_tiles(x, y, z) = Tile(2);
 				}
 			}
 		}
@@ -190,8 +190,10 @@ void WorldChunk::genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkMa
 	auto tileOpt = getNeigboringChunkTile(p_tileX, p_tileY, p_tileZ, p_chnks);
 	if (!tileOpt.has_value()) return;
 	Tile* thisTile = tileOpt.value();
-	int x = thisTile->getChunkPos().x;
-	int y = thisTile->getChunkPos().y;
+	auto npos = utils::worldToLocalChunkCoords(p_tileX, p_tileY);
+	int x = npos.x;
+	int y = npos.y;
+
 	int z = p_tileZ;
 
 	WorldChunk* currentChunk = this;
@@ -532,7 +534,7 @@ void WorldChunk::flip()
 
 void WorldChunk::setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID) {
 	if (m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z).m_tileID == p_tileID) return;
-	m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z) = Tile(p_chunkCoordinates, p_tileID);
+	m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z) = Tile(p_tileID);
 	colliderValid = false;
 	feedbackMeshReady = false;
 	return;

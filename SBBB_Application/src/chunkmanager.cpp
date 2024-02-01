@@ -233,8 +233,9 @@ void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worl
 	if (!s_chunkMap.contains(ChunkPos(chunkX, chunkY))) return;
 	if (s_chunkMap[ChunkPos(chunkX, chunkY)].invalid) return;
 	WorldChunk& c = s_chunkMap[ChunkPos(chunkX, chunkY)];
-	int localTileX = utils::modUnsigned(p_worldX, CHUNKSIZE);
-	int localTileY = utils::modUnsigned(-p_worldY - 1, CHUNKSIZE);
+	glm::ivec2 local = utils::worldToLocalChunkCoords(p_worldX, p_worldY);
+	int localTileX = local.x;
+	int localTileY = local.y;
 
 	auto tileInfoOpt = res.getTileInfo(p_tileID);
 	if (!tileInfoOpt.has_value()) throw std::exception("tile ID not found");

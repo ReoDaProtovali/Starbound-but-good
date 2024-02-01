@@ -113,6 +113,11 @@ namespace utils {
 		int y2 = utils::gridFloor((int)p_frame.w, CHUNKSIZE) + 2;
 		return glm::ivec4(x1, y1, x2, y2);
 	}
+	inline glm::ivec2 worldToLocalChunkCoords(int p_worldX, int p_worldY) {
+		int localTileX = utils::modUnsigned(p_worldX, CHUNKSIZE);
+		int localTileY = utils::modUnsigned(p_worldY, CHUNKSIZE);
+		return { localTileX, localTileY };
+	}
 	inline uint8_t* toRGBAUnsignedCharArray(float* floats, size_t p_outByteCount) {
 		uint8_t* out = (uint8_t*)malloc(p_outByteCount);
 		if (!out) {
