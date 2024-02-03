@@ -30,6 +30,11 @@ void WorldGenerator::initTestSettings()
 	cavernCarver.z_levels[2].setExclusionThreshold(0.2);
 	cavernCarver.z_levels[3].setExclusionThreshold(0.1);
 
+	gen::LayerGroup heightmapCarver;
+	heightmapCarver.setAllLevelsShader("heightcutoff1", 0);
+	heightmapCarver.setAllLevelModes(gen::LayerMode::EXCLUSION);
+	heightmapCarver.setAllExclusionThresholds(0.5f);
+
 	gen::LayerGroup copeite_cover;
 	gen::LayerGroup copeite;
 	copeite.setAllLevelsShader("black", 0);
@@ -41,6 +46,7 @@ void WorldGenerator::initTestSettings()
 	m_generatorStack.push(copeite);
 	m_generatorStack.push(perlinDirt);
 	m_generatorStack.push(cavernCarver);
+	m_generatorStack.push(heightmapCarver);
 }
 
 Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, bool& wasEmpty)
@@ -50,13 +56,12 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
-				out(x, y, z) = 2;
-				//out(x, y, z) = m_generatorStack.getTile(p_chunkX * CHUNKSIZE + x, p_chunkY * CHUNKSIZE - y, z, m_noiseMap);
+				out(x, y, z) = m_generatorStack.getTile(p_chunkX * CHUNKSIZE + x, p_chunkY * CHUNKSIZE - y, z, m_noiseMap);
+				if (out(x, y, z).m_tileID != 0) wasEmpty = false;
 			}
 		}
 	}
 
-	wasEmpty = false;
 	return out;
 }
 

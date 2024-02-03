@@ -9,19 +9,18 @@ void ClientWorldState::testDraw()
 	glEnable(GL_BLEND);
 	testFrame++;
 
-	//static glm::ivec4 lastFrame;
-	//if (playerCam) {
-	//	auto newFrame = utils::frameToChunkCoords(playerCam->getFrame());
-	//	if (lastFrame != newFrame) {
-	//		LOG(newFrame.x << " " << newFrame.z << " " << newFrame.y << " " << newFrame.w);
-	//		for (int y = newFrame.y; y <= newFrame.y; y++) {
-	//			for (int x = newFrame.x; x <= newFrame.x + 5; x++) {
-	//				s_generationRequest.sendMessageFront({ x, y });
-	//			}
-	//		}
-	//	}
-	//	lastFrame = newFrame;
-	//}
+	static glm::ivec4 lastFrame;
+	if (playerCam) {
+		auto newFrame = utils::frameToChunkCoords(playerCam->getFrame());
+		if (lastFrame != newFrame) {
+			for (int y = newFrame.y; y <= newFrame.w; y++) {
+				for (int x = newFrame.x; x <= newFrame.z; x++) {
+					s_generationRequest.sendMessageFront({ x, y });
+				}
+			}
+		}
+		lastFrame = newFrame;
+	}
 
 	GlobalUniforms uniforms;
 	uniforms.time_ticks = (uint32_t)testFrame;

@@ -363,6 +363,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="res\tilesets\vanilla\tiledata\Test.TileProperties" />
     <None Include="res\tilesets\vanilla\tileset.json" />
     <None Include="SDL2.dll" />
+    <None Include="src\Shaders\noisegenerators\HeightCutoff1FS.glsl" />
     <None Include="src\Shaders\noisegenerators\WhiteFS.glsl" />
     <None Include="src\Shaders\ImageFS.glsl" />
     <None Include="src\Shaders\ImageVS.glsl" />

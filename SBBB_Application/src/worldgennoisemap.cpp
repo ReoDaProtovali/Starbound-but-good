@@ -68,7 +68,7 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 	auto& currentVec = m_map[glm::ivec2(p_mapX, p_mapY)];
 
 	currentVec.emplace_back(p_generatorName, StaticArray2D<uint8_t>(), p_seed);
-	LOAD_LOG("Loaded '" << p_generatorName << "' noisemap tile at " << p_mapX << ", " << p_mapY << " with seed " << p_seed);
+	//LOAD_LOG("Loaded '" << p_generatorName << "' noisemap tile at " << p_mapX << ", " << p_mapY << " with seed " << p_seed);
 	Shader& generatorShader = res.getGeneratorShader(p_generatorName);
 
 	DrawStates d;

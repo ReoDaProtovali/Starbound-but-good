@@ -115,7 +115,7 @@ Tile& WorldChunk::operator()(size_t p_x, size_t p_y, size_t p_depth)
 }
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
-	if (isEmpty) return;
+	//if (isEmpty) return;
 	tileMesh.clean();
 	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
 	ResourceManager& res = ResourceManager::Get();
@@ -204,7 +204,7 @@ void WorldChunk::genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkMa
 		}
 	}
 	std::unique_lock<std::mutex> lock(currentChunk->m_vboMutex);
-	if (currentChunk->isEmpty) return;
+	//if (currentChunk->isEmpty) return;
 	if (currentChunk->invalid) return;
 	if (currentChunk->tileMesh.getTotalVBOSize() == 0) return;
 	uint32_t tID = thisTile->m_tileID;

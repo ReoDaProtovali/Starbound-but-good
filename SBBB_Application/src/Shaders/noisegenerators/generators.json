@@ -21,6 +21,10 @@
       "file": "TestHeightmapFS.glsl"
     },
     {
+      "name": "heightcutoff1",
+      "file": "HeightCutoff1FS.glsl"
+    },
+    {
       "name": "cavern",
       "file": "CavernFS.glsl"
     },
