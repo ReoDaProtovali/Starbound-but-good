@@ -1,7 +1,7 @@
 #include "SpriteSheet.hpp"
 
-void SpriteSheet::setMode(SheetMode mode) {
-	m_sheetMode = mode;
+void SpriteSheet::setMode(SheetMode m_mode) {
+	m_sheetMode = m_mode;
 }
 
 void SpriteSheet::nextFrame() {

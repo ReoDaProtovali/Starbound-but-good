@@ -21,7 +21,7 @@ struct ivec2Hash {
 struct NoiseTile {
 	std::string generator;
 	StaticArray2D<uint8_t> data;
-	int seed;
+	int m_seed;
 	bool generated = false;
 };
 

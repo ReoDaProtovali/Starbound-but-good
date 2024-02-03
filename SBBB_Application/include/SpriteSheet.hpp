@@ -55,7 +55,7 @@ class SpriteSheet
 		/// Sets the dimensions of a single sprite within the sheet
 		void setSpriteDimensions(glm::ivec2 p_dim);
 		/// Changes the mode of the spritesheet, which determines how to handle indexing and texture coordinate grabbing
-		void setMode(SheetMode mode);
+		void setMode(SheetMode m_mode);
 		/// Used mainly when the sheet is in animation mode, advances to the next frame of the animation, and wraps if it's past the end
 		void nextFrame();
 

@@ -2306,10 +2306,10 @@ static void ShowDemoWindowWidgets()
                 Mode_Move,
                 Mode_Swap
             };
-            static int mode = 0;
-            if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; } ImGui::SameLine();
-            if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
-            if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; }
+            static int m_mode = 0;
+            if (ImGui::RadioButton("Copy", m_mode == Mode_Copy)) { m_mode = Mode_Copy; } ImGui::SameLine();
+            if (ImGui::RadioButton("Move", m_mode == Mode_Move)) { m_mode = Mode_Move; } ImGui::SameLine();
+            if (ImGui::RadioButton("Swap", m_mode == Mode_Swap)) { m_mode = Mode_Swap; }
             static const char* names[9] =
             {
                 "Bobby", "Beatrice", "Betty",
@@ -2331,9 +2331,9 @@ static void ShowDemoWindowWidgets()
 
                     // Display preview (could be anything, e.g. when dragging an image we could decide to display
                     // the filename and a small preview of the image, etc.)
-                    if (mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }
-                    if (mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
-                    if (mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
+                    if (m_mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }
+                    if (m_mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
+                    if (m_mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
                     ImGui::EndDragDropSource();
                 }
                 if (ImGui::BeginDragDropTarget())
@@ -2342,16 +2342,16 @@ static void ShowDemoWindowWidgets()
                     {
                         IM_ASSERT(payload->DataSize == sizeof(int));
                         int payload_n = *(const int*)payload->Data;
-                        if (mode == Mode_Copy)
+                        if (m_mode == Mode_Copy)
                         {
                             names[n] = names[payload_n];
                         }
-                        if (mode == Mode_Move)
+                        if (m_mode == Mode_Move)
                         {
                             names[n] = names[payload_n];
                             names[payload_n] = "";
                         }
-                        if (mode == Mode_Swap)
+                        if (m_mode == Mode_Swap)
                         {
                             const char* tmp = names[n];
                             names[n] = names[payload_n];

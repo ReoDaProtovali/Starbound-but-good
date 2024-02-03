@@ -181,7 +181,7 @@ typedef khronos_uint8_t GLubyte;
 #define GL_LINEAR                         0x2601
 #define GL_TEXTURE_MAG_FILTER             0x2800
 #define GL_TEXTURE_MIN_FILTER             0x2801
-typedef void (APIENTRYP PFNGLPOLYGONMODEPROC) (GLenum face, GLenum mode);
+typedef void (APIENTRYP PFNGLPOLYGONMODEPROC) (GLenum face, GLenum m_mode);
 typedef void (APIENTRYP PFNGLSCISSORPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 typedef void (APIENTRYP PFNGLTEXPARAMETERIPROC) (GLenum target, GLenum pname, GLint param);
 typedef void (APIENTRYP PFNGLTEXIMAGE2DPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
@@ -220,7 +220,7 @@ GLAPI void APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height)
 typedef khronos_float_t GLclampf;
 typedef double GLclampd;
 #define GL_TEXTURE_BINDING_2D             0x8069
-typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC) (GLenum mode, GLsizei count, GLenum type, const void *indices);
+typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC) (GLenum m_mode, GLsizei count, GLenum type, const void *indices);
 typedef void (APIENTRYP PFNGLBINDTEXTUREPROC) (GLenum target, GLuint texture);
 typedef void (APIENTRYP PFNGLDELETETEXTURESPROC) (GLsizei n, const GLuint *textures);
 typedef void (APIENTRYP PFNGLGENTEXTURESPROC) (GLsizei n, GLuint *textures);
@@ -246,7 +246,7 @@ GLAPI void APIENTRY glActiveTexture (GLenum texture);
 #define GL_BLEND_SRC_ALPHA                0x80CB
 #define GL_FUNC_ADD                       0x8006
 typedef void (APIENTRYP PFNGLBLENDFUNCSEPARATEPROC) (GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha);
-typedef void (APIENTRYP PFNGLBLENDEQUATIONPROC) (GLenum mode);
+typedef void (APIENTRYP PFNGLBLENDEQUATIONPROC) (GLenum m_mode);
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glBlendFuncSeparate (GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha);
 GLAPI void APIENTRY glBlendEquation (GLenum mode);
@@ -377,7 +377,7 @@ typedef khronos_uint64_t GLuint64;
 typedef khronos_int64_t GLint64;
 #define GL_CONTEXT_COMPATIBILITY_PROFILE_BIT 0x00000002
 #define GL_CONTEXT_PROFILE_MASK           0x9126
-typedef void (APIENTRYP PFNGLDRAWELEMENTSBASEVERTEXPROC) (GLenum mode, GLsizei count, GLenum type, const void *indices, GLint basevertex);
+typedef void (APIENTRYP PFNGLDRAWELEMENTSBASEVERTEXPROC) (GLenum m_mode, GLsizei count, GLenum type, const void *indices, GLint basevertex);
 typedef void (APIENTRYP PFNGLGETINTEGER64I_VPROC) (GLenum target, GLuint index, GLint64 *data);
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glDrawElementsBaseVertex (GLenum mode, GLsizei count, GLenum type, const void *indices, GLint basevertex);

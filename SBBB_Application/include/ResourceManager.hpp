@@ -67,6 +67,7 @@ public:
 	void loadDirTiles(const std::string& p_namespace, const std::filesystem::path& p_tileInfoPath, const std::filesystem::path& p_imagePath, const std::filesystem::path& p_parentPath);
 
 	std::optional<std::reference_wrapper<TileInfo>> getTileInfo(const std::string& p_key);
+	std::optional<uint32_t> getTileNumericalID(const std::string& p_key);
 	TileInfo& getTileInfo(size_t p_index);
 
 	 void loadGeneratorShaders();

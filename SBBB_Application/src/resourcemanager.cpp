@@ -178,6 +178,14 @@ std::optional<std::reference_wrapper<TileInfo>> ResourceManager::getTileInfo(con
 	}
 	return tileInfoCache[it->second];
 }
+std::optional<uint32_t> ResourceManager::getTileNumericalID(const std::string& p_key)
+{
+	auto it = tileInfoIndexDict.find(p_key);
+	if (it == tileInfoIndexDict.end()) {
+		return std::nullopt;
+	}
+	return tileInfoCache[it->second].spriteIndex;
+}
 TileInfo& ResourceManager::getTileInfo(size_t p_index)
 {
 	return tileInfoCache[p_index];

@@ -26,11 +26,11 @@ GameWindow::GameWindow(const char* p_title, uint32_t p_w, uint32_t p_h)
 
 
 	int displayIndex = SDL_GetWindowDisplayIndex(m_window);
-	SDL_DisplayMode mode;
-	SDL_GetDisplayMode(displayIndex, 0, &mode);
+	SDL_DisplayMode m_mode;
+	SDL_GetDisplayMode(displayIndex, 0, &m_mode);
 
-	screenWidth = mode.w;
-	screenHeight = mode.h;
+	screenWidth = m_mode.w;
+	screenHeight = m_mode.h;
 
 	GameWindow::initGL();
 }
@@ -53,12 +53,12 @@ void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h, int p_f
 
 
 	int displayIndex = SDL_GetWindowDisplayIndex(m_window);
-	SDL_DisplayMode mode;
-	SDL_GetDisplayMode(displayIndex, 0, &mode);
+	SDL_DisplayMode m_mode;
+	SDL_GetDisplayMode(displayIndex, 0, &m_mode);
 
-	globals.refresh_rate = mode.refresh_rate;
-	screenWidth = mode.w;
-	screenHeight = mode.h;
+	globals.refresh_rate = m_mode.refresh_rate;
+	screenWidth = m_mode.w;
+	screenHeight = m_mode.h;
 
 	m_glContext = SDL_GL_CreateContext(m_window);
 	SDL_GL_MakeCurrent(m_window, m_glContext); // Attach OpenGL context to the window
@@ -152,9 +152,9 @@ bool GameWindow::hasChangedFullscreenState() {
 }
 int GameWindow::getRefreshRate() {
 	int displayIndex = SDL_GetWindowDisplayIndex(m_window);
-	SDL_DisplayMode mode;
-	SDL_GetDisplayMode(displayIndex, 0, &mode);
-	return mode.refresh_rate;
+	SDL_DisplayMode m_mode;
+	SDL_GetDisplayMode(displayIndex, 0, &m_mode);
+	return m_mode.refresh_rate;
 }
 
 

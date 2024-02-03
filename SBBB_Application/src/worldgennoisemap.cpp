@@ -30,7 +30,7 @@ glm::vec4 WorldGenNoisemap::getPixel(int32_t p_worldPosX, int32_t p_worldPosY, c
 	std::vector<NoiseTile>& data = m_map[tilePos];
 	
 	for (auto& tile : data) {
-		if (p_generatorName == tile.generator && p_seed == tile.seed) {
+		if (p_generatorName == tile.generator && p_seed == tile.m_seed) {
 			uint16_t x = utils::modUnsigned(p_worldPosX, NOISEMAP_TILE_SIZE);
 			uint16_t y = utils::modUnsigned(p_worldPosY, NOISEMAP_TILE_SIZE);
 			return glm::vec4(
@@ -56,7 +56,7 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 	if (m_map.find(glm::ivec2(p_mapX, p_mapY)) != m_map.end()) {
 		auto& currentVec = m_map[glm::ivec2(p_mapX, p_mapY)];
 		for (auto& it : currentVec) {
-			if (p_generatorName == it.generator && p_seed == it.seed) {
+			if (p_generatorName == it.generator && p_seed == it.m_seed) {
 				return;
 			}
 		}
@@ -68,7 +68,7 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 	auto& currentVec = m_map[glm::ivec2(p_mapX, p_mapY)];
 
 	currentVec.emplace_back(p_generatorName, StaticArray2D<uint8_t>(), p_seed);
-	
+	LOAD_LOG("Loaded '" << p_generatorName << "' noisemap tile at " << p_mapX << ", " << p_mapY << " with seed " << p_seed);
 	Shader& generatorShader = res.getGeneratorShader(p_generatorName);
 
 	DrawStates d;

@@ -542,7 +542,7 @@
     </None>
     <None Include="README.md" />
     <None Include=".gitignore" />
-    <None Include="src\Shaders\noisegenerators\Perlin2DFS.glsl">
+    <None Include="src\Shaders\noisegenerators\Perlin1xFS.glsl">
       <Filter>Shaders\Fragment Shaders</Filter>
     </None>
     <None Include="src\Shaders\noisegenerators\GradFS.glsl">
@@ -620,6 +620,8 @@
     <None Include="src\Shaders\LightingFS.glsl" />
     <None Include="res\tilesets\vanilla\tiledata\Gedstone.TileProperties" />
     <None Include="src\Shaders\AmbientLightingFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\Perlin0.5xFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\WhiteFS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\tilesets\vanilla\images\dirt.png">

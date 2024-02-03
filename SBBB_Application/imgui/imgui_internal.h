@@ -338,8 +338,8 @@ namespace ImStb
 //-----------------------------------------------------------------------------
 
 // Helpers: Hashing
-IMGUI_API ImGuiID       ImHashData(const void* data, size_t data_size, ImGuiID seed = 0);
-IMGUI_API ImGuiID       ImHashStr(const char* data, size_t data_size = 0, ImGuiID seed = 0);
+IMGUI_API ImGuiID       ImHashData(const void* data, size_t data_size, ImGuiID m_seed = 0);
+IMGUI_API ImGuiID       ImHashStr(const char* data, size_t data_size = 0, ImGuiID m_seed = 0);
 
 // Helpers: Sorting
 #ifndef ImQsort
@@ -406,7 +406,7 @@ static inline ImU64         ImFileWrite(const void*, ImU64, ImU64, ImFileHandle)
 #endif
 #ifndef IMGUI_DISABLE_DEFAULT_FILE_FUNCTIONS
 typedef FILE* ImFileHandle;
-IMGUI_API ImFileHandle      ImFileOpen(const char* filename, const char* mode);
+IMGUI_API ImFileHandle      ImFileOpen(const char* filename, const char* m_mode);
 IMGUI_API bool              ImFileClose(ImFileHandle file);
 IMGUI_API ImU64             ImFileGetSize(ImFileHandle file);
 IMGUI_API ImU64             ImFileRead(void* data, ImU64 size, ImU64 count, ImFileHandle file);
@@ -414,7 +414,7 @@ IMGUI_API ImU64             ImFileWrite(const void* data, ImU64 size, ImU64 coun
 #else
 #define IMGUI_DISABLE_TTY_FUNCTIONS // Can't use stdout, fflush if we are not using default file functions
 #endif
-IMGUI_API void*             ImFileLoadToMemory(const char* filename, const char* mode, size_t* out_file_size = NULL, int padding_bytes = 0);
+IMGUI_API void*             ImFileLoadToMemory(const char* filename, const char* m_mode, size_t* out_file_size = NULL, int padding_bytes = 0);
 
 // Helpers: Maths
 IM_MSVC_RUNTIME_CHECKS_OFF
@@ -3085,8 +3085,8 @@ namespace ImGui
     IMGUI_API void          KeepAliveID(ImGuiID id);
     IMGUI_API void          MarkItemEdited(ImGuiID id);     // Mark data associated to given item as "edited", used by IsItemDeactivatedAfterEdit() function.
     IMGUI_API void          PushOverrideID(ImGuiID id);     // Push given value as-is at the top of the ID stack (whereas PushID combines old and new hashes)
-    IMGUI_API ImGuiID       GetIDWithSeed(const char* str_id_begin, const char* str_id_end, ImGuiID seed);
-    IMGUI_API ImGuiID       GetIDWithSeed(int n, ImGuiID seed);
+    IMGUI_API ImGuiID       GetIDWithSeed(const char* str_id_begin, const char* str_id_end, ImGuiID m_seed);
+    IMGUI_API ImGuiID       GetIDWithSeed(int n, ImGuiID m_seed);
 
     // Basic Helpers for widget code
     IMGUI_API void          ItemSize(const ImVec2& size, float text_baseline_y = -1.0f);

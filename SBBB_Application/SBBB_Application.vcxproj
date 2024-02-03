@@ -363,6 +363,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="res\tilesets\vanilla\tiledata\Test.TileProperties" />
     <None Include="res\tilesets\vanilla\tileset.json" />
     <None Include="SDL2.dll" />
+    <None Include="src\Shaders\noisegenerators\WhiteFS.glsl" />
     <None Include="src\Shaders\ImageFS.glsl" />
     <None Include="src\Shaders\ImageVS.glsl" />
     <None Include="src\Shaders\LightingCombineFS.glsl" />
@@ -372,10 +373,11 @@ Xcopy /E /I res $(OutDir)res</Command>
     <None Include="src\Shaders\noisegenerators\CavernFS.glsl" />
     <None Include="src\Shaders\noisegenerators\generators.json" />
     <None Include="src\Shaders\noisegenerators\GradFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\Perlin0.5xFS.glsl" />
     <None Include="src\Shaders\SolidColorFS.glsl" />
     <None Include="src\Shaders\SolidColorVS.glsl" />
     <None Include="src\Shaders\noisegenerators\PassThroughVS.glsl" />
-    <None Include="src\Shaders\noisegenerators\Perlin2DFS.glsl" />
+    <None Include="src\Shaders\noisegenerators\Perlin1xFS.glsl" />
     <None Include="src\Shaders\noisegenerators\TestHeightmapFS.glsl" />
     <None Include="src\Shaders\TextFS.glsl" />
     <None Include="src\Shaders\TextVS.glsl" />

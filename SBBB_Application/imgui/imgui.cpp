@@ -1973,9 +1973,9 @@ static const ImU32 GCrc32LookupTable[256] =
 // Known size hash
 // It is ok to call ImHashData on a string with known length but the ### operator won't be supported.
 // FIXME-OPT: Replace with e.g. FNV1a hash? CRC32 pretty much randomly access 1KB. Need to do proper measurements.
-ImGuiID ImHashData(const void* data_p, size_t data_size, ImGuiID seed)
+ImGuiID ImHashData(const void* data_p, size_t data_size, ImGuiID m_seed)
 {
-    ImU32 crc = ~seed;
+    ImU32 crc = ~m_seed;
     const unsigned char* data = (const unsigned char*)data_p;
     const ImU32* crc32_lut = GCrc32LookupTable;
     while (data_size-- != 0)
@@ -1989,10 +1989,10 @@ ImGuiID ImHashData(const void* data_p, size_t data_size, ImGuiID seed)
 // - If we reach ### in the string we discard the hash so far and reset to the seed.
 // - We don't do 'current += 2; continue;' after handling ### to keep the code smaller/faster (measured ~10% diff in Debug build)
 // FIXME-OPT: Replace with e.g. FNV1a hash? CRC32 pretty much randomly access 1KB. Need to do proper measurements.
-ImGuiID ImHashStr(const char* data_p, size_t data_size, ImGuiID seed)
+ImGuiID ImHashStr(const char* data_p, size_t data_size, ImGuiID m_seed)
 {
-    seed = ~seed;
-    ImU32 crc = seed;
+    m_seed = ~m_seed;
+    ImU32 crc = m_seed;
     const unsigned char* data = (const unsigned char*)data_p;
     const ImU32* crc32_lut = GCrc32LookupTable;
     if (data_size != 0)
@@ -2001,7 +2001,7 @@ ImGuiID ImHashStr(const char* data_p, size_t data_size, ImGuiID seed)
         {
             unsigned char c = *data++;
             if (c == '#' && data_size >= 2 && data[0] == '#' && data[1] == '#')
-                crc = seed;
+                crc = m_seed;
             crc = (crc >> 8) ^ crc32_lut[(crc & 0xFF) ^ c];
         }
     }
@@ -2010,7 +2010,7 @@ ImGuiID ImHashStr(const char* data_p, size_t data_size, ImGuiID seed)
         while (unsigned char c = *data++)
         {
             if (c == '#' && data[0] == '#' && data[1] == '#')
-                crc = seed;
+                crc = m_seed;
             crc = (crc >> 8) ^ crc32_lut[(crc & 0xFF) ^ c];
         }
     }
@@ -2024,17 +2024,17 @@ ImGuiID ImHashStr(const char* data_p, size_t data_size, ImGuiID seed)
 // Default file functions
 #ifndef IMGUI_DISABLE_DEFAULT_FILE_FUNCTIONS
 
-ImFileHandle ImFileOpen(const char* filename, const char* mode)
+ImFileHandle ImFileOpen(const char* filename, const char* m_mode)
 {
 #if defined(_WIN32) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS) && !defined(__CYGWIN__) && !defined(__GNUC__)
     // We need a fopen() wrapper because MSVC/Windows fopen doesn't handle UTF-8 filenames.
     // Previously we used ImTextCountCharsFromUtf8/ImTextStrFromUtf8 here but we now need to support ImWchar16 and ImWchar32!
     const int filename_wsize = ::MultiByteToWideChar(CP_UTF8, 0, filename, -1, NULL, 0);
-    const int mode_wsize = ::MultiByteToWideChar(CP_UTF8, 0, mode, -1, NULL, 0);
+    const int mode_wsize = ::MultiByteToWideChar(CP_UTF8, 0, m_mode, -1, NULL, 0);
     ImVector<wchar_t> buf;
     buf.resize(filename_wsize + mode_wsize);
     ::MultiByteToWideChar(CP_UTF8, 0, filename, -1, (wchar_t*)&buf[0], filename_wsize);
-    ::MultiByteToWideChar(CP_UTF8, 0, mode, -1, (wchar_t*)&buf[filename_wsize], mode_wsize);
+    ::MultiByteToWideChar(CP_UTF8, 0, m_mode, -1, (wchar_t*)&buf[filename_wsize], mode_wsize);
     return ::_wfopen((const wchar_t*)&buf[0], (const wchar_t*)&buf[filename_wsize]);
 #else
     return fopen(filename, mode);
@@ -2051,14 +2051,14 @@ ImU64   ImFileWrite(const void* data, ImU64 sz, ImU64 count, ImFileHandle f)    
 // Helper: Load file content into memory
 // Memory allocated with IM_ALLOC(), must be freed by user using IM_FREE() == ImGui::MemFree()
 // This can't really be used with "rt" because fseek size won't match read size.
-void*   ImFileLoadToMemory(const char* filename, const char* mode, size_t* out_file_size, int padding_bytes)
+void*   ImFileLoadToMemory(const char* filename, const char* m_mode, size_t* out_file_size, int padding_bytes)
 {
-    IM_ASSERT(filename && mode);
+    IM_ASSERT(filename && m_mode);
     if (out_file_size)
         *out_file_size = 0;
 
     ImFileHandle f;
-    if ((f = ImFileOpen(filename, mode)) == NULL)
+    if ((f = ImFileOpen(filename, m_mode)) == NULL)
         return NULL;
 
     size_t file_size = (size_t)ImFileGetSize(f);
@@ -3790,8 +3790,8 @@ ImGuiWindow::~ImGuiWindow()
 
 ImGuiID ImGuiWindow::GetID(const char* str, const char* str_end)
 {
-    ImGuiID seed = IDStack.back();
-    ImGuiID id = ImHashStr(str, str_end ? (str_end - str) : 0, seed);
+    ImGuiID m_seed = IDStack.back();
+    ImGuiID id = ImHashStr(str, str_end ? (str_end - str) : 0, m_seed);
     ImGuiContext& g = *Ctx;
     if (g.DebugHookIdInfo == id)
         ImGui::DebugHookIdInfo(id, ImGuiDataType_String, str, str_end);
@@ -3800,8 +3800,8 @@ ImGuiID ImGuiWindow::GetID(const char* str, const char* str_end)
 
 ImGuiID ImGuiWindow::GetID(const void* ptr)
 {
-    ImGuiID seed = IDStack.back();
-    ImGuiID id = ImHashData(&ptr, sizeof(void*), seed);
+    ImGuiID m_seed = IDStack.back();
+    ImGuiID id = ImHashData(&ptr, sizeof(void*), m_seed);
     ImGuiContext& g = *Ctx;
     if (g.DebugHookIdInfo == id)
         ImGui::DebugHookIdInfo(id, ImGuiDataType_Pointer, ptr, NULL);
@@ -3810,8 +3810,8 @@ ImGuiID ImGuiWindow::GetID(const void* ptr)
 
 ImGuiID ImGuiWindow::GetID(int n)
 {
-    ImGuiID seed = IDStack.back();
-    ImGuiID id = ImHashData(&n, sizeof(n), seed);
+    ImGuiID m_seed = IDStack.back();
+    ImGuiID id = ImHashData(&n, sizeof(n), m_seed);
     ImGuiContext& g = *Ctx;
     if (g.DebugHookIdInfo == id)
         ImGui::DebugHookIdInfo(id, ImGuiDataType_S32, (void*)(intptr_t)n, NULL);
@@ -3821,9 +3821,9 @@ ImGuiID ImGuiWindow::GetID(int n)
 // This is only used in rare/specific situations to manufacture an ID out of nowhere.
 ImGuiID ImGuiWindow::GetIDFromRectangle(const ImRect& r_abs)
 {
-    ImGuiID seed = IDStack.back();
+    ImGuiID m_seed = IDStack.back();
     ImRect r_rel = ImGui::WindowRectAbsToRel(this, r_abs);
-    ImGuiID id = ImHashData(&r_rel, sizeof(r_rel), seed);
+    ImGuiID id = ImHashData(&r_rel, sizeof(r_rel), m_seed);
     return id;
 }
 
@@ -8281,18 +8281,18 @@ void ImGui::PushOverrideID(ImGuiID id)
 // Helper to avoid a common series of PushOverrideID -> GetID() -> PopID() call
 // (note that when using this pattern, TestEngine's "Stack Tool" will tend to not display the intermediate stack level.
 //  for that to work we would need to do PushOverrideID() -> ItemAdd() -> PopID() which would alter widget code a little more)
-ImGuiID ImGui::GetIDWithSeed(const char* str, const char* str_end, ImGuiID seed)
+ImGuiID ImGui::GetIDWithSeed(const char* str, const char* str_end, ImGuiID m_seed)
 {
-    ImGuiID id = ImHashStr(str, str_end ? (str_end - str) : 0, seed);
+    ImGuiID id = ImHashStr(str, str_end ? (str_end - str) : 0, m_seed);
     ImGuiContext& g = *GImGui;
     if (g.DebugHookIdInfo == id)
         DebugHookIdInfo(id, ImGuiDataType_String, str, str_end);
     return id;
 }
 
-ImGuiID ImGui::GetIDWithSeed(int n, ImGuiID seed)
+ImGuiID ImGui::GetIDWithSeed(int n, ImGuiID m_seed)
 {
-    ImGuiID id = ImHashData(&n, sizeof(n), seed);
+    ImGuiID id = ImHashData(&n, sizeof(n), m_seed);
     ImGuiContext& g = *GImGui;
     if (g.DebugHookIdInfo == id)
         DebugHookIdInfo(id, ImGuiDataType_S32, (void*)(intptr_t)n, NULL);

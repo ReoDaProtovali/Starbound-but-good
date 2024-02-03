@@ -5931,10 +5931,10 @@ namespace detail
 {
 
 // boost::hash_combine
-inline std::size_t combine(std::size_t seed, std::size_t h) noexcept
+inline std::size_t combine(std::size_t m_seed, std::size_t h) noexcept
 {
-    seed ^= h + 0x9e3779b9 + (seed << 6U) + (seed >> 2U);
-    return seed;
+    m_seed ^= h + 0x9e3779b9 + (m_seed << 6U) + (m_seed >> 2U);
+    return m_seed;
 }
 
 /*!
@@ -5967,24 +5967,24 @@ std::size_t hash(const BasicJsonType& j)
 
         case BasicJsonType::value_t::object:
         {
-            auto seed = combine(type, j.size());
+            auto m_seed = combine(type, j.size());
             for (const auto& element : j.items())
             {
                 const auto h = std::hash<string_t> {}(element.key());
-                seed = combine(seed, h);
-                seed = combine(seed, hash(element.value()));
+                m_seed = combine(m_seed, h);
+                m_seed = combine(m_seed, hash(element.value()));
             }
-            return seed;
+            return m_seed;
         }
 
         case BasicJsonType::value_t::array:
         {
-            auto seed = combine(type, j.size());
+            auto m_seed = combine(type, j.size());
             for (const auto& element : j)
             {
-                seed = combine(seed, hash(element));
+                m_seed = combine(m_seed, hash(element));
             }
-            return seed;
+            return m_seed;
         }
 
         case BasicJsonType::value_t::string:
@@ -6019,15 +6019,15 @@ std::size_t hash(const BasicJsonType& j)
 
         case BasicJsonType::value_t::binary:
         {
-            auto seed = combine(type, j.get_binary().size());
+            auto m_seed = combine(type, j.get_binary().size());
             const auto h = std::hash<bool> {}(j.get_binary().has_subtype());
-            seed = combine(seed, h);
-            seed = combine(seed, static_cast<std::size_t>(j.get_binary().subtype()));
+            m_seed = combine(m_seed, h);
+            m_seed = combine(m_seed, static_cast<std::size_t>(j.get_binary().subtype()));
             for (const auto byte : j.get_binary())
             {
-                seed = combine(seed, std::hash<std::uint8_t> {}(byte));
+                m_seed = combine(m_seed, std::hash<std::uint8_t> {}(byte));
             }
-            return seed;
+            return m_seed;
         }
 
         default:                   // LCOV_EXCL_LINE

@@ -1,8 +1,16 @@
 {
   "generators": [
     {
+      "name": "white",
+      "file": "WhiteFS.glsl"
+    },
+    {
       "name": "perlin",
-      "file": "Perlin2DFS.glsl"
+      "file": "Perlin1xFS.glsl"
+    },
+    {
+      "name": "perlin0.5x",
+      "file": "Perlin0.5xFS.glsl"
     },
     {
       "name": "testheightmap",
