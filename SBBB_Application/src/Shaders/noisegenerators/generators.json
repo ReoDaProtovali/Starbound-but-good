@@ -5,6 +5,10 @@
       "file": "WhiteFS.glsl"
     },
     {
+      "name": "black",
+      "file": "BlackFS.glsl"
+    },
+    {
       "name": "perlin",
       "file": "Perlin1xFS.glsl"
     },

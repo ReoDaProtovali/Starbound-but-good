@@ -205,6 +205,12 @@ void Lighting::floodAmbient(uint32_t lx, uint32_t ly, Pixmap& lightCanvas, Pixma
 }
 
 
+void Lighting::setLight(uint32_t p_lightIndex, Light&& p_light)
+{
+	m_lights.setAt(p_lightIndex, p_light);
+
+}
+
 void Lighting::calculateAmbient(glm::ivec4 tileFrame, float p_pixelsPerTile)
 {
 	static Observer<ChunkUpdate> tileUpdates(globals.chunkUpdateSubject);
@@ -261,8 +267,8 @@ void Lighting::calculateAmbient(glm::ivec4 tileFrame, float p_pixelsPerTile)
 
 void Lighting::calculateDynamic(FrameBuffer& p_screenFBO)
 {
-	m_lights.setAt(0, { {0.5f, 70.5f}, dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f, 0.4f });
-	m_lights.setAt(1, { {-5.5f, 70.5f}, 1.f - dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f + 3.1415f, 0.4f });
+	//m_lights.setAt(0, { {0.5f, 70.5f}, dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f, 0.4f });
+	//m_lights.setAt(1, { {-5.5f, 70.5f}, 1.f - dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f + 3.1415f, 0.4f });
 	dynamicUniforms.lightCount = 2;
 	dynamicUniformBlock.setData(&dynamicUniforms);
 

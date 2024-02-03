@@ -13,8 +13,14 @@ void WorldGenerator::initTestSettings()
 	perlinDirt.setAllLevelChannels(3);
 	perlinDirt.addTileToAllLevels("vanilla:dirt", 0.5);
 
+	gen::LayerGroup perlinStone;
+	perlinStone.setAllLevelsShader("perlin0.5x", 3);
+	perlinStone.setAllLevelChannels(3);
+	perlinStone.addTileToAllLevels("vanilla:richstone", 0.6);
+
+
 	gen::LayerGroup pureStone;
-	pureStone.makeSolid("vanilla:richstone");
+	pureStone.makeSolid("vanilla:stone");
 
 	gen::LayerGroup cavernCarver;
 	cavernCarver.setAllLevelsShader("cavern", 0);
@@ -24,7 +30,15 @@ void WorldGenerator::initTestSettings()
 	cavernCarver.z_levels[2].setExclusionThreshold(0.2);
 	cavernCarver.z_levels[3].setExclusionThreshold(0.1);
 
+	gen::LayerGroup copeite_cover;
+	gen::LayerGroup copeite;
+	copeite.setAllLevelsShader("black", 0);
+	copeite.setLayer(3, "perlin0.5x", 2);
+	copeite.z_levels[3].addTileType("vanilla:copeite", 0.8);
+
 	m_generatorStack.push(pureStone);
+	m_generatorStack.push(perlinStone);
+	m_generatorStack.push(copeite);
 	m_generatorStack.push(perlinDirt);
 	m_generatorStack.push(cavernCarver);
 }
@@ -36,7 +50,8 @@ Array3D<Tile> WorldGenerator::generateChunk(int32_t p_chunkX, int32_t p_chunkY, 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
-				out(x, y, z) = m_generatorStack.getTile(p_chunkX * CHUNKSIZE + x, p_chunkY * CHUNKSIZE - y, z, m_noiseMap);
+				out(x, y, z) = 2;
+				//out(x, y, z) = m_generatorStack.getTile(p_chunkX * CHUNKSIZE + x, p_chunkY * CHUNKSIZE - y, z, m_noiseMap);
 			}
 		}
 	}
@@ -149,7 +164,7 @@ void gen::LayerGroup::setLayer(size_t p_depth, std::string_view p_shaderName, in
 
 }
 
-void gen::LayerGroup::setAllLevelsShader(std::string_view p_shaderName, int p_seed)
+void gen::LayerGroup::setAllLevelsShader(std::string_view p_shaderName, int p_seed = 0)
 {
 	for (auto& l : z_levels) {
 		l = Layer(p_shaderName, p_seed);

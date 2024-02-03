@@ -33,6 +33,7 @@ public:
 
 	SharedList<EntityWrapper>& entities = SharedList<EntityWrapper>::Get();
 	Subject<TileUpdateRequest>& m_tileRequester = globals.tileUpdateRequestSubject;
+	BidirectionalMessenger<ChunkPos, int>& s_generationRequest = BidirectionalMessenger<ChunkPos, int>::Get();
 
 	void init() override;
 	void update() override;

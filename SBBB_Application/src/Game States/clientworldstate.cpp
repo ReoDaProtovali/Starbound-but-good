@@ -9,6 +9,20 @@ void ClientWorldState::testDraw()
 	glEnable(GL_BLEND);
 	testFrame++;
 
+	//static glm::ivec4 lastFrame;
+	//if (playerCam) {
+	//	auto newFrame = utils::frameToChunkCoords(playerCam->getFrame());
+	//	if (lastFrame != newFrame) {
+	//		LOG(newFrame.x << " " << newFrame.z << " " << newFrame.y << " " << newFrame.w);
+	//		for (int y = newFrame.y; y <= newFrame.y; y++) {
+	//			for (int x = newFrame.x; x <= newFrame.x + 5; x++) {
+	//				s_generationRequest.sendMessageFront({ x, y });
+	//			}
+	//		}
+	//	}
+	//	lastFrame = newFrame;
+	//}
+
 	GlobalUniforms uniforms;
 	uniforms.time_ticks = (uint32_t)testFrame;
 	uniforms.time_seconds = SDL_GetTicks() / 1000.f;
@@ -67,7 +81,7 @@ void ClientWorldState::testDraw()
 
 	globalUniforms.setData(&uniforms);
 
-	skip:
+skip:
 	ImGui::Begin("Toggles");
 	if (ImGui::Button("Chunk Borders")) {
 		worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
@@ -75,9 +89,9 @@ void ClientWorldState::testDraw()
 	}
 	static bool vsyncOn = true;
 	ImGui::Checkbox("Vsync", &vsyncOn);
-	
+
 	SDL_GL_SetSwapInterval(vsyncOn);
-	
+
 	ImGui::End();
 	renderer.screenFBO.bind();
 	DebugStats& db = globals.debug;
@@ -97,7 +111,7 @@ void ClientWorldState::testDraw()
 #endif // !DISABLE_DEBUG_STATS
 
 		const float INTERP_FACTOR = (float(UPDATE_RATE_FPS) / float(globals.refresh_rate)) / 2.f;
-		if(Globals::shouldInterpolate()) playerCam->interpolate(INTERP_FACTOR);
+		if (Globals::shouldInterpolate()) playerCam->interpolate(INTERP_FACTOR);
 		state.setTransform(playerCam->getTransform());
 	}
 
@@ -111,7 +125,7 @@ void ClientWorldState::testDraw()
 			entity->entityCam.setDimensions(renderer.window.width, renderer.window.height);
 			entity->entityCam.setTileScale(renderer.cam->tileScale);
 			entity->entityCam.updateFrame();
-
+			worldRenderer.lighting.setLight(0, Light(glm::vec2(entity->getPosition().x, entity->getPosition().y), glm::vec3(0.02), 0.f, 1.f));
 			// stop jitter
 			if (Globals::shouldInterpolate()) playerCam->disableInterpolation();
 			state.setTransform(playerCam->getTransform());
@@ -144,7 +158,7 @@ void ClientWorldState::testDraw()
 				if (Globals::shouldInterpolate())
 					bombSprite.setPosition(glm::vec3(playerCam->apparentPos.x, playerCam->apparentPos.y, 2.f));
 				else
-				 bombSprite.setPosition(glm::vec3(playerCam->pos.x, playerCam->pos.y, 2.f));
+					bombSprite.setPosition(glm::vec3(playerCam->pos.x, playerCam->pos.y, 2.f));
 			}
 			break;
 		case SDLK_6:
@@ -301,7 +315,7 @@ void ClientWorldState::init()
 
 	funnyButton.disableBackground();
 	funnyButton.onClick([&]() {
-			GameStateManager::Get().close();
+		GameStateManager::Get().close();
 		});
 	funnyButtonContainer.addChild(&funnyButton);
 	win95Box.addChild(&funnyButtonContainer);
@@ -340,6 +354,7 @@ void ClientWorldState::update()
 	//InfoFBOTexContainer.setImage(worldRenderer.lighting.m_lightingInfoTex, true);
 
 	//DynFBOTexContainer.setImage(worldRenderer.lighting.dynamicLightingFBO.getColorTexRef(0), true);
+
 	renderer.screenFBO.bind();
 	renderer.setClearColor(glm::vec4(0.2f, 0.2f, 0.3f, 0.0f));
 	renderer.clearScreen();
@@ -375,6 +390,6 @@ int ClientWorldState::drawWorld()
 		worldDrawnState.setTransform(renderer.cam->getTransform());
 		worldDrawnState.cam = renderer.cam;
 	}
-	
+
 	return worldRenderer.draw(renderer.screenFBO, worldDrawnState, renderer.window.width);
 }

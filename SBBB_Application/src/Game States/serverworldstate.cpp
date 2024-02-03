@@ -8,14 +8,21 @@ void ServerWorldState::init()
 	sim->init();
 	world->setCollisionWorld(sim->getCollisionWorldPtr());
 
-	world->genFixed(-5, -1, 10, 5);
+	world->genFixed(-1, -1, 2, 2);
+
 	world->startThreads();
 }
 
 void ServerWorldState::update()
 {
+
 	while (auto k = keyObserver.observe()) {
 		if (k.value().keyCode == SDLK_4) world->regenVBOs();
+		if (k.value().keyCode == SDLK_n) {
+			static int x = 0;
+			world->genFixed(-2, -2, 10, 10);
+			x += 2;
+		}
 	}
 	world->processRequests();
 	world->tidyNoisemapIfDone();

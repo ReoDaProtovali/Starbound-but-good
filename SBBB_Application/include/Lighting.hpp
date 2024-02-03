@@ -41,6 +41,7 @@ public:
 	void setTileInfoTex(Texture p_infoTex);
 	void setDims(uint16_t p_width, uint16_t p_height);
 
+	void setLight(uint32_t p_lightIndex, Light&& p_light);
 	void calculateAmbient(glm::ivec4 tileFrame, float p_pixelsPerTile);
 	void calculateDynamic(FrameBuffer& p_screenFBO);
 	void updateDynamicLightingSprite(const Camera& p_tileCam);

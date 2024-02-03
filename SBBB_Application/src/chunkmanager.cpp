@@ -15,12 +15,11 @@ void ChunkManager::flip()
 }
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 {
+
 	if (!chunkExistsAt(p_chunkPos)) {
 		static auto allGenerators = res.getAllGeneratorShaders();
-		for (auto& str : allGenerators) {
-			//m_noiseMap.genTilesNeighboringChunk(p_chunkPos.x, p_chunkPos.y, str);
-			m_worldgen.loadNoiseValuesAtChunk(p_chunkPos.x, p_chunkPos.y);
-		}
+		m_worldgen.loadNoiseValuesAtChunk(p_chunkPos.x, p_chunkPos.y);
+
 		m_generatingQueue.push(0);
 		m_loadQueue.push(p_chunkPos);
 		// because this is a std::unordered_map, it inserts a default constructed chunk when you do this
@@ -98,7 +97,7 @@ void ChunkManager::genVBOFromQueueThreaded()
 		ChunkPos pos = m_vboQueue.pop();
 		// must be done here, because if it terminates, the position from .pop() is invalid 
 		if (m_stopAllThreads) break;
-		if (!validChunkExistsAt(pos)) continue;
+		if (!validChunkExistsAt(pos) || !chunkExistsAt(pos)) continue;
 
 		s_chunkMap[pos].generateVBO(*this);
 		s_chunkMap[pos].drawable = true;
@@ -124,14 +123,9 @@ void ChunkManager::genChunkThreaded(ChunkPos p_chunkPos)
 	s_chunkMap[p_chunkPos] = std::move(c);
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
-			//if (j == 0 && i == 0) continue;
-			auto& neighbor = s_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)];
-			if (validChunkExistsAt(p_chunkPos.x + j, p_chunkPos.y + i)) {
-				//neighbor.drawable = false;
+			if (validChunkExistsAt(ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i))) {
+				auto& neighbor = s_chunkMap[ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i)];
 				m_vboQueue.push(ChunkPos(p_chunkPos.x + j, p_chunkPos.y + i));
-				//neighbor.generateVBO(*this);
-				//neighbor.drawable = true;
-				//m_chunkUpdateSubject.notifyAll(ChunkUpdate(p_chunkPos.x + j, p_chunkPos.y + i, ChunkUpdateType::NEW_VBO_DATA));
 			}
 		}
 	}
@@ -242,7 +236,7 @@ void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worl
 
 	//c(localTileX, localTileY, p_worldLayer).m_tileID = tileInfoOpt.value().get().spriteIndex;
 	c.setChunkTile(glm::ivec3(localTileX, localTileY, p_worldLayer), tileInfoOpt.value().get().spriteIndex);
-		if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
+	if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 
 	c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
