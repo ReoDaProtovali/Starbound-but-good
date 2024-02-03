@@ -13,8 +13,8 @@ void ClientWorldState::testDraw()
 	if (playerCam) {
 		auto newFrame = utils::frameToChunkCoords(playerCam->getFrame());
 		if (lastFrame != newFrame) {
-			for (int y = newFrame.y; y <= newFrame.w; y++) {
-				for (int x = newFrame.x; x <= newFrame.z; x++) {
+			for (int y = newFrame.y - 1; y <= newFrame.w + 1; y++) {
+				for (int x = newFrame.x - 1; x <= newFrame.z + 1; x++) {
 					s_generationRequest.sendMessageFront({ x, y });
 				}
 			}

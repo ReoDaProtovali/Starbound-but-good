@@ -97,7 +97,7 @@ void ChunkManager::genVBOFromQueueThreaded()
 		ChunkPos pos = m_vboQueue.pop();
 		// must be done here, because if it terminates, the position from .pop() is invalid 
 		if (m_stopAllThreads) break;
-		if (!validChunkExistsAt(pos) || !chunkExistsAt(pos)) continue;
+		if (!validChunkExistsAt(pos)) continue;
 
 		s_chunkMap[pos].generateVBO(*this);
 		s_chunkMap[pos].drawable = true;
@@ -212,6 +212,9 @@ bool ChunkManager::validChunkExistsAt(int p_chunkX, int p_chunkY) {
 
 bool ChunkManager::removeChunk(ChunkPos p_chunkPos)
 {
+	//if (s_chunkMap.contains(p_chunkPos)) {
+
+	//}
 	return (bool)s_chunkMap.erase(p_chunkPos);
 }
 

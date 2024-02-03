@@ -18,6 +18,10 @@ void ServerWorldState::update()
 
 	while (auto k = keyObserver.observe()) {
 		if (k.value().keyCode == SDLK_4) world->regenVBOs();
+		if (k.value().keyCode == SDLK_n) {
+			world->removeChunk({ -1, -1 });
+			world->genFixed(-1, -1, 1, 1);
+		};
 	}
 	world->processRequests();
 	world->tidyNoisemapIfDone();

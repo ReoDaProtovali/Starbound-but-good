@@ -69,7 +69,7 @@ void main() {
     vec4 value = vec4(noise(uv*10.f + 30.f)) - vec4(noise(uv*200.f + 94020.f))* 0.03 - vec4(fractalDistortNoise(uv*40.f, 2,6.f, 2.f))* 0.1f;
     value *= 5.f;
     value -= 5.f;
-    if ((TexCoord.y + WorldPos.y) * 3.f > value.x) {
+    if ((TexCoord.y + WorldPos.y - 1.f) * 3.f > value.x) {
       fragColor = vec4(1.f, 1.f, 1.f, 1.f);
     } else {
       fragColor = vec4(0.f, 0.f, 0.f, 1.f);
