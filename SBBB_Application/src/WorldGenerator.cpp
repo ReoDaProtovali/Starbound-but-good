@@ -9,12 +9,12 @@ WorldGenerator::WorldGenerator() {
 void WorldGenerator::initTestSettings()
 {
 	gen::LayerGroup perlinDirt;
-	perlinDirt.setAllLevelsShader("perlin0.5x", 0);
+	perlinDirt.setAllLevelsShader("perlin", 0);
 	perlinDirt.setAllLevelChannels(3);
 	perlinDirt.addTileToAllLevels("vanilla:dirt", 0.5);
 
 	gen::LayerGroup perlinStone;
-	perlinStone.setAllLevelsShader("perlin0.5x", 3);
+	perlinStone.setAllLevelsShader("perlin0.5x", 1);
 	perlinStone.setAllLevelChannels(3);
 	perlinStone.addTileToAllLevels("vanilla:richstone", 0.6);
 
@@ -38,8 +38,9 @@ void WorldGenerator::initTestSettings()
 	gen::LayerGroup copeite_cover;
 	gen::LayerGroup copeite;
 	copeite.setAllLevelsShader("black", 0);
+	copeite.setAllLevelChannels(1);
 	copeite.setLayer(3, "perlin0.5x", 2);
-	copeite.z_levels[3].addTileType("vanilla:copeite", 0.8);
+	copeite.z_levels[3].addTileType("vanilla:copeite", 0.5);
 
 	m_generatorStack.push(pureStone);
 	m_generatorStack.push(perlinStone);
@@ -105,6 +106,7 @@ Tile gen::Layer::getTile(int32_t p_worldX, int32_t p_worldY, WorldGenNoisemap& p
 	switch (m_mode) {
 	case LayerMode::BASIC:
 		px = p_nm.getPixel(p_worldX, p_worldY, m_shaderName, m_seed);
+
 		if (px[channel] > m_tilePalette[0].position) {
 			return res.getTileNumericalID(m_tilePalette[0].tileID).value_or(0);
 		}
@@ -236,7 +238,7 @@ void gen::Stack::loadNoiseValuesAtChunk(int32_t p_chunkX, int32_t p_chunkY, Worl
 	// a little intensive but as long as it works
 	for (LayerGroup& lg : m_stack) {
 		for (Layer& l : lg.z_levels) {
-			p_noisemap.genTilesNeighboringChunk(p_chunkX, p_chunkY, l.getShaderName(), l.getSeed());
+			p_noisemap.genTilesNeighboringChunk(p_chunkX, p_chunkY, l.getShaderName(), 8.f, l.getSeed());
 		}
 	}
 }

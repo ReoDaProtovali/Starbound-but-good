@@ -10,6 +10,6 @@
 	"transparent": false,
 	"variationCount": 4,
 	"lightAbsorption": 1.0,
-	"emissive": false,
+	"emissive": true,
 	"lightingColor": [ 0.15, 0, 0.15 ]
 }

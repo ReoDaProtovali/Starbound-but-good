@@ -1,0 +1,15 @@
+{
+	"id": "grass2",
+	"name": "Grass",
+	"genericDescription": "Basic flora residing upon dirt.",
+	"categories": [ "soft", "natural", "plant" ],
+	"rarity": "ubiquitous",
+	"imageFile": "grass2.png",
+	"isAnimated": false,
+	"emissive": false,
+	"transparent": false,
+	"lightingColor": [ 0, 0, 1 ],
+	"maxHP": 30,
+	"variationCount": 4,
+	"lightAbsorption": 0.2
+}

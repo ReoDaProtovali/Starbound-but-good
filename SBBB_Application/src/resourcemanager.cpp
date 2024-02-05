@@ -251,6 +251,7 @@ void ResourceManager::loadGeneratorShaders() {
 			m_generatorShaders[e["name"]] = Shader(vertexShaderPath.string().c_str(), fragmentShaderPath.string().c_str());
 			m_generatorShaders[e["name"]].addIntUniform("Seed", 0);
 			m_generatorShaders[e["name"]].addVec2Uniform("WorldPos", glm::vec2(0));
+			m_generatorShaders[e["name"]].addFloatUniform("WorldSize", 1.f);
 
 		}
 	}

@@ -51,7 +51,7 @@ glm::ivec2 WorldGenNoisemap::globalPosToTilePos(int32_t p_worldPosX, int32_t p_w
 	return glm::ivec2(utils::gridFloor(p_worldPosX, NOISEMAP_TILE_SIZE), utils::gridFloor(p_worldPosY, NOISEMAP_TILE_SIZE));
 }
 
-void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string& p_generatorName, int p_seed)
+void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string& p_generatorName, float p_worldSize, int p_seed)
 {
 	if (m_map.find(glm::ivec2(p_mapX, p_mapY)) != m_map.end()) {
 		auto& currentVec = m_map[glm::ivec2(p_mapX, p_mapY)];
@@ -81,6 +81,7 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 	// Location 2 is the world position uniform
 	generatorShader.setVec2Uniform(generatorShader.getUniformLoc("WorldPos"), glm::vec2(p_mapX, p_mapY));
 	generatorShader.setIntUniform(generatorShader.getUniformLoc("Seed"), p_seed);
+	generatorShader.setFloatUniform(generatorShader.getUniformLoc("WorldSize"), p_worldSize);
 	m_FBO.bind();
 	m_FBO.draw(m_square, GL_TRIANGLES, d);
 
@@ -89,12 +90,12 @@ void WorldGenNoisemap::genTile(int32_t p_mapX, int32_t p_mapY, const std::string
 	currentVec[currentVec.size() - 1].generated = true;
 }
 
-void WorldGenNoisemap::genTilesNeighboringChunk(int p_chunkX, int p_chunkY, const std::string& p_generatorName, int p_seed)
+void WorldGenNoisemap::genTilesNeighboringChunk(int p_chunkX, int p_chunkY, const std::string& p_generatorName, float p_worldSize, int p_seed)
 {
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
 			glm::ivec2 tilePos = globalPosToTilePos(p_chunkX * CHUNKSIZE + CHUNKSIZE * j, p_chunkY * CHUNKSIZE + CHUNKSIZE * i);
-			genTile(tilePos.x, tilePos.y, p_generatorName, p_seed);
+			genTile(tilePos.x, tilePos.y, p_generatorName, p_worldSize, p_seed);
 		}
 	}
 }

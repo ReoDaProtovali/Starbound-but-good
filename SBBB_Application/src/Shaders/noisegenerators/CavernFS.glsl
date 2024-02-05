@@ -67,11 +67,12 @@ float fractalDistortNoise( in vec2 uv, int level, float harmonic, float amount )
 
 layout(location = 0) out vec4 fragColor;
 uniform vec2 WorldPos;
+in vec2 TexCoord;
 
 void main()
 {
     // Normalized pixel coordinates (from 0 to 1)
-    vec2 uv = gl_FragCoord.xy / vec2(512);
+    vec2 uv = TexCoord;
     uv += WorldPos;
     uv *= 10.f;
     uv = uv * vec2(1.0f, 1.5f);

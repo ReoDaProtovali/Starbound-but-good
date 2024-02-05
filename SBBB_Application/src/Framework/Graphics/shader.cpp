@@ -508,7 +508,7 @@ GLuint Shader::getUniformLoc(std::string_view uniformName)
 		if (u.name == uniformName) loc = u.loc;
 	}
 	if (loc == -1 && uniformName != "transform") {
-		//ERROR_LOG("Could not find uniform location for " << uniformName << ".");
+		ERROR_LOG("Could not find uniform location for " << uniformName << ".");
 	}
 	// wha
 	return loc;

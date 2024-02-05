@@ -3,6 +3,8 @@
 uniform int Seed;
 layout(location = 0) out vec4 fragColor;
 uniform vec2 WorldPos;
+uniform float WorldSize;
+
 
 // Credit goes to Inigo Quilez
 vec2 grad( ivec2 z )  // replace this anything that returns a random vector

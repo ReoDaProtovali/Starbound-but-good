@@ -35,6 +35,32 @@ void ClientWorldState::testDraw()
 	ImGui::Begin("Tile Interaction");
 	static char tileIDInput[128] = "vanilla:richstone";
 	ImGui::InputText("Tile ID:", tileIDInput, 128);
+	auto tileOpt = res.getTileInfo(tileIDInput);
+	if (tileOpt.has_value()) {
+		auto& tile = tileOpt.value().get();
+		std::string name = tile.name;
+		std::string description = tile.genericDescription;
+		float lightAbsorption = tile.lightAbsorption;
+		bool emissive = tile.emissive;
+		std::vector<GLfloat> lightCol = tile.lightingColor;
+		std::stringstream lightColString;
+		lightColString << "Lighting Color: " << " R: " << lightCol[0] << " G: " << lightCol[1] << " B: " << lightCol[2];
+		std::string categories = "Categories: ";
+		for (int i = 0; i < tile.categories.size(); i++) {
+			categories += tile.categories[i];
+			if (i != tile.categories.size() - 1) categories += ", ";
+		}
+
+		ImGui::Text(name.c_str());
+		ImGui::Text(description.c_str());
+		std::string tmp = "Light Absorption: ";
+		ImGui::Text((tmp + std::to_string(lightAbsorption)).c_str());
+		emissive ? ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), "Tile is Emissive.") : ImGui::TextColored(ImVec4(1.f, 2.f, 0.2f, 1.f), "Tile is Not Emissive.");
+		ImGui::Text(lightColString.str().c_str());
+		ImGui::Text(categories.c_str());
+
+
+	}
 	ImGui::End();
 
 	static bool lMouseDown = false;
@@ -210,6 +236,7 @@ skip:
 	ImGui::Begin("Debug Info");
 	ImGui::Text(infoString.str().c_str());
 	ImGui::End();
+
 	//debugTextField.setText(infoString.str());
 	//debugText.draw(glm::vec2(-0.98f, 0.80f), 20, glm::vec3(1.f, 1.f, 1.f), renderer.screenFBO, true);
 #endif
