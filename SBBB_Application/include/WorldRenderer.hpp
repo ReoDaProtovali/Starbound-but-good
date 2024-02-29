@@ -35,14 +35,14 @@ private:
 
 	FrameBuffer m_tileFBO;
 	const char* varyingNames[3] = { "TexCoord", "zLevel", "pos" };
-	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileGS.glsl", ".\\src\\Shaders\\TileFS.glsl", varyingNames, 3 };
+	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 	GLuint tileSheetHeightUniformLoc = 0;
 	GLuint worldPosUniformLoc = 0;
 	GLuint tileSheetUniformLoc = 0;
 	GLuint drawAsBordersUniformLoc = 0;
 	Texture m_tileSheetTexture;
 
-	Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
+	//Shader m_tileFeedbackShader{ ".\\src\\Shaders\\TileFeedbackVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 	// different shaders need different uniforms
 	GLuint feedback_tileSheetUniformLoc = 0;
 	GLuint feedback_tileSheetHeightUniformLoc = 0;

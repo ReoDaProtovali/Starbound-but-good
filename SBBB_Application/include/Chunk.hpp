@@ -42,6 +42,13 @@ struct ChunkPos {
 	int32_t y;
 };
 
+struct BasicTileVert {
+	glm::vec3 pos;
+	glm::vec2 texCoord;
+	//uint32_t variationCount = 1;
+	//uint32_t flags = 0;
+};
+
 class ChunkManager;
 struct WorldChunk : public TransformObject
 {
@@ -72,12 +79,12 @@ struct WorldChunk : public TransformObject
 	std::optional<WorldChunk*> getIntrudedChunk(int p_localTileX, int p_localTileY, int localTileZ, ChunkManager& p_chnks);
 	Tile& operator()(size_t p_x, size_t p_y, size_t p_depth);
 	void generateVBO(ChunkManager& p_chnks);
-	void genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkManager& p_chnks);
+	//void genSingleTileVBO(int p_tileX, int p_tileY, int p_tileZ, ChunkManager& p_chnks);
 
 	void genCollider(b2World& p_world, ChunkManager& tmp);
 
 	void pushVBO();
-	void subSingleTileVBOS();
+	//void subSingleTileVBOS();
 	uint32_t getVBOSize();
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
@@ -95,7 +102,7 @@ struct WorldChunk : public TransformObject
 	std::atomic<bool> isEmpty{ true };
 	std::atomic<bool> colliderValid{ false };
 	std::atomic<bool> feedbackMeshReady = false;
-	Mesh<TileVert> tileMesh{NO_VAO_INIT};
+	Mesh<BasicTileVert> tileMesh{NO_VAO_INIT};
 	//struct PostGSVert {
 	//	glm::vec2 TexCoord;
 	//	float zLevel;

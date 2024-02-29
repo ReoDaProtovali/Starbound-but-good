@@ -242,8 +242,8 @@ void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worl
 	if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 
-	c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
-	//c.generateVBO(*this);
+	//c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
+	c.generateVBO(*this);
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
 }
 
@@ -264,11 +264,12 @@ void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_world
 	if (p_tileID != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 
-	for (int i = -1; i <= 1; i++) {
-		for (int j = -1; j <= 1; j++) {
-			c.genSingleTileVBO(localTileX + j, localTileY + i, p_worldLayer, *this);
-		}
-	}
+	//for (int i = -1; i <= 1; i++) {
+	//	for (int j = -1; j <= 1; j++) {
+	//		c.genSingleTileVBO(localTileX + j, localTileY + i, p_worldLayer, *this);
+	//	}
+	//}
+	c.generateVBO(*this);
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
 }
 

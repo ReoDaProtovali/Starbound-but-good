@@ -53,21 +53,21 @@ public:
 		globals.debug.drawCalls++;
 #endif
 		if (p_mesh.IBOInitialized) {
-			glDrawElements(p_primitiveType, (GLsizei)p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0);
+			glCheck(glDrawElements(p_primitiveType, (GLsizei)p_mesh.getTotalIBOSize(), GL_UNSIGNED_INT, 0));
 		}
 		else {
 			if (p_mesh.isFeedbackMesh) {
 				// these are the only three things a feedback mesh can be
 				if (p_primitiveType == GL_TRIANGLES)
-					glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount() * 3);
+					glCheck(glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount() * 3));
 				else if (p_primitiveType == GL_LINES)
-					glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount() * 2);
+					glCheck(glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount() * 2));
 				else {
-					glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount());
+					glCheck(glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getCapturedPrimitiveCount()));
 				}
 			}
 			else {
-				glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getTotalVBOSize());
+				glCheck(glDrawArrays(p_primitiveType, 0, (GLsizei)p_mesh.getTotalVBOSize()));
 
 			}
 
@@ -87,14 +87,14 @@ public:
 		m_viewport = glm::ivec4(p_x1, p_y1, p_x2, p_y2);
 	};
 	void useViewport() {
-		glViewport(m_viewport.x, m_viewport.y, m_viewport.z, m_viewport.w);
+		glCheck(glViewport(m_viewport.x, m_viewport.y, m_viewport.z, m_viewport.w));
 	};
 	void setClearColor(glm::vec4 p_col) {
-		glClearColor(p_col.r, p_col.g, p_col.b, p_col.a);
+		glCheck(glClearColor(p_col.r, p_col.g, p_col.b, p_col.a));
 	};
 	void clear() {
 		bind();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	}
 	// Clears the color buffer at the given attachment.
 	void clearRegion(GLint p_x, GLint p_y, GLsizei p_width, GLsizei p_height, GLfloat p_col[], size_t p_bufferIndex = 0) {

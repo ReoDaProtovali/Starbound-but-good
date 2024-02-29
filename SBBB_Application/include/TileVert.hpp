@@ -19,8 +19,15 @@ struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID i
 		set5BitZ(p_z);
 		set15BitID(p_id);
 	}
+	TileVert(uint32_t p_x, uint32_t p_y, uint32_t p_z, uint32_t p_id, uint32_t p_variationCount) { /// compact version, packs the values upon construction + variationCount
+		set6BitX(p_x);
+		set6BitY(p_y);
+		set5BitZ(p_z);
+		set15BitID(p_id);
+		variationCount = p_variationCount;
+	}
 	Bitwise32 xyzID; // 32 bit unsigned integer storing multiple components
-	uint32_t adjacent = 0;
+	//uint32_t adjacent = 0;
 	uint32_t variationCount = 0;
 
 	void set6BitX(uint32_t p_x) {
@@ -35,12 +42,12 @@ struct TileVert { // efficient mesh building, xy are 6 bit, z is 5 bit, and ID i
 	void set15BitID(uint32_t p_id) {
 		xyzID.setRange(0, 14, p_id);
 	}
-	void setAdjacent(Adjacency a) {
-		adjacent = a | adjacent;
-	}
-	void setAdjacent(uint32_t a) {
-		adjacent = a | adjacent;
-	}
+	//void setAdjacent(Adjacency a) {
+	//	adjacent = a | adjacent;
+	//}
+	//void setAdjacent(uint32_t a) {
+	//	adjacent = a | adjacent;
+	//}
 	glm::uvec4 toUvec4() { // undoes the packing and formats nicely
 		return glm::uvec4(
 			xyzID.unpackRange(26, 31), 
