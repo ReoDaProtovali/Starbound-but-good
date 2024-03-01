@@ -257,12 +257,11 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				});
 				// this must be horizontally inverted compared to the base tile for some reason, probably rect code
 
-				
-				// right side
-				pushBorderVerts(SIDE_RIGHT_POS, SIDE_RIGHT_UV, z);
-				pushBorderVerts(SIDE_LEFT_POS, SIDE_LEFT_UV, z);
-				pushBorderVerts(SIDE_BOTTOM_POS, SIDE_BOTTOM_UV, z);
-				pushBorderVerts(SIDE_TOP_POS, SIDE_TOP_UV, z);
+				//// sides
+				//pushBorderVerts(SIDE_RIGHT_POS, SIDE_RIGHT_UV, z);
+				//pushBorderVerts(SIDE_LEFT_POS, SIDE_LEFT_UV, z);
+				//pushBorderVerts(SIDE_BOTTOM_POS, SIDE_BOTTOM_UV, z);
+				//pushBorderVerts(SIDE_TOP_POS, SIDE_TOP_UV, z);
 			}
 		}
 	}

@@ -17,7 +17,6 @@ public:
 	int redrawCameraView(const glm::vec4& chunkFrame);
 
 	WorldRenderer();
-	int redrawCameraView();
 	int drawChunk(ChunkPos pos, uint32_t p_windowWidth);
 
 
@@ -46,6 +45,7 @@ private:
 	// different shaders need different uniforms
 	GLuint feedback_tileSheetUniformLoc = 0;
 	GLuint feedback_tileSheetHeightUniformLoc = 0;
+	GLsync drawFence = 0;
 
 	DrawStates m_tileDrawStates;
 	Camera m_tileCam;

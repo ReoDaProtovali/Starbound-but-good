@@ -27,7 +27,7 @@
 
 #include "util/SubjectObserver.hpp"
 #define GENERATION_THREAD_COUNT 2
-#define VBO_THREAD_COUNT 2
+#define VBO_THREAD_COUNT 4
 
 
 class ChunkManager

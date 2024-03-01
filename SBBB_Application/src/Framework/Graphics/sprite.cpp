@@ -121,8 +121,8 @@ void Sprite::setBounds(Rect p_bounds)
 		tr.x, tr.y, 0.0f, 1.0f, 0.0f, // vertex 5
 		br.x, br.y, 0.0f, 1.0f, 1.0f // vertex 6
 	});
-
-	m_spriteMesh.pushVBOToGPU();
+	if (m_drawReady)
+		m_spriteMesh.pushVBOToGPU();
 
 }
 

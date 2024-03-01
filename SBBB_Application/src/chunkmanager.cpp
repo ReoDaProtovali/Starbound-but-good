@@ -238,8 +238,9 @@ void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worl
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 
 	//c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
-	c.generateVBO(*this);
-	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
+	//c.generateVBO(*this);
+	m_vboQueue.push(ChunkPos(chunkX, chunkY));
+	//m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
 }
 
 void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_worldLayer)

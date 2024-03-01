@@ -110,7 +110,6 @@ skip:
 	ImGui::Begin("Toggles");
 	if (ImGui::Button("Chunk Borders")) {
 		worldRenderer.drawChunkBorders = !worldRenderer.drawChunkBorders;
-		worldRenderer.redrawCameraView();
 	}
 	static bool vsyncOn = true;
 	ImGui::Checkbox("Vsync", &vsyncOn);

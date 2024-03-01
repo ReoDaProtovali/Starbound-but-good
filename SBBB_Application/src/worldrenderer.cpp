@@ -48,42 +48,6 @@ WorldRenderer::WorldRenderer()
 
 }
 
-int WorldRenderer::redrawCameraView()
-{
-
-	m_tileDrawStates.attachShader(&m_tileShader);
-	//m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
-	m_tileShader.use();
-
-	m_tileFBO.clear();
-	m_tileFBO.setClearColor(glm::vec4(0.f, 0.f, 0.f, 0.f));
-	glEnable(GL_DEPTH_TEST);
-	int drawnChunkCount = 0;
-	for (int y = (int)m_chunkFramePrev.y; y <= (int)m_chunkFramePrev.w; y++) {
-		for (int x = (int)m_chunkFramePrev.x; x <= (int)m_chunkFramePrev.z; x++) {
-			if (s_chunkMap.contains(ChunkPos(x, y))) {
-
-				WorldChunk& chunk = s_chunkMap[ChunkPos(x, y)];
-				if (!chunk.drawable) {
-					continue;
-				}
-				if (chunk.isEmpty) {
-					continue;
-				};
-				auto pixelCoords = m_tileCam.tileToPixelCoordinates(x * (float)CHUNKSIZE, y * (float)CHUNKSIZE - (float)CHUNKSIZE);
-
-				m_tileFBO.bind();
-				chunk.draw(m_tileFBO, m_tileDrawStates);
-				if (drawChunkBorders) {
-					SBBBDebugDraw::drawBoxImmediate(chunk.getPosition().x, chunk.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
-				}
-				drawnChunkCount++;
-			}
-		}
-	}
-	return drawnChunkCount;
-}
-
 int WorldRenderer::drawChunk(ChunkPos pos, uint32_t p_windowWidth)
 {
 	int drawnChunkCount = 0;
@@ -117,10 +81,18 @@ int WorldRenderer::drawChunk(ChunkPos pos, uint32_t p_windowWidth)
 				if (!s_chunkMap.contains(neighborPos)) continue;
 				WorldChunk& c = s_chunkMap[neighborPos];
 				if (!c.drawable) continue;
-				if (!c.vboIsPushed) c.pushVBO();
+				if (!c.vboIsPushed) { 
+					c.pushVBO(); 
+					drawFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+					glCheck(;);
+				}
 				//m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(c.worldPos.x, c.worldPos.y));
 				//m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
 				m_tileDrawStates.m_blendMode.disable();
+				if (drawFence != nullptr)
+						auto signal = glClientWaitSync(drawFence, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+				glCheck(glDeleteSync(drawFence));
+				drawFence = 0;
 				c.draw(m_tileFBO, m_tileDrawStates);
 			}
 		}
@@ -191,11 +163,11 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 			seenVBOPositions.insert(pos);
 		}
 	}
-	for (ChunkPos pos : seenVBOPositions) {
-		WorldChunk& c = s_chunkMap[pos];
-		//c.subSingleTileVBOS();
-		if (!c.vboIsPushed) c.pushVBO();
-	}
+	//for (ChunkPos pos : seenVBOPositions) {
+	//	WorldChunk& c = s_chunkMap[pos];
+	//	//c.subSingleTileVBOS();
+	//	if (!c.vboIsPushed) c.pushVBO();
+	//}
 	seenPositions.insert(seenVBOPositions.begin(), seenVBOPositions.end());
 	for (ChunkPos pos : seenPositions) {
 		drawnChunkCount += drawChunk(pos, p_windowWidth);
@@ -265,13 +237,21 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 				if (chunk.isEmpty) {
 					continue;
 				};
-				if (!chunk.vboIsPushed) chunk.pushVBO();
+				if (!chunk.vboIsPushed) {
+					chunk.pushVBO();
+					drawFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				}
 
 				m_tileDrawStates.attachShader(&m_tileShader);
 				//m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 				m_tileShader.use();
 
 				m_tileFBO.bind();
+				if (drawFence != nullptr) {
+					auto signal = glClientWaitSync(drawFence, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+				}
+				glCheck(glDeleteSync(drawFence));
+				drawFence = 0;
 				chunk.draw(m_tileFBO, m_tileDrawStates);
 				glDisable(GL_DEPTH_TEST);
 				if (drawChunkBorders) {

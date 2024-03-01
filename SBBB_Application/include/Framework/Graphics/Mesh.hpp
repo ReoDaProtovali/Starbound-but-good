@@ -172,19 +172,18 @@ public:
 		m_attribList.emplace_back(p_size, GL_INT);
 	};
 
+	// only use if type T is a struct, or represents a vert with only one attribute
 	void pushVertex(T& vert) {
 		m_verts.push_back(vert);
-		m_GPUVertCount += 1;
 	}
 	/// Simply adds a vertex of type T to the end of the mesh list.
+	// make sure you push a multiple of the total vert size worth of data.
 	void pushVertices(const std::initializer_list<T>& p_attribs) {
 		m_verts.insert(m_verts.end(), p_attribs);
-		m_GPUVertCount += (uint32_t)p_attribs.size();
 	};
 
 	void pushIndices(const std::initializer_list<GLuint>& p_attribs) {
 		m_indices.insert(m_indices.end(), p_attribs);
-		m_GPUIndicesCount += (uint32_t)p_attribs.size();
 	}
 
 	// make sure you set attributes beforehand.
@@ -274,6 +273,10 @@ public:
 		setAttribPointers();
 
 		glEnableVertexAttribArray(0);
+
+		// keep it thread-accurate
+		m_GPUVertCount = (m_verts.size() * sizeof(T)) / m_singleVertexSize;
+		m_GPUIndicesCount = m_indices.size();
 	};
 
 	void pushIBOToGPU() {
@@ -317,6 +320,10 @@ public:
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
 		glCheck(glBufferSubData(GL_ARRAY_BUFFER, p_startIndex * sizeof(T), (p_endIndex - p_startIndex) * sizeof(T), p_data));
 	}
+	void resetGPUCounts() {
+		m_GPUVertCount = 0;
+		m_GPUIndicesCount = 0;
+	}
 	// dealloc the cpu-side verts, but keep gpu state the same
 	void clean() {
 		m_verts.clear();
@@ -325,8 +332,6 @@ public:
 		m_indices.shrink_to_fit();
 	}
 	void remove() {
-		m_GPUVertCount = 0;
-		m_GPUIndicesCount = 0;
 		m_verts = std::vector<T>();
 		m_indices = std::vector<GLuint>();
 	};
