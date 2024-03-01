@@ -26,7 +26,7 @@
 #include "WorldGenerator.hpp"
 
 #include "util/SubjectObserver.hpp"
-#define GENERATION_THREAD_COUNT 1
+#define GENERATION_THREAD_COUNT 2
 #define VBO_THREAD_COUNT 2
 
 
@@ -37,7 +37,6 @@ public:
 	ChunkManager() { s_chunkMap.reserve(1024); };
 
 	void regenVBOs();
-	void flip();
 	void enqueueGen(ChunkPos p_chunkPos);
 	void genFixed(int x, int y, uint32_t w, uint32_t h);
 	void processRequests();

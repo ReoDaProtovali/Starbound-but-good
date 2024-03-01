@@ -85,11 +85,9 @@ struct WorldChunk : public TransformObject
 
 	void pushVBO();
 	//void subSingleTileVBOS();
-	uint32_t getVBOSize();
+	uint32_t getTileVBOSize();
 
 	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
-
-	void flip();
 
 	void remove();
 
@@ -103,6 +101,7 @@ struct WorldChunk : public TransformObject
 	std::atomic<bool> colliderValid{ false };
 	std::atomic<bool> feedbackMeshReady = false;
 	Mesh<BasicTileVert> tileMesh{NO_VAO_INIT};
+	Mesh<BasicTileVert> borderMesh{NO_VAO_INIT};
 	//struct PostGSVert {
 	//	glm::vec2 TexCoord;
 	//	float zLevel;

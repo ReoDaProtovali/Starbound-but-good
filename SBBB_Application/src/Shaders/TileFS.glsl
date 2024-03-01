@@ -27,6 +27,7 @@ void main()
     //tuv.x = 1.f - tuv.x;
 
     vec2 uv = TexCoord;
+   // uv.y = 1.f - uv.y;
     //vec4 col4 = texture(tileSheet, tuv);
     //if (col4.a == 0.f) discard; // workaround, a way to get around using blending 
      vec4 lightingInfoCol = vec4(0.f);

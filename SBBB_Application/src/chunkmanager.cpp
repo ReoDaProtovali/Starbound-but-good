@@ -7,12 +7,7 @@ void ChunkManager::regenVBOs()
 		it.second.generateVBO(*this);
 	}
 }
-void ChunkManager::flip()
-{
-	for (auto& it : s_chunkMap) {
-		it.second.flip();
-	}
-}
+
 void ChunkManager::enqueueGen(ChunkPos p_chunkPos)
 {
 

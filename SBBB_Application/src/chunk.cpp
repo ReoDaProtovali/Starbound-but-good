@@ -19,6 +19,10 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	//tileMesh.addUintAttrib(1); // variation count i guess
 	tileMesh.addFloatAttrib(3); // pos
 	tileMesh.addFloatAttrib(2); // texcoord
+
+	borderMesh.addFloatAttrib(3); // pos
+	borderMesh.addFloatAttrib(2); // texCoord
+
 	//tileMesh.addUintAttrib(1); // variation count
 	//tileMesh.addUintAttrib(1); // flags
 	//feedbackMesh.addFloatAttrib(2);
@@ -29,7 +33,7 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 
 WorldChunk::WorldChunk(const WorldChunk& other) noexcept :
 	tileMesh(other.tileMesh),
-	//feedbackMesh(other.feedbackMesh),
+	borderMesh(other.borderMesh),
 	m_tiles(other.m_tiles),
 	worldID(other.worldID),
 	worldPos(other.worldPos),
@@ -46,7 +50,7 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 {
 
 	tileMesh = other.tileMesh;
-	//feedbackMesh = other.feedbackMesh;
+	borderMesh = other.borderMesh;
 	m_tiles = other.m_tiles;
 	worldID = other.worldID;
 	worldPos = other.worldPos;
@@ -62,7 +66,7 @@ WorldChunk& WorldChunk::operator=(const WorldChunk& other)
 WorldChunk& WorldChunk::operator=(WorldChunk&& other) noexcept
 {
 	tileMesh = std::move(other.tileMesh);
-	//feedbackMesh = std::move(other.feedbackMesh);
+	borderMesh = std::move(other.borderMesh);
 	m_tiles = std::move(other.m_tiles);
 	worldID = other.worldID;
 	worldPos = other.worldPos;
@@ -79,7 +83,7 @@ WorldChunk& WorldChunk::operator=(WorldChunk&& other) noexcept
 
 WorldChunk::WorldChunk(WorldChunk&& other) noexcept :
 	tileMesh(std::move(other.tileMesh)),
-	//feedbackMesh(std::move(other.feedbackMesh)),
+	borderMesh(std::move(other.borderMesh)),
 	m_tiles(std::move(other.m_tiles)),
 	worldID(other.worldID),
 	worldPos(other.worldPos),
@@ -124,7 +128,8 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	//if (isEmpty) return;
 	tileMesh.remove();
-	tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
+	borderMesh.remove();
+	//tileMesh.reserve((size_t)CHUNKSIZE * CHUNKSIZE * CHUNKDEPTH * sizeof(TileVert)); // reserve a chunks worth of data idk
 	ResourceManager& res = ResourceManager::Get();
 
 	Texture tileSheet = res.getTileSheetTexture();
@@ -133,47 +138,23 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 		return { 1.f - float(x) / tileSheet.width, 1.f - float(y) / tileSheet.height };
 
 	};
-	constexpr uint32_t BASE_TILE_DIM = 8;
-	constexpr uint32_t BASE_TILE_X = 4;
-	constexpr uint32_t BASE_TILE_Y = 12;
-	constexpr uint32_t INCORNER_DIM = 4;
-	constexpr uint32_t BORDER_WIDTH = 4;
-	constexpr uint32_t ROW_HEIGHT = 24;
-	constexpr uint32_t COLUMN_WIDTH = 16;
+	auto pushBorderVerts = [&](Rect pos_rect, Rect tex_rect, int z) {
+		borderMesh.pushVertices({
+				{{ pos_rect.getTL(), z }, tex_rect.getBR() },
+				{{ pos_rect.getBL(), z }, tex_rect.getTR() },
+				{{ pos_rect.getTR(), z }, tex_rect.getBL() },
+				{{ pos_rect.getBL(), z }, tex_rect.getTR() },
+				{{ pos_rect.getTR(), z }, tex_rect.getBL() },
+				{{ pos_rect.getBR(), z }, tex_rect.getTL() }
+			});
+
+	};
 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
 				uint32_t tID = m_tiles(x, y, z).m_tileID;
 				if (tID == 0) continue;
-
-
-				// it's teeechnically possible to convert the image id into the cache id by subtracting one
-				TileInfo& tInfo = res.getTileInfo(tID - 1);
-				uint32_t variationCount = tInfo.variationCount;
-
-				// evil hash code
-				float tmp = sinf(glm::dot(glm::vec2( float(worldPos.x * CHUNKSIZE + x) / CHUNKSIZE, float(worldPos.y * CHUNKSIZE + y) / CHUNKSIZE), glm::vec2{ 12.9898, 78.233 }) * 43758.5453);
-				float hash1 = fabs(tmp) - (long)fabs(tmp);
-				uint32_t variationHash = uint32_t(0xFA5A3 * hash1);
-				
-
-				// in the future, allow multiple variation rows
-				uint32_t variation = variationHash % variationCount;
-
-				glm::vec3 pos_tl = glm::vec3(x, CHUNKSIZE - 1 - y, z);
-				glm::vec3 pos_tr = glm::vec3(x + 1, CHUNKSIZE - 1 - y, z);
-				glm::vec3 pos_bl = glm::vec3(x, CHUNKSIZE - 1 - y + 1, z);
-				glm::vec3 pos_br = glm::vec3(x + 1, CHUNKSIZE - 1 - y + 1, z);
-
-				glm::vec2 tex_tl = toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT);
-				glm::vec2 tex_tr = toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT);
-				glm::vec2 tex_bl = toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT);
-				glm::vec2 tex_br = toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT);
-
-
-				std::vector<bool> adjacencies = {false, false, false, false, false, false, false, false};
-
 				// Remove non-visible tiles
 				for (int layer = CHUNKDEPTH - 1; layer > z; layer--) {
 					uint8_t tileCount = 0;
@@ -190,38 +171,60 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 					}
 
 					if (tileCount == 9) {
-						goto skip;
+						continue;
 					}
 				}
 
-				/*
-				  tl 0, 0    tr 1, 0
-				  
-				  
-				  bl 0, 1    br 1, 1
-				*/
-				tileMesh.pushVertices({ // push all the calculated tile vertices
-					{{pos_tl.x, pos_tl.y, pos_tl.z}, // Position attributes
-					tex_tl},           // ID Attribute, variationCount
-					{{pos_bl.x, pos_bl.y, pos_bl.z},
-					tex_bl},
-					{{pos_tr.x, pos_tr.y, pos_tr.z},
-					tex_tr},
-					{{pos_bl.x, pos_bl.y, pos_bl.z},
-					tex_bl},
-					{{pos_tr.x, pos_tr.y, pos_tr.z},
-					tex_tr},
-					{{pos_br.x, pos_br.y, pos_br.z},
-					tex_br}
-					});
+				// it's teeechnically possible to convert the image id into the cache id by subtracting one
+				TileInfo& tInfo = res.getTileInfo(tID - 1);
+				uint32_t variationCount = tInfo.variationCount;
 
-				//if (m_tiles(x, y, z).m_tileID == 0) {
-				//	tileMesh.pushVertex(v);
-				//	continue;
-				//};
+				// evil hash code
+				float tmp = sinf(glm::dot(glm::vec2(float(worldPos.x * CHUNKSIZE + x) / CHUNKSIZE, float(worldPos.y * CHUNKSIZE + y) / CHUNKSIZE), glm::vec2{ 12.9898, 78.233 }) * 43758.5453);
+				float hash1 = fabs(tmp) - (long)fabs(tmp);
+				uint32_t variationHash = uint32_t(0xFA5A3 * hash1);
 
 
+				// in the future, allow multiple variation rows
+				uint32_t variation = variationHash % variationCount;
 
+
+				// begin the long list of messy declarations, its just data
+				constexpr uint32_t BASE_TILE_DIM = 8;
+				constexpr uint32_t BASE_TILE_X = 4;
+				constexpr uint32_t BASE_TILE_Y = 12;
+				constexpr uint32_t INCORNER_DIM = 4;
+				constexpr uint32_t BORDER_WIDTH = 4;
+				constexpr uint32_t ROW_HEIGHT = 24;
+				constexpr uint32_t COLUMN_WIDTH = 16;
+
+
+				const glm::vec2 vertical_side_dim = { BORDER_WIDTH / float(tileSheet.width), BASE_TILE_DIM / float(tileSheet.height) };
+				const glm::vec2 horizont_side_dim = { BASE_TILE_DIM / float(tileSheet.width), BORDER_WIDTH / float(tileSheet.height) };
+
+				const Rect SIDE_LEFT_UV{ toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT), vertical_side_dim };
+				const Rect SIDE_RIGHT_UV{ toTexCoords(BASE_TILE_X + BASE_TILE_DIM + BORDER_WIDTH + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT), vertical_side_dim };
+				const Rect SIDE_TOP_UV{ toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y + BORDER_WIDTH + tID * ROW_HEIGHT), horizont_side_dim };
+				const Rect SIDE_BOTTOM_UV{ toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT), horizont_side_dim };
+				// i have to invert y in the mesh code for... who knows what reason
+				// bt is the base tile, it's always rendered regardless of adjacencies, it shall serve as the basis for all other positions
+				const glm::vec3 pos_bt_tl = glm::vec3(x, CHUNKSIZE - 1 - y, z);
+				const glm::vec3 pos_bt_tr = glm::vec3(x + 1, CHUNKSIZE - 1 - y, z);
+				const glm::vec3 pos_bt_bl = glm::vec3(x, CHUNKSIZE - 1 - y + 1, z);
+				const glm::vec3 pos_bt_br = glm::vec3(x + 1, CHUNKSIZE - 1 - y + 1, z);
+
+				const Rect SIDE_LEFT_POS{ {pos_bt_tl.x - 0.5f, pos_bt_tl.y}, {0.5f, 1.f} };
+				const Rect SIDE_RIGHT_POS{ {pos_bt_tr.x, pos_bt_tl.y}, {0.5f, 1.f} };
+				const Rect SIDE_TOP_POS{ {pos_bt_bl.x, pos_bt_bl.y}, {1.f, 0.5f} };
+				const Rect SIDE_BOTTOM_POS{ {pos_bt_tl.x, pos_bt_tl.y - 0.5f}, {1.f, 0.5f} };
+
+				const glm::vec2 tex_bl = toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT);
+				const glm::vec2 tex_br = toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT);
+				const glm::vec2 tex_tl = toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT);
+				const glm::vec2 tex_tr = toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT);
+
+
+				std::vector<bool> adjacencies = { false, false, false, false, false, false, false, false };
 				// Set tile adjacencies
 				for (int i = 0; i < 9; i++) {
 					if (i == 4) continue;
@@ -237,15 +240,33 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 					adjacencies[(i > 4 ? i - 1 : i)] = true;
 
 				}
+
+				tileMesh.pushVertices({ // push all the calculated tile vertices
+					{{pos_bt_tl.x, pos_bt_tl.y, z}, // Position attributes
+					tex_tl},           // ID Attribute, variationCount
+					{{pos_bt_bl.x, pos_bt_bl.y, z},
+					tex_bl},
+					{{pos_bt_tr.x, pos_bt_tr.y, z},
+					tex_tr},
+					{{pos_bt_bl.x, pos_bt_bl.y, z},
+					tex_bl},
+					{{pos_bt_tr.x, pos_bt_tr.y, z},
+					tex_tr},
+					{{pos_bt_br.x, pos_bt_br.y, z},
+					tex_br}
+				});
+				// this must be horizontally inverted compared to the base tile for some reason, probably rect code
+
 				
-			skip:
-				{}
+				// right side
+				pushBorderVerts(SIDE_RIGHT_POS, SIDE_RIGHT_UV, z);
+				pushBorderVerts(SIDE_LEFT_POS, SIDE_LEFT_UV, z);
+				pushBorderVerts(SIDE_BOTTOM_POS, SIDE_BOTTOM_UV, z);
+				pushBorderVerts(SIDE_TOP_POS, SIDE_TOP_UV, z);
 			}
 		}
 	}
-	//if (tileMesh.getStoredVertCount() == 0) {
-	//	tileMesh.pushVertices({ { {0.f, 0.f, 0.f}, {0.f, 0.f}, 0, 0 } });
-	//}
+
 	vboIsPushed = false;
 
 }
@@ -396,7 +417,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b10000000) {
 							verts.push_back(localToColliderP(edgeTileX, edgeTileY - 1));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileX--;
 							edgeTileY--;
 							currentSide = 3;
@@ -409,7 +429,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b00010000) {
 							verts.push_back(localToColliderP(edgeTileX - 1, edgeTileY));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileX--;
 							currentSide = 0;
 							break;
@@ -420,7 +439,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						// . . .
 						verts.push_back(localToColliderP(edgeTileX, edgeTileY + 1));
 						visitedEdges(edgeTileX, edgeTileY) |= 0b1000;
-						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 						currentSide = 1;
 						break;
 						// left edge
@@ -436,7 +454,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b00000100) {
 							verts.push_back(localToColliderP(edgeTileX - 1, edgeTileY + 1));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b0100;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileX--;
 							edgeTileY++;
 							currentSide = 0;
@@ -449,7 +466,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b00000010) {
 							verts.push_back(localToColliderP(edgeTileX, edgeTileY + 2));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b0100;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileY++;
 							currentSide = 1;
 							break;
@@ -460,7 +476,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						// . ‾ .
 						verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY + 1));
 						visitedEdges(edgeTileX, edgeTileY) |= 0b0100;
-						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 						currentSide = 2;
 						break;
 						// bottom edge
@@ -476,7 +491,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b00000001) {
 							verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY + 2));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b0010;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileX++;
 							edgeTileY++;
 							currentSide = 1;
@@ -489,7 +503,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b00001000) {
 							verts.push_back(localToColliderP(edgeTileX + 2, edgeTileY + 1));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b0010;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileX++;
 							currentSide = 2;
 							break;
@@ -515,7 +528,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b00100000) {
 							verts.push_back(localToColliderP(edgeTileX + 2, edgeTileY));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b0001;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileX++;
 							edgeTileY--;
 							currentSide = 2;
@@ -528,7 +540,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						if (adj & 0b01000000) {
 							verts.push_back(localToColliderP(edgeTileX + 1, edgeTileY - 1));
 							visitedEdges(edgeTileX, edgeTileY) |= 0b0001;
-							//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 							edgeTileY--;
 							currentSide = 3;
 							break;
@@ -539,7 +550,6 @@ void WorldChunk::genCollider(b2World& p_world, ChunkManager& tmp)
 						// . . .
 						verts.push_back(localToColliderP(edgeTileX, edgeTileY));
 						visitedEdges(edgeTileX, edgeTileY) |= 0b0001;
-						//m_tiles(edgeTileX, edgeTileY, 3).m_tileID = 3;
 						currentSide = 0;
 						break;
 					}
@@ -572,6 +582,7 @@ void WorldChunk::pushVBO()
 {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
 	tileMesh.pushVBOToGPU();
+	borderMesh.pushVBOToGPU();
 	//tileMesh.clean();
 	vboIsPushed = true;
 }
@@ -588,16 +599,9 @@ void WorldChunk::pushVBO()
 //	}
 //}
 
-uint32_t WorldChunk::getVBOSize() {
+uint32_t WorldChunk::getTileVBOSize() {
 	return (uint16_t)tileMesh.getTotalVBOSize();
 }
-
-// ill advised now
-void WorldChunk::flip()
-{
-	//m_tiles.invertDepth = !m_tiles.invertDepth;
-}
-
 
 void WorldChunk::setChunkTile(glm::ivec3 p_chunkCoordinates, uint32_t p_tileID) {
 	if (m_tiles(p_chunkCoordinates.x, p_chunkCoordinates.y, p_chunkCoordinates.z).m_tileID == p_tileID) return;
@@ -662,6 +666,7 @@ std::optional<WorldChunk*> WorldChunk::getIntrudedChunk(int p_localTileX, int p_
 void WorldChunk::remove() {
 	associatedWorld->DestroyBody(m_collisionBody);
 	tileMesh.remove();
+	borderMesh.remove();
 }
 
 void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
@@ -670,6 +675,13 @@ void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 
 	newStates.setTransform(p_drawStates.m_transform * m_transform);
 
+	newStates.m_blendMode.disable();
+	glEnable(GL_DEPTH_TEST);
 	p_target.draw(tileMesh, GL_TRIANGLES, newStates, false);
+
+	newStates.m_blendMode.enable();
+	glDisable(GL_DEPTH_TEST);
+	p_target.draw(borderMesh, GL_TRIANGLES, newStates, false);
+
 
 }

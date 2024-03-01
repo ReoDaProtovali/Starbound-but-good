@@ -9,6 +9,10 @@ struct Rect {
 		xy = glm::vec2(p_x, p_y);
 		wh = glm::vec2(p_w, p_h);
 	}
+	Rect(glm::vec2 p_xy, glm::vec2 p_wh) {
+		xy = p_xy;
+		wh = p_wh;
+	}
 
 	bool operator==(const Rect& rect2) {
 		return (xy == rect2.xy && wh == rect2.wh);
