@@ -7,6 +7,7 @@
 #include <vector>
 #include <optional>
 #include <unordered_map>
+#include <set>
 #include <mutex>
 #include <thread>
 #include <string_view>
@@ -27,7 +28,7 @@
 
 #include "util/SubjectObserver.hpp"
 #define GENERATION_THREAD_COUNT 2
-#define VBO_THREAD_COUNT 4
+#define VBO_THREAD_COUNT 2
 
 
 class ChunkManager
@@ -87,6 +88,8 @@ private:
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 	SharedQueue<ChunkPos> m_loadQueue;
 	SharedQueue<ChunkPos> m_vboQueue;
+
+	std::set<ChunkPos> m_newTileChunks;
 
 	SharedQueue<int> m_generatingQueue; // just a list for the generator threads to say "hey, don't delete the noisemap data!"
 

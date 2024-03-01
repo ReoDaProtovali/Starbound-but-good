@@ -306,7 +306,7 @@ public:
 			VBOInitialized = true;
 		}
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, VBO->ID));
-		assert(m_verts.size() == m_GPUVertCount);
+		assert((m_verts.size() * sizeof(T)) / m_singleVertexSize == m_GPUVertCount);
 		glCheck(glBufferSubData(GL_ARRAY_BUFFER, 0, m_verts.size() * sizeof(T), m_verts.data()));
 	}
 	void subVBOData(GLuint p_startIndex, GLuint p_endIndex, T* p_data) {

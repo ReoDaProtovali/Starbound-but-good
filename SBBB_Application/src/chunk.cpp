@@ -126,6 +126,7 @@ Tile& WorldChunk::operator()(size_t p_x, size_t p_y, size_t p_depth)
 
 void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	std::unique_lock<std::mutex> lock(m_vboMutex);
+	vboBusy = true; // a bad way of preventing half-baked pushes
 	//if (isEmpty) return;
 	tileMesh.remove();
 	borderMesh.remove();
@@ -267,6 +268,7 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	}
 
 	vboIsPushed = false;
+	vboBusy = false;
 
 }
 

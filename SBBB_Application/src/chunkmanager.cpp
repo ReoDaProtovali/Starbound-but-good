@@ -39,6 +39,12 @@ void ChunkManager::processRequests() {
 	if (lastReq.numericalID != -1) {
 		setTile(lastReq.numericalID, lastReq.x, lastReq.y, lastReq.z);
 	}
+    
+	// add all the vbos for new tile data
+	for (auto& p : m_newTileChunks) {
+		m_vboQueue.push(p);
+	}
+	m_newTileChunks.clear();
 }
 
 void ChunkManager::tidyNoisemapIfDone() {
@@ -239,7 +245,7 @@ void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worl
 
 	//c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
 	//c.generateVBO(*this);
-	m_vboQueue.push(ChunkPos(chunkX, chunkY));
+	m_newTileChunks.insert(ChunkPos(chunkX, chunkY));
 	//m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
 }
 
@@ -265,7 +271,8 @@ void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_world
 	//		c.genSingleTileVBO(localTileX + j, localTileY + i, p_worldLayer, *this);
 	//	}
 	//}
-	c.generateVBO(*this);
+	m_newTileChunks.insert(ChunkPos(chunkX, chunkY));
+
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
 }
 

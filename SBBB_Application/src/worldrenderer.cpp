@@ -22,7 +22,7 @@ WorldRenderer::WorldRenderer()
 
 	Texture& infoTex = m_tileFBO.getColorTexRef(1);
 	fboTex.setFiltering(GL_NEAREST, GL_NEAREST);
-	//infoTex.setChannels(GL_RGB);
+
 	lighting.setTileInfoTex(infoTex);
 
 	auto& res = ResourceManager::Get();
@@ -31,14 +31,8 @@ WorldRenderer::WorldRenderer()
 
 	glm::mat4 tmp = glm::mat4(1.f);
 	m_tileShader.addMat4Uniform("transform", tmp);
-	//tileSheetHeightUniformLoc = m_tileShader.addIntUniform("tileSheetHeight", m_tileSheetTexture.height);
-	//worldPosUniformLoc = m_tileShader.addVec2Uniform("worldPos", glm::vec2(0.f));
-	tileSheetUniformLoc = m_tileShader.addTexUniform("tileSheet", 0);
-	//drawAsBordersUniformLoc = m_tileShader.addBoolUniform("drawAsBorders", 0);
 
-	//m_tileFeedbackShader.addMat4Uniform("transform", tmp);
-	//feedback_tileSheetUniformLoc = m_tileFeedbackShader.addTexUniform("tileSheet", 0);
-	//feedback_tileSheetHeightUniformLoc = m_tileFeedbackShader.addIntUniform("tileSheetHeight", m_tileSheetTexture.height);
+	tileSheetUniformLoc = m_tileShader.addTexUniform("tileSheet", 0);
 
 	m_tileDrawStates.attachTexture(m_tileSheetTexture);
 
@@ -58,64 +52,23 @@ int WorldRenderer::drawChunk(ChunkPos pos, uint32_t p_windowWidth)
 		m_tileDrawStates.attachShader(&m_tileShader);
 		m_tileShader.use();
 
-		// has to be shifted one chunk down on the y for reasons
-		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE - CHUNKSIZE, pos.y * float(CHUNKSIZE) - float(CHUNKSIZE * 2));
-		GLfloat clearCol[] = { 0.f, 0.f, 0.f, 0.f };
-		m_tileFBO.clearRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile) * 3.f, (GLsizei)roundf(CHUNKSIZE * pixelsPerTile) * 3.f, clearCol);
-		m_tileFBO.clearRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile) * 3.f, (GLsizei)roundf(CHUNKSIZE * pixelsPerTile) * 3.f, clearCol, 1);
-		m_tileFBO.clearDepthRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile) * 3, (GLsizei)roundf(CHUNKSIZE * pixelsPerTile) * 3);
-
 		WorldChunk& chunk = s_chunkMap[pos];
 		if (chunk.isEmpty) {
 			return 0;
 		};
-		//m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
-		//m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
-		//chunk.draw(m_tileFBO, m_tileDrawStates);
-		// workaround to fix chunk border bug
-		glEnable(GL_DEPTH_TEST);
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				//if (i == 0 && j == 0) continue;
-				auto neighborPos = ChunkPos(pos.x + i, pos.y + j);
-				if (!s_chunkMap.contains(neighborPos)) continue;
-				WorldChunk& c = s_chunkMap[neighborPos];
-				if (!c.drawable) continue;
-				if (!c.vboIsPushed) { 
-					c.pushVBO(); 
-					drawFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-					glCheck(;);
-				}
-				//m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(c.worldPos.x, c.worldPos.y));
-				//m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
-				m_tileDrawStates.m_blendMode.disable();
-				if (drawFence != nullptr)
-						auto signal = glClientWaitSync(drawFence, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
-				glCheck(glDeleteSync(drawFence));
-				drawFence = 0;
-				c.draw(m_tileFBO, m_tileDrawStates);
-			}
+
+		if (!chunk.vboIsPushed) {
+			chunk.pushVBO();
 		}
 
-		//// this for loop deals with drawing the neighbors as borders
-		//for (int i = -1; i <= 1; i++) {
-		//	for (int j = -1; j <= 1; j++) {
-		//		//if (i == 0 && j == 0) continue;
-		//		auto neighborPos = ChunkPos(pos.x + i, pos.y + j);
-		//		if (!s_chunkMap.contains(neighborPos)) continue;
-		//		WorldChunk& c = s_chunkMap[neighborPos];
-		//		if (!c.drawable) continue;
-		//		m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(c.worldPos.x, c.worldPos.y));
-		//		m_tileShader.setBoolUniform(drawAsBordersUniformLoc, true);
-		//		m_tileDrawStates.m_blendMode.enable();
-		//		glEnable(GL_DEPTH_TEST);
-		//		c.draw(m_tileFBO, m_tileDrawStates);
-		//		glDisable(GL_DEPTH_TEST);
-		//		if (drawChunkBorders) {
-		//			SBBBDebugDraw::drawBoxImmediate(c.getPosition().x, c.getPosition().y, CHUNKSIZE, CHUNKSIZE, glm::vec3(0.f, 0.f, 1.f), m_tileFBO, m_tileCam);
-		//		}
-		//	}
-		//}
+		// has to be shifted one chunk down on the y for reasons
+		auto pixelCoords = m_tileCam.tileToPixelCoordinates(pos.x * CHUNKSIZE, pos.y * float(CHUNKSIZE) - float(CHUNKSIZE));
+		GLfloat clearCol[] = { 0.f, 0.f, 0.f, 0.f };
+		m_tileFBO.clearRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile), clearCol);
+		m_tileFBO.clearRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile), clearCol, 1);
+		m_tileFBO.clearDepthRegion((GLsizei)roundf(pixelCoords.x), (GLsizei)roundf(pixelCoords.y), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile), (GLsizei)roundf(CHUNKSIZE * pixelsPerTile));
+
+		chunk.draw(m_tileFBO, m_tileDrawStates);
 
 		drawnChunkCount++;
 	}
@@ -141,13 +94,11 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 	f.x -= CHUNKSIZE * 2.f;
 	f.z += CHUNKSIZE;
 
-	//m_tileShader.setIntUniform(tileSheetHeightUniformLoc, m_tileSheetTexture.height);
 	glm::ivec4 chunkFrame = utils::frameToChunkCoords(f);
 
 
 	m_tileFBO.bind();
 	m_tileFBO.setClearColor(glm::vec4(0.f, 0.f, 0.f, 0.f));
-
 
 	// prevent overdrawing
 	static std::set<ChunkPos> seenPositions;
@@ -207,12 +158,9 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	m_tileDrawStates.attachShader(&m_tileShader);
 	m_tileShader.use();
-	//m_tileShader.setBoolUniform(drawAsBordersUniformLoc, false);
+
 	m_tileDrawStates.m_blendMode.disable();
 	drawnChunkCount += redrawCameraView(chunkFrame);
-	//m_tileShader.setBoolUniform(drawAsBordersUniformLoc, true);
-	//m_tileDrawStates.m_blendMode.enable();
-	//drawnChunkCount += redrawCameraView(chunkFrame);
 
 	lighting.updateInfoFBO(m_tileFBO.getColorTexRef(1), m_tileDrawStates);
 	m_tileSprite.setOrigin(glm::vec2(0));
@@ -237,20 +185,13 @@ int WorldRenderer::redrawCameraView(const glm::vec4& chunkFrame)
 				if (chunk.isEmpty) {
 					continue;
 				};
-				if (!chunk.vboIsPushed) {
+				if (!chunk.vboIsPushed && !chunk.vboBusy)
 					chunk.pushVBO();
-					drawFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-				}
 
 				m_tileDrawStates.attachShader(&m_tileShader);
-				//m_tileShader.setVec2Uniform(worldPosUniformLoc, glm::vec2(chunk.worldPos.x, chunk.worldPos.y));
 				m_tileShader.use();
-
 				m_tileFBO.bind();
-				if (drawFence != nullptr) {
-					auto signal = glClientWaitSync(drawFence, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
-				}
-				glCheck(glDeleteSync(drawFence));
+
 				drawFence = 0;
 				chunk.draw(m_tileFBO, m_tileDrawStates);
 				glDisable(GL_DEPTH_TEST);

@@ -95,6 +95,7 @@ struct WorldChunk : public TransformObject
 	int worldID;
 
 	std::atomic<bool> vboIsPushed{ false };
+	std::atomic<bool> vboBusy{ false };
 	std::atomic<bool> drawable{ false };
 	std::atomic<bool> invalid{ true };
 	std::atomic<bool> isEmpty{ true };
