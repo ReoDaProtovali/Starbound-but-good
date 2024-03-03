@@ -142,7 +142,7 @@ void ResourceManager::loadDirTiles(const std::string& p_namespace, const std::fi
 		tileSheetPixmap.appendImage(imageData, width * height * nrChannels);
 		delete imageData;
 		// assume rgba
-		glm::vec4 lightingCol = glm::vec4(tileInfo.lightingColor[0], tileInfo.lightingColor[1], tileInfo.lightingColor[2], 1.0 - tileInfo.lightAbsorption);
+		glm::vec4 lightingCol = glm::vec4(tileInfo.lightingColor[0], tileInfo.lightingColor[1], tileInfo.lightingColor[2], 1.f - tileInfo.lightAbsorption);
 		tileSheetPixmap.setPixel(
 			tileSheetPixmap.width - 1,
 			tileSheetPixmap.height - 1,

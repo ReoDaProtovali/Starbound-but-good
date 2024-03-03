@@ -19,25 +19,25 @@ class GameClient
 	void processDebugStats();
 	void resizeWindow(uint32_t p_w, uint32_t p_h);
 	// core systems
-public: GameWindow gw { "Barstound" };
+public: GameWindow gw{ "Barstound" };
 private: GameRenderer renderer{ gw };
 
-	GUI& gui = GUI::Get();
+	   GUI& gui = GUI::Get();
 
-	GameStateManager& stateManager = GameStateManager::Get();
-	ClientWorldState State_ClientWorld{ gw, renderer };
-	MenuState State_Menu{};
-	TemplateState State_None;
+	   GameStateManager& stateManager = GameStateManager::Get();
+	   ClientWorldState State_ClientWorld{ gw, renderer };
+	   MenuState State_Menu{};
+	   TemplateState State_None;
 
-	// utility/testing
-	glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
-	fpsGauge renderFPSGauge;
+	   // utility/testing
+	   glm::vec2 camVelocity = glm::vec2(0.0f, 0.0f);
+	   fpsGauge renderFPSGauge;
 
-	// thread management
-	std::thread clientThread;
-	BidirectionalMessenger<ChunkPos, int>& s_generationRequest = BidirectionalMessenger<ChunkPos, int>::Get();
+	   // thread management
+	   std::thread clientThread;
+	   BidirectionalMessenger<ChunkPos, int>& s_generationRequest = BidirectionalMessenger<ChunkPos, int>::Get();
 
-	void cleanUp();
+	   void cleanUp();
 
 public:
 	GameClient();

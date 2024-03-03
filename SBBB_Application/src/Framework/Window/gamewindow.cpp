@@ -66,7 +66,7 @@ void GameWindow::create(const char* p_title, uint32_t p_w, uint32_t p_h, int p_f
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
-	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
+	m_DrawBuffers[0] = GL_BACK_LEFT; // Back of double buffer
 	setViewport(0, 0, p_w, p_h);
 	//GameWindow::initGL();
 }
@@ -104,7 +104,7 @@ void GameWindow::initGL() {
 	glEnable(GL_DEPTH_TEST);
 
 	// init inherited class's variables
-	m_DrawBuffers[0] = GL_BACK; // Back of double buffer
+	m_DrawBuffers[0] = GL_BACK_LEFT; // Back of double buffer
 	setViewport(0, 0, width, height);
 
 }

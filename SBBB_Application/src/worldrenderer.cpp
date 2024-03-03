@@ -51,6 +51,7 @@ int WorldRenderer::drawChunk(ChunkPos pos, uint32_t p_windowWidth)
 
 		m_tileDrawStates.attachShader(&m_tileShader);
 		m_tileShader.use();
+		m_tileShader.setTexUniform(tileSheetUniformLoc, 0);
 
 		WorldChunk& chunk = s_chunkMap[pos];
 		if (chunk.isEmpty) {
@@ -158,6 +159,7 @@ int WorldRenderer::draw(DrawSurface& p_surface, DrawStates& p_states, uint32_t p
 
 	m_tileDrawStates.attachShader(&m_tileShader);
 	m_tileShader.use();
+	m_tileShader.setTexUniform(tileSheetUniformLoc, 0);
 
 	m_tileDrawStates.m_blendMode.disable();
 	drawnChunkCount += redrawCameraView(chunkFrame);

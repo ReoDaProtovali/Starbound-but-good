@@ -1,5 +1,6 @@
 #version 330 core
 
+in vec4 LightingCol;
 in vec2 TexCoord;
 in float z;
 
@@ -27,10 +28,10 @@ void main()
     //tuv.x = 1.f - tuv.x;
 
     vec2 uv = TexCoord;
-   // uv.y = 1.f - uv.y;
+   //uv.y = 1.f - uv.y;
     //vec4 col4 = texture(tileSheet, tuv);
     //if (col4.a == 0.f) discard; // workaround, a way to get around using blending 
-     vec4 lightingInfoCol = vec4(0.f);
+     vec4 lightingInfoCol = LightingCol;
     // scuffed lol
 //    if (lightingInfoCol.a != 0.f) {
 //    switch (int(zLevel)) {
@@ -52,7 +53,7 @@ void main()
    // vec4 outCol = vec4(col4.xyz * (zLevel + 1) / 4 , col4.a);
    vec4 outCol = texture(tileSheet, uv);
    outCol.xyz *=  0.5f + (z / 3.f) / 2.f;
-
+ //  outCol = lightingInfoCol;
     //gl_FragData[1] = vec4(0.f, 0.f, 0.f, 0.f);
 
     //if (!drawAsBorders) {

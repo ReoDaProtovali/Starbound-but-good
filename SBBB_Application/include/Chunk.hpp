@@ -43,8 +43,9 @@ struct ChunkPos {
 };
 
 struct BasicTileVert {
-	glm::vec3 pos;
-	glm::vec2 texCoord;
+	GLfloat pos[3];
+	GLfloat texCoord[2];
+	GLfloat lightingCol[4];
 	//uint32_t variationCount = 1;
 	//uint32_t flags = 0;
 };

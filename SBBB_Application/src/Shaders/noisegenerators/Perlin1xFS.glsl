@@ -106,7 +106,7 @@ vec3 fade(vec3 t) {
 }
 
 float perlinNoise(vec3 position, uint seed) {
-    position.y = abs(position.y + 1000000.f); // bandaid solution;
+    position.y = abs(position.y + 10000.f); // bandaid solution;
     vec3 floorPosition = floor(position);
     vec3 fractPosition = position - floorPosition;
     uvec3 cellCoordinates = uvec3(floorPosition);

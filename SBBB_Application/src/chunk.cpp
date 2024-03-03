@@ -19,9 +19,11 @@ WorldChunk::WorldChunk(ChunkPos p_chunkPos, int p_worldID) :
 	//tileMesh.addUintAttrib(1); // variation count i guess
 	tileMesh.addFloatAttrib(3); // pos
 	tileMesh.addFloatAttrib(2); // texcoord
+	tileMesh.addFloatAttrib(4); // lightingCol
 
 	borderMesh.addFloatAttrib(3); // pos
 	borderMesh.addFloatAttrib(2); // texCoord
+	borderMesh.addFloatAttrib(4); // lightingCol
 
 	//tileMesh.addUintAttrib(1); // variation count
 	//tileMesh.addUintAttrib(1); // flags
@@ -138,18 +140,18 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 	auto toTexCoords = [&](uint32_t x, uint32_t y) -> glm::vec2 {
 		return { 1.f - float(x) / tileSheet.width, 1.f - float(y) / tileSheet.height };
 
-	};
-	auto pushBorderVerts = [&](Rect pos_rect, Rect tex_rect, int z) {
+		};
+	auto pushBorderVerts = [&](Rect pos_rect, Rect tex_rect, glm::vec4 lightingCol, GLfloat z) {
 		borderMesh.pushVertices({
-				{{ pos_rect.getTL(), z }, tex_rect.getBR() },
-				{{ pos_rect.getBL(), z }, tex_rect.getTR() },
-				{{ pos_rect.getTR(), z }, tex_rect.getBL() },
-				{{ pos_rect.getBL(), z }, tex_rect.getTR() },
-				{{ pos_rect.getTR(), z }, tex_rect.getBL() },
-				{{ pos_rect.getBR(), z }, tex_rect.getTL() }
+				{{ pos_rect.getTL().x, pos_rect.getTL().y,  z }, {tex_rect.getBR().x, tex_rect.getBR().y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w}},
+				{{ pos_rect.getBL().x, pos_rect.getBL().y , z }, {tex_rect.getTR().x, tex_rect.getTR().y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w} },
+				{{ pos_rect.getTR().x, pos_rect.getTR().y, z }, {tex_rect.getBL().x, tex_rect.getBL().y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w} },
+				{{ pos_rect.getBL().x, pos_rect.getBL().y, z }, {tex_rect.getTR().x, tex_rect.getTR().y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w} },
+				{{ pos_rect.getTR().x, pos_rect.getTR().y, z }, {tex_rect.getBL().x, tex_rect.getBL().y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w} },
+				{{ pos_rect.getBR().x, pos_rect.getBR().y, z }, {tex_rect.getTL().x, tex_rect.getTL().y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w} }
 			});
 
-	};
+		};
 
 	for (int z = 0; z < CHUNKDEPTH; z++) {
 		for (int y = 0; y < CHUNKSIZE; y++) {
@@ -179,6 +181,7 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				// it's teeechnically possible to convert the image id into the cache id by subtracting one
 				TileInfo& tInfo = res.getTileInfo(tID - 1);
 				uint32_t variationCount = tInfo.variationCount;
+				glm::vec4 lightingCol1 = { tInfo.lightingColor[0], tInfo.lightingColor[1], tInfo.lightingColor[2], 1.f - tInfo.lightAbsorption };
 
 				// evil hash code
 				float tmp = sinf(glm::dot(glm::vec2(float(worldPos.x * CHUNKSIZE + x) / CHUNKSIZE, float(worldPos.y * CHUNKSIZE + y) / CHUNKSIZE), glm::vec2{ 12.9898, 78.233 }) * 43758.5453);
@@ -243,19 +246,19 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				}
 
 				tileMesh.pushVertices({ // push all the calculated tile vertices
-					{{pos_bt_tl.x, pos_bt_tl.y, z}, // Position attributes
-					tex_tl},           // ID Attribute, variationCount
-					{{pos_bt_bl.x, pos_bt_bl.y, z},
-					tex_bl},
-					{{pos_bt_tr.x, pos_bt_tr.y, z},
-					tex_tr},
-					{{pos_bt_bl.x, pos_bt_bl.y, z},
-					tex_bl},
-					{{pos_bt_tr.x, pos_bt_tr.y, z},
-					tex_tr},
-					{{pos_bt_br.x, pos_bt_br.y, z},
-					tex_br}
-				});
+					{{pos_bt_tl.x, pos_bt_tl.y, (float)z}, // Position attributes
+					{tex_tl.x, tex_tl.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},           // ID Attribute, variationCount
+					{{pos_bt_bl.x, pos_bt_bl.y, (float)z},
+					{tex_bl.x, tex_bl.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{{pos_bt_tr.x, pos_bt_tr.y, (float)z},
+					{tex_tr.x, tex_tr.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{{pos_bt_bl.x, pos_bt_bl.y, (float)z},
+					{tex_bl.x, tex_bl.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{{pos_bt_tr.x, pos_bt_tr.y, (float)z},
+					{tex_tr.x, tex_tr.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{{pos_bt_br.x, pos_bt_br.y, (float)z},
+					{tex_br.x, tex_br.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}}
+					});
 				// this must be horizontally inverted compared to the base tile for some reason, probably rect code
 
 				//// sides
