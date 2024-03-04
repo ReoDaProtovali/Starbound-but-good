@@ -41,14 +41,20 @@ struct ChunkPos {
 	int32_t x;
 	int32_t y;
 };
+#ifdef __GNUC__
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#endif
 
-struct BasicTileVert {
+#ifdef _MSC_VER
+#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
+#endif
+PACK(struct BasicTileVert {
 	GLfloat pos[3];
 	GLfloat texCoord[2];
 	GLfloat lightingCol[4];
 	//uint32_t variationCount = 1;
 	//uint32_t flags = 0;
-};
+});
 
 class ChunkManager;
 struct WorldChunk : public TransformObject

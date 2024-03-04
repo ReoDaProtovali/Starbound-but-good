@@ -1,8 +1,8 @@
 #version 330 core
 
 in vec3 xyz_i;
-in vec4 lightingCol_i;
 in vec2 texCoord_i;
+in vec4 lightingCol_i;
 //in uint variationCount;
 //in uint flags;
 

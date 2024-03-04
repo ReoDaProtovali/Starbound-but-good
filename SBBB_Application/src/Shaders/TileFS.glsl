@@ -1,7 +1,7 @@
 #version 330 core
-
-in vec4 LightingCol;
 in vec2 TexCoord;
+in vec4 LightingCol;
+
 in float z;
 
 layout(location = 0) out vec4 FragColor;

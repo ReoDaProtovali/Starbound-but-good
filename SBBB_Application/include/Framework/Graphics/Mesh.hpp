@@ -359,7 +359,7 @@ private:
 				break;
 			case GL_INT:
 				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_INT, m_singleVertexSize, reinterpret_cast<const void*>(currentOffset)));
-				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLuint));
+				currentOffset += (GLint)(m_attribList[i].size * sizeof(GLint));
 				break;
 			case GL_UNSIGNED_BYTE:
 				glCheck(glVertexAttribIPointer(i, m_attribList[i].size, GL_UNSIGNED_BYTE, m_singleVertexSize, reinterpret_cast<const void*>(currentOffset)));
