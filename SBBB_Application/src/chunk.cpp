@@ -158,7 +158,13 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 			for (int x = 0; x < CHUNKSIZE; x++) {
 				uint32_t tID = m_tiles(x, y, z).m_tileID;
 				if (tID == 0) continue;
-				// Remove non-visible tiles
+
+
+				// Remove non-visible tiles and fix borders
+
+				std::vector<bool> cullMask = { true, true, true, true, true, true, true, true };
+
+				bool flag = false;
 				for (int layer = CHUNKDEPTH - 1; layer > z; layer--) {
 					uint8_t tileCount = 0;
 					for (int i = -1; i <= 1; i++) {
@@ -168,20 +174,24 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 								if (!opt.value()) continue;
 								if (opt.value()->m_tileID == 0) continue;
 								if (res.getTileInfo(opt.value()->m_tileID - 1).transparent) continue;
-								if (opt.value()->m_tileID != 0) tileCount++;
+								int flatIndex = (1 + j + (1 + i) * 3);
+								if (flatIndex != 4)
+									cullMask[(flatIndex > 4 ? flatIndex - 1 : flatIndex)] = false;
+								tileCount++;
 							}
 						}
 					}
 
 					if (tileCount == 9) {
-						continue;
+						flag = true;
 					}
 				}
 
+				if (flag) continue;
 				// it's teeechnically possible to convert the image id into the cache id by subtracting one
 				TileInfo& tInfo = res.getTileInfo(tID - 1);
 				uint32_t variationCount = tInfo.variationCount;
-				glm::vec4 lightingCol1 = { tInfo.lightingColor[0], tInfo.lightingColor[1], tInfo.lightingColor[2], 1.f - tInfo.lightAbsorption };
+				glm::vec4 lightingCol = { tInfo.lightingColor[0], tInfo.lightingColor[1], tInfo.lightingColor[2], 1.f - tInfo.lightAbsorption };
 
 				// evil hash code
 				float tmp = sinf(glm::dot(glm::vec2(float(worldPos.x * CHUNKSIZE + x) / CHUNKSIZE, float(worldPos.y * CHUNKSIZE + y) / CHUNKSIZE), glm::vec2{ 12.9898, 78.233 }) * 43758.5453);
@@ -202,19 +212,36 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				constexpr uint32_t ROW_HEIGHT = 24;
 				constexpr uint32_t COLUMN_WIDTH = 16;
 
+				const uint32_t VARIATION_TILE_X = BASE_TILE_X + variation * COLUMN_WIDTH;
+				const uint32_t VARIATION_TILE_Y = BASE_TILE_Y + tID * ROW_HEIGHT;
+				const uint32_t VARIATION_INCORNER_X = variation * COLUMN_WIDTH + 4;
+				const uint32_t VARIATION_INCORNER_Y = tID * ROW_HEIGHT + 24;
 
-				const glm::vec2 vertical_side_dim = { BORDER_WIDTH / float(tileSheet.width), BASE_TILE_DIM / float(tileSheet.height) };
-				const glm::vec2 horizont_side_dim = { BASE_TILE_DIM / float(tileSheet.width), BORDER_WIDTH / float(tileSheet.height) };
+				const glm::vec2 VERTICAL_SIDE_WH = { BORDER_WIDTH / float(tileSheet.width), BASE_TILE_DIM / float(tileSheet.height) };
+				const glm::vec2 HORIZONT_SIDE_WH = { BASE_TILE_DIM / float(tileSheet.width), BORDER_WIDTH / float(tileSheet.height) };
+				const glm::vec2 CORNER_WH = { INCORNER_DIM / float(tileSheet.width), INCORNER_DIM / float(tileSheet.height) };
 
-				const Rect SIDE_LEFT_UV{ toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT), vertical_side_dim };
-				const Rect SIDE_RIGHT_UV{ toTexCoords(BASE_TILE_X + BASE_TILE_DIM + BORDER_WIDTH + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT), vertical_side_dim };
-				const Rect SIDE_TOP_UV{ toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y + BORDER_WIDTH + tID * ROW_HEIGHT), horizont_side_dim };
-				const Rect SIDE_BOTTOM_UV{ toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT), horizont_side_dim };
+
+				const Rect SIDE_LEFT_UV{   toTexCoords(VARIATION_TILE_X,                                VARIATION_TILE_Y                ), VERTICAL_SIDE_WH };
+				const Rect SIDE_RIGHT_UV{  toTexCoords(VARIATION_TILE_X + BASE_TILE_DIM + BORDER_WIDTH, VARIATION_TILE_Y                ), VERTICAL_SIDE_WH };
+				const Rect SIDE_TOP_UV{    toTexCoords(VARIATION_TILE_X + BASE_TILE_DIM,                VARIATION_TILE_Y + BORDER_WIDTH ), HORIZONT_SIDE_WH };
+				const Rect SIDE_BOTTOM_UV{ toTexCoords(VARIATION_TILE_X + BASE_TILE_DIM,                VARIATION_TILE_Y - BASE_TILE_DIM), HORIZONT_SIDE_WH };
+
+				const Rect OUTCORNER_TL_UV{ toTexCoords(VARIATION_TILE_X,                                VARIATION_TILE_Y + INCORNER_DIM),  CORNER_WH };
+				const Rect OUTCORNER_TR_UV{ toTexCoords(VARIATION_TILE_X + BASE_TILE_DIM + INCORNER_DIM, VARIATION_TILE_Y + INCORNER_DIM),  CORNER_WH };
+				const Rect OUTCORNER_BL_UV{ toTexCoords(VARIATION_TILE_X,                                VARIATION_TILE_Y - BASE_TILE_DIM), CORNER_WH };
+				const Rect OUTCORNER_BR_UV{ toTexCoords(VARIATION_TILE_X + BASE_TILE_DIM + INCORNER_DIM, VARIATION_TILE_Y - BASE_TILE_DIM), CORNER_WH };
+
+				const Rect INCORNER_TL_UV{ toTexCoords(VARIATION_INCORNER_X + INCORNER_DIM, VARIATION_INCORNER_Y - INCORNER_DIM),  CORNER_WH };
+				const Rect INCORNER_TR_UV{ toTexCoords(VARIATION_INCORNER_X,                VARIATION_INCORNER_Y - INCORNER_DIM),  CORNER_WH };
+				const Rect INCORNER_BL_UV{ toTexCoords(VARIATION_INCORNER_X + INCORNER_DIM, VARIATION_INCORNER_Y),                 CORNER_WH };
+				const Rect INCORNER_BR_UV{ toTexCoords(VARIATION_INCORNER_X,                VARIATION_INCORNER_Y),                 CORNER_WH };
+
 				// i have to invert y in the mesh code for... who knows what reason
 				// bt is the base tile, it's always rendered regardless of adjacencies, it shall serve as the basis for all other positions
-				const glm::vec3 pos_bt_tl = glm::vec3(x, CHUNKSIZE - 1 - y, z);
-				const glm::vec3 pos_bt_tr = glm::vec3(x + 1, CHUNKSIZE - 1 - y, z);
-				const glm::vec3 pos_bt_bl = glm::vec3(x, CHUNKSIZE - 1 - y + 1, z);
+				const glm::vec3 pos_bt_tl = glm::vec3(x,     CHUNKSIZE - 1 - y,     z);
+				const glm::vec3 pos_bt_tr = glm::vec3(x + 1, CHUNKSIZE - 1 - y,     z);
+				const glm::vec3 pos_bt_bl = glm::vec3(x,     CHUNKSIZE - 1 - y + 1, z);
 				const glm::vec3 pos_bt_br = glm::vec3(x + 1, CHUNKSIZE - 1 - y + 1, z);
 
 				const Rect SIDE_LEFT_POS{ {pos_bt_tl.x - 0.5f, pos_bt_tl.y}, {0.5f, 1.f} };
@@ -222,10 +249,20 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 				const Rect SIDE_TOP_POS{ {pos_bt_bl.x, pos_bt_bl.y}, {1.f, 0.5f} };
 				const Rect SIDE_BOTTOM_POS{ {pos_bt_tl.x, pos_bt_tl.y - 0.5f}, {1.f, 0.5f} };
 
-				const glm::vec2 tex_bl = toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT);
-				const glm::vec2 tex_br = toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y + tID * ROW_HEIGHT);
-				const glm::vec2 tex_tl = toTexCoords(BASE_TILE_X + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT);
-				const glm::vec2 tex_tr = toTexCoords(BASE_TILE_X + BASE_TILE_DIM + variation * COLUMN_WIDTH, BASE_TILE_Y - BASE_TILE_DIM + tID * ROW_HEIGHT);
+				const Rect OUTCORNER_TL_POS{ {pos_bt_tl.x - 0.5f, pos_bt_tl.y + 1.0f}, { 0.5f, 0.5f } };
+				const Rect OUTCORNER_TR_POS{ {pos_bt_tr.x,        pos_bt_tr.y + 1.0f}, { 0.5f, 0.5f } };
+				const Rect OUTCORNER_BL_POS{ {pos_bt_bl.x - 0.5f, pos_bt_bl.y - 1.5f}, { 0.5f, 0.5f } };
+				const Rect OUTCORNER_BR_POS{ {pos_bt_br.x,        pos_bt_br.y - 1.5f}, { 0.5f, 0.5f } };
+
+				const Rect INCORNER_BL_POS{ {pos_bt_tl.x - 0.5f, pos_bt_tl.y + 0.5f}, { 0.5f, 0.5f } };
+				const Rect INCORNER_BR_POS{ {pos_bt_tr.x,        pos_bt_tl.y + 0.5f}, { 0.5f, 0.5f } };
+				const Rect INCORNER_TR_POS{ {pos_bt_bl.x,        pos_bt_bl.y},        { 0.5f, 0.5f } };
+				const Rect INCORNER_TL_POS{ {pos_bt_bl.x + 0.5f, pos_bt_bl.y},        { 0.5f, 0.5f } };
+
+				const glm::vec2 tex_bl = toTexCoords(VARIATION_TILE_X,                 VARIATION_TILE_Y);
+				const glm::vec2 tex_br = toTexCoords(VARIATION_TILE_X + BASE_TILE_DIM, VARIATION_TILE_Y);
+				const glm::vec2 tex_tl = toTexCoords(VARIATION_TILE_X,                 VARIATION_TILE_Y - BASE_TILE_DIM);
+				const glm::vec2 tex_tr = toTexCoords(VARIATION_TILE_X + BASE_TILE_DIM, VARIATION_TILE_Y - BASE_TILE_DIM);
 
 
 				std::vector<bool> adjacencies = { false, false, false, false, false, false, false, false };
@@ -235,37 +272,79 @@ void WorldChunk::generateVBO(ChunkManager& p_chnks) {
 
 					auto opt = getNeigboringChunkTile(x + (i % 3) - 1, y + (i / 3) - 1, z, p_chnks);
 
-					auto centerOpt = getNeigboringChunkTile(x, y, z, p_chnks);
 
 					if (opt.has_value()) {
 						if (opt.value()->m_tileID != 0) continue;
+						
 					}
 
 					adjacencies[(i > 4 ? i - 1 : i)] = true;
+					
 
 				}
 
 				tileMesh.pushVertices({ // push all the calculated tile vertices
 					{{pos_bt_tl.x, pos_bt_tl.y, (float)z}, // Position attributes
-					{tex_tl.x, tex_tl.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},           // ID Attribute, variationCount
+					{tex_tl.x, tex_tl.y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w}},           // ID Attribute, variationCount
 					{{pos_bt_bl.x, pos_bt_bl.y, (float)z},
-					{tex_bl.x, tex_bl.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{tex_bl.x, tex_bl.y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w}},
 					{{pos_bt_tr.x, pos_bt_tr.y, (float)z},
-					{tex_tr.x, tex_tr.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{tex_tr.x, tex_tr.y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w}},
 					{{pos_bt_bl.x, pos_bt_bl.y, (float)z},
-					{tex_bl.x, tex_bl.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{tex_bl.x, tex_bl.y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w}},
 					{{pos_bt_tr.x, pos_bt_tr.y, (float)z},
-					{tex_tr.x, tex_tr.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}},
+					{tex_tr.x, tex_tr.y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w}},
 					{{pos_bt_br.x, pos_bt_br.y, (float)z},
-					{tex_br.x, tex_br.y}, {lightingCol1.x, lightingCol1.y, lightingCol1.z, lightingCol1.w}}
+					{tex_br.x, tex_br.y}, {lightingCol.x, lightingCol.y, lightingCol.z, lightingCol.w}}
 					});
-				// this must be horizontally inverted compared to the base tile for some reason, probably rect code
+
+				// 0 1 2
+				// 3   4
+				// 5 6 7
+
 
 				//// sides
-				//pushBorderVerts(SIDE_RIGHT_POS, SIDE_RIGHT_UV, z);
-				//pushBorderVerts(SIDE_LEFT_POS, SIDE_LEFT_UV, z);
-				//pushBorderVerts(SIDE_BOTTOM_POS, SIDE_BOTTOM_UV, z);
-				//pushBorderVerts(SIDE_TOP_POS, SIDE_TOP_UV, z);
+				if (adjacencies[1] && cullMask[1])
+					pushBorderVerts(SIDE_TOP_POS, SIDE_TOP_UV, glm::vec4(0.f), z);
+				if (adjacencies[6] && cullMask[6])
+					pushBorderVerts(SIDE_BOTTOM_POS, SIDE_BOTTOM_UV, glm::vec4(0.f), z);
+				if (adjacencies[3] && cullMask[3])
+					pushBorderVerts(SIDE_LEFT_POS, SIDE_LEFT_UV, glm::vec4(0.f), z);
+				if (adjacencies[4] && cullMask[4])
+					pushBorderVerts(SIDE_RIGHT_POS, SIDE_RIGHT_UV, glm::vec4(0.f), z);
+
+				//// --------------------------------------------------------------------
+
+				// pos: left of BT
+				if (adjacencies[3] && !adjacencies[0] && cullMask[3])
+					pushBorderVerts(INCORNER_BL_POS, INCORNER_BL_UV, glm::vec4(0.f), z);
+
+				// pos: top of BT
+				if (adjacencies[1] && !adjacencies[0] && cullMask[1])
+					pushBorderVerts(INCORNER_TR_POS, INCORNER_TR_UV, glm::vec4(0.f), z);
+
+				// pos: top of BT
+				if (adjacencies[1] && !adjacencies[2] && cullMask[1])
+					pushBorderVerts(INCORNER_TL_POS, INCORNER_TL_UV, glm::vec4(0.f), z);
+
+				// pos: right of BT
+				if (adjacencies[4] && !adjacencies[2] && cullMask[4])
+					pushBorderVerts(INCORNER_BR_POS, INCORNER_BR_UV, glm::vec4(0.f), z);
+
+				//// --------------------------------------------------------------------
+
+				if (adjacencies[1] && adjacencies[4] && adjacencies[2] && cullMask[2])
+					pushBorderVerts(OUTCORNER_TR_POS, OUTCORNER_TR_UV, glm::vec4(0.f), z);
+
+				if (adjacencies[1] && adjacencies[3] && adjacencies[0] && cullMask[0])
+					pushBorderVerts(OUTCORNER_TL_POS, OUTCORNER_TL_UV, glm::vec4(0.f), z);
+
+				if (adjacencies[6] && adjacencies[3] && adjacencies[5] && cullMask[5])
+					pushBorderVerts(OUTCORNER_BL_POS, OUTCORNER_BL_UV, glm::vec4(0.f), z);
+
+
+				if (adjacencies[6] && adjacencies[4] && adjacencies[7] && cullMask[7])
+					pushBorderVerts(OUTCORNER_BR_POS, OUTCORNER_BR_UV, glm::vec4(0.f), z);
 			}
 		}
 	}

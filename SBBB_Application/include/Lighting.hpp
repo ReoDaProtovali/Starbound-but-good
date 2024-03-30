@@ -76,6 +76,7 @@ private:
 	GLint m_combine_ambientTextureUniformLoc = 0;
 	GLint m_screenTextureUniformLoc = 0;
 	GLint m_lightingResUniformLoc = 0;
+	GLint m_ambientResUniformLoc = 0;
 
 	Shader m_dynamicLightingShader;
 	UniformArray<Light> m_lights{1, 64};

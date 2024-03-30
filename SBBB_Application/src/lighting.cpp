@@ -21,6 +21,7 @@ Lighting::Lighting() :
 	m_combine_ambientTextureUniformLoc = m_lightingCombineShader.addTexUniform("ambientTexture", 1);
 	m_screenTextureUniformLoc = m_lightingCombineShader.addTexUniform("screenTexture", 2);
 	m_lightingResUniformLoc = m_lightingCombineShader.addVec2Uniform("lightingRes", glm::vec2(1.f));
+	m_ambientResUniformLoc = m_lightingCombineShader.addVec2Uniform("ambientRes", glm::vec2(1.f));
 
 	glm::mat4 tmpmat4 = glm::mat4(1.f);
 	m_dynamicLightingShader.addMat4Uniform("transform", tmpmat4);
@@ -267,7 +268,7 @@ void Lighting::calculateAmbient(glm::ivec4 tileFrame, float p_pixelsPerTile)
 
 void Lighting::calculateDynamic(FrameBuffer& p_screenFBO)
 {
-	//m_lights.setAt(0, { {0.5f, 70.5f}, dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f, 0.4f });
+	m_lights.setAt(0, { {0.5f, 70.5f}, dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f, 0.4f });
 	//m_lights.setAt(1, { {-5.5f, 70.5f}, 1.f - dynamicUniforms.testLightInfo, SDL_GetTicks() / 1000.f + 3.1415f, 0.4f });
 	dynamicUniforms.lightCount = 2;
 	dynamicUniformBlock.setData(&dynamicUniforms);
@@ -376,7 +377,12 @@ void Lighting::draw(FrameBuffer& p_screenFBO, DrawSurface& p_gameWindow, DrawSta
 	//m_lightingCombineStates.setTexture(0, ambientTex);
 	//m_lightingCombineStates.setTexture(0, dynamicLightingFBO.getColorTexRef(0));
 	//m_lightingCombineStates.setTexture(1, ambientLightingFBO.getColorTexRef(0));
+
+	if (dynamicLightingFBO.getViewportWidth() != p_gameWindow.getViewportWidth() || dynamicLightingFBO.getViewportHeight() != p_gameWindow.getViewportHeight()) {
+		dynamicLightingFBO.setDimensions(p_gameWindow.getViewportWidth() / m_dynamicResDivisor, p_gameWindow.getViewportHeight() / m_dynamicResDivisor);
+	}
 	m_lightingCombineShader.setVec2Uniform(m_lightingResUniformLoc, glm::vec2(dynamicLightingFBO.getViewportWidth(), dynamicLightingFBO.getViewportHeight()));
+	m_lightingCombineShader.setVec2Uniform(m_ambientResUniformLoc, glm::vec2(ambientLightingFBO.getViewportWidth(), ambientLightingFBO.getViewportHeight()));
 	p_gameWindow.bind();
 	// something I realize now is that calling .draw on an FBO does not actually bind the FBO, it just draws to the current bound thing.
 	p_gameWindow.draw(m_overlayMesh, GL_TRIANGLES, m_lightingCombineStates);

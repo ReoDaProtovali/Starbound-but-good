@@ -15,6 +15,7 @@ layout(std140, binding = 0) uniform GlobalsBlock {
 } g;
 
 uniform vec2 lightingRes;
+uniform vec2 ambientRes;
 
 vec4 cubic(float v) {
   vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
