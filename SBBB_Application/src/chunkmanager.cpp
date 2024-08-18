@@ -224,30 +224,30 @@ void ChunkManager::removeChunks()
 	s_chunkMap.clear();
 }
 
-void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worldY, int p_worldLayer)
-{
-	int chunkX = utils::gridFloor(p_worldX, CHUNKSIZE);
-	int chunkY = utils::gridFloor(p_worldY, CHUNKSIZE) + 1;
-	if (!s_chunkMap.contains(ChunkPos(chunkX, chunkY))) return;
-	if (s_chunkMap[ChunkPos(chunkX, chunkY)].invalid) return;
-	WorldChunk& c = s_chunkMap[ChunkPos(chunkX, chunkY)];
-	glm::ivec2 local = utils::worldToLocalChunkCoords(p_worldX, p_worldY);
-	int localTileX = local.x;
-	int localTileY = local.y;
-
-	auto tileInfoOpt = res.getTileInfo(p_tileID);
-	if (!tileInfoOpt.has_value()) throw std::exception("tile ID not found");
-
-	//c(localTileX, localTileY, p_worldLayer).m_tileID = tileInfoOpt.value().get().spriteIndex;
-	c.setChunkTile(glm::ivec3(localTileX, localTileY, p_worldLayer), tileInfoOpt.value().get().spriteIndex);
-	if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
-	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
-
-	//c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
-	//c.generateVBO(*this);
-	m_newTileChunks.insert(ChunkPos(chunkX, chunkY));
-	//m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
-}
+//void ChunkManager::setTile(const std::string& p_tileID, int p_worldX, int p_worldY, int p_worldLayer)
+//{
+//	int chunkX = utils::gridFloor(p_worldX, CHUNKSIZE);
+//	int chunkY = utils::gridFloor(p_worldY, CHUNKSIZE) + 1;
+//	if (!s_chunkMap.contains(ChunkPos(chunkX, chunkY))) return;
+//	if (s_chunkMap[ChunkPos(chunkX, chunkY)].invalid) return;
+//	WorldChunk& c = s_chunkMap[ChunkPos(chunkX, chunkY)];
+//	glm::ivec2 local = utils::worldToLocalChunkCoords(p_worldX, p_worldY);
+//	int localTileX = local.x;
+//	int localTileY = local.y;
+//
+//	auto tileInfoOpt = res.getTileInfo(p_tileID);
+//	if (!tileInfoOpt.has_value()) throw std::exception("tile ID not found");
+//
+//	//c(localTileX, localTileY, p_worldLayer).m_tileID = tileInfoOpt.value().get().spriteIndex;
+//	c.setChunkTile(glm::ivec3(localTileX, localTileY, p_worldLayer), tileInfoOpt.value().get().spriteIndex);
+//	if (tileInfoOpt.value().get().spriteIndex != 0) c.isEmpty = false;
+//	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
+//
+//	//c.genSingleTileVBO(localTileX, localTileY, p_worldLayer, *this);
+//	//c.generateVBO(*this);
+//	m_newTileChunks.insert(ChunkPos(chunkX, chunkY));
+//	//m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_VBO_DATA));
+//}
 
 void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_worldLayer)
 {
@@ -266,9 +266,29 @@ void ChunkManager::setTile(int p_tileID, int p_worldX, int p_worldY, int p_world
 	if (p_tileID != 0) c.isEmpty = false;
 	m_chunkUpdateSubject.notifyAll(ChunkUpdate(c.worldPos.x, c.worldPos.y, ChunkUpdateType::NEW_TILE_DATA));
 
+	// todo: deal with the corner case
+	int neighborX = 0, neighborY = 0;
+	if (localTileX == 0) {
+		neighborX = -1;
+	}
+	if (localTileX == CHUNKSIZE - 1) {
+		neighborX = 1;
+	}
+	if (localTileY == 0) {
+		neighborY = 1;
+	}
+	if (localTileY == CHUNKSIZE - 1) {
+		neighborY = -1;
+	}
+
+	if (!(localTileX == 0 && localTileY == 0) && validChunkExistsAt(chunkX, chunkY)) {
+		auto& neighbor = s_chunkMap[ChunkPos(chunkX + neighborX, chunkY + neighborY)];
+		m_vboQueue.push(ChunkPos(chunkX + neighborX, chunkY + neighborY));
+	}
 	//for (int i = -1; i <= 1; i++) {
 	//	for (int j = -1; j <= 1; j++) {
-	//		c.genSingleTileVBO(localTileX + j, localTileY + i, p_worldLayer, *this);
+	//		if (i == 0 && j == 0) continue;
+	//		if (validChunkExistsAt(chunk))
 	//	}
 	//}
 	m_newTileChunks.insert(ChunkPos(chunkX, chunkY));

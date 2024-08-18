@@ -65,7 +65,7 @@ public:
 	bool removeChunk(ChunkPos p_chunkPos);
 	void removeChunks();
 
-	void setTile(const std::string& p_tileID, int p_worldX, int p_worldY, int p_worldLayer);
+	//void setTile(const std::string& p_tileID, int p_worldX, int p_worldY, int p_worldLayer);
 	void setTile(int p_tileID, int p_worldX, int p_worldY, int p_worldLayer);
 
 	void logSize();

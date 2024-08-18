@@ -14,11 +14,11 @@ public:
 
 	SharedMap<ChunkPos, WorldChunk, ChunkPos>& s_chunkMap = SharedMap<ChunkPos, WorldChunk, ChunkPos>::Get();
 	void tidy();
-	int redrawCameraView(const glm::vec4& chunkFrame);
+	int redrawTilesView(const glm::vec4& chunkFrame);
+	int redrawBordersView(const glm::vec4& chunkFrame);
 
 	WorldRenderer();
 	int drawChunk(ChunkPos pos, uint32_t p_windowWidth);
-
 
 	// If we want to draw the world, we kinda have to know where we are in it
 	void setCamera(Camera* p_cam);
@@ -33,6 +33,7 @@ public:
 private:
 
 	FrameBuffer m_tileFBO;
+	FrameBuffer m_borderFBO;
 	const char* varyingNames[3] = { "TexCoord", "zLevel", "pos" };
 	Shader m_tileShader{ ".\\src\\Shaders\\TileVS.glsl", ".\\src\\Shaders\\TileFS.glsl" };
 	GLuint tileSheetHeightUniformLoc = 0;

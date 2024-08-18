@@ -1,6 +1,7 @@
 #include "GameClient.hpp"
 #include "Framework/Graphics/Sprite.hpp"
 #include "ResourceManager.hpp"
+#include "Framework/Audio/wav.hpp"
 
 
 GameClient::GameClient() {
@@ -60,6 +61,41 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	ImGui_ImplSDL2_InitForOpenGL(gw.m_window, gw.m_glContext);
 	const char* glsl_version = "#version 130";
 	ImGui_ImplOpenGL3_Init(glsl_version);
+
+	const ALchar* defaultDevice_str = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
+	ALCdevice* defaultDevice = alcOpenDevice(defaultDevice_str);
+	std::cout << "Got \"" << alcGetString(defaultDevice, ALC_DEVICE_SPECIFIER) << "\" as the default sound device.\n";
+
+	ALCcontext* alctx = alcCreateContext(defaultDevice, nullptr);
+
+	if (!alcMakeContextCurrent(alctx)) {
+		std::cerr << "Failed to set active context.\n";
+	}
+
+	alcheck(alListener3f(AL_POSITION, 0.f, 0.f, 0.f));
+	alcheck(alListener3f(AL_VELOCITY, 0.f, 0.f, 0.f));
+
+	ALfloat basis[] = {
+		1.f, 0.f, 0.f,
+		0.f, 1.f, 0.f
+	};
+
+	alcheck(alListenerfv(AL_ORIENTATION, basis));
+
+	ALuint flupBuffer;
+	create_AL_buffer(flupBuffer, "./res/flup.wav");
+
+	ALuint stereoSource;
+	alcheck(alGenSources(1, &stereoSource));
+	alcheck(alSource3f(stereoSource, AL_POSITION, 5.f, 0.f, 0.f));
+	//alcheck(alSource3f(stereoSource, AL_VELOCITY, 0.f, 0.f, 0.f));
+	alcheck(alSourcef(stereoSource, AL_PITCH, 1.f));
+	alcheck(alSourcef(stereoSource, AL_GAIN, 0.5f));
+	alcheck(alSourcei(stereoSource, AL_LOOPING, true));
+	alcheck(alSourcei(stereoSource, AL_BUFFER, flupBuffer));
+
+	alcheck(alSourcePlay(stereoSource));
+
 
 	try {
 

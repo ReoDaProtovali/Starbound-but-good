@@ -1,3 +1,7 @@
+#KNOWN BUGS::
+- transparent tiles don't draw over tile borders
+
+
 #TODO::
 
 Add sound using OpenAL

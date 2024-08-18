@@ -94,7 +94,8 @@ struct WorldChunk : public TransformObject
 	//void subSingleTileVBOS();
 	uint32_t getTileVBOSize();
 
-	void draw(DrawSurface& p_target, DrawStates& p_drawStates);
+	void drawTiles(DrawSurface& p_target, DrawStates& p_drawStates);
+	void drawBorders(DrawSurface& p_target, DrawStates& p_drawStates);
 
 	void remove();
 

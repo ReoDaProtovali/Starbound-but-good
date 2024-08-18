@@ -752,7 +752,7 @@ void WorldChunk::remove() {
 	borderMesh.remove();
 }
 
-void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
+void WorldChunk::drawTiles(DrawSurface& p_target, DrawStates& p_drawStates)
 {
 	DrawStates newStates = DrawStates(p_drawStates);
 
@@ -762,9 +762,15 @@ void WorldChunk::draw(DrawSurface& p_target, DrawStates& p_drawStates)
 	glEnable(GL_DEPTH_TEST);
 	p_target.draw(tileMesh, GL_TRIANGLES, newStates, false);
 
+}
+
+void WorldChunk::drawBorders(DrawSurface& p_target, DrawStates& p_drawStates)
+{
+	DrawStates newStates = DrawStates(p_drawStates);
+
+	newStates.setTransform(p_drawStates.m_transform * m_transform);
+
 	newStates.m_blendMode.enable();
 	glDisable(GL_DEPTH_TEST);
 	p_target.draw(borderMesh, GL_TRIANGLES, newStates, false);
-
-
 }
