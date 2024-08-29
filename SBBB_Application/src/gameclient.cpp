@@ -2,6 +2,7 @@
 #include "Framework/Graphics/Sprite.hpp"
 #include "ResourceManager.hpp"
 #include "Framework/Audio/wav.hpp"
+#include "Framework/Audio/AudioImmediate.hpp"
 
 
 GameClient::GameClient() {
@@ -26,6 +27,9 @@ void GameClient::stop() {
 	clientStopping = true;
 	clientThread.join();
 }
+
+void audioInit();
+
 void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	SharedQueue<MouseEvent>& s_mouseQueue = SharedQueue<MouseEvent>::Get(); // one-way messenger for capturing mouse events
 	SharedQueue<KeyEvent>& s_keyQueue = SharedQueue<KeyEvent>::Get(); // one-way messenger for capturing mouse events
@@ -62,40 +66,7 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 	const char* glsl_version = "#version 130";
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	const ALchar* defaultDevice_str = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
-	ALCdevice* defaultDevice = alcOpenDevice(defaultDevice_str);
-	std::cout << "Got \"" << alcGetString(defaultDevice, ALC_DEVICE_SPECIFIER) << "\" as the default sound device.\n";
-
-	ALCcontext* alctx = alcCreateContext(defaultDevice, nullptr);
-
-	if (!alcMakeContextCurrent(alctx)) {
-		std::cerr << "Failed to set active context.\n";
-	}
-
-	alcheck(alListener3f(AL_POSITION, 0.f, 0.f, 0.f));
-	alcheck(alListener3f(AL_VELOCITY, 0.f, 0.f, 0.f));
-
-	ALfloat basis[] = {
-		1.f, 0.f, 0.f,
-		0.f, 1.f, 0.f
-	};
-
-	alcheck(alListenerfv(AL_ORIENTATION, basis));
-
-	ALuint flupBuffer;
-	create_AL_buffer(flupBuffer, "./res/flup.wav");
-
-	ALuint stereoSource;
-	alcheck(alGenSources(1, &stereoSource));
-	alcheck(alSource3f(stereoSource, AL_POSITION, 5.f, 0.f, 0.f));
-	//alcheck(alSource3f(stereoSource, AL_VELOCITY, 0.f, 0.f, 0.f));
-	alcheck(alSourcef(stereoSource, AL_PITCH, 1.f));
-	alcheck(alSourcef(stereoSource, AL_GAIN, 0.5f));
-	alcheck(alSourcei(stereoSource, AL_LOOPING, true));
-	alcheck(alSourcei(stereoSource, AL_BUFFER, flupBuffer));
-
-	alcheck(alSourcePlay(stereoSource));
-
+	audioInit();
 
 	try {
 
@@ -116,7 +87,58 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 			ImGui_ImplSDL2_NewFrame();
 			ImGui::NewFrame();
 
+			const char* testAudio[] = {
+				"./res/HEY.wav",
+				"./res/flup.wav",
+				"./res/plong.wav",
+				"./res/section.wav"
+			};
+			static size_t audio_device_dropdown_index = 0;
+			static size_t test_audio_index = 0;
+			const char* combo_preview_value = globals.audioDeviceNames[audio_device_dropdown_index].c_str();
+			const char* test_audio_sample = testAudio[test_audio_index];
+			bool device_changed = false;
+			ImGui::Begin("Audio");
 
+
+			if (ImGui::BeginCombo("Sample file", test_audio_sample)) {
+				for (size_t i = 0; i < sizeof(testAudio) / sizeof(const char*); ++i) {
+					const bool is_selected = test_audio_index == i;
+					if (ImGui::Selectable(testAudio[i], &is_selected)) {
+						test_audio_index = i;
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+			if (ImGui::Button("Play test audio")) {
+				play_wav_immediate(test_audio_sample, 1.f, 1.f, false, globals.alctx);
+			}
+			if (ImGui::BeginCombo("Audio Device", combo_preview_value)) {
+				for (size_t i = 0; i < globals.audioDeviceNames.size(); ++i) {
+					const bool is_selected = audio_device_dropdown_index == i;
+					if (ImGui::Selectable(globals.audioDeviceNames[i].c_str(), &is_selected)) {
+						device_changed = true;
+						audio_device_dropdown_index = i;
+					}
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+
+			ImGui::End();
+
+			if (device_changed) {
+				alcMakeContextCurrent(NULL);
+				alcDestroyContext(globals.alctx);
+				globals.alctx = alcCreateContext(alcOpenDevice(globals.audioDeviceNames[audio_device_dropdown_index].c_str()), nullptr);
+
+				if (!alcMakeContextCurrent(globals.alctx)) {
+					std::cerr << "Failed to set active context.\n";
+				}
+			}
 			//static bool open = true;
 			//ImGui::ShowDemoWindow(&open);
 
@@ -191,7 +213,8 @@ void GameClient::run(SharedQueue<std::exception_ptr>& p_exceptionQueue) {
 
 void GameClient::cleanUp()
 {
-
+	alcMakeContextCurrent(NULL);
+	alcDestroyContext(globals.alctx);
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext(imctx);
@@ -203,6 +226,71 @@ void GameClient::resizeWindow(uint32_t p_w, uint32_t p_h)
 	gw.height = p_h;
 	gw.setViewport(0, 0, p_w, p_h);
 	renderer.setViewport(p_w, p_h);
+}
+
+void audioInit() {
+
+	const ALchar* allDevice_ptr = nullptr;
+	if (alcIsExtensionPresent(NULL, "ALC_ENUMERATE_ALL_EXT") == AL_TRUE) { // able to get every device via openAL
+		// openAL context owns this string so we don't need to free
+		allDevice_ptr = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
+		if (*allDevice_ptr != '\0') {
+			globals.audioDeviceNames.push_back(reinterpret_cast<const char*>(allDevice_ptr));
+		}
+		// world's worst failsafe but at least it stops a runoff
+		constexpr uint16_t MAX_DEVICE_CHARLEN = 1024;
+		for (uint16_t itr = 0; !(allDevice_ptr[itr] == '\0' && allDevice_ptr[itr + 1] == '\0') && itr < MAX_DEVICE_CHARLEN; ++itr) {
+			if (allDevice_ptr[itr] == '\0') {
+				// copy from cstr to vector (maybe unsafe)
+				globals.audioDeviceNames.push_back(reinterpret_cast<const char*>(allDevice_ptr + itr + 1));
+			}
+		}
+	}
+
+	const ALchar* defaultDevice_str = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
+	ALCdevice* defaultDevice = alcOpenDevice(defaultDevice_str);
+	std::cout << "Got \"" << alcGetString(defaultDevice, ALC_DEVICE_SPECIFIER) << "\" as the default sound device.\n";
+
+	globals.defaultDeviceName = defaultDevice_str;
+	globals.currentAudioDevice = defaultDevice;
+
+	auto vecPos = std::find(globals.audioDeviceNames.begin(), globals.audioDeviceNames.end(), defaultDevice_str);
+	if (vecPos != globals.audioDeviceNames.end())
+		std::iter_swap(globals.audioDeviceNames.begin() + 1, vecPos);
+
+	globals.alctx = alcCreateContext(defaultDevice, nullptr);
+
+	if (!alcMakeContextCurrent(globals.alctx)) {
+		std::cerr << "Failed to set active context.\n";
+	}
+
+	//play_wav_immediate("./res/flup.wav", 1.f, 1.f, false, globals.alctx);
+}
+
+void GameClient::processDebugStats()
+{
+	globals.drawFPS = (float)(1.0 / renderFPSGauge.getFrametimeAverage());
+#ifndef DISABLE_DEBUG_STATS
+	static uint32_t debugUpdateCounter = 0;
+	debugUpdateCounter++;
+	if (debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) {
+		debugUpdateCounter = 0;
+		DebugStats& db = globals.debug;
+		//db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
+		db.camX = renderer.cam->pos.x;
+		db.camY = renderer.cam->pos.y;
+		auto f = renderer.cam->getFrame();
+		db.camFX1 = f.x;
+		db.camFY1 = f.y;
+		db.camFX2 = f.z;
+		db.camFY2 = f.w;
+		db.screenW = renderer.window.screenWidth;
+		db.screenH = renderer.window.screenHeight;
+		db.windowW = renderer.window.width;
+		db.windowH = renderer.window.height;
+		db.statUpdate = true;
+	}
+#endif
 }
 
 void GameClient::testInput()
@@ -253,30 +341,4 @@ void GameClient::testInput()
 	//	m.y = m.y / (float)gw.height;
 	//	renderer.testButton.onUpdate(GUIEvent{ m, KeyEvent() });
 	//}
-}
-
-void GameClient::processDebugStats()
-{
-	globals.drawFPS = (float)(1.0 / renderFPSGauge.getFrametimeAverage());
-#ifndef DISABLE_DEBUG_STATS
-	static uint32_t debugUpdateCounter = 0;
-	debugUpdateCounter++;
-	if (debugUpdateCounter > FRAMES_BETWEEN_STAT_UPDATES) {
-		debugUpdateCounter = 0;
-		DebugStats& db = globals.debug;
-		//db.updateFPS = 1.0f / utils::averageVector(updateFPSGauge.frametimeBuffer);
-		db.camX = renderer.cam->pos.x;
-		db.camY = renderer.cam->pos.y;
-		auto f = renderer.cam->getFrame();
-		db.camFX1 = f.x;
-		db.camFY1 = f.y;
-		db.camFX2 = f.z;
-		db.camFY2 = f.w;
-		db.screenW = renderer.window.screenWidth;
-		db.screenH = renderer.window.screenHeight;
-		db.windowW = renderer.window.width;
-		db.windowH = renderer.window.height;
-		db.statUpdate = true;
-	}
-#endif
 }

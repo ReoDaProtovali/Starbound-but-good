@@ -47,4 +47,5 @@ void create_AL_buffer(ALuint& buffer, const std::string& filename) {
 
 	alcheck(alGenBuffers(1, &buffer));
 	alcheck(alBufferData(buffer, toOpenALFormat(file), file_raw.data(), file_raw.size(), file.getSampleRate()));
+	LOG("Create Buffer " << buffer);
 }

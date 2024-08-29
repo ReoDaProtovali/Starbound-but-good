@@ -2,6 +2,7 @@
 #include <atomic>
 #include <thread>
 #include "util/SubjectObserver.hpp"
+#include <AL/alc.h>
 struct DebugStats {
 	float drawFPS = 0.f;
 	float updateFPS = 0.f;
@@ -78,6 +79,13 @@ struct GlobalStruct {
 	Subject<ChunkUpdate> chunkUpdateSubject;
 	Subject<TileUpdateRequest> tileUpdateRequestSubject;
 	DebugStats debug;
+	ALCcontext* alctx;
+	// all audio device names.
+	std::vector<std::string> audioDeviceNames;
+	std::string defaultDeviceName;
+
+	ALCdevice* currentAudioDevice;
+
 	float updateFPS = 0.f;
 	float drawFPS = 0.f;
 	int refresh_rate = 0;

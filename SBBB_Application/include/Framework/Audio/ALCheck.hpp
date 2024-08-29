@@ -6,7 +6,7 @@
 {\
     ALenum err = alGetError();\
     if (err != AL_NO_ERROR) {\
-        std::cerr << "OpenAL Error: " << err << "when calling " << #message << "\n";\
+        std::cerr << "OpenAL Error: " << err << " when calling " << #message << "\n";\
     }\
 }
 

@@ -527,6 +527,9 @@
     <ClInclude Include="include\Framework\Audio\SampleManip.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Framework\Audio\AudioImmediate.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\TODO.txt" />

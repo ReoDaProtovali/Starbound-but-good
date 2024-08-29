@@ -261,6 +261,7 @@ Xcopy /E /I res $(OutDir)res</Command>
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="include\Framework\Audio\ALCheck.hpp" />
+    <ClInclude Include="include\Framework\Audio\AudioImmediate.hpp" />
     <ClInclude Include="include\Framework\Audio\SampleManip.hpp" />
     <ClInclude Include="include\Framework\Audio\wav.hpp" />
     <ClInclude Include="include\Framework\Graphics\UniformArray.hpp" />
